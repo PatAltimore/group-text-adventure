@@ -1,0 +1,67 @@
+{
+  "name": "Test World",
+  "startRoom": "room-a",
+  "rooms": {
+    "room-a": {
+      "name": "Room A",
+      "description": "Starting room.",
+      "exits": { "north": "room-b", "east": "room-c" },
+      "items": ["key"],
+      "hazards": []
+    },
+    "room-b": {
+      "name": "Room B",
+      "description": "A locked room.",
+      "exits": { "south": "room-a" },
+      "items": [],
+      "hazards": ["A cold draft chills you."]
+    },
+    "room-c": {
+      "name": "Room C",
+      "description": "A side room.",
+      "exits": { "west": "room-a" },
+      "items": ["torch"],
+      "hazards": []
+    },
+    "room-d": {
+      "name": "Room D",
+      "description": "Secret room.",
+      "exits": { "south": "room-b" },
+      "items": ["treasure"],
+      "hazards": []
+    }
+  },
+  "items": {
+    "key": {
+      "name": "Old Key",
+      "description": "A brass key.",
+      "pickupText": "You take the key.",
+      "portable": true
+    },
+    "torch": {
+      "name": "Torch",
+      "description": "A burning torch.",
+      "pickupText": "You grab the torch.",
+      "portable": true
+    },
+    "treasure": {
+      "name": "Golden Treasure",
+      "description": "A pile of gold!",
+      "pickupText": "You grab the treasure!",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "locked-passage": {
+      "room": "room-b",
+      "description": "A locked gate blocks the way north.",
+      "requiredItem": "key",
+      "solvedText": "The gate swings open!",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "room-d"
+      }
+    }
+  }
+}

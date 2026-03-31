@@ -1,0 +1,23 @@
+{
+  "name": "group-text-adventure-api",
+  "version": "1.0.0",
+  "description": "Azure Functions backend for the group text adventure game",
+  "main": "src/functions/*.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "func start",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test:ci": "node --experimental-vm-modules node_modules/.bin/jest --ci"
+  },
+  "dependencies": {
+    "@azure/data-tables": "^13.2.2",
+    "@azure/functions": "^4.5.0",
+    "@azure/web-pubsub": "^1.1.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
