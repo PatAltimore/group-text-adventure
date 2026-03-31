@@ -17,3 +17,17 @@
 - **Game IDs:** 6-char alphanumeric codes (no ambiguous chars like 0/O/1/I/L). Passed via `?game=` URL param.
 - **Dark theme:** CSS custom properties in `:root` — easy to tweak colors globally.
 - **Command history:** Up/Down arrow keys cycle through previous commands, stored in `state.commandHistory`.
+
+### 2026-03-31 — Backend + Test suite complete
+
+**From Mouth (Backend):**
+- Azure Functions v4 game engine with pure game-engine.js (zero Azure imports)
+- WebSocket message types: `look`, `message`, `error`, `inventory`, `playerEvent`, `gameInfo`
+- `/api/negotiate?gameId=...` endpoint returns `{ url: "wss://...", gameId }`
+- Connection ID doubles as player ID
+- Backend API paths: `api/src/functions/negotiate.js`, `api/src/functions/gameHub.js`
+
+**From Stef (Tester):**
+- 111 tests (all passing) cover game engine and command parser
+- Run tests with `npm test` from project root
+- ESM modules required (`import`/`export`)
