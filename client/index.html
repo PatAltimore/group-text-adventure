@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group Text Adventure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- ===== Landing Screen ===== -->
+  <main id="screen-landing" class="screen active" role="main" aria-label="Game lobby">
+    <div class="landing-container">
+      <h1 class="landing-title">🏰 Group Text Adventure</h1>
+      <p class="landing-subtitle">Explore dungeons, solve puzzles, and survive — together.</p>
+
+      <div class="landing-form">
+        <label for="player-name" class="sr-only">Your Name</label>
+        <input
+          id="player-name"
+          type="text"
+          placeholder="Enter your name…"
+          maxlength="24"
+          autocomplete="off"
+          aria-label="Your player name"
+        >
+
+        <div class="landing-buttons">
+          <button id="btn-host" class="btn btn-primary" disabled aria-label="Host a new game">
+            Host New Game
+          </button>
+          <button id="btn-join" class="btn btn-secondary" disabled aria-label="Join an existing game">
+            Join Game
+          </button>
+        </div>
+
+        <div id="join-code-group" class="join-code-group hidden">
+          <label for="join-code" class="sr-only">Game Code</label>
+          <input
+            id="join-code"
+            type="text"
+            placeholder="Enter game code…"
+            maxlength="12"
+            autocomplete="off"
+            aria-label="Game code to join"
+          >
+          <button id="btn-join-go" class="btn btn-primary" disabled>Join →</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== Lobby Screen (Host) ===== -->
+  <section id="screen-lobby" class="screen" role="region" aria-label="Game lobby waiting room">
+    <div class="lobby-container">
+      <h2 class="lobby-title">🏰 Waiting for Players…</h2>
+
+      <div class="lobby-share">
+        <p class="lobby-label">Share this link or scan the QR code:</p>
+        <div class="lobby-url-row">
+          <input id="lobby-url" type="text" readonly aria-label="Game join URL">
+          <button id="btn-copy-url" class="btn btn-small" aria-label="Copy join URL">Copy</button>
+        </div>
+        <div id="qr-canvas" class="qr-container" aria-label="QR code for joining the game"></div>
+      </div>
+
+      <div class="lobby-players">
+        <h3>Players (<span id="lobby-player-count">0</span>)</h3>
+        <ul id="lobby-player-list" aria-label="Connected players"></ul>
+      </div>
+
+      <button id="btn-start-game" class="btn btn-primary btn-large">Start Game</button>
+    </div>
+  </section>
+
+  <!-- ===== Game Screen ===== -->
+  <section id="screen-game" class="screen" role="region" aria-label="Game interface">
+    <header class="game-header">
+      <div class="game-title" id="game-title">🏰 Group Text Adventure</div>
+      <div class="game-players" id="game-player-badge" aria-label="Player count">Players: <span id="game-player-count">0</span></div>
+    </header>
+
+    <div id="game-output" class="game-output" role="log" aria-live="polite" aria-label="Game output">
+      <div class="msg msg-system">Welcome! Type commands to play. Try <strong>look</strong> to see around you.</div>
+    </div>
+
+    <form id="command-form" class="command-bar" autocomplete="off" aria-label="Command input">
+      <span class="prompt-char" aria-hidden="true">&gt;</span>
+      <label for="command-input" class="sr-only">Enter command</label>
+      <input
+        id="command-input"
+        type="text"
+        placeholder="Type a command…"
+        autocomplete="off"
+        aria-label="Game command"
+      >
+      <button type="submit" class="btn btn-send" aria-label="Send command">Send</button>
+    </form>
+  </section>
+</body>
+</html>

@@ -1,0 +1,504 @@
+// ===== Group Text Adventure — Client =====
+
+(function () {
+  'use strict';
+
+  // --- State ---
+  const state = {
+    playerName: '',
+    gameId: '',
+    isHost: false,
+    ws: null,
+    players: [],
+    commandHistory: [],
+    historyIndex: -1,
+    connected: false,
+  };
+
+  // --- DOM References ---
+  const $ = (sel) => document.querySelector(sel);
+  const screens = {
+    landing: $('#screen-landing'),
+    lobby: $('#screen-lobby'),
+    game: $('#screen-game'),
+  };
+  const els = {
+    playerName: $('#player-name'),
+    btnHost: $('#btn-host'),
+    btnJoin: $('#btn-join'),
+    joinCodeGroup: $('#join-code-group'),
+    joinCode: $('#join-code'),
+    btnJoinGo: $('#btn-join-go'),
+    lobbyUrl: $('#lobby-url'),
+    btnCopyUrl: $('#btn-copy-url'),
+    qrCanvas: $('#qr-canvas'),
+    lobbyPlayerCount: $('#lobby-player-count'),
+    lobbyPlayerList: $('#lobby-player-list'),
+    btnStartGame: $('#btn-start-game'),
+    gameTitle: $('#game-title'),
+    gamePlayerCount: $('#game-player-count'),
+    gameOutput: $('#game-output'),
+    commandForm: $('#command-form'),
+    commandInput: $('#command-input'),
+  };
+
+  // --- Screen Management ---
+  function showScreen(name) {
+    Object.values(screens).forEach((s) => s.classList.remove('active'));
+    screens[name].classList.add('active');
+    if (name === 'game') {
+      els.commandInput.focus();
+    }
+  }
+
+  // --- URL Helpers ---
+  function getGameIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('game') || '';
+  }
+
+  function buildJoinUrl(gameId) {
+    const url = new URL(window.location.href);
+    url.search = `?game=${encodeURIComponent(gameId)}`;
+    return url.toString();
+  }
+
+  // --- QR Code ---
+  function renderQrCode(url) {
+    els.qrCanvas.innerHTML = '';
+    if (typeof QRCode === 'undefined') {
+      const fallback = document.createElement('p');
+      fallback.textContent = url;
+      fallback.style.wordBreak = 'break-all';
+      fallback.style.fontSize = '12px';
+      els.qrCanvas.appendChild(fallback);
+      return;
+    }
+    const canvas = document.createElement('canvas');
+    els.qrCanvas.appendChild(canvas);
+    QRCode.toCanvas(canvas, url, {
+      width: 200,
+      margin: 2,
+      color: { dark: '#e6edf3', light: '#0d1117' },
+    });
+  }
+
+  // --- WebSocket ---
+  async function connectWebSocket(gameId) {
+    try {
+      const res = await fetch(`/api/negotiate?gameId=${encodeURIComponent(gameId)}`);
+      if (!res.ok) throw new Error(`Negotiate failed: ${res.status}`);
+      const data = await res.json();
+      const wsUrl = data.url;
+
+      const ws = new WebSocket(wsUrl, 'json.webpubsub.azure.v1');
+      state.ws = ws;
+
+      ws.addEventListener('open', () => {
+        state.connected = true;
+        sendMessage({ type: 'join', playerName: state.playerName });
+      });
+
+      ws.addEventListener('message', (event) => {
+        handleServerMessage(event);
+      });
+
+      ws.addEventListener('close', () => {
+        state.connected = false;
+        appendSystemMessage('Connection lost. Refresh to reconnect.');
+      });
+
+      ws.addEventListener('error', () => {
+        state.connected = false;
+        appendSystemMessage('Connection error. Please try again.');
+      });
+    } catch (err) {
+      appendSystemMessage(`Failed to connect: ${err.message}`);
+    }
+  }
+
+  function sendMessage(payload) {
+    if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
+    // Web PubSub json.webpubsub.azure.v1 subprotocol envelope
+    state.ws.send(JSON.stringify({
+      type: 'sendToGroup',
+      group: state.gameId,
+      dataType: 'json',
+      data: payload,
+    }));
+  }
+
+  function sendCommand(text) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    // Local echo
+    appendCommandEcho(trimmed);
+
+    // Store in history
+    state.commandHistory.push(trimmed);
+    state.historyIndex = state.commandHistory.length;
+
+    sendMessage({ type: 'command', text: trimmed });
+  }
+
+  // --- Incoming Messages ---
+  function handleServerMessage(event) {
+    let raw;
+    try {
+      raw = JSON.parse(event.data);
+    } catch {
+      return;
+    }
+
+    // Web PubSub wraps data in an envelope
+    const msg = raw.data || raw;
+
+    switch (msg.type) {
+      case 'look':
+        renderRoomMessage(msg.room);
+        break;
+      case 'message':
+        appendNarrativeMessage(msg.text);
+        break;
+      case 'error':
+        appendErrorMessage(msg.text);
+        break;
+      case 'inventory':
+        renderInventoryMessage(msg.items);
+        break;
+      case 'playerEvent':
+        handlePlayerEvent(msg);
+        break;
+      case 'gameInfo':
+        handleGameInfo(msg);
+        break;
+      default:
+        // Unknown message type — show as system text if it has text
+        if (msg.text) appendSystemMessage(msg.text);
+        break;
+    }
+  }
+
+  // --- Message Rendering ---
+  function scrollToBottom() {
+    const out = els.gameOutput;
+    requestAnimationFrame(() => {
+      out.scrollTop = out.scrollHeight;
+    });
+  }
+
+  function appendToOutput(element) {
+    els.gameOutput.appendChild(element);
+    scrollToBottom();
+  }
+
+  function createMsg(className, content) {
+    const div = document.createElement('div');
+    div.className = `msg ${className}`;
+    if (typeof content === 'string') {
+      div.textContent = content;
+    } else {
+      div.appendChild(content);
+    }
+    return div;
+  }
+
+  function appendSystemMessage(text) {
+    appendToOutput(createMsg('msg-system', text));
+  }
+
+  function appendNarrativeMessage(text) {
+    appendToOutput(createMsg('msg-narrative', text));
+  }
+
+  function appendErrorMessage(text) {
+    appendToOutput(createMsg('msg-error', text));
+  }
+
+  function appendCommandEcho(text) {
+    appendToOutput(createMsg('msg-command', text));
+  }
+
+  function renderRoomMessage(room) {
+    const container = document.createElement('div');
+
+    const name = document.createElement('div');
+    name.className = 'room-name';
+    name.textContent = room.name || 'Unknown Room';
+    container.appendChild(name);
+
+    if (room.description) {
+      const desc = document.createElement('div');
+      desc.className = 'room-desc';
+      desc.textContent = room.description;
+      container.appendChild(desc);
+    }
+
+    if (room.exits && room.exits.length) {
+      container.appendChild(
+        createRoomSection('Exits', room.exits.join(', '), 'room-exits')
+      );
+    }
+
+    if (room.items && room.items.length) {
+      container.appendChild(
+        createRoomSection('Items', room.items.join(', '), 'room-items')
+      );
+    }
+
+    if (room.players && room.players.length) {
+      container.appendChild(
+        createRoomSection('Players here', room.players.join(', '), 'room-players-list')
+      );
+    }
+
+    if (room.hazards && room.hazards.length) {
+      container.appendChild(
+        createRoomSection('⚠ Hazards', room.hazards.join(', '), 'room-hazard')
+      );
+    }
+
+    const msg = document.createElement('div');
+    msg.className = 'msg msg-room';
+    msg.appendChild(container);
+    appendToOutput(msg);
+  }
+
+  function createRoomSection(label, value, valueClass) {
+    const section = document.createElement('div');
+    section.className = 'room-section';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'room-section-label';
+    lbl.textContent = label;
+    section.appendChild(lbl);
+
+    const val = document.createElement('span');
+    val.className = `room-section-value ${valueClass}`;
+    val.textContent = value;
+    section.appendChild(val);
+
+    return section;
+  }
+
+  function renderInventoryMessage(items) {
+    const container = document.createElement('div');
+
+    const title = document.createElement('div');
+    title.className = 'inv-title';
+    title.textContent = '🎒 Inventory';
+    container.appendChild(title);
+
+    if (!items || items.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'inv-empty';
+      empty.textContent = 'Your inventory is empty.';
+      container.appendChild(empty);
+    } else {
+      items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'inv-item';
+
+        const itemName = document.createElement('span');
+        itemName.className = 'inv-item-name';
+        itemName.textContent = item.name;
+        row.appendChild(itemName);
+
+        if (item.description) {
+          const itemDesc = document.createElement('span');
+          itemDesc.className = 'inv-item-desc';
+          itemDesc.textContent = ` — ${item.description}`;
+          row.appendChild(itemDesc);
+        }
+
+        container.appendChild(row);
+      });
+    }
+
+    const msg = document.createElement('div');
+    msg.className = 'msg msg-inventory';
+    msg.appendChild(container);
+    appendToOutput(msg);
+  }
+
+  function handlePlayerEvent(msg) {
+    const action = msg.event === 'joined' ? 'has joined the game.' : 'has left the game.';
+    const text = `${msg.playerName} ${action}`;
+    appendToOutput(createMsg('msg-player-event', text));
+
+    // Update player list
+    if (msg.event === 'joined' && !state.players.includes(msg.playerName)) {
+      state.players.push(msg.playerName);
+    } else if (msg.event === 'left') {
+      state.players = state.players.filter((p) => p !== msg.playerName);
+    }
+    updatePlayerCount();
+  }
+
+  function handleGameInfo(msg) {
+    if (msg.gameId) state.gameId = msg.gameId;
+    if (msg.playerCount != null) {
+      updatePlayerCount(msg.playerCount);
+    }
+    if (msg.joinUrl && state.isHost) {
+      els.lobbyUrl.value = msg.joinUrl;
+      renderQrCode(msg.joinUrl);
+    }
+  }
+
+  function updatePlayerCount(count) {
+    const c = count != null ? count : state.players.length;
+    els.gamePlayerCount.textContent = c;
+    els.lobbyPlayerCount.textContent = c;
+  }
+
+  function updateLobbyPlayerList() {
+    els.lobbyPlayerList.innerHTML = '';
+    state.players.forEach((name) => {
+      const li = document.createElement('li');
+      li.textContent = name;
+      els.lobbyPlayerList.appendChild(li);
+    });
+    els.lobbyPlayerCount.textContent = state.players.length;
+  }
+
+  // --- Landing Screen Logic ---
+  function initLanding() {
+    const urlGameId = getGameIdFromUrl();
+
+    // Enable/disable buttons based on name input
+    els.playerName.addEventListener('input', () => {
+      const hasName = els.playerName.value.trim().length > 0;
+      els.btnHost.disabled = !hasName;
+      els.btnJoin.disabled = !hasName;
+      els.btnJoinGo.disabled = !hasName || !els.joinCode.value.trim();
+    });
+
+    els.joinCode.addEventListener('input', () => {
+      els.btnJoinGo.disabled =
+        !els.playerName.value.trim() || !els.joinCode.value.trim();
+    });
+
+    // Host button
+    els.btnHost.addEventListener('click', () => {
+      state.playerName = els.playerName.value.trim();
+      state.isHost = true;
+      state.gameId = generateGameId();
+      startHost();
+    });
+
+    // Join button — toggle code input
+    els.btnJoin.addEventListener('click', () => {
+      els.joinCodeGroup.classList.toggle('hidden');
+      if (!els.joinCodeGroup.classList.contains('hidden')) {
+        els.joinCode.focus();
+      }
+    });
+
+    // Join go
+    els.btnJoinGo.addEventListener('click', () => {
+      state.playerName = els.playerName.value.trim();
+      state.gameId = els.joinCode.value.trim();
+      state.isHost = false;
+      startJoin();
+    });
+
+    // If URL has game code, pre-fill and show join UI
+    if (urlGameId) {
+      els.joinCode.value = urlGameId;
+      els.joinCodeGroup.classList.remove('hidden');
+      els.playerName.focus();
+    } else {
+      els.playerName.focus();
+    }
+  }
+
+  function generateGameId() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let id = '';
+    for (let i = 0; i < 6; i++) {
+      id += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return id;
+  }
+
+  function startHost() {
+    const joinUrl = buildJoinUrl(state.gameId);
+
+    // Set up lobby
+    els.lobbyUrl.value = joinUrl;
+    renderQrCode(joinUrl);
+    state.players = [state.playerName];
+    updateLobbyPlayerList();
+
+    showScreen('lobby');
+
+    // Connect
+    connectWebSocket(state.gameId);
+
+    // Copy URL button
+    els.btnCopyUrl.addEventListener('click', () => {
+      navigator.clipboard.writeText(joinUrl).then(() => {
+        els.btnCopyUrl.textContent = 'Copied!';
+        setTimeout(() => {
+          els.btnCopyUrl.textContent = 'Copy';
+        }, 2000);
+      });
+    });
+
+    // Start game button
+    els.btnStartGame.addEventListener('click', () => {
+      showScreen('game');
+      sendMessage({ type: 'command', text: 'look' });
+    });
+  }
+
+  function startJoin() {
+    // Update URL without reload
+    const joinUrl = buildJoinUrl(state.gameId);
+    window.history.replaceState({}, '', `?game=${encodeURIComponent(state.gameId)}`);
+
+    showScreen('game');
+    connectWebSocket(state.gameId);
+  }
+
+  // --- Command Input ---
+  function initCommandInput() {
+    els.commandForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = els.commandInput.value;
+      els.commandInput.value = '';
+      sendCommand(text);
+      els.commandInput.focus();
+    });
+
+    // Command history (Up/Down arrows)
+    els.commandInput.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (state.historyIndex > 0) {
+          state.historyIndex--;
+          els.commandInput.value = state.commandHistory[state.historyIndex];
+        }
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (state.historyIndex < state.commandHistory.length - 1) {
+          state.historyIndex++;
+          els.commandInput.value = state.commandHistory[state.historyIndex];
+        } else {
+          state.historyIndex = state.commandHistory.length;
+          els.commandInput.value = '';
+        }
+      }
+    });
+  }
+
+  // --- Init ---
+  function init() {
+    initLanding();
+    initCommandInput();
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
