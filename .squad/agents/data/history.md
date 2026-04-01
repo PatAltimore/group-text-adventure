@@ -88,3 +88,18 @@
 - **CORS:** Deploy script configures CORS with static website origin. A CORS failure would show as a CORS error, not 404
 - **Conclusion:** The 404 is a server-side issue (function app runtime not serving the negotiate function). Client is correct.
 
+### 2026-04-01 — Static Website 404 Investigation
+
+**Issue:** Static website at `https://patcastlestore.z5.web.core.windows.net` reported returning 404 (`WebContentNotFound`).
+
+**Investigation findings:**
+- **Website is NOW serving correctly** — HTTP 200 on all files (index.html, style.css, app.js, config.json)
+- **Deployed app.js matches local repo** — content is up to date
+- **config.json correctly points to** `https://patcastle-func.azurewebsites.net`
+- **deploy.ps1 already fixed** (commit `0334f01`) — uses `--connection-string` instead of `--account-name` for blob uploads, plus upload verification
+- **deploy.sh already had** `--connection-string` and verification — PowerShell was the lagging script
+
+**Root cause:** The original `deploy.ps1` used `--account-name` for `az storage blob upload-batch`, which relies on Azure CLI auto-detecting storage keys. This can fail silently (exit 0 with 0 files uploaded). The bash script (`deploy.sh`) already used `--connection-string` and had upload verification. The PowerShell script was missing both.
+
+**Key takeaway:** Always use `--connection-string` for Azure Storage CLI commands in deploy scripts, and verify uploads by counting blobs in the container after upload-batch.
+
