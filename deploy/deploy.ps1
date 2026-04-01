@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Deploys the Group Text Adventure game to Azure.
 .DESCRIPTION
@@ -25,7 +25,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# ── Derive resource names ──────────────────────────────────────────────
+# -- Derive resource names ----------------------------------------------
 $appNameLower = $AppName.ToLower()
 $storageName = "${appNameLower}store" -replace '[^a-z0-9]', ''
 if ($storageName.Length -gt 24) { $storageName = $storageName.Substring(0, 24) }
@@ -58,7 +58,7 @@ Write-Host " Location:        $Location"
 Write-Host ""
 
 try {
-    # ── 0. Resource Group ──────────────────────────────────────────────
+    # -- 0. Resource Group ----------------------------------------------
     Write-Step "Creating resource group '$ResourceGroup' in '$Location'..."
     az group create `
         --name $ResourceGroup `
@@ -67,7 +67,7 @@ try {
     Assert-AzSuccess "Failed to create resource group '$ResourceGroup'"
     Write-Done "Resource group ready."
 
-    # ── 1. Pre-flight: Check if storage account exists or is available ───
+    # -- 1. Pre-flight: Check if storage account exists or is available ---
     Write-Step "Checking storage account '$storageName'..."
     $existingAccount = $null
     try {
@@ -77,9 +77,9 @@ try {
         $existingAccount = $null
     }
     if ($existingAccount) {
-        Write-Done "Storage account '$storageName' already exists — reusing."
+        Write-Done "Storage account '$storageName' already exists - reusing."
     } else {
-        # Storage account doesn't exist — check if name is available
+        # Storage account doesn't exist - check if name is available
         $nameCheck = az storage account check-name --name $storageName --query "nameAvailable" --output tsv
         Assert-AzSuccess "Failed to check storage account name availability"
         if ($nameCheck -ne "true") {
@@ -89,7 +89,7 @@ try {
         Write-Done "Storage account name '$storageName' is available."
     }
 
-    # ── 2. Storage Account ─────────────────────────────────────────────
+    # -- 2. Storage Account ---------------------------------------------
     Write-Step "Creating storage account '$storageName'..."
     az storage account create `
         --name $storageName `
@@ -116,11 +116,11 @@ try {
         Start-Sleep -Seconds 10
     }
     if (-not $storageReady) {
-        Write-Info "Storage account provisioning state: $provState — proceeding anyway..."
+        Write-Info "Storage account provisioning state: $provState - proceeding anyway..."
     }
     Write-Done "Storage account created."
 
-    # ── 3. Enable Static Website ───────────────────────────────────────
+    # -- 3. Enable Static Website ---------------------------------------
     Write-Step "Enabling static website hosting..."
     $staticEnabled = $false
     for ($attempt = 1; $attempt -le 3; $attempt++) {
@@ -164,7 +164,7 @@ try {
     }
     $staticWebUrl = $staticWebUrl.TrimEnd('/')
 
-    # ── 4. Web PubSub ──────────────────────────────────────────────────
+    # -- 4. Web PubSub --------------------------------------------------
     Write-Step "Creating Web PubSub '$webPubSubName' (Free tier)..."
     az webpubsub create `
         --name $webPubSubName `
@@ -185,7 +185,7 @@ try {
         throw "Web PubSub connection string is empty."
     }
 
-    # ── 5. Function App ────────────────────────────────────────────────
+    # -- 5. Function App ------------------------------------------------
     Write-Step "Creating Function App '$functionAppName' (Consumption plan)..."
     az functionapp create `
         --name $functionAppName `
@@ -220,7 +220,7 @@ try {
     }
     Write-Done "Function App created (Consumption plan)."
 
-    # ── 6. Configure App Settings ──────────────────────────────────────
+    # -- 6. Configure App Settings --------------------------------------
     Write-Step "Configuring app settings..."
     az functionapp config appsettings set `
         --name $functionAppName `
@@ -238,9 +238,9 @@ try {
     Assert-AzSuccess "Failed to configure app settings"
     Write-Done "App settings configured."
 
-    # ── 7. Configure CORS ──────────────────────────────────────────────
+    # -- 7. Configure CORS ----------------------------------------------
     Write-Step "Configuring CORS on Function App..."
-    # Remove default allowed origins (may fail if not present — that's OK)
+    # Remove default allowed origins (may fail if not present - that's OK)
     az functionapp cors remove `
         --name $functionAppName `
         --resource-group $ResourceGroup `
@@ -255,7 +255,7 @@ try {
     Assert-AzSuccess "Failed to add CORS origin '$staticWebUrl'"
     Write-Done "CORS configured for $staticWebUrl."
 
-    # ── 8. Build and Deploy Function App ───────────────────────────────
+    # -- 8. Build and Deploy Function App -------------------------------
     Write-Step "Building and packaging Function App..."
 
     # Clean previous staging
@@ -309,7 +309,7 @@ try {
     }
     Write-Done "Function App deployed."
 
-    # ── 9. Configure Web PubSub Event Handler ──────────────────────────
+    # -- 9. Configure Web PubSub Event Handler --------------------------
     Write-Step "Configuring Web PubSub event handler..."
     Write-Info "Warming up Function App (this may take up to 2 minutes)..."
 
@@ -361,7 +361,7 @@ try {
     Assert-AzSuccess "Failed to create Web PubSub hub '$hubName'"
     Write-Done "Web PubSub hub '$hubName' configured."
 
-    # ── 10. Upload Client Files ────────────────────────────────────────
+    # -- 10. Upload Client Files ----------------------------------------
     Write-Step "Uploading client files to static website..."
 
     # Generate config.json with the Function App URL
@@ -405,11 +405,11 @@ try {
     Remove-Item $configPath -Force -ErrorAction SilentlyContinue
     Write-Done "Client files uploaded."
 
-    # ── 11. Clean Up ───────────────────────────────────────────────────
+    # -- 11. Clean Up ---------------------------------------------------
     if (Test-Path $stageDir) { Remove-Item $stageDir -Recurse -Force }
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 
-    # ── 12. Output Summary ─────────────────────────────────────────────
+    # -- 12. Output Summary ---------------------------------------------
     $wpsHostName = az webpubsub show `
         --name $webPubSubName `
         --resource-group $ResourceGroup `
