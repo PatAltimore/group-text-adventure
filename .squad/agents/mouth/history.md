@@ -167,3 +167,16 @@
 - **Decision recorded** in `.squad/decisions.md` with version upgrade conventions for the team.
 - **Ready for:** Redeployment to production. The fixed package will resolve persistent 404 errors on deployed endpoints when redeployed.
 - **Next step:** Run `cd deploy && .\deploy.ps1 -AppName patcastle` to redeploy with the updated package.
+
+### 2026-04-01 — Fix: App settings never applied due to cmd.exe semicolon mangling
+
+- **Problem:** `az functionapp config appsettings set --settings "Key=value;with;semicolons"` in `deploy.ps1` passes connection strings as command-line arguments. On Windows, `az` is `az.cmd` — a batch file executed via `cmd.exe /c`. cmd.exe interprets semicolons as command separators, silently truncating or breaking the entire `--settings` argument list. Critical settings like `AzureWebJobsFeatureFlags=EnableWorkerIndexing` were never applied, causing the v4 runtime to fall back to v3-style function.json discovery, find none, and return 404 on ALL endpoints.
+- **Why previous fixes didn't help:** We'd already fixed the entry point, package version, and added `EnableWorkerIndexing` to the script — but the script itself couldn't deliver the settings to Azure because cmd.exe mangled the command before `az` ever saw it.
+- **Fix:** Replaced `az functionapp config appsettings set --settings ...` with ARM REST API calls via `az rest --body @file`. Settings are written to a temp JSON file (`_appsettings.json`), then applied via `PUT .../config/appsettings`. File-based input (`@filepath`) bypasses cmd.exe argument parsing entirely. The script GETs existing settings first and merges them to preserve system settings like `AzureWebJobsStorage`.
+- **Connection string retrieval is safe:** Lines 157-160 and 188-191 capture `az` output into PowerShell variables via stdout — no semicolons on the command line. Only the app settings SET operation was broken.
+- **Cleanup:** Temp file cleaned up in both success path and catch block.
+- **Key learning — Windows az CLI:** NEVER pass values containing semicolons, equals signs, or base64 chars as command-line arguments to `az` on Windows. Always use file-based input (`az rest --body @file`) or environment variables. This applies to connection strings, SAS tokens, and storage keys.
+- **Key learning — ARM REST API for app settings:** `POST .../config/appsettings/list` to read, `PUT .../config/appsettings` to write. Body format: `{"properties": {"KEY": "VALUE"}}`. PUT replaces all settings, so always merge with existing.
+- **Key file path:** `deploy/deploy.ps1` (step 6, lines ~232-282)
+- **All 111 tests still pass.**
+- **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
