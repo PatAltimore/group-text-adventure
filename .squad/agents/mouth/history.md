@@ -125,3 +125,15 @@
 - **Key file paths:** `api/src/index.js` (new), `api/package.json` (line 5)
 - **All 111 tests still pass.**
 - **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+### 2026-04-01 — Negotiate 404 root cause: missing EnableWorkerIndexing feature flag
+
+- **Problem:** Despite correct entry point (`src/index.js`), correct package structure, and successful deployment, ALL function endpoints returned 404. Function app root `/` returned 200 (host alive), admin endpoints returned 401 (expected), but `/api/negotiate` and `/api/` returned 404.
+- **Root cause:** The app setting `AzureWebJobsFeatureFlags=EnableWorkerIndexing` was missing. Azure Functions v4 Node.js programming model (where functions register via `app.http()`, `app.generic()`) requires this flag to tell the host to delegate function discovery to the Node.js worker process. Without it, the host uses v3-style discovery — looking for `function.json` files in subdirectories — finds none, and reports 0 functions. `az functionapp create` does NOT set this flag by default.
+- **Fix:** Added `AzureWebJobsFeatureFlags=EnableWorkerIndexing` to both `deploy/deploy.ps1` and `deploy/deploy.sh` app settings. Also added to `api/local.settings.json` for local dev consistency.
+- **Diagnosis method:** Confirmed the code was correct by loading `src/index.js` in the staged production directory — all 4 functions registered successfully (in test mode). Confirmed zip structure was correct (forward-slash paths). Confirmed `@azure/functions` v4.12.0 installed. The only remaining explanation was host-side function discovery configuration.
+- **Key learning — Azure Functions v4 programming model:** `AzureWebJobsFeatureFlags=EnableWorkerIndexing` is MANDATORY for the v4 Node.js programming model. Without it, the host ignores programmatic function registrations and looks only for v3-style `function.json` files. `az functionapp create` does NOT set this automatically. Azure Functions Core Tools (`func start`) enables it implicitly for local dev, masking the issue.
+- **Key learning — Debugging 404 on Azure Functions:** When the function app root (/) returns 200 but all `/api/*` routes return 404, the functions are not being discovered. Check: (1) `AzureWebJobsFeatureFlags=EnableWorkerIndexing` for v4 model, (2) `WEBSITE_RUN_FROM_PACKAGE=1` for zip deploy, (3) `package.json` `main` field for correct entry point.
+- **Key file paths:** `deploy/deploy.ps1` (line 184), `deploy/deploy.sh` (line 194), `api/local.settings.json`
+- **All 111 tests still pass.**
+- **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
