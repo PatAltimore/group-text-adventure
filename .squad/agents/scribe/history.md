@@ -11,7 +11,9 @@ Agent Scribe initialized and ready for work.
 
 📌 Team initialized on 2026-03-31  
 📌 Mouth: Fixed gameId bug + deploy idempotency (2026-04-01)  
-📌 Data: Created dedicated join screen for `?game=` URLs (2026-04-01)
+📌 Data: Created dedicated join screen for `?game=` URLs (2026-04-01)  
+📌 Mouth: Fixed deploy storage account check with try/catch pattern (2026-04-01T13:09)  
+📌 Scribe: Orchestration processed, decisions merged (2026-04-01T13:09)
 
 ## Learnings
 
