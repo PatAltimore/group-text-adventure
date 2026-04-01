@@ -99,17 +99,49 @@ try {
         --kind StorageV2 `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to create storage account '$storageName'"
+
+    # Wait for storage account to be fully provisioned
+    Write-Info "Waiting for storage account to be ready..."
+    $storageReady = $false
+    for ($i = 0; $i -lt 12; $i++) {
+        $provState = az storage account show `
+            --name $storageName `
+            --resource-group $ResourceGroup `
+            --query "provisioningState" --output tsv 2>$null
+        if ($LASTEXITCODE -eq 0 -and $provState -eq "Succeeded") {
+            $storageReady = $true
+            break
+        }
+        Write-Info "Waiting for storage account... (attempt $($i + 1)/12)"
+        Start-Sleep -Seconds 10
+    }
+    if (-not $storageReady) {
+        Write-Info "Storage account provisioning state: $provState — proceeding anyway..."
+    }
     Write-Done "Storage account created."
 
     # ── 3. Enable Static Website ───────────────────────────────────────
     Write-Step "Enabling static website hosting..."
-    az storage blob service-properties update `
-        --account-name $storageName `
-        --static-website `
-        --index-document index.html `
-        --404-document index.html `
-        --only-show-errors | Out-Null
-    Assert-AzSuccess "Failed to enable static website hosting"
+    $staticEnabled = $false
+    for ($attempt = 1; $attempt -le 3; $attempt++) {
+        az storage blob service-properties update `
+            --account-name $storageName `
+            --static-website `
+            --index-document index.html `
+            --404-document index.html `
+            --only-show-errors | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            $staticEnabled = $true
+            break
+        }
+        if ($attempt -lt 3) {
+            Write-Info "Static website enable attempt $attempt failed, retrying in 10 seconds..."
+            Start-Sleep -Seconds 10
+        }
+    }
+    if (-not $staticEnabled) {
+        throw "Failed to enable static website hosting after 3 attempts"
+    }
     Write-Done "Static website enabled."
 
     # Get storage connection string and static website URL
