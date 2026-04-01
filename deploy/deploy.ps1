@@ -43,6 +43,7 @@ $zipPath = Join-Path $PSScriptRoot "api.zip"
 function Write-Step { param([string]$msg) Write-Host "`n=> $msg" -ForegroundColor Cyan }
 function Write-Done { param([string]$msg) Write-Host "   OK: $msg" -ForegroundColor Green }
 function Write-Info { param([string]$msg) Write-Host "   .. $msg" -ForegroundColor Yellow }
+function Assert-AzSuccess { param([string]$Message) if ($LASTEXITCODE -ne 0) { throw $Message } }
 
 Write-Host ""
 Write-Host "=======================================================" -ForegroundColor Magenta
@@ -57,12 +58,23 @@ Write-Host " Location:        $Location"
 Write-Host ""
 
 try {
+    # ── 0. Pre-flight: Validate storage account name ───────────────────
+    Write-Step "Checking storage account name availability..."
+    $nameCheck = az storage account check-name --name $storageName --query "nameAvailable" -o tsv
+    Assert-AzSuccess "Failed to check storage account name availability"
+    if ($nameCheck -ne "true") {
+        $nameReason = az storage account check-name --name $storageName --query "reason" -o tsv 2>$null
+        throw "Storage account name '$storageName' is not available (reason: $nameReason). Try a different AppName."
+    }
+    Write-Done "Storage account name '$storageName' is available."
+
     # ── 1. Resource Group ──────────────────────────────────────────────
     Write-Step "Creating resource group '$ResourceGroup' in '$Location'..."
     az group create `
         --name $ResourceGroup `
         --location $Location `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to create resource group '$ResourceGroup'"
     Write-Done "Resource group ready."
 
     # ── 2. Storage Account ─────────────────────────────────────────────
@@ -74,6 +86,7 @@ try {
         --sku Standard_LRS `
         --kind StorageV2 `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to create storage account '$storageName'"
     Write-Done "Storage account created."
 
     # ── 3. Enable Static Website ───────────────────────────────────────
@@ -84,6 +97,7 @@ try {
         --index-document index.html `
         --404-document index.html `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to enable static website hosting"
     Write-Done "Static website enabled."
 
     # Get storage connection string and static website URL
@@ -91,11 +105,19 @@ try {
         --name $storageName `
         --resource-group $ResourceGroup `
         --query connectionString -o tsv
+    Assert-AzSuccess "Failed to get storage connection string"
+    if ([string]::IsNullOrWhiteSpace($storageConnStr)) {
+        throw "Storage connection string is empty. Storage account '$storageName' may not be ready."
+    }
 
     $staticWebUrl = az storage account show `
         --name $storageName `
         --resource-group $ResourceGroup `
         --query "primaryEndpoints.web" -o tsv
+    Assert-AzSuccess "Failed to get static website URL"
+    if ([string]::IsNullOrWhiteSpace($staticWebUrl)) {
+        throw "Static website URL is empty. Static website hosting may not be enabled."
+    }
     $staticWebUrl = $staticWebUrl.TrimEnd('/')
 
     # ── 4. Web PubSub ──────────────────────────────────────────────────
@@ -106,6 +128,7 @@ try {
         --location $Location `
         --sku Free_F1 `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to create Web PubSub '$webPubSubName'"
     Write-Done "Web PubSub created (Free tier: 20 connections, 20K msgs/day)."
 
     # Get Web PubSub connection string
@@ -113,6 +136,10 @@ try {
         --name $webPubSubName `
         --resource-group $ResourceGroup `
         --query primaryConnectionString -o tsv
+    Assert-AzSuccess "Failed to get Web PubSub connection string"
+    if ([string]::IsNullOrWhiteSpace($wpsConnStr)) {
+        throw "Web PubSub connection string is empty."
+    }
 
     # ── 5. Function App ────────────────────────────────────────────────
     Write-Step "Creating Function App '$functionAppName' (Consumption plan)..."
@@ -126,6 +153,7 @@ try {
         --functions-version 4 `
         --os-type Linux `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to create Function App '$functionAppName'"
     Write-Done "Function App created (Consumption plan)."
 
     # ── 6. Configure App Settings ──────────────────────────────────────
@@ -142,21 +170,24 @@ try {
             "WEBSITE_RUN_FROM_PACKAGE=1" `
             "SCM_DO_BUILD_DURING_DEPLOYMENT=false" `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to configure app settings"
     Write-Done "App settings configured."
 
     # ── 7. Configure CORS ──────────────────────────────────────────────
     Write-Step "Configuring CORS on Function App..."
-    # Remove default allowed origins, then add the static website URL
+    # Remove default allowed origins (may fail if not present — that's OK)
     az functionapp cors remove `
         --name $functionAppName `
         --resource-group $ResourceGroup `
         --allowed-origins "https://functions.azure.com" `
         --only-show-errors 2>$null
+    # Add the static website URL as allowed origin
     az functionapp cors add `
         --name $functionAppName `
         --resource-group $ResourceGroup `
         --allowed-origins $staticWebUrl `
-        --only-show-errors 2>$null
+        --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to add CORS origin '$staticWebUrl'"
     Write-Done "CORS configured for $staticWebUrl."
 
     # ── 8. Build and Deploy Function App ───────────────────────────────
@@ -197,6 +228,7 @@ try {
         --resource-group $ResourceGroup `
         --src $zipPath `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to deploy Function App code"
     Write-Done "Function App deployed."
 
     # ── 9. Configure Web PubSub Event Handler ──────────────────────────
@@ -248,6 +280,7 @@ try {
         --resource-group $ResourceGroup `
         --event-handler url-template="$eventHandlerUrl" user-event-pattern="*" system-event="connect" system-event="disconnected" `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to create Web PubSub hub '$hubName'"
     Write-Done "Web PubSub hub '$hubName' configured."
 
     # ── 10. Upload Client Files ────────────────────────────────────────
@@ -264,6 +297,7 @@ try {
         --account-name $storageName `
         --overwrite `
         --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to upload client files to static website"
 
     # Clean up generated config.json from source
     Remove-Item $configPath -Force -ErrorAction SilentlyContinue
@@ -278,6 +312,10 @@ try {
         --name $webPubSubName `
         --resource-group $ResourceGroup `
         --query "hostName" -o tsv
+    Assert-AzSuccess "Failed to get Web PubSub hostname"
+    if ([string]::IsNullOrWhiteSpace($wpsHostName)) {
+        throw "Web PubSub hostname is empty."
+    }
 
     Write-Host ""
     Write-Host "=======================================================" -ForegroundColor Green

@@ -81,6 +81,16 @@ echo " Web PubSub:      $WPS_NAME"
 echo " Location:        $LOCATION"
 echo ""
 
+# ── 0. Pre-flight: Validate storage account name ──────────────────────
+step "Checking storage account name availability..."
+NAME_CHECK=$(az storage account check-name --name "$STORAGE_NAME" --query "nameAvailable" -o tsv)
+if [[ "$NAME_CHECK" != "true" ]]; then
+    NAME_REASON=$(az storage account check-name --name "$STORAGE_NAME" --query "reason" -o tsv 2>/dev/null || echo "unknown")
+    echo "Error: Storage account name '$STORAGE_NAME' is not available (reason: $NAME_REASON). Try a different --app-name."
+    exit 1
+fi
+done_ "Storage account name '$STORAGE_NAME' is available."
+
 # ── 1. Resource Group ──────────────────────────────────────────────────
 step "Creating resource group '$RESOURCE_GROUP' in '$LOCATION'..."
 az group create \
@@ -115,11 +125,19 @@ STORAGE_CONN_STR=$(az storage account show-connection-string \
     --name "$STORAGE_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --query connectionString -o tsv)
+if [[ -z "$STORAGE_CONN_STR" ]]; then
+    echo "Error: Storage connection string is empty. Storage account '$STORAGE_NAME' may not be ready."
+    exit 1
+fi
 
 STATIC_WEB_URL=$(az storage account show \
     --name "$STORAGE_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --query "primaryEndpoints.web" -o tsv)
+if [[ -z "$STATIC_WEB_URL" ]]; then
+    echo "Error: Static website URL is empty. Static website hosting may not be enabled."
+    exit 1
+fi
 STATIC_WEB_URL="${STATIC_WEB_URL%/}"
 
 # ── 4. Web PubSub ──────────────────────────────────────────────────────
@@ -136,6 +154,10 @@ WPS_CONN_STR=$(az webpubsub key show \
     --name "$WPS_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --query primaryConnectionString -o tsv)
+if [[ -z "$WPS_CONN_STR" ]]; then
+    echo "Error: Web PubSub connection string is empty."
+    exit 1
+fi
 
 # ── 5. Function App ────────────────────────────────────────────────────
 step "Creating Function App '$FUNCTION_APP_NAME' (Consumption plan)..."
@@ -178,7 +200,7 @@ az functionapp cors add \
     --name "$FUNCTION_APP_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --allowed-origins "$STATIC_WEB_URL" \
-    --only-show-errors 2>/dev/null || true
+    --only-show-errors > /dev/null
 done_ "CORS configured for $STATIC_WEB_URL."
 
 # ── 8. Build and Deploy Function App ───────────────────────────────────
@@ -297,6 +319,10 @@ WPS_HOSTNAME=$(az webpubsub show \
     --name "$WPS_NAME" \
     --resource-group "$RESOURCE_GROUP" \
     --query "hostName" -o tsv)
+if [[ -z "$WPS_HOSTNAME" ]]; then
+    echo "Error: Web PubSub hostname is empty."
+    exit 1
+fi
 
 echo ""
 echo "======================================================="
