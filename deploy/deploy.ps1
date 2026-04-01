@@ -268,17 +268,87 @@ try {
         $merged[$key] = $newSettings[$key]
     }
 
-    # Write to temp file — az reads it directly, no cmd.exe parsing
+    # Write to temp file — az reads it directly, no cmd.exe parsing.
+    # Use WriteAllText to avoid UTF-8 BOM (Windows PowerShell 5.x adds BOM
+    # with Set-Content -Encoding UTF8, which breaks az rest JSON parsing).
     $settingsFile = Join-Path $PSScriptRoot "_appsettings.json"
-    @{ properties = $merged } | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsFile -Encoding UTF8
+    $settingsJson = @{ properties = $merged } | ConvertTo-Json -Depth 10
+    [System.IO.File]::WriteAllText($settingsFile, $settingsJson, [System.Text.UTF8Encoding]::new($false))
 
-    az rest --method PUT `
+    $restResult = az rest --method PUT `
         --url "$armBase/config/appsettings?api-version=2022-03-01" `
         --body "@$settingsFile" `
-        --only-show-errors | Out-Null
-    Assert-AzSuccess "Failed to configure app settings"
+        --only-show-errors 2>&1
+    $restExitCode = $LASTEXITCODE
 
     Remove-Item $settingsFile -Force -ErrorAction SilentlyContinue
+
+    if ($restExitCode -ne 0) {
+        Write-Info "ARM REST API for app settings failed (exit code $restExitCode)."
+        Write-Info "Response: $($restResult -join ' ')"
+        Write-Info "Falling back to individual az commands..."
+
+        # Fall back to setting each non-connection-string setting individually
+        $safeSettings = @(
+            "AzureWebJobsFeatureFlags=EnableWorkerIndexing"
+            "FUNCTIONS_WORKER_RUNTIME=node"
+            "WEBSITE_NODE_DEFAULT_VERSION=~20"
+            "WEBSITE_RUN_FROM_PACKAGE=1"
+            "SCM_DO_BUILD_DURING_DEPLOYMENT=false"
+            "WebPubSubHubName=$hubName"
+        )
+        foreach ($setting in $safeSettings) {
+            az functionapp config appsettings set `
+                --name $functionAppName `
+                --resource-group $ResourceGroup `
+                --settings $setting `
+                --only-show-errors 2>$null | Out-Null
+        }
+
+        # Connection strings require temp file approach with az webapp config
+        $connSettings = @{
+            "WebPubSubConnectionString"         = $wpsConnStr
+            "AzureTableStorageConnectionString" = $storageConnStr
+        }
+        foreach ($key in $connSettings.Keys) {
+            $val = $connSettings[$key]
+            $connFile = Join-Path $PSScriptRoot "_conn_setting.json"
+            $connBody = @{ properties = @{ $key = $val } } | ConvertTo-Json -Depth 5
+            [System.IO.File]::WriteAllText($connFile, $connBody, [System.Text.UTF8Encoding]::new($false))
+            az rest --method PUT `
+                --url "$armBase/config/appsettings?api-version=2022-03-01" `
+                --body "@$connFile" `
+                --only-show-errors 2>$null | Out-Null
+            Remove-Item $connFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Verify critical settings were applied by reading them back
+    Write-Info "Verifying app settings..."
+    $verifyRaw = (az rest --method POST `
+        --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
+        --only-show-errors 2>$null)
+    $verifyProps = ($verifyRaw -join "`n" | ConvertFrom-Json).properties
+    $criticalKeys = @("AzureWebJobsFeatureFlags", "FUNCTIONS_WORKER_RUNTIME", "WebPubSubConnectionString", "AzureTableStorageConnectionString")
+    $missing = @()
+    foreach ($key in $criticalKeys) {
+        $val = $verifyProps.$key
+        if ([string]::IsNullOrWhiteSpace($val)) { $missing += $key }
+    }
+    if ($missing.Count -gt 0) {
+        Write-Host "   WARNING: Missing settings after deployment: $($missing -join ', ')" -ForegroundColor Yellow
+        # Last resort: set EnableWorkerIndexing directly (no special chars, safe for cmd.exe)
+        if ($missing -contains "AzureWebJobsFeatureFlags") {
+            Write-Info "Setting EnableWorkerIndexing via direct az command..."
+            az functionapp config appsettings set `
+                --name $functionAppName `
+                --resource-group $ResourceGroup `
+                --settings "AzureWebJobsFeatureFlags=EnableWorkerIndexing" `
+                --only-show-errors 2>$null | Out-Null
+        }
+    } else {
+        Write-Info "All critical settings verified."
+    }
     Write-Done "App settings configured."
 
     # -- 7. Configure CORS ----------------------------------------------
@@ -352,14 +422,59 @@ try {
     }
     Write-Done "Function App deployed."
 
+    # -- Post-deploy: Verify functions are registered ----------------------
+    Write-Step "Verifying function registration..."
+    $functionAppUrl = "https://${functionAppName}.azurewebsites.net"
+
+    # Give the runtime time to start and index functions
+    Write-Info "Waiting for Function App to start..."
+    Start-Sleep -Seconds 20
+
+    # Check if negotiate endpoint responds (should return 400, not 404)
+    $negotiateOk = $false
+    for ($check = 1; $check -le 6; $check++) {
+        try {
+            $resp = Invoke-WebRequest -Uri "$functionAppUrl/api/negotiate" -TimeoutSec 15 -ErrorAction Stop
+            $negotiateOk = $true
+            break
+        } catch {
+            $statusCode = $_.Exception.Response.StatusCode.value__
+            if ($statusCode -and $statusCode -ne 404) {
+                # 400 or 500 means the function IS registered (just missing params)
+                $negotiateOk = $true
+                break
+            }
+        }
+        if ($check -lt 6) {
+            Write-Info "Negotiate endpoint not ready (attempt $check/6), waiting..."
+            if ($check -eq 3) {
+                # Mid-way: try restarting the Function App
+                Write-Info "Restarting Function App to pick up configuration..."
+                az functionapp restart `
+                    --name $functionAppName `
+                    --resource-group $ResourceGroup `
+                    --only-show-errors 2>$null | Out-Null
+            }
+            Start-Sleep -Seconds 15
+        }
+    }
+    if ($negotiateOk) {
+        Write-Done "Function registration verified - negotiate endpoint is live."
+    } else {
+        Write-Host "   WARNING: negotiate endpoint returned 404 after deployment." -ForegroundColor Yellow
+        Write-Info "The Function App may need a few more minutes to start."
+        Write-Info "If the issue persists, check Function App logs in Azure Portal."
+    }
+
     # -- 9. Configure Web PubSub Event Handler --------------------------
     Write-Step "Configuring Web PubSub event handler..."
-    Write-Info "Warming up Function App (this may take up to 2 minutes)..."
+    Write-Info "Warming up Function App..."
 
-    # Trigger a cold start by hitting the negotiate endpoint
-    $functionAppUrl = "https://${functionAppName}.azurewebsites.net"
-    try { Invoke-WebRequest -Uri "$functionAppUrl/api/negotiate" -TimeoutSec 30 -ErrorAction SilentlyContinue | Out-Null } catch { }
-    Start-Sleep -Seconds 15
+    # Use the warmup we already did above; just wait briefly if needed
+    if (-not $negotiateOk) {
+        try { Invoke-WebRequest -Uri "$functionAppUrl/api/negotiate" -TimeoutSec 30 -ErrorAction SilentlyContinue | Out-Null } catch { }
+        Start-Sleep -Seconds 15
+    }
 
     # Retrieve the system key for Web PubSub extension
     $systemKey = $null
@@ -481,6 +596,8 @@ try {
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
     $settingsCleanup = Join-Path $PSScriptRoot "_appsettings.json"
     if (Test-Path $settingsCleanup) { Remove-Item $settingsCleanup -Force -ErrorAction SilentlyContinue }
+    $connCleanup = Join-Path $PSScriptRoot "_conn_setting.json"
+    if (Test-Path $connCleanup) { Remove-Item $connCleanup -Force -ErrorAction SilentlyContinue }
 
     # Clean up generated config.json if it exists
     $configCleanup = Join-Path $clientDir "config.json"
