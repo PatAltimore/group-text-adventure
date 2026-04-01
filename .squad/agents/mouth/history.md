@@ -137,3 +137,15 @@
 - **Key file paths:** `deploy/deploy.ps1` (line 184), `deploy/deploy.sh` (line 194), `api/local.settings.json`
 - **All 111 tests still pass.**
 - **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+### 2026-04-01 — Fix: Static website 404 — upload-batch missing connection-string auth
+
+- **Problem:** Static website at `https://patcastlestore.z5.web.core.windows.net` returned 404 (`WebContentNotFound`). Static website hosting was enabled (proper 404, not DNS error), but `$web` container had no files. The `az storage blob upload-batch` command in step 10 used `--account-name` only — no `--connection-string`, `--account-key`, or `--auth-mode`. This is a data plane operation that requires storage-level auth. With just `--account-name`, `az` attempts to auto-discover the account key via a management plane `listkeys` call, which can fail silently depending on RBAC role assignments and CLI version. The earlier `service-properties update` worked because it uses the management plane (ARM) API directly, not the storage data plane.
+- **Fix (deploy.ps1 & deploy.sh):** Changed `upload-batch` from `--account-name $storageName` to `--connection-string $storageConnStr`. The connection string was already available (retrieved in step 3) but wasn't being passed to the upload command. Also added a post-upload verification step that lists blobs in `$web` and fails if count is 0 — catches any future silent upload failures.
+- **Config.json generation:** Both scripts correctly generate `config.json` with `apiBaseUrl` before upload, then clean it up after. No issue there.
+- **Content types:** `az storage blob upload-batch` auto-detects MIME types via Python's `mimetypes` module. Standard extensions (`.html`, `.js`, `.css`, `.json`) are detected correctly. No explicit override needed.
+- **Key learning — az storage data plane auth:** Never rely on `--account-name` alone for `az storage blob` data plane commands (`upload-batch`, `upload`, `download`, `list`). Always pass `--connection-string` or `--account-key` explicitly. The `--account-name`-only auto-key-discovery depends on the caller having `listkeys` permission and can fail silently (exit code 0, 0 files transferred).
+- **Key learning — verify uploads:** `az storage blob upload-batch` can return exit code 0 even when 0 files are uploaded. Always verify by listing the container after upload.
+- **Key file paths:** `deploy/deploy.ps1` (step 10, lines ~307-328), `deploy/deploy.sh` (step 10, lines ~311-330)
+- **All 111 tests still pass.**
+- **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`

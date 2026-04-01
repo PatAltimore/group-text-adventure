@@ -178,3 +178,35 @@ try {
 - Bash version (`deploy.sh`) was already safe via `|| echo ""`
 - All 111 tests still pass
 - This pattern applies to any `az`, `npm`, or other native command where failure is an expected/valid outcome
+
+---
+
+## 8. Fix: Static Website Upload — Use Connection String for Data Plane Auth
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Decision
+
+Changed `az storage blob upload-batch` in deploy scripts from `--account-name` to `--connection-string` authentication. Added post-upload verification that fails if 0 files are present.
+
+### Problem Resolved
+
+Static website returned 404. The `upload-batch` command used `--account-name` alone, which silently fails when storage-level auth isn't auto-discovered (exit code 0, 0 files uploaded). Data plane operations require explicit auth credentials.
+
+### Rule
+
+- Always pass `--connection-string` to `az storage blob` data plane commands (`upload-batch`, `upload`, `download`, `list`)
+- Never rely on `--account-name` alone for data plane operations
+- Always verify uploads complete by listing the container after `upload-batch`
+
+### Impact
+
+- Modified: `deploy/deploy.ps1`, `deploy/deploy.sh` (step 10)
+- No application code changes; all 111 tests pass
+- Requires Azure redeployment
+
+### Convention
+
+Data plane vs management plane are separate auth paths. Wrap data plane commands with verification logic — silent failures are common.
