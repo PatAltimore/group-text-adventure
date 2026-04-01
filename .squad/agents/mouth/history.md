@@ -140,6 +140,15 @@
 
 ### 2026-04-01 — Fix: Static website 404 — upload-batch missing connection-string auth
 
+### 2026-04-01 — Fix: App Settings Configuration via ARM REST API
+
+- **Problem:** Despite adding `AzureWebJobsFeatureFlags=EnableWorkerIndexing` to deploy scripts, the setting was never actually applied to the live Function App. Investigation revealed that on Windows, `az` is `az.cmd` — a batch file routed through `cmd.exe`. When connection strings containing semicolons are passed as command-line arguments to `az functionapp config appsettings set`, `cmd.exe` interprets the semicolons as command separators, silently truncating the argument list. The app setting was never applied.
+- **Fix:** Replaced `az functionapp config appsettings set --settings ...` with ARM REST API calls using `az rest --body @file`. File-based input bypasses cmd.exe command-line parsing entirely. The script now: (1) GETs current settings via `POST .../config/appsettings/list`, (2) merges new values in-memory, (3) PUTs merged JSON via file (`_appsettings.json`), (4) cleans up temp file.
+- **Key learning — Windows command-line parsing:** NEVER pass values containing semicolons as `az` command-line arguments on Windows. Use file-based input, environment variables, or ARM REST API instead. This applies to connection strings, SAS tokens, storage account keys, and base64-encoded values. The bash `deploy.sh` does NOT have this problem.
+- **Key file paths:** `deploy/deploy.ps1` (step 6 — app settings)
+- **All 111 tests still pass. Committed and pushed.**
+- **Requires redeployment** to take effect
+
 - **Problem:** Static website at `https://patcastlestore.z5.web.core.windows.net` returned 404 (`WebContentNotFound`). Static website hosting was enabled (proper 404, not DNS error), but `$web` container had no files. The `az storage blob upload-batch` command in step 10 used `--account-name` only — no `--connection-string`, `--account-key`, or `--auth-mode`. This is a data plane operation that requires storage-level auth. With just `--account-name`, `az` attempts to auto-discover the account key via a management plane `listkeys` call, which can fail silently depending on RBAC role assignments and CLI version. The earlier `service-properties update` worked because it uses the management plane (ARM) API directly, not the storage data plane.
 - **Fix (deploy.ps1 & deploy.sh):** Changed `upload-batch` from `--account-name $storageName` to `--connection-string $storageConnStr`. The connection string was already available (retrieved in step 3) but wasn't being passed to the upload command. Also added a post-upload verification step that lists blobs in `$web` and fails if count is 0 — catches any future silent upload failures.
 - **Config.json generation:** Both scripts correctly generate `config.json` with `apiBaseUrl` before upload, then clean it up after. No issue there.

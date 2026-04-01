@@ -137,6 +137,42 @@ When starting new Azure Functions projects or troubleshooting existing ones:
 3. Run `npm install` to update lockfile
 4. Don't assume "v4.x is v4.x" — minor version differences matter for stability
 
+### Decision: ARM REST API for App Settings Deployment
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-01
+
+#### What
+
+Replaced `az functionapp config appsettings set --settings ...` in `deploy.ps1` with ARM REST API calls (`az rest --body @file`) to apply app settings safely on Windows.
+
+#### Why
+
+On Windows, `az` is `az.cmd` — a batch file that runs through `cmd.exe`. When connection strings containing semicolons (`;`) are passed as command-line arguments, cmd.exe interprets the semicolons as command separators, silently truncating or breaking the entire argument list. This meant critical settings like `AzureWebJobsFeatureFlags=EnableWorkerIndexing` were never actually applied to the Function App, causing the v4 runtime to fall back to v3-style discovery (function.json files), find none, and return 404 for ALL endpoints.
+
+This is the same class of bug previously fixed for storage operations (lines 124-131 use env vars to avoid passing keys on the command line).
+
+#### Key Points
+
+1. **File-based input bypasses cmd.exe entirely.** `az rest --body @filepath` reads the JSON body from disk, never exposing semicolons or special characters to command-line parsing.
+
+2. **Merge before PUT.** The ARM `PUT .../config/appsettings` endpoint replaces ALL settings. The script now GETs existing settings first (`POST .../config/appsettings/list`) and merges our values in, preserving system settings like `AzureWebJobsStorage` and `FUNCTIONS_EXTENSION_VERSION`.
+
+3. **Temp file cleanup.** The `_appsettings.json` file is cleaned up in both the success path and the catch block.
+
+#### Impact
+
+- Modified: `deploy/deploy.ps1` (step 6 — app settings configuration)
+- All 111 tests pass
+- Committed and pushed
+- **Requires redeployment** to take effect
+
+#### Convention Going Forward
+
+- **NEVER pass values with semicolons as `az` command-line arguments on Windows.** Use file-based input (`@filepath`), environment variables, or the ARM REST API instead.
+- This applies to: connection strings, SAS tokens, storage account keys, and any base64-encoded values.
+- The `deploy.sh` (bash) version does NOT have this problem — bash doesn't route `.cmd` files through cmd.exe.
+
 ### Resolution: Static Website 404 — Investigation Complete
 
 **By:** Data (Frontend Dev)  
