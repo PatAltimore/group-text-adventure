@@ -61,3 +61,58 @@
 - All team members run tests with `npm test` from project root
 - New test files must use ESM `import` syntax
 - `@jest/globals` is required devDependency
+
+---
+
+## 4. Fix: Negotiate 404, Deploy Idempotency, Missing gameId
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Decision
+
+- Add `gameId` to client join message to prevent players always joining 'default' game
+- Make deploy scripts idempotent by checking storage account existence before name availability
+- Improve error messages in negotiate endpoint to include full URL
+
+### Problem Resolved
+
+After deployment, users couldn't connect properly. Three issues found:
+
+1. **gameId missing:** WebSocket join message didn't include gameId, causing all players to join 'default' game
+2. **Deploy not idempotent:** `az storage account check-name` returns false for your own accounts, blocking re-runs
+3. **Poor error messages:** 404 errors didn't show which URL was called, hindering diagnosis
+
+### Impact
+
+- **Modified files:** `client/app.js`, `deploy/deploy.ps1`, `deploy/deploy.sh`
+- **Fixes deployed behavior** without breaking changes
+- Requires Azure redeployment
+- All 111 tests pass
+
+---
+
+## 5. Dedicated Join Screen for URL-Based Game Discovery
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Decision
+
+- Create separate `screen-join` component for players arriving via `?game=XXX` URLs
+- Show game code prominently (read-only)
+- Focus on single action: "Join Game →"
+- Optimize for mobile-first UX (QR code scanning)
+
+### Problem Resolved
+
+Join URLs showed same confusing screen as landing page with mixed host/join CTAs. Mobile users didn't know which button to press.
+
+### Impact
+
+- **Modified files:** `client/index.html`, `client/style.css`, `client/app.js`
+- **New function:** `initJoin()` for dedicated join screen
+- Improved UX for QR code and shared link flows
+- All tests pass, cleaner code organization

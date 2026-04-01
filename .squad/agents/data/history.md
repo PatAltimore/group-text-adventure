@@ -48,9 +48,18 @@
 - **Deploy scripts:** Added `WEBSITE_RUN_FROM_PACKAGE=1` env var to Linux zip deployment
 - All 111 tests pass post-fix
 
+### 2026-04-01 — Critical Backend Fix: Missing gameId + Deploy Idempotency
+
+**From Mouth (Backend):**
+- **CRITICAL bug — gameId missing in join message:** Players were all joining 'default' game regardless of URL. Fixed by adding `gameId` to join message so server loads correct session.
+- **Deploy not idempotent:** Re-running deploy always failed. Fixed by checking storage account existence before name availability.
+- **Better error messages:** Negotiate errors now show full URL for easier debugging.
+- **Modified files:** `client/app.js`, `deploy/deploy.ps1`, `deploy/deploy.sh`
+- **Impact:** All 111 tests pass. Requires Azure redeployment.
+
 ### 2026-04-01 — Join UX Redesign: Dedicated Join Screen
 
-**From Data (Frontend):**
+**Data (Frontend) Implementation:**
 - **New join screen:** Created dedicated `screen-join` that shows when URL has `?game=XXX` parameter
 - **Screen routing logic:** Modified `initLanding()` to detect URL params and call `initJoin()` when game code is present
 - **Join screen features:**
@@ -62,5 +71,6 @@
 - **Files modified:** `client/index.html`, `client/style.css`, `client/app.js`
 - **Mobile-first:** Join screen optimized for QR code scanning (responsive styles for small screens)
 - **Auto-focus behavior:** Join screen auto-focuses name input, landing screen auto-focuses name input, game screen auto-focuses command input
-- **Join message includes gameId:** All join messages now send `{ type: 'join', playerName, gameId }` (coordinated with Mouth's backend fix)
+- **Join message includes gameId:** All join messages now send `{ type: 'join', playerName, gameId }` (coordinated with Mouth's backend gameId fix)
+- **Coordination:** This work aligns with Mouth's fix to include gameId in backend, ensuring clients and server are synchronized
 

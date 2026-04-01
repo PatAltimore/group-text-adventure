@@ -1,0 +1,11 @@
+docs: orchestration logs, session log, merged decisions
+
+- Scribe: Added orchestration logs for Mouth and Data spawn completion
+- Scribe: Added session log for negotiate & join UX fixes  
+- Decisions: Merged inbox (mouth-negotiate-idempotent-fix.md, data-join-ux-redesign.md) → decisions.md
+- Decisions: Deleted inbox files after merge
+- Mouth history: Added coordination note with Data's join screen work
+- Data history: Added coordination note with Mouth's gameId backend fix
+- Scribe history: Updated with orchestration activities
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
