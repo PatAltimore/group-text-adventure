@@ -189,3 +189,15 @@
 - **Key file path:** `deploy/deploy.ps1` (step 6, lines ~232-282)
 - **All 111 tests still pass.**
 - **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+### 2026-04-01 — Diagnosis: Static website 404 — Azure resources deleted
+
+- **Problem:** `https://patcastlestore.z5.web.core.windows.net` returns 404 (`WebContentNotFound`).
+- **Finding:** Both `patcastlestore` (storage account) and `patcastle-func` (function app) return exit code 1 from `az ... show` — the resources no longer exist. The `rg-text-adventure` resource group was likely deleted or the resources were removed.
+- **Deploy script audit:** Reviewed `deploy/deploy.ps1` end-to-end (491 lines). Parse check: 0 errors. All known cmd.exe issues are resolved:
+  - Storage auth uses env vars (`AZURE_STORAGE_ACCOUNT`, `AZURE_STORAGE_KEY`) — no keys on command line.
+  - App settings use ARM REST API with `@file` — no semicolons on command line.
+  - Upload-batch uses env var auth — no connection string on command line.
+  - Static website enable uses env var auth with retry logic.
+  - Post-upload verification checks blob count in `$web`.
+- **Conclusion:** Script is correct. Resources just need to be re-provisioned. User must run: `cd deploy && .\deploy.ps1 -AppName patcastle`
