@@ -27,6 +27,51 @@ Created a single-command Azure deployment solution (`deploy/deploy.ps1` and `dep
 - Modified: `client/app.js` (config loading), `api/src/functions/gameHub.js` (multi-path world loading), `.gitignore` (deploy artifacts)
 - All 111 existing tests still pass
 
+### Fix: Three Deployment Bugs
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-03-31
+
+#### What
+
+Fixed three bugs preventing the deployed Azure app from working:
+
+1. **Negotiate 404** — Added `WEBSITE_RUN_FROM_PACKAGE=1` and `SCM_DO_BUILD_DURING_DEPLOYMENT=false` to deploy script app settings. Required for zip deployment on Linux Consumption plan.
+
+2. **WebSocket protocol** — Changed client `sendMessage` from `sendToGroup` to `event` type. `sendToGroup` bypasses the server entirely (client-to-client only); `event` routes to the server's game engine handler.
+
+3. **QR code CDN** — Downgraded from `qrcode@1.5.4` (missing `build/` directory) to `@1.4.4` (has working UMD browser build). Added `.catch()` on `QRCode.toCanvas()`.
+
+#### Impact
+
+- Modified: `client/app.js`, `client/index.html`, `deploy/deploy.ps1`, `deploy/deploy.sh`
+- All 111 tests still pass
+- Requires redeployment to take effect
+
+### Deploy Scripts: Error Propagation
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-01
+
+#### What
+
+Both `deploy.ps1` and `deploy.sh` now check every `az` command for failure and stop immediately with a clear error message instead of cascading into confusing secondary failures.
+
+#### Key Points
+
+1. **PowerShell `$ErrorActionPreference = 'Stop'` does NOT catch native command failures.** Every `az` call in `deploy.ps1` now has an explicit `$LASTEXITCODE` check via the `Assert-AzSuccess` helper.
+
+2. **Storage account names are globally unique.** Both scripts now validate name availability before attempting creation, giving an immediate actionable error.
+
+3. **Captured output is validated.** Connection strings and URLs are checked for null/empty after retrieval — no more null-reference crashes downstream.
+
+4. **Intentional failures are still suppressed.** CORS remove and hub delete may legitimately fail on first deploy — those keep their error suppression.
+
+#### Impact
+
+- Modified: `deploy/deploy.ps1`, `deploy/deploy.sh`
+- No application code changes; all 111 tests still pass
+
 ## Governance
 
 - All meaningful changes require team consensus

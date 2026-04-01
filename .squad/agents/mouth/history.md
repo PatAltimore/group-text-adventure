@@ -56,3 +56,11 @@
 - **Key learning — Web PubSub subprotocol:** With `json.webpubsub.azure.v1`, `sendToGroup` bypasses server entirely. Must use `type: 'event'` to reach server-side handlers.
 - **Key learning — Linux Consumption deploy:** Always set `WEBSITE_RUN_FROM_PACKAGE=1` for zip deploy on Linux Consumption plan.
 - **Key learning — qrcode npm package:** v1.5.4 is broken for browser CDN use. v1.4.4 works. The browser UMD build lives at `build/qrcode.min.js`.
+
+### 2026-03-31 — Deploy script error handling fix
+
+- **Problem:** `$ErrorActionPreference = 'Stop'` does NOT catch non-zero exit codes from native commands like `az` in PowerShell. When `az storage account create` failed (globally unique name conflict), the script silently continued, causing cascading failures ending in a null-reference crash on `$staticWebUrl.TrimEnd('/')`.
+- **Fix (deploy.ps1):** Added `Assert-AzSuccess` helper that checks `$LASTEXITCODE` after every critical `az` call. Added null/empty checks for all captured output (connection strings, URLs). Added pre-flight `az storage account check-name` validation.
+- **Fix (deploy.sh):** Already had `set -euo pipefail` for exit-code propagation. Added null/empty checks for captured variables (`STORAGE_CONN_STR`, `STATIC_WEB_URL`, `WPS_CONN_STR`, `WPS_HOSTNAME`). Added same pre-flight storage name check. Removed `|| true` from CORS add (should succeed).
+- **Intentionally suppressed commands:** CORS remove (`2>$null`/`|| true`) and hub delete (`2>$null`/`|| true`) — these may legitimately fail if resources don't exist yet.
+- **Key learning — PowerShell native commands:** `$ErrorActionPreference = 'Stop'` only affects cmdlets, not native executables. Must check `$LASTEXITCODE` after every `az`/`npm`/etc. call, or use `$PSNativeCommandUseErrorActionPreference = $true` (PowerShell 7.3+).
