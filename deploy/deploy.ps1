@@ -178,8 +178,11 @@ try {
     # Install production dependencies
     Write-Info "Installing production dependencies..."
     Push-Location $stageDir
-    npm install --production --quiet 2>&1 | Out-Null
-    Pop-Location
+    try {
+        npm install --omit=dev --quiet 2>&1 | Out-Null
+    } finally {
+        Pop-Location
+    }
 
     # Create deployment zip
     Compress-Archive -Path "$stageDir\*" -DestinationPath $zipPath -Force

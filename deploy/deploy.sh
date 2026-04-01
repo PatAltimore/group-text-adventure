@@ -193,7 +193,7 @@ cp -r "$WORLD_DIR" "$STAGE_DIR/world"
 
 # Install production dependencies
 info "Installing production dependencies..."
-(cd "$STAGE_DIR" && npm install --production --quiet 2>&1 | tail -1)
+(cd "$STAGE_DIR" && npm install --omit=dev --quiet 2>&1 | tail -1)
 
 # Create deployment zip
 (cd "$STAGE_DIR" && zip -qr "$ZIP_PATH" .)
