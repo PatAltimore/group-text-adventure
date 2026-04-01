@@ -304,10 +304,19 @@ try {
     $configPath = Join-Path $clientDir "config.json"
     Set-Content -Path $configPath -Value $configJson -Encoding UTF8
 
+    # Get storage key for upload (avoid --connection-string which has semicolons
+    # that cmd.exe on Windows misinterprets as command separators)
+    $storageKey = az storage account keys list `
+        --account-name $storageName `
+        --resource-group $ResourceGroup `
+        --query "[0].value" --output tsv
+    Assert-AzSuccess "Failed to get storage key for upload"
+
     az storage blob upload-batch `
         --source $clientDir `
         --destination '$web' `
-        --connection-string $storageConnStr `
+        --account-name $storageName `
+        --account-key $storageKey `
         --overwrite `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to upload client files to static website"
@@ -315,8 +324,9 @@ try {
     # Verify files were actually uploaded (upload-batch can exit 0 with 0 files)
     $blobCount = az storage blob list `
         --container-name '$web' `
-        --connection-string $storageConnStr `
-        --query "length(@)" -o tsv
+        --account-name $storageName `
+        --account-key $storageKey `
+        --query "length(@)" --output tsv
     Assert-AzSuccess "Failed to verify uploaded files"
     if ([int]$blobCount -lt 1) {
         throw "Upload verification failed: 0 files found in '`$web' container."
