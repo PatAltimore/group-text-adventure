@@ -45,13 +45,24 @@ function getServiceClient() {
 
 /**
  * Load the default world JSON from disk.
+ * Checks two paths: deployed (world/ alongside api code) and local dev (project root).
  */
 async function getDefaultWorld() {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  const worldPath = join(__dirname, '..', '..', '..', 'world', 'default-world.json');
-  const raw = await readFile(worldPath, 'utf-8');
-  return JSON.parse(raw);
+  const candidates = [
+    join(__dirname, '..', '..', 'world', 'default-world.json'),
+    join(__dirname, '..', '..', '..', 'world', 'default-world.json'),
+  ];
+  for (const worldPath of candidates) {
+    try {
+      const raw = await readFile(worldPath, 'utf-8');
+      return JSON.parse(raw);
+    } catch {
+      continue;
+    }
+  }
+  throw new Error('Could not find default-world.json');
 }
 
 /**

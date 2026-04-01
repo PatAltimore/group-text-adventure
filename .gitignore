@@ -4,6 +4,11 @@ node_modules/
 # Azure Functions local settings (may contain secrets)
 api/local.settings.json
 
+# Deploy artifacts
+deploy/_stage/
+deploy/api.zip
+client/config.json
+
 # Squad: ignore runtime state (logs, inbox, sessions)
 .squad/orchestration-log/
 .squad/log/

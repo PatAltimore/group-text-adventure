@@ -3,6 +3,21 @@
 (function () {
   'use strict';
 
+  // --- Config ---
+  let apiBaseUrl = '';
+
+  async function loadConfig() {
+    try {
+      const res = await fetch('config.json');
+      if (res.ok) {
+        const config = await res.json();
+        apiBaseUrl = (config.apiBaseUrl || '').replace(/\/+$/, '');
+      }
+    } catch {
+      // config.json not found — use relative paths (local development)
+    }
+  }
+
   // --- State ---
   const state = {
     playerName: '',
@@ -86,7 +101,7 @@
   // --- WebSocket ---
   async function connectWebSocket(gameId) {
     try {
-      const res = await fetch(`/api/negotiate?gameId=${encodeURIComponent(gameId)}`);
+      const res = await fetch(`${apiBaseUrl}/api/negotiate?gameId=${encodeURIComponent(gameId)}`);
       if (!res.ok) throw new Error(`Negotiate failed: ${res.status}`);
       const data = await res.json();
       const wsUrl = data.url;
@@ -495,7 +510,8 @@
   }
 
   // --- Init ---
-  function init() {
+  async function init() {
+    await loadConfig();
     initLanding();
     initCommandInput();
   }
