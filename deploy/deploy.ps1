@@ -132,9 +132,12 @@ try {
 
     # -- 3. Enable Static Website ---------------------------------------
     Write-Step "Enabling static website hosting..."
+    $storageKey = $env:AZURE_STORAGE_KEY
     $staticEnabled = $false
     for ($attempt = 1; $attempt -le 3; $attempt++) {
         az storage blob service-properties update `
+            --account-name $storageName `
+            --account-key $storageKey `
             --static-website `
             --index-document index.html `
             --404-document index.html `
@@ -151,7 +154,20 @@ try {
     if (-not $staticEnabled) {
         throw "Failed to enable static website hosting after 3 attempts"
     }
-    Write-Done "Static website enabled."
+    # Verify the enable actually worked by reading back the status
+    $verifySwJson = (az storage blob service-properties show `
+        --account-name $storageName `
+        --account-key $storageKey `
+        --query "staticWebsite" --output json --only-show-errors)
+    if ($LASTEXITCODE -eq 0 -and $verifySwJson) {
+        $verifySw = $verifySwJson | ConvertFrom-Json
+        if ($verifySw.enabled -ne $true) {
+            throw "Static website hosting enable succeeded (exit code 0) but status shows disabled. This is an Azure CLI bug."
+        }
+        Write-Done "Static website enabled and verified (index=$($verifySw.indexDocument))."
+    } else {
+        Write-Done "Static website enabled (could not verify status)."
+    }
 
     # Get storage connection string and static website URL
     $storageConnStr = az storage account show-connection-string `
@@ -606,29 +622,81 @@ try {
     # -- 10. Upload Client Files ----------------------------------------
     Write-Step "Uploading client files to static website..."
 
+    # Defensive: re-enable static website hosting immediately before upload.
+    # Intermediate operations (Function App create, zip deploy, etc.) can
+    # reset storage account properties. Re-enabling is idempotent and free.
+    Write-Info "Re-enabling static website hosting (defensive)..."
+    $uploadKey = $env:AZURE_STORAGE_KEY
+    az storage blob service-properties update `
+        --account-name $storageName `
+        --account-key $uploadKey `
+        --static-website `
+        --index-document index.html `
+        --404-document index.html `
+        --only-show-errors | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Info "WARNING: Static website re-enable returned exit code $LASTEXITCODE"
+    }
+
     # Generate config.json with the Function App URL
     $configJson = @{ apiBaseUrl = "https://${functionAppName}.azurewebsites.net" } | ConvertTo-Json
     $configPath = Join-Path $clientDir "config.json"
     Set-Content -Path $configPath -Value $configJson -Encoding UTF8
 
-    # Storage env vars (AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_KEY) already set in step 2
+    # Upload files — pass --account-name and --account-key explicitly.
+    # Env vars alone can be unreliable through az.cmd on some Windows CLI versions.
     az storage blob upload-batch `
         --source $clientDir `
         --destination '$web' `
+        --account-name $storageName `
+        --account-key $uploadKey `
         --overwrite `
-        --only-show-errors | Out-Null
+        --only-show-errors
     Assert-AzSuccess "Failed to upload client files to static website"
 
     # Verify files were actually uploaded (upload-batch can exit 0 with 0 files)
     $blobJson = (az storage blob list `
         --container-name '$web' `
+        --account-name $storageName `
+        --account-key $uploadKey `
         --output json --only-show-errors)
     Assert-AzSuccess "Failed to verify uploaded files"
-    $blobCount = ($blobJson | ConvertFrom-Json).Count
+    $blobList = ($blobJson | ConvertFrom-Json)
+    $blobCount = $blobList.Count
     if ([int]$blobCount -lt 1) {
         throw "Upload verification failed: 0 files found in '`$web' container."
     }
-    Write-Info "Verified: $blobCount file(s) in '`$web' container."
+
+    # Verify index.html specifically exists (this is what the static website serves)
+    $indexBlob = $blobList | Where-Object { $_.name -eq "index.html" }
+    if (-not $indexBlob) {
+        $blobNames = ($blobList | ForEach-Object { $_.name }) -join ", "
+        throw "index.html not found in '`$web' container. Found: $blobNames"
+    }
+    Write-Info "Verified: $blobCount file(s) in '`$web' container (index.html confirmed)."
+
+    # Verify static website hosting is still enabled after all operations
+    $swPropsJson = (az storage blob service-properties show `
+        --account-name $storageName `
+        --account-key $uploadKey `
+        --query "staticWebsite" --output json --only-show-errors)
+    if ($LASTEXITCODE -eq 0 -and $swPropsJson) {
+        $swProps = $swPropsJson | ConvertFrom-Json
+        if ($swProps.enabled -ne $true) {
+            Write-Host "   WARNING: Static website hosting is DISABLED after upload! Re-enabling..." -ForegroundColor Red
+            az storage blob service-properties update `
+                --account-name $storageName `
+                --account-key $uploadKey `
+                --static-website `
+                --index-document index.html `
+                --404-document index.html `
+                --only-show-errors | Out-Null
+            Assert-AzSuccess "Failed to re-enable static website hosting"
+            Write-Done "Static website hosting re-enabled."
+        } else {
+            Write-Info "Static website hosting verified: enabled, index=$($swProps.indexDocument)"
+        }
+    }
 
     # Clean up generated config.json from source
     Remove-Item $configPath -Force -ErrorAction SilentlyContinue
@@ -646,6 +714,60 @@ try {
     Assert-AzSuccess "Failed to get Web PubSub hostname"
     if ([string]::IsNullOrWhiteSpace($wpsHostName)) {
         throw "Web PubSub hostname is empty."
+    }
+
+    # -- 12a. Health Check: Static Website --------------------------------
+    Write-Info "Checking static website accessibility..."
+    $siteOk = $false
+    for ($hc = 1; $hc -le 3; $hc++) {
+        try {
+            $healthResp = Invoke-WebRequest -Uri "$staticWebUrl/" -TimeoutSec 15 -UseBasicParsing -ErrorAction Stop
+            Write-Done "Static website is live (HTTP $($healthResp.StatusCode))."
+            $siteOk = $true
+            break
+        } catch {
+            $hcStatus = $_.Exception.Response.StatusCode.value__
+            if ($hcStatus -eq 404) {
+                Write-Info "Static website returned 404 (attempt $hc/3), waiting 10s..."
+                if ($hc -lt 3) { Start-Sleep -Seconds 10 }
+            } else {
+                Write-Info "Static website returned HTTP $hcStatus (attempt $hc/3)"
+                if ($hcStatus -and $hcStatus -ne 404) { $siteOk = $true; break }
+                if ($hc -lt 3) { Start-Sleep -Seconds 10 }
+            }
+        }
+    }
+    if (-not $siteOk) {
+        Write-Host ""
+        Write-Host "   ============================================================" -ForegroundColor Red
+        Write-Host "   STATIC WEBSITE STILL RETURNING 404" -ForegroundColor Red
+        Write-Host "   ============================================================" -ForegroundColor Red
+        Write-Host "   URL: $staticWebUrl" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "   Diagnostics:" -ForegroundColor Yellow
+        # Check static website status
+        $diagSwJson = (az storage blob service-properties show `
+            --account-name $storageName `
+            --account-key $uploadKey `
+            --query "staticWebsite" --output json --only-show-errors 2>$null)
+        if ($diagSwJson) {
+            Write-Host "   Static website config: $diagSwJson" -ForegroundColor Yellow
+        }
+        # List blob names
+        $diagBlobs = (az storage blob list `
+            --container-name '$web' `
+            --account-name $storageName `
+            --account-key $uploadKey `
+            --query "[].name" --output json --only-show-errors 2>$null)
+        if ($diagBlobs) {
+            Write-Host "   Blobs in `$web: $diagBlobs" -ForegroundColor Yellow
+        }
+        Write-Host ""
+        Write-Host "   Next steps:" -ForegroundColor Yellow
+        Write-Host "   1. Wait 1-2 minutes and try the URL in a browser" -ForegroundColor Yellow
+        Write-Host "   2. Run: az storage blob service-properties show --account-name $storageName --query staticWebsite" -ForegroundColor Yellow
+        Write-Host "   3. Run: az storage blob list --container-name '`$web' --account-name $storageName --query '[].name'" -ForegroundColor Yellow
+        Write-Host ""
     }
 
     Write-Host ""
