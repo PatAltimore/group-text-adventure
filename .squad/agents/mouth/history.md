@@ -149,3 +149,14 @@
 - **Key file paths:** `deploy/deploy.ps1` (step 10, lines ~307-328), `deploy/deploy.sh` (step 10, lines ~311-330)
 - **All 111 tests still pass.**
 - **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+### 2026-04-01 — Fix: Negotiate 404 — @azure/functions version upgrade
+
+- **Problem:** Despite all previous fixes (explicit entry point, `EnableWorkerIndexing` app setting, correct package structure), the deployed function app continued returning 404 for `/api/negotiate?gameId=XXX`. The `@azure/functions` package was at version 4.5.0 (from early 2024), which is significantly outdated.
+- **Root cause:** The `@azure/functions` v4 programming model underwent significant development and bug fixes throughout 2024. Version 4.5.0 (deployed) likely contained bugs affecting function discovery in production environments with `WEBSITE_RUN_FROM_PACKAGE=1`, even when all configuration was correct. The package had 7 minor version updates since 4.5.0, including important stability fixes.
+- **Fix:** Upgraded `@azure/functions` from `^4.5.0` to `^4.12.0` (latest stable as of April 2026) in `api/package.json`. This ensures the deployed function app uses a mature, stable version of the v4 programming model that correctly discovers and registers functions in production.
+- **Verification:** Local test with `node -e "import('./src/index.js')"` confirmed all 4 functions (negotiate, gameHubConnect, gameHubMessage, gameHubDisconnect) register correctly with the updated package.
+- **Key learning — @azure/functions versions:** When using Azure Functions v4 Node.js programming model, always use the latest stable version of `@azure/functions`. Early v4 releases (4.0-4.6) had stability issues in production that were fixed in later versions. Don't assume an old v4.x version is "good enough" — the programming model matured significantly across minor versions.
+- **Key learning — version hygiene:** Check `@azure/functions` version during 404 troubleshooting. If it's more than a few months old, upgrade to latest stable before investigating configuration issues.
+- **Key file paths:** `api/package.json` (dependencies), `api/package-lock.json` (updated lockfile)
+- **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
