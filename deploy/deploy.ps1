@@ -69,7 +69,13 @@ try {
 
     # ── 1. Pre-flight: Check if storage account exists or is available ───
     Write-Step "Checking storage account '$storageName'..."
-    $existingAccount = az storage account show --name $storageName --resource-group $ResourceGroup --query "name" -o tsv 2>$null
+    $existingAccount = $null
+    try {
+        $existingAccount = az storage account show --name $storageName --resource-group $ResourceGroup --query "name" -o tsv 2>&1
+        if ($LASTEXITCODE -ne 0) { $existingAccount = $null }
+    } catch {
+        $existingAccount = $null
+    }
     if ($existingAccount) {
         Write-Done "Storage account '$storageName' already exists — reusing."
     } else {

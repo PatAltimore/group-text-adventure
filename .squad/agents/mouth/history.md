@@ -107,3 +107,12 @@
 - **Key learning — dependency ordering:** Any `az` command that references `--resource-group` requires the RG to exist. Resource group creation must always be the first provisioning step.
 - **All 111 tests still pass.**
 
+### 2026-04-01 — Fix: Storage account existence check fails on fresh deploy
+
+- **Problem:** `deploy.ps1` line 72 used `2>$null` to suppress stderr from `az storage account show` when the account doesn't exist. With `$ErrorActionPreference = 'Stop'`, stderr from native commands can become terminating errors in PowerShell — `2>$null` doesn't reliably prevent this across all PS versions.
+- **Fix (deploy.ps1):** Wrapped the `az storage account show` call in a try/catch block. Uses `2>&1` (merge stderr into stdout) plus `$LASTEXITCODE` check inside the try, and catches any terminating error. Result is `$null` when account doesn't exist, allowing the script to fall through to the name-availability check.
+- **Bash version (deploy.sh) was already safe:** Line 94 uses `|| echo ""` which absorbs the non-zero exit code from `az` despite `set -euo pipefail`.
+- **Key learning — PowerShell stderr + ErrorActionPreference:** Never rely on `2>$null` alone to suppress native command errors when `$ErrorActionPreference = 'Stop'`. Always wrap expected-failure native commands in try/catch and use `2>&1` to merge streams, then check `$LASTEXITCODE`.
+- **Key file path:** `deploy/deploy.ps1` (lines 70-90)
+- **All 111 tests still pass.**
+
