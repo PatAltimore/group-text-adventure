@@ -141,3 +141,40 @@ Any `az` command with `--resource-group` requires the RG to exist. Resource grou
 
 - Modified: `deploy/deploy.ps1`, `deploy/deploy.sh`
 - No application code changes; all 111 tests pass
+
+---
+
+## 7. Deploy Script: Safe Native Command Error Handling Pattern
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Decision
+
+For PowerShell deploy scripts with `$ErrorActionPreference = 'Stop'`, wrap expected-failure native commands (like `az`) in try/catch blocks.
+
+**Safe pattern for expected failures:**
+
+```powershell
+$result = $null
+try {
+    $result = az some-command 2>&1
+    if ($LASTEXITCODE -ne 0) { $result = $null }
+} catch {
+    $result = $null
+}
+```
+
+`2>$null` alone is NOT safe. Use try/catch + `2>&1` + `$LASTEXITCODE` check.
+
+### Problem Resolved
+
+`$ErrorActionPreference = 'Stop'` only affects PowerShell cmdlets, not native executables. When `az storage account show` failed (ResourceNotFound), `2>$null` didn't reliably suppress the stderr stream across PowerShell versions, causing terminating errors.
+
+### Impact
+
+- Fixed: `deploy/deploy.ps1` (lines 70-90)
+- Bash version (`deploy.sh`) was already safe via `|| echo ""`
+- All 111 tests still pass
+- This pattern applies to any `az`, `npm`, or other native command where failure is an expected/valid outcome
