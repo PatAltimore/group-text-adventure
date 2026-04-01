@@ -210,3 +210,77 @@ Static website returned 404. The `upload-batch` command used `--account-name` al
 ### Convention
 
 Data plane vs management plane are separate auth paths. Wrap data plane commands with verification logic — silent failures are common.
+
+---
+
+## 9. Fix: Belt-and-Suspenders for EnableWorkerIndexing
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Decision
+
+Modified `deploy/deploy.ps1` to set `AzureWebJobsFeatureFlags=EnableWorkerIndexing` at FOUR points in the deployment lifecycle, plus added loud diagnostic output when negotiate returns 404.
+
+### Problem Resolved
+
+The setting was applied via ARM REST API but the negotiate endpoint still returned 404 across multiple deployments. Zip deployment can reset or fail to propagate app settings, and the Azure Functions runtime needs this flag present at cold-start time to enable v4 worker indexing.
+
+### Changes
+
+1. **Set at function app creation** — via `--app-settings` on `az functionapp create`
+2. **Restart after app settings** — before zip deploy
+3. **Re-apply after zip deploy** — simple `az functionapp config appsettings set`
+4. **Restart after zip deploy** — force re-index
+5. **Fixed fallback path bug** — connection string PUTs were replacing ALL settings instead of merging
+6. **Added loud diagnostics on 404** — dumps settings, lists functions, prints next steps
+
+### Convention
+
+For deployment-critical app settings, apply them redundantly at every opportunity. The cost of redundancy is zero; the cost of a missing flag is a broken deployment.
+
+### Impact
+
+- Modified: `deploy/deploy.ps1`
+- All 111 tests pass
+- **Requires redeployment** to take effect
+
+---
+
+## 10. Deploy Architecture Review — Negotiate 404
+
+**Author:** Mikey (Lead)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Verdict
+
+**The function code, dependencies, ESM configuration, and zip package structure are all correct.** The persistent 404 is a deployment configuration issue, not a code issue.
+
+### Critical Issue Found
+
+**Missing `FUNCTIONS_EXTENSION_VERSION=~4` in settings dict:**
+
+- File: `deploy/deploy.ps1`, lines 241-250
+- The `$newSettings` hashtable does NOT include `FUNCTIONS_EXTENSION_VERSION=~4`
+- Script relies entirely on ARM API read-and-merge to preserve it from `az functionapp create`
+- **Risk:** If merge happens before propagation completes, `PUT` replaces ALL settings, dropping `FUNCTIONS_EXTENSION_VERSION`
+- Result: host version undefined → function discovery fails silently → 404 on all endpoints
+
+**Same risk applies to `AzureWebJobsStorage`** — also not in `$newSettings`, also relies on merge.
+
+### Verification Done
+
+✅ 28 checks passed (programming model, ESM, deps, host.json, zip structure, runtime imports, etc.)
+
+### Recommendations
+
+1. Add `FUNCTIONS_EXTENSION_VERSION=~4` to `$newSettings` dict — makes deployment self-contained
+2. Add `FUNCTIONS_EXTENSION_VERSION` and `AzureWebJobsStorage` to `criticalKeys` verification — catch dropped values
+3. Add `Assert-AzSuccess` after post-deploy re-apply
+4. Consider adding `AzureWebJobsStorage` to `$newSettings` with storage connection string
+
+### Impact
+
+Deployment configuration only. No application code changes needed.
