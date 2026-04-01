@@ -162,6 +162,8 @@ az functionapp config appsettings set \
         "AzureTableStorageConnectionString=$STORAGE_CONN_STR" \
         "FUNCTIONS_WORKER_RUNTIME=node" \
         "WEBSITE_NODE_DEFAULT_VERSION=~20" \
+        "WEBSITE_RUN_FROM_PACKAGE=1" \
+        "SCM_DO_BUILD_DURING_DEPLOYMENT=false" \
     --only-show-errors > /dev/null
 done_ "App settings configured."
 

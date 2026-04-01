@@ -95,6 +95,14 @@
       width: 200,
       margin: 2,
       color: { dark: '#e6edf3', light: '#0d1117' },
+    }).catch(() => {
+      // QR rendering failed — show URL as fallback text
+      els.qrCanvas.innerHTML = '';
+      const fallback = document.createElement('p');
+      fallback.textContent = url;
+      fallback.style.wordBreak = 'break-all';
+      fallback.style.fontSize = '12px';
+      els.qrCanvas.appendChild(fallback);
     });
   }
 
@@ -134,10 +142,12 @@
 
   function sendMessage(payload) {
     if (!state.ws || state.ws.readyState !== WebSocket.OPEN) return;
-    // Web PubSub json.webpubsub.azure.v1 subprotocol envelope
+    // Web PubSub json.webpubsub.azure.v1 subprotocol — send as user event so
+    // the server's gameHubMessage handler receives it (not sendToGroup, which
+    // bypasses the server entirely).
     state.ws.send(JSON.stringify({
-      type: 'sendToGroup',
-      group: state.gameId,
+      type: 'event',
+      event: 'message',
       dataType: 'json',
       data: payload,
     }));

@@ -139,6 +139,8 @@ try {
             "AzureTableStorageConnectionString=$storageConnStr" `
             "FUNCTIONS_WORKER_RUNTIME=node" `
             "WEBSITE_NODE_DEFAULT_VERSION=~20" `
+            "WEBSITE_RUN_FROM_PACKAGE=1" `
+            "SCM_DO_BUILD_DURING_DEPLOYMENT=false" `
         --only-show-errors | Out-Null
     Write-Done "App settings configured."
 
