@@ -74,3 +74,17 @@
 - **Join message includes gameId:** All join messages now send `{ type: 'join', playerName, gameId }` (coordinated with Mouth's backend gameId fix)
 - **Coordination:** This work aligns with Mouth's fix to include gameId in backend, ensuring clients and server are synchronized
 
+### 2026-04-01 — Negotiate 404 Investigation (Client-Side Audit)
+
+**Issue:** Deployed game shows "Failed to connect: Negotiate failed: 404" when calling `https://patcastle-func.azurewebsites.net/api/negotiate?gameId=UPY6JE`.
+
+**Client-side findings — ALL CORRECT, no changes needed:**
+- **URL construction (app.js:130):** `${apiBaseUrl}/api/negotiate?gameId=${encodeURIComponent(gameId)}` — correct path, no double slashes, proper encoding
+- **apiBaseUrl loading (app.js:9-22):** Loaded from `config.json`, trailing slashes stripped — correct
+- **config.json generation (deploy.ps1:302):** Writes `https://${functionAppName}.azurewebsites.net` — no trailing slash, correct domain
+- **HTTP method:** `fetch()` defaults to GET, negotiate function expects GET — correct
+- **Route match:** Server `route: 'negotiate'` → `/api/negotiate` (Azure Functions v4 default prefix). Client calls `/api/negotiate` — matches
+- **Error display (app.js:132):** Shows status code AND full URL in error message — good for debugging
+- **CORS:** Deploy script configures CORS with static website origin. A CORS failure would show as a CORS error, not 404
+- **Conclusion:** The 404 is a server-side issue (function app runtime not serving the negotiate function). Client is correct.
+

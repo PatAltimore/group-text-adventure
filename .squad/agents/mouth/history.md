@@ -116,3 +116,13 @@
 - **Key file path:** `deploy/deploy.ps1` (lines 70-90)
 - **All 111 tests still pass.**
 
+### 2026-04-01 — Negotiate 404 fix: explicit entry point replaces glob in main
+
+- **Problem:** `api/package.json` had `"main": "src/functions/*.js"` — a glob pattern. Azure Functions v4 Node.js worker resolves this glob at startup to discover function files. However, `glob` is only a transitive devDependency (via Jest → @jest/core → @jest/reporters → glob). The deploy script runs `npm install --omit=dev`, stripping the `glob` package from the production deployment zip. Without glob resolution capability, the worker can't find `negotiate.js` or `gameHub.js`, so the runtime reports 0 functions and returns 404 on all routes.
+- **Diagnosis:** Function app root (/) returned 200 (runtime alive), admin/host/status returned 401 (expected), but `/api/negotiate` returned 404. Simulated the staging directory — confirmed `glob` package absent from production `node_modules`. The `@azure/functions` npm package does NOT bundle its own glob resolver; it relies on the host worker, which in turn may depend on the user's installed packages or its own bundled glob.
+- **Fix:** Created `api/src/index.js` that explicitly imports `./functions/negotiate.js` and `./functions/gameHub.js`. Changed `package.json` `"main"` from `"src/functions/*.js"` to `"src/index.js"`. This is deterministic — no glob resolution needed.
+- **Key learning — Azure Functions v4 main field:** Never use glob patterns in `package.json` `"main"` for Azure Functions v4 Node.js. Use an explicit entry point file that imports all function registration modules. Glob resolution depends on runtime/worker version and package availability, making it fragile in production.
+- **Key file paths:** `api/src/index.js` (new), `api/package.json` (line 5)
+- **All 111 tests still pass.**
+- **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
