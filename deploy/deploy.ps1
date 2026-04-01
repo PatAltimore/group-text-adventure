@@ -205,7 +205,6 @@ try {
         --runtime-version 20 `
         --functions-version 4 `
         --os-type Linux `
-        --app-settings "AzureWebJobsFeatureFlags=EnableWorkerIndexing" `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to create Function App '$functionAppName'"
 
