@@ -2,7 +2,7 @@
   "name": "group-text-adventure-api",
   "version": "1.0.0",
   "description": "Azure Functions backend for the group text adventure game",
-  "main": "src/functions/*.js",
+  "main": "src/index.js",
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
