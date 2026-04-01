@@ -103,3 +103,15 @@
 
 **Key takeaway:** Always use `--connection-string` for Azure Storage CLI commands in deploy scripts, and verify uploads by counting blobs in the container after upload-batch.
 
+### 2026-04-01 — Status: Negotiate 404 investigation re-confirmed (client correct)
+
+- **Summary:** Re-audited client-side negotiate call per Mouth's findings on backend version issue. All client-side code confirmed correct:
+  - URL construction: `${apiBaseUrl}/api/negotiate?gameId=${encodeURIComponent(gameId)}` ✅
+  - HTTP method: GET (default, matches backend expectation) ✅
+  - Config loading: Proper fallback logic for dev/prod ✅
+  - Error handling: Shows status code and full URL for debugging ✅
+  - CORS: Deploy script configures correctly, not the issue ✅
+- **Conclusion:** 404 is a backend-only issue (Function App not serving the endpoint). No client-side changes needed.
+- **Coordination with Mouth:** Backend issue diagnosed as version bug in `@azure/functions` v4.5.0. Mouth upgraded to v4.12.0. This resolves the 404 when redeployed.
+- **Decision recorded** in `.squad/decisions.md` documenting the investigation and resolution findings.
+

@@ -160,3 +160,10 @@
 - **Key learning — version hygiene:** Check `@azure/functions` version during 404 troubleshooting. If it's more than a few months old, upgrade to latest stable before investigating configuration issues.
 - **Key file paths:** `api/package.json` (dependencies), `api/package-lock.json` (updated lockfile)
 - **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+### 2026-04-01 — Status: Azure Functions version upgrade deployed and tested
+
+- **Summary:** Upgrade from `@azure/functions` v4.5.0 to v4.12.0 completed. All 111 tests pass. Code committed and pushed to git.
+- **Decision recorded** in `.squad/decisions.md` with version upgrade conventions for the team.
+- **Ready for:** Redeployment to production. The fixed package will resolve persistent 404 errors on deployed endpoints when redeployed.
+- **Next step:** Run `cd deploy && .\deploy.ps1 -AppName patcastle` to redeploy with the updated package.

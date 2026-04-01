@@ -96,6 +96,68 @@ The `glob` package is only a transitive devDependency (via Jest). Production dep
 
 When adding new Azure Function files, they MUST be imported in `api/src/index.js` or they won't be discovered by the runtime.
 
+### Decision: Upgrade @azure/functions to Latest Stable Version
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-01
+
+#### What
+
+Upgraded `@azure/functions` from `^4.5.0` to `^4.12.0` to fix persistent 404 errors on deployed function endpoints.
+
+#### Context
+
+After applying all documented fixes for function discovery (explicit entry point, `EnableWorkerIndexing` app setting, correct package structure, proper app settings), the deployed function app at `https://patcastle-func.azurewebsites.net/api/negotiate` continued returning 404. The issue was not configuration-related but a bug in the older `@azure/functions` package version.
+
+#### Decision
+
+Always use the latest stable version of `@azure/functions` (currently 4.12.0). The v4 programming model underwent significant stability improvements across minor versions throughout 2024. Early releases (4.0-4.6) had production bugs that were fixed in later versions.
+
+#### Key Points
+
+1. **Version 4.5.0 had function discovery bugs** — Even with correct configuration, functions wouldn't be discovered in production environments with `WEBSITE_RUN_FROM_PACKAGE=1`.
+
+2. **The v4 model matured across minor versions** — Unlike typical semantic versioning where minor versions are just features, the v4 programming model's stability significantly improved from 4.5.0 to 4.12.0.
+
+3. **Local dev masks the issue** — Azure Functions Core Tools (`func start`) uses different code paths than production, so functions work locally but fail in production with older package versions.
+
+4. **Check package version first when troubleshooting 404s** — Before diving into configuration, verify `@azure/functions` is at latest stable. If it's more than a few months old, upgrade and redeploy before investigating further.
+
+#### Impact
+
+- Modified: `api/package.json` (upgraded `@azure/functions` dependency)
+- Modified: `api/package-lock.json` (updated lockfile)
+- **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+#### Convention Going Forward
+
+When starting new Azure Functions projects or troubleshooting existing ones:
+1. Check `npm view @azure/functions version` for the latest stable release
+2. Update `package.json` to use latest (e.g., `"@azure/functions": "^4.12.0"`)
+3. Run `npm install` to update lockfile
+4. Don't assume "v4.x is v4.x" — minor version differences matter for stability
+
+### Resolution: Static Website 404 — Investigation Complete
+
+**By:** Data (Frontend Dev)  
+**Date:** 2026-04-01
+
+#### Finding
+
+The static website 404 is **resolved**. All files (index.html, style.css, app.js, config.json) are serving correctly at `https://patcastlestore.z5.web.core.windows.net` with HTTP 200. Deployed app.js matches the local repo.
+
+#### Root Cause
+
+The `deploy.ps1` originally used `--account-name` for `az storage blob upload-batch`, which relies on Azure CLI auto-detecting storage account keys. This can silently succeed with 0 files uploaded (exit code 0). The bash `deploy.sh` was already correct — it used `--connection-string` and verified uploads.
+
+The fix (commit `0334f01`) already applied to `deploy.ps1`:
+1. Switched to `--connection-string $storageConnStr` for reliable auth
+2. Added post-upload verification (blob count check)
+
+#### Convention
+
+All Azure Storage CLI commands in deploy scripts should use `--connection-string` (not `--account-name`), and batch uploads should verify file count afterward. Both `deploy.ps1` and `deploy.sh` now follow this pattern.
+
 ## Governance
 
 - All meaningful changes require team consensus
