@@ -72,6 +72,30 @@ Both `deploy.ps1` and `deploy.sh` now check every `az` command for failure and s
 - Modified: `deploy/deploy.ps1`, `deploy/deploy.sh`
 - No application code changes; all 111 tests still pass
 
+### Fix: Negotiate 404 — Explicit Entry Point
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-01
+
+#### What
+
+Replaced glob pattern `"main": "src/functions/*.js"` in `api/package.json` with explicit entry point `"main": "src/index.js"`. Created `api/src/index.js` that imports `negotiate.js` and `gameHub.js`.
+
+#### Why
+
+The `glob` package is only a transitive devDependency (via Jest). Production deployment strips it with `npm install --omit=dev`. Without glob resolution, the Azure Functions v4 runtime cannot discover any function files, causing 404 on all endpoints.
+
+#### Impact
+
+- New file: `api/src/index.js`
+- Modified: `api/package.json` (line 5)
+- All 111 tests still pass
+- **Requires redeployment** to take effect
+
+#### Convention Going Forward
+
+When adding new Azure Function files, they MUST be imported in `api/src/index.js` or they won't be discovered by the runtime.
+
 ## Governance
 
 - All meaningful changes require team consensus
