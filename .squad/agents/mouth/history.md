@@ -201,3 +201,17 @@
   - Static website enable uses env var auth with retry logic.
   - Post-upload verification checks blob count in `$web`.
 - **Conclusion:** Script is correct. Resources just need to be re-provisioned. User must run: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+### 2026-04-01 — Fix: EnableWorkerIndexing belt-and-suspenders + diagnostic output
+
+- **Problem:** Negotiate 404 persisted across multiple deployments. The ARM REST API approach was setting `EnableWorkerIndexing` correctly, but zip deployment can reset/override app settings, and the runtime needs the flag to be present when it cold-starts to index v4-model functions.
+- **Fix (5 changes to deploy.ps1):**
+  1. Added `--app-settings "AzureWebJobsFeatureFlags=EnableWorkerIndexing"` to `az functionapp create` — set at creation time before anything else runs.
+  2. Added explicit `az functionapp restart` after app settings configuration, before zip deploy — forces runtime to pick up settings.
+  3. Added post-zip-deploy re-application of `EnableWorkerIndexing` via simple `az functionapp config appsettings set` (no special chars, safe for cmd.exe).
+  4. Added another restart after zip deploy to ensure runtime re-indexes with new code AND the flag.
+  5. Fixed fallback path bug: connection string fallback was doing individual `PUT` calls per connection string. ARM `PUT .../config/appsettings` REPLACES ALL settings, so each PUT obliterated the previous one. Fixed by re-reading current settings and merging before PUT.
+  6. Made post-deploy 404 diagnostic output LOUD: dumps app setting keys, checks if `AzureWebJobsFeatureFlags` is set, lists registered functions, and prints actionable next steps.
+- **Key learning — belt-and-suspenders for critical settings:** For settings that are make-or-break (like `EnableWorkerIndexing`), set them at EVERY opportunity: creation, configuration, post-deploy. The cost of redundancy is zero; the cost of missing the flag is a completely broken deployment.
+- **Key learning — ARM PUT replaces ALL settings:** `PUT .../config/appsettings` is a full replacement, not a merge. Always GET existing settings first and merge before PUT. The fallback path had a data-loss bug because it did individual PUTs.
+- **All 111 tests still pass. Committed and pushed.**

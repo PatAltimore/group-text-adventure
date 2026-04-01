@@ -238,10 +238,21 @@ try {
     # cmd.exe argument parsing entirely.
     Write-Step "Configuring app settings..."
 
+    # Include ALL critical settings — don't rely on merge preserving them.
+    # The ARM PUT replaces all settings; if the read-merge misses a value
+    # (e.g., propagation delay after az functionapp create), it gets dropped.
+    $storageConnStrForFunc = az storage account show-connection-string `
+        --name $storageName `
+        --resource-group $ResourceGroup `
+        --output json --only-show-errors
+    $storageConnStrForFunc = ($storageConnStrForFunc | ConvertFrom-Json).connectionString
+
     $newSettings = @{
         "WebPubSubConnectionString"         = $wpsConnStr
         "WebPubSubHubName"                  = $hubName
         "AzureTableStorageConnectionString" = $storageConnStr
+        "AzureWebJobsStorage"              = $storageConnStrForFunc
+        "FUNCTIONS_EXTENSION_VERSION"       = "~4"
         "FUNCTIONS_WORKER_RUNTIME"          = "node"
         "WEBSITE_NODE_DEFAULT_VERSION"      = "~20"
         "WEBSITE_RUN_FROM_PACKAGE"          = "1"
@@ -252,8 +263,8 @@ try {
     $subId = (az account show --query id --output tsv)
     Assert-AzSuccess "Failed to get subscription ID"
 
-    # Retrieve existing app settings to merge (preserves system settings like
-    # AzureWebJobsStorage, FUNCTIONS_EXTENSION_VERSION set by az functionapp create)
+    # Retrieve existing app settings to merge (preserves any additional system
+    # settings not in our list; critical settings are now self-contained above)
     $armBase = "https://management.azure.com/subscriptions/$subId/resourceGroups/$ResourceGroup/providers/Microsoft.Web/sites/$functionAppName"
     $existingRaw = (az rest --method POST `
         --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
@@ -337,7 +348,7 @@ try {
         --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
         --only-show-errors 2>$null)
     $verifyProps = ($verifyRaw -join "`n" | ConvertFrom-Json).properties
-    $criticalKeys = @("AzureWebJobsFeatureFlags", "FUNCTIONS_WORKER_RUNTIME", "WebPubSubConnectionString", "AzureTableStorageConnectionString")
+    $criticalKeys = @("AzureWebJobsFeatureFlags", "FUNCTIONS_EXTENSION_VERSION", "FUNCTIONS_WORKER_RUNTIME", "WebPubSubConnectionString", "AzureTableStorageConnectionString", "AzureWebJobsStorage")
     $missing = @()
     foreach ($key in $criticalKeys) {
         $val = $verifyProps.$key
