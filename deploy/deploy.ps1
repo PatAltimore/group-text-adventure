@@ -205,6 +205,7 @@ try {
         --runtime-version 20 `
         --functions-version 4 `
         --os-type Linux `
+        --app-settings "AzureWebJobsFeatureFlags=EnableWorkerIndexing" `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to create Function App '$functionAppName'"
 
@@ -305,22 +306,29 @@ try {
                 --only-show-errors 2>$null | Out-Null
         }
 
-        # Connection strings require temp file approach with az webapp config
-        $connSettings = @{
-            "WebPubSubConnectionString"         = $wpsConnStr
-            "AzureTableStorageConnectionString" = $storageConnStr
+        # Connection strings require file-based approach. Build a merged settings
+        # body by re-reading current settings (which now include the safe settings
+        # set above) and adding the connection strings.
+        Write-Info "Setting connection strings via ARM REST API..."
+        $fbExistingRaw = (az rest --method POST `
+            --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
+            --only-show-errors 2>$null)
+        $fbMerged = @{}
+        $fbExistingProps = ($fbExistingRaw -join "`n" | ConvertFrom-Json).properties
+        if ($fbExistingProps) {
+            $fbExistingProps.PSObject.Properties | ForEach-Object { $fbMerged[$_.Name] = $_.Value }
         }
-        foreach ($key in $connSettings.Keys) {
-            $val = $connSettings[$key]
-            $connFile = Join-Path $PSScriptRoot "_conn_setting.json"
-            $connBody = @{ properties = @{ $key = $val } } | ConvertTo-Json -Depth 5
-            [System.IO.File]::WriteAllText($connFile, $connBody, [System.Text.UTF8Encoding]::new($false))
-            az rest --method PUT `
-                --url "$armBase/config/appsettings?api-version=2022-03-01" `
-                --body "@$connFile" `
-                --only-show-errors 2>$null | Out-Null
-            Remove-Item $connFile -Force -ErrorAction SilentlyContinue
-        }
+        $fbMerged["WebPubSubConnectionString"] = $wpsConnStr
+        $fbMerged["AzureTableStorageConnectionString"] = $storageConnStr
+
+        $connFile = Join-Path $PSScriptRoot "_conn_setting.json"
+        $connBody = @{ properties = $fbMerged } | ConvertTo-Json -Depth 10
+        [System.IO.File]::WriteAllText($connFile, $connBody, [System.Text.UTF8Encoding]::new($false))
+        az rest --method PUT `
+            --url "$armBase/config/appsettings?api-version=2022-03-01" `
+            --body "@$connFile" `
+            --only-show-errors 2>$null | Out-Null
+        Remove-Item $connFile -Force -ErrorAction SilentlyContinue
     }
 
     # Verify critical settings were applied by reading them back
@@ -350,6 +358,11 @@ try {
         Write-Info "All critical settings verified."
     }
     Write-Done "App settings configured."
+
+    # Restart to pick up EnableWorkerIndexing before code deployment
+    Write-Info "Restarting Function App to apply settings..."
+    az functionapp restart --name $functionAppName --resource-group $ResourceGroup --only-show-errors 2>$null | Out-Null
+    Start-Sleep -Seconds 10
 
     # -- 7. Configure CORS ----------------------------------------------
     Write-Step "Configuring CORS on Function App..."
@@ -422,6 +435,19 @@ try {
     }
     Write-Done "Function App deployed."
 
+    # Re-apply EnableWorkerIndexing after zip deploy (zip deploy can reset settings)
+    Write-Info "Ensuring EnableWorkerIndexing is set after deployment..."
+    az functionapp config appsettings set `
+        --name $functionAppName `
+        --resource-group $ResourceGroup `
+        --settings "AzureWebJobsFeatureFlags=EnableWorkerIndexing" `
+        --only-show-errors 2>$null | Out-Null
+
+    # Restart to ensure the runtime picks up v4 worker indexing with new code
+    Write-Info "Restarting Function App after deployment..."
+    az functionapp restart --name $functionAppName --resource-group $ResourceGroup --only-show-errors 2>$null | Out-Null
+    Start-Sleep -Seconds 10
+
     # -- Post-deploy: Verify functions are registered ----------------------
     Write-Step "Verifying function registration..."
     $functionAppUrl = "https://${functionAppName}.azurewebsites.net"
@@ -461,9 +487,57 @@ try {
     if ($negotiateOk) {
         Write-Done "Function registration verified - negotiate endpoint is live."
     } else {
-        Write-Host "   WARNING: negotiate endpoint returned 404 after deployment." -ForegroundColor Yellow
-        Write-Info "The Function App may need a few more minutes to start."
-        Write-Info "If the issue persists, check Function App logs in Azure Portal."
+        Write-Host ""
+        Write-Host "   ============================================================" -ForegroundColor Red
+        Write-Host "   NEGOTIATE ENDPOINT RETURNED 404 AFTER DEPLOYMENT" -ForegroundColor Red
+        Write-Host "   ============================================================" -ForegroundColor Red
+        Write-Host ""
+
+        # Diagnostic: dump app settings key names
+        Write-Info "Diagnostic: Reading deployed app settings..."
+        try {
+            $diagRaw = (az rest --method POST `
+                --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
+                --only-show-errors 2>$null)
+            $diagProps = ($diagRaw -join "`n" | ConvertFrom-Json).properties
+            $diagKeys = $diagProps.PSObject.Properties | ForEach-Object { $_.Name }
+            Write-Host "   App setting keys: $($diagKeys -join ', ')" -ForegroundColor Yellow
+            $ewif = $diagProps.AzureWebJobsFeatureFlags
+            if ($ewif) {
+                Write-Host "   AzureWebJobsFeatureFlags = $ewif" -ForegroundColor Yellow
+            } else {
+                Write-Host "   AzureWebJobsFeatureFlags is NOT SET (this is the problem!)" -ForegroundColor Red
+            }
+        } catch {
+            Write-Host "   Could not read app settings: $_" -ForegroundColor Yellow
+        }
+
+        # Diagnostic: list registered functions
+        Write-Info "Diagnostic: Listing registered functions..."
+        try {
+            $funcList = (az functionapp function list `
+                --name $functionAppName `
+                --resource-group $ResourceGroup `
+                --output json --only-show-errors 2>$null)
+            $funcs = ($funcList | ConvertFrom-Json)
+            if ($funcs.Count -eq 0) {
+                Write-Host "   ZERO functions registered — v4 worker indexing is likely not active." -ForegroundColor Red
+            } else {
+                $funcNames = $funcs | ForEach-Object { $_.name }
+                Write-Host "   Registered functions: $($funcNames -join ', ')" -ForegroundColor Yellow
+            }
+        } catch {
+            Write-Host "   Could not list functions: $_" -ForegroundColor Yellow
+        }
+
+        Write-Host ""
+        Write-Host "   Next steps:" -ForegroundColor Yellow
+        Write-Host "   1. Check Azure Portal > Function App > Functions (are any listed?)" -ForegroundColor Yellow
+        Write-Host "   2. Check Azure Portal > Function App > Configuration > Application settings" -ForegroundColor Yellow
+        Write-Host "      Verify AzureWebJobsFeatureFlags = EnableWorkerIndexing" -ForegroundColor Yellow
+        Write-Host "   3. Try restarting the Function App from the Portal" -ForegroundColor Yellow
+        Write-Host "   4. Check Log Stream for startup errors" -ForegroundColor Yellow
+        Write-Host ""
     }
 
     # -- 9. Configure Web PubSub Event Handler --------------------------
