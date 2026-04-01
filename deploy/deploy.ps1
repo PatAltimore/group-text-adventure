@@ -120,12 +120,21 @@ try {
     }
     Write-Done "Storage account created."
 
+    # Set up storage auth via environment variables early - used by all
+    # subsequent storage operations. Avoids cmd.exe mangling of keys/connection strings.
+    $env:AZURE_STORAGE_ACCOUNT = $storageName
+    $keysJson = (az storage account keys list `
+        --account-name $storageName `
+        --resource-group $ResourceGroup `
+        --output json)
+    Assert-AzSuccess "Failed to get storage account key"
+    $env:AZURE_STORAGE_KEY = ($keysJson | ConvertFrom-Json)[0].value
+
     # -- 3. Enable Static Website ---------------------------------------
     Write-Step "Enabling static website hosting..."
     $staticEnabled = $false
     for ($attempt = 1; $attempt -le 3; $attempt++) {
         az storage blob service-properties update `
-            --account-name $storageName `
             --static-website `
             --index-document index.html `
             --404-document index.html `
@@ -369,16 +378,7 @@ try {
     $configPath = Join-Path $clientDir "config.json"
     Set-Content -Path $configPath -Value $configJson -Encoding UTF8
 
-    # Use environment variables for storage auth to avoid cmd.exe mangling
-    # special characters (semicolons, +, /, =) in connection strings and keys
-    $env:AZURE_STORAGE_ACCOUNT = $storageName
-    $keysJson = (az storage account keys list `
-        --account-name $storageName `
-        --resource-group $ResourceGroup `
-        --output json)
-    Assert-AzSuccess "Failed to get storage key for upload"
-    $env:AZURE_STORAGE_KEY = ($keysJson | ConvertFrom-Json)[0].value
-
+    # Storage env vars (AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_KEY) already set in step 2
     az storage blob upload-batch `
         --source $clientDir `
         --destination '$web' `
@@ -396,10 +396,6 @@ try {
         throw "Upload verification failed: 0 files found in '`$web' container."
     }
     Write-Info "Verified: $blobCount file(s) in '`$web' container."
-
-    # Clean up storage env vars
-    $env:AZURE_STORAGE_ACCOUNT = $null
-    $env:AZURE_STORAGE_KEY = $null
 
     # Clean up generated config.json from source
     Remove-Item $configPath -Force -ErrorAction SilentlyContinue
@@ -435,8 +431,16 @@ try {
     Write-Host "    az group delete --name $ResourceGroup --yes" -ForegroundColor Gray
     Write-Host ""
 
+    # Clean up storage env vars
+    $env:AZURE_STORAGE_ACCOUNT = $null
+    $env:AZURE_STORAGE_KEY = $null
+
 } catch {
     Write-Host "`nDeployment failed: $_" -ForegroundColor Red
+
+    # Clean up storage env vars
+    $env:AZURE_STORAGE_ACCOUNT = $null
+    $env:AZURE_STORAGE_KEY = $null
 
     # Clean up staging on failure
     if (Test-Path $stageDir) { Remove-Item $stageDir -Recurse -Force }
