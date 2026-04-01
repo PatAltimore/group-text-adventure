@@ -311,9 +311,20 @@ EOF
 az storage blob upload-batch \
     --source "$CLIENT_DIR" \
     --destination '$web' \
-    --account-name "$STORAGE_NAME" \
+    --connection-string "$STORAGE_CONN_STR" \
     --overwrite \
     --only-show-errors > /dev/null
+
+# Verify files were actually uploaded (upload-batch can exit 0 with 0 files)
+BLOB_COUNT=$(az storage blob list \
+    --container-name '$web' \
+    --connection-string "$STORAGE_CONN_STR" \
+    --query "length(@)" -o tsv)
+if [[ -z "$BLOB_COUNT" || "$BLOB_COUNT" -lt 1 ]]; then
+    echo "Error: Upload verification failed — 0 files found in '\$web' container."
+    exit 1
+fi
+info "Verified: $BLOB_COUNT file(s) in '\$web' container."
 
 rm -f "$CLIENT_DIR/config.json"
 done_ "Client files uploaded."

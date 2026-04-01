@@ -307,10 +307,21 @@ try {
     az storage blob upload-batch `
         --source $clientDir `
         --destination '$web' `
-        --account-name $storageName `
+        --connection-string $storageConnStr `
         --overwrite `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to upload client files to static website"
+
+    # Verify files were actually uploaded (upload-batch can exit 0 with 0 files)
+    $blobCount = az storage blob list `
+        --container-name '$web' `
+        --connection-string $storageConnStr `
+        --query "length(@)" -o tsv
+    Assert-AzSuccess "Failed to verify uploaded files"
+    if ([int]$blobCount -lt 1) {
+        throw "Upload verification failed: 0 files found in '`$web' container."
+    }
+    Write-Info "Verified: $blobCount file(s) in '`$web' container."
 
     # Clean up generated config.json from source
     Remove-Item $configPath -Force -ErrorAction SilentlyContinue
