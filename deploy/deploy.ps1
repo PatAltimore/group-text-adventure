@@ -230,21 +230,55 @@ try {
     Write-Done "Function App created (Consumption plan)."
 
     # -- 6. Configure App Settings --------------------------------------
+    # Uses ARM REST API with a file-based body to avoid cmd.exe mangling.
+    # On Windows, `az` is `az.cmd` — all arguments pass through cmd.exe which
+    # interprets semicolons as command separators, breaking connection strings.
+    # Writing settings to a JSON file and using `az rest --body @file` bypasses
+    # cmd.exe argument parsing entirely.
     Write-Step "Configuring app settings..."
-    az functionapp config appsettings set `
-        --name $functionAppName `
-        --resource-group $ResourceGroup `
-        --settings `
-            "WebPubSubConnectionString=$wpsConnStr" `
-            "WebPubSubHubName=$hubName" `
-            "AzureTableStorageConnectionString=$storageConnStr" `
-            "FUNCTIONS_WORKER_RUNTIME=node" `
-            "WEBSITE_NODE_DEFAULT_VERSION=~20" `
-            "WEBSITE_RUN_FROM_PACKAGE=1" `
-            "SCM_DO_BUILD_DURING_DEPLOYMENT=false" `
-            "AzureWebJobsFeatureFlags=EnableWorkerIndexing" `
+
+    $newSettings = @{
+        "WebPubSubConnectionString"         = $wpsConnStr
+        "WebPubSubHubName"                  = $hubName
+        "AzureTableStorageConnectionString" = $storageConnStr
+        "FUNCTIONS_WORKER_RUNTIME"          = "node"
+        "WEBSITE_NODE_DEFAULT_VERSION"      = "~20"
+        "WEBSITE_RUN_FROM_PACKAGE"          = "1"
+        "SCM_DO_BUILD_DURING_DEPLOYMENT"    = "false"
+        "AzureWebJobsFeatureFlags"          = "EnableWorkerIndexing"
+    }
+
+    $subId = (az account show --query id --output tsv)
+    Assert-AzSuccess "Failed to get subscription ID"
+
+    # Retrieve existing app settings to merge (preserves system settings like
+    # AzureWebJobsStorage, FUNCTIONS_EXTENSION_VERSION set by az functionapp create)
+    $armBase = "https://management.azure.com/subscriptions/$subId/resourceGroups/$ResourceGroup/providers/Microsoft.Web/sites/$functionAppName"
+    $existingRaw = (az rest --method POST `
+        --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
+        --only-show-errors)
+    Assert-AzSuccess "Failed to read existing app settings"
+
+    $merged = @{}
+    $existingProps = ($existingRaw -join "`n" | ConvertFrom-Json).properties
+    if ($existingProps) {
+        $existingProps.PSObject.Properties | ForEach-Object { $merged[$_.Name] = $_.Value }
+    }
+    foreach ($key in $newSettings.Keys) {
+        $merged[$key] = $newSettings[$key]
+    }
+
+    # Write to temp file — az reads it directly, no cmd.exe parsing
+    $settingsFile = Join-Path $PSScriptRoot "_appsettings.json"
+    @{ properties = $merged } | ConvertTo-Json -Depth 10 | Set-Content -Path $settingsFile -Encoding UTF8
+
+    az rest --method PUT `
+        --url "$armBase/config/appsettings?api-version=2022-03-01" `
+        --body "@$settingsFile" `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to configure app settings"
+
+    Remove-Item $settingsFile -Force -ErrorAction SilentlyContinue
     Write-Done "App settings configured."
 
     # -- 7. Configure CORS ----------------------------------------------
@@ -442,9 +476,11 @@ try {
     $env:AZURE_STORAGE_ACCOUNT = $null
     $env:AZURE_STORAGE_KEY = $null
 
-    # Clean up staging on failure
+    # Clean up staging and temp files on failure
     if (Test-Path $stageDir) { Remove-Item $stageDir -Recurse -Force }
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
+    $settingsCleanup = Join-Path $PSScriptRoot "_appsettings.json"
+    if (Test-Path $settingsCleanup) { Remove-Item $settingsCleanup -Force -ErrorAction SilentlyContinue }
 
     # Clean up generated config.json if it exists
     $configCleanup = Join-Path $clientDir "config.json"
