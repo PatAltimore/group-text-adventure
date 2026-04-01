@@ -340,11 +340,12 @@ try {
     # Use environment variables for storage auth to avoid cmd.exe mangling
     # special characters (semicolons, +, /, =) in connection strings and keys
     $env:AZURE_STORAGE_ACCOUNT = $storageName
-    $env:AZURE_STORAGE_KEY = (az storage account keys list `
+    $keysJson = (az storage account keys list `
         --account-name $storageName `
         --resource-group $ResourceGroup `
-        --query "[0].value" --output tsv)
+        --output json)
     Assert-AzSuccess "Failed to get storage key for upload"
+    $env:AZURE_STORAGE_KEY = ($keysJson | ConvertFrom-Json)[0].value
 
     az storage blob upload-batch `
         --source $clientDir `
@@ -354,10 +355,11 @@ try {
     Assert-AzSuccess "Failed to upload client files to static website"
 
     # Verify files were actually uploaded (upload-batch can exit 0 with 0 files)
-    $blobCount = (az storage blob list `
+    $blobJson = (az storage blob list `
         --container-name '$web' `
-        --query "length(@)" --output tsv)
+        --output json --only-show-errors)
     Assert-AzSuccess "Failed to verify uploaded files"
+    $blobCount = ($blobJson | ConvertFrom-Json).Count
     if ([int]$blobCount -lt 1) {
         throw "Upload verification failed: 0 files found in '`$web' container."
     }
