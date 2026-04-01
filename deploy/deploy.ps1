@@ -166,6 +166,26 @@ try {
         --os-type Linux `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to create Function App '$functionAppName'"
+
+    # Wait for Function App to be fully provisioned (Linux Consumption can
+    # return from 'create' before the deployment endpoint is ready)
+    Write-Info "Waiting for Function App to be fully provisioned..."
+    $provisionReady = $false
+    for ($i = 0; $i -lt 12; $i++) {
+        $state = az functionapp show `
+            --name $functionAppName `
+            --resource-group $ResourceGroup `
+            --query "state" --output tsv 2>$null
+        if ($LASTEXITCODE -eq 0 -and $state -eq "Running") {
+            $provisionReady = $true
+            break
+        }
+        Write-Info "Waiting for Function App... (attempt $($i + 1)/12)"
+        Start-Sleep -Seconds 10
+    }
+    if (-not $provisionReady) {
+        Write-Info "Function App not yet in 'Running' state (state=$state), proceeding anyway..."
+    }
     Write-Done "Function App created (Consumption plan)."
 
     # ── 6. Configure App Settings ──────────────────────────────────────
@@ -236,12 +256,25 @@ try {
     Write-Done "Package created ($zipSize MB)."
 
     Write-Step "Deploying Function App code..."
-    az functionapp deployment source config-zip `
-        --name $functionAppName `
-        --resource-group $ResourceGroup `
-        --src $zipPath `
-        --only-show-errors | Out-Null
-    Assert-AzSuccess "Failed to deploy Function App code"
+    $deploySuccess = $false
+    for ($attempt = 1; $attempt -le 3; $attempt++) {
+        az functionapp deployment source config-zip `
+            --name $functionAppName `
+            --resource-group $ResourceGroup `
+            --src $zipPath `
+            --only-show-errors | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            $deploySuccess = $true
+            break
+        }
+        if ($attempt -lt 3) {
+            Write-Info "Deploy attempt $attempt failed, retrying in 15 seconds..."
+            Start-Sleep -Seconds 15
+        }
+    }
+    if (-not $deploySuccess) {
+        throw "Failed to deploy Function App code after 3 attempts"
+    }
     Write-Done "Function App deployed."
 
     # ── 9. Configure Web PubSub Event Handler ──────────────────────────
