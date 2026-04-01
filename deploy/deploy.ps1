@@ -71,7 +71,7 @@ try {
     Write-Step "Checking storage account '$storageName'..."
     $existingAccount = $null
     try {
-        $existingAccount = az storage account show --name $storageName --resource-group $ResourceGroup --query "name" -o tsv 2>&1
+        $existingAccount = az storage account show --name $storageName --resource-group $ResourceGroup --query "name" --output tsv 2>&1
         if ($LASTEXITCODE -ne 0) { $existingAccount = $null }
     } catch {
         $existingAccount = $null
@@ -80,10 +80,10 @@ try {
         Write-Done "Storage account '$storageName' already exists — reusing."
     } else {
         # Storage account doesn't exist — check if name is available
-        $nameCheck = az storage account check-name --name $storageName --query "nameAvailable" -o tsv
+        $nameCheck = az storage account check-name --name $storageName --query "nameAvailable" --output tsv
         Assert-AzSuccess "Failed to check storage account name availability"
         if ($nameCheck -ne "true") {
-            $nameReason = az storage account check-name --name $storageName --query "reason" -o tsv 2>$null
+            $nameReason = az storage account check-name --name $storageName --query "reason" --output tsv 2>$null
             throw "Storage account name '$storageName' is not available (reason: $nameReason). Try a different AppName."
         }
         Write-Done "Storage account name '$storageName' is available."
@@ -116,7 +116,7 @@ try {
     $storageConnStr = az storage account show-connection-string `
         --name $storageName `
         --resource-group $ResourceGroup `
-        --query connectionString -o tsv
+        --query connectionString --output tsv
     Assert-AzSuccess "Failed to get storage connection string"
     if ([string]::IsNullOrWhiteSpace($storageConnStr)) {
         throw "Storage connection string is empty. Storage account '$storageName' may not be ready."
@@ -125,7 +125,7 @@ try {
     $staticWebUrl = az storage account show `
         --name $storageName `
         --resource-group $ResourceGroup `
-        --query "primaryEndpoints.web" -o tsv
+        --query "primaryEndpoints.web" --output tsv
     Assert-AzSuccess "Failed to get static website URL"
     if ([string]::IsNullOrWhiteSpace($staticWebUrl)) {
         throw "Static website URL is empty. Static website hosting may not be enabled."
@@ -147,7 +147,7 @@ try {
     $wpsConnStr = az webpubsub key show `
         --name $webPubSubName `
         --resource-group $ResourceGroup `
-        --query primaryConnectionString -o tsv
+        --query primaryConnectionString --output tsv
     Assert-AzSuccess "Failed to get Web PubSub connection string"
     if ([string]::IsNullOrWhiteSpace($wpsConnStr)) {
         throw "Web PubSub connection string is empty."
@@ -304,34 +304,35 @@ try {
     $configPath = Join-Path $clientDir "config.json"
     Set-Content -Path $configPath -Value $configJson -Encoding UTF8
 
-    # Get storage key for upload (avoid --connection-string which has semicolons
-    # that cmd.exe on Windows misinterprets as command separators)
-    $storageKey = az storage account keys list `
+    # Use environment variables for storage auth to avoid cmd.exe mangling
+    # special characters (semicolons, +, /, =) in connection strings and keys
+    $env:AZURE_STORAGE_ACCOUNT = $storageName
+    $env:AZURE_STORAGE_KEY = (az storage account keys list `
         --account-name $storageName `
         --resource-group $ResourceGroup `
-        --query "[0].value" --output tsv
+        --query "[0].value" --output tsv)
     Assert-AzSuccess "Failed to get storage key for upload"
 
     az storage blob upload-batch `
         --source $clientDir `
         --destination '$web' `
-        --account-name $storageName `
-        --account-key $storageKey `
         --overwrite `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to upload client files to static website"
 
     # Verify files were actually uploaded (upload-batch can exit 0 with 0 files)
-    $blobCount = az storage blob list `
+    $blobCount = (az storage blob list `
         --container-name '$web' `
-        --account-name $storageName `
-        --account-key $storageKey `
-        --query "length(@)" --output tsv
+        --query "length(@)" --output tsv)
     Assert-AzSuccess "Failed to verify uploaded files"
     if ([int]$blobCount -lt 1) {
         throw "Upload verification failed: 0 files found in '`$web' container."
     }
     Write-Info "Verified: $blobCount file(s) in '`$web' container."
+
+    # Clean up storage env vars
+    $env:AZURE_STORAGE_ACCOUNT = $null
+    $env:AZURE_STORAGE_KEY = $null
 
     # Clean up generated config.json from source
     Remove-Item $configPath -Force -ErrorAction SilentlyContinue
@@ -345,7 +346,7 @@ try {
     $wpsHostName = az webpubsub show `
         --name $webPubSubName `
         --resource-group $ResourceGroup `
-        --query "hostName" -o tsv
+        --query "hostName" --output tsv
     Assert-AzSuccess "Failed to get Web PubSub hostname"
     if ([string]::IsNullOrWhiteSpace($wpsHostName)) {
         throw "Web PubSub hostname is empty."
