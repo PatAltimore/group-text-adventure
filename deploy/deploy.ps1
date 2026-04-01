@@ -181,6 +181,7 @@ try {
             "WEBSITE_NODE_DEFAULT_VERSION=~20" `
             "WEBSITE_RUN_FROM_PACKAGE=1" `
             "SCM_DO_BUILD_DURING_DEPLOYMENT=false" `
+            "AzureWebJobsFeatureFlags=EnableWorkerIndexing" `
         --only-show-errors | Out-Null
     Assert-AzSuccess "Failed to configure app settings"
     Write-Done "App settings configured."

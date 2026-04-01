@@ -192,6 +192,7 @@ az functionapp config appsettings set \
         "WEBSITE_NODE_DEFAULT_VERSION=~20" \
         "WEBSITE_RUN_FROM_PACKAGE=1" \
         "SCM_DO_BUILD_DURING_DEPLOYMENT=false" \
+        "AzureWebJobsFeatureFlags=EnableWorkerIndexing" \
     --only-show-errors > /dev/null
 done_ "App settings configured."
 
