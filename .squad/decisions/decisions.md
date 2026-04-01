@@ -116,3 +116,28 @@ Join URLs showed same confusing screen as landing page with mixed host/join CTAs
 - **New function:** `initJoin()` for dedicated join screen
 - Improved UX for QR code and shared link flows
 - All tests pass, cleaner code organization
+
+---
+
+## 6. Resource Group Must Be First Provisioning Step
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Decision
+
+Reordered deploy scripts (`deploy.ps1` and `deploy.sh`) so resource group creation runs before any command that references the resource group (specifically the storage account existence check).
+
+### Problem Resolved
+
+Fresh deploys failed with `ResourceGroupNotFound` because the idempotency check added for storage accounts used `az storage account show --resource-group $RG` before the resource group existed.
+
+### Rule
+
+Any `az` command with `--resource-group` requires the RG to exist. Resource group creation (`az group create`) is idempotent and must always be the first provisioning step in deploy scripts.
+
+### Impact
+
+- Modified: `deploy/deploy.ps1`, `deploy/deploy.sh`
+- No application code changes; all 111 tests pass
