@@ -44,3 +44,15 @@
 - **Key file paths:** `deploy/deploy.ps1`, `deploy/deploy.sh`, `deploy/README.md`.
 - **All tiers are cheapest:** Storage Standard_LRS, Web PubSub Free_F1, Functions Consumption plan on Linux. Estimated cost ~$0/month.
 - **Web PubSub event handler config:** Uses `webpubsub_extension` system key (falls back to master key). Script retries up to 12 times waiting for cold start to generate the key.
+
+### 2026-03-31 — Three deployment bugs fixed
+
+**Bug 1 — Negotiate 404:** Deploy scripts were missing `WEBSITE_RUN_FROM_PACKAGE=1` and `SCM_DO_BUILD_DURING_DEPLOYMENT=false`. Without `WEBSITE_RUN_FROM_PACKAGE=1`, Linux Consumption zip deployment doesn't mount the zip correctly, so functions return 404. Both `deploy.ps1` and `deploy.sh` updated.
+
+**Bug 2 — WebSocket protocol (critical):** Client `sendMessage` was using `sendToGroup` envelope, which sends messages directly to other clients — the server never receives them. Changed to `type: 'event', event: 'message'` which routes messages to the server's `gameHubMessage` handler. This is a fundamental Web PubSub protocol distinction: `sendToGroup` = client-to-client, `event` = client-to-server.
+
+**Bug 3 — QR code CDN 404:** The `qrcode` npm package v1.5.4 doesn't include the `build/` directory in its published files (despite listing it in package.json `files` array). The `build/qrcode.min.js` path 404s. Downgraded to v1.4.4 which has the UMD browser build. Also added `.catch()` error handling on `QRCode.toCanvas()` promise.
+
+- **Key learning — Web PubSub subprotocol:** With `json.webpubsub.azure.v1`, `sendToGroup` bypasses server entirely. Must use `type: 'event'` to reach server-side handlers.
+- **Key learning — Linux Consumption deploy:** Always set `WEBSITE_RUN_FROM_PACKAGE=1` for zip deploy on Linux Consumption plan.
+- **Key learning — qrcode npm package:** v1.5.4 is broken for browser CDN use. v1.4.4 works. The browser UMD build lives at `build/qrcode.min.js`.

@@ -39,3 +39,11 @@
 - Client falls back to relative paths for local dev
 - Config file is gitignored and never committed
 - Deployment architecture uses single Storage Account (Table Storage + static website hosting)
+
+### 2026-04-01 — Deploy Bugfix: Client Protocol + QR Code
+
+**From Mouth (Backend):**
+- **Client message protocol:** Changed from `sendToGroup` to `event` type messages. Server was expecting `event` type, not `sendToGroup` envelope.
+- **QR code CDN:** Downgraded from v1.5.4 to v1.4.4 with error handling (v1.5.4 had JS errors in some browsers)
+- **Deploy scripts:** Added `WEBSITE_RUN_FROM_PACKAGE=1` env var to Linux zip deployment
+- All 111 tests pass post-fix
