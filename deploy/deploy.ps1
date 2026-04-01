@@ -58,7 +58,16 @@ Write-Host " Location:        $Location"
 Write-Host ""
 
 try {
-    # ── 0. Pre-flight: Check if storage account exists or is available ───
+    # ── 0. Resource Group ──────────────────────────────────────────────
+    Write-Step "Creating resource group '$ResourceGroup' in '$Location'..."
+    az group create `
+        --name $ResourceGroup `
+        --location $Location `
+        --only-show-errors | Out-Null
+    Assert-AzSuccess "Failed to create resource group '$ResourceGroup'"
+    Write-Done "Resource group ready."
+
+    # ── 1. Pre-flight: Check if storage account exists or is available ───
     Write-Step "Checking storage account '$storageName'..."
     $existingAccount = az storage account show --name $storageName --resource-group $ResourceGroup --query "name" -o tsv 2>$null
     if ($existingAccount) {
@@ -73,15 +82,6 @@ try {
         }
         Write-Done "Storage account name '$storageName' is available."
     }
-
-    # ── 1. Resource Group ──────────────────────────────────────────────
-    Write-Step "Creating resource group '$ResourceGroup' in '$Location'..."
-    az group create `
-        --name $ResourceGroup `
-        --location $Location `
-        --only-show-errors | Out-Null
-    Assert-AzSuccess "Failed to create resource group '$ResourceGroup'"
-    Write-Done "Resource group ready."
 
     # ── 2. Storage Account ─────────────────────────────────────────────
     Write-Step "Creating storage account '$storageName'..."

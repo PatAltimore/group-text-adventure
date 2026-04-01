@@ -81,7 +81,15 @@ echo " Web PubSub:      $WPS_NAME"
 echo " Location:        $LOCATION"
 echo ""
 
-# ── 0. Pre-flight: Check if storage account exists or is available ───
+# ── 0. Resource Group ──────────────────────────────────────────────────
+step "Creating resource group '$RESOURCE_GROUP' in '$LOCATION'..."
+az group create \
+    --name "$RESOURCE_GROUP" \
+    --location "$LOCATION" \
+    --only-show-errors > /dev/null
+done_ "Resource group ready."
+
+# ── 1. Pre-flight: Check if storage account exists or is available ───
 step "Checking storage account '$STORAGE_NAME'..."
 EXISTING_ACCOUNT=$(az storage account show --name "$STORAGE_NAME" --resource-group "$RESOURCE_GROUP" --query "name" -o tsv 2>/dev/null || echo "")
 if [[ -n "$EXISTING_ACCOUNT" ]]; then
@@ -96,14 +104,6 @@ else
     fi
     done_ "Storage account name '$STORAGE_NAME' is available."
 fi
-
-# ── 1. Resource Group ──────────────────────────────────────────────────
-step "Creating resource group '$RESOURCE_GROUP' in '$LOCATION'..."
-az group create \
-    --name "$RESOURCE_GROUP" \
-    --location "$LOCATION" \
-    --only-show-errors > /dev/null
-done_ "Resource group ready."
 
 # ── 2. Storage Account ─────────────────────────────────────────────────
 step "Creating storage account '$STORAGE_NAME'..."

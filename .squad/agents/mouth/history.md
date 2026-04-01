@@ -100,3 +100,10 @@
 - **Auto-focus behavior:** Join screen auto-focuses name input, landing screen auto-focuses name input, game screen auto-focuses command input
 - **Join message includes gameId:** All join messages now send `{ type: 'join', playerName, gameId }` (coordinated with Mouth's backend fix)
 
+### 2026-04-01 — Deploy script ordering fix (resource group before storage check)
+
+- **Problem:** Fresh deploys failed with `ResourceGroupNotFound` because the idempotency check (`az storage account show --resource-group ...`) ran BEFORE the resource group was created. Step 0 (storage check) depended on step 1 (resource group creation).
+- **Fix:** Swapped the order in both `deploy/deploy.ps1` and `deploy/deploy.sh` — resource group creation is now step 0, storage account check is step 1. `az group create` is idempotent so safe to always run first.
+- **Key learning — dependency ordering:** Any `az` command that references `--resource-group` requires the RG to exist. Resource group creation must always be the first provisioning step.
+- **All 111 tests still pass.**
+
