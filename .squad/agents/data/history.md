@@ -47,3 +47,20 @@
 - **QR code CDN:** Downgraded from v1.5.4 to v1.4.4 with error handling (v1.5.4 had JS errors in some browsers)
 - **Deploy scripts:** Added `WEBSITE_RUN_FROM_PACKAGE=1` env var to Linux zip deployment
 - All 111 tests pass post-fix
+
+### 2026-04-01 — Join UX Redesign: Dedicated Join Screen
+
+**From Data (Frontend):**
+- **New join screen:** Created dedicated `screen-join` that shows when URL has `?game=XXX` parameter
+- **Screen routing logic:** Modified `initLanding()` to detect URL params and call `initJoin()` when game code is present
+- **Join screen features:**
+  - Displays game code prominently (read-only, so players know which game they're joining)
+  - Single name input with auto-focus for mobile-first experience
+  - Large primary "Join Game →" button (obvious action)
+  - Small "Or host a new game" link at bottom (navigates to base URL)
+- **Landing screen unchanged when no game param:** Host experience remains the same
+- **Files modified:** `client/index.html`, `client/style.css`, `client/app.js`
+- **Mobile-first:** Join screen optimized for QR code scanning (responsive styles for small screens)
+- **Auto-focus behavior:** Join screen auto-focuses name input, landing screen auto-focuses name input, game screen auto-focuses command input
+- **Join message includes gameId:** All join messages now send `{ type: 'join', playerName, gameId }` (coordinated with Mouth's backend fix)
+

@@ -64,3 +64,22 @@
 - **Fix (deploy.sh):** Already had `set -euo pipefail` for exit-code propagation. Added null/empty checks for captured variables (`STORAGE_CONN_STR`, `STATIC_WEB_URL`, `WPS_CONN_STR`, `WPS_HOSTNAME`). Added same pre-flight storage name check. Removed `|| true` from CORS add (should succeed).
 - **Intentionally suppressed commands:** CORS remove (`2>$null`/`|| true`) and hub delete (`2>$null`/`|| true`) — these may legitimately fail if resources don't exist yet.
 - **Key learning — PowerShell native commands:** `$ErrorActionPreference = 'Stop'` only affects cmdlets, not native executables. Must check `$LASTEXITCODE` after every `az`/`npm`/etc. call, or use `$PSNativeCommandUseErrorActionPreference = $true` (PowerShell 7.3+).
+
+### 2026-04-01 — Critical fix: Missing gameId in join + deploy idempotency
+
+**Bug 1 (CRITICAL) — gameId not sent in join message:**
+- **Problem:** `client/app.js` line 122 sent `{ type: 'join', playerName: state.playerName }` without `gameId`. Server's `handleJoin` defaulted missing gameId to 'default', so EVERY player joined game 'default' regardless of URL. WebSocket connected to correct PubSub group (via negotiate), but server created/loaded sessions under wrong game ID → data mismatch causing negotiate 404 on subsequent plays.
+- **Fix:** Changed join message to include `gameId: state.gameId` so server loads the correct game session matching the PubSub group.
+
+**Bug 2 — Deploy scripts not idempotent:**
+- **Problem:** `az storage account check-name` returns `nameAvailable=false` even for YOUR OWN storage accounts. Re-running deploy always failed at pre-flight check despite claiming to be "safe to run multiple times (idempotent)".
+- **Fix (deploy.ps1 & deploy.sh):** Check if storage account already exists in resource group with `az storage account show` BEFORE checking name availability. If it exists, reuse it. If it doesn't exist, THEN check name availability before creating. This makes re-deploys work correctly.
+
+**Bug 3 — Better negotiate error messages:**
+- **Fix:** Added logging in `loadConfig()` to show whether config.json loaded successfully and what apiBaseUrl is being used. Added the full negotiate URL to the error message when negotiate returns 404, so debugging is easier.
+
+**Impact:**
+- Modified: `client/app.js`, `deploy/deploy.ps1`, `deploy/deploy.sh`
+- All 111 tests still pass
+- **Key file paths:** `client/app.js` (lines 9-19, 110-122), `deploy/deploy.ps1` (lines 60-77), `deploy/deploy.sh` (lines 84-98)
+

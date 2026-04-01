@@ -58,15 +58,21 @@ Write-Host " Location:        $Location"
 Write-Host ""
 
 try {
-    # ── 0. Pre-flight: Validate storage account name ───────────────────
-    Write-Step "Checking storage account name availability..."
-    $nameCheck = az storage account check-name --name $storageName --query "nameAvailable" -o tsv
-    Assert-AzSuccess "Failed to check storage account name availability"
-    if ($nameCheck -ne "true") {
-        $nameReason = az storage account check-name --name $storageName --query "reason" -o tsv 2>$null
-        throw "Storage account name '$storageName' is not available (reason: $nameReason). Try a different AppName."
+    # ── 0. Pre-flight: Check if storage account exists or is available ───
+    Write-Step "Checking storage account '$storageName'..."
+    $existingAccount = az storage account show --name $storageName --resource-group $ResourceGroup --query "name" -o tsv 2>$null
+    if ($existingAccount) {
+        Write-Done "Storage account '$storageName' already exists — reusing."
+    } else {
+        # Storage account doesn't exist — check if name is available
+        $nameCheck = az storage account check-name --name $storageName --query "nameAvailable" -o tsv
+        Assert-AzSuccess "Failed to check storage account name availability"
+        if ($nameCheck -ne "true") {
+            $nameReason = az storage account check-name --name $storageName --query "reason" -o tsv 2>$null
+            throw "Storage account name '$storageName' is not available (reason: $nameReason). Try a different AppName."
+        }
+        Write-Done "Storage account name '$storageName' is available."
     }
-    Write-Done "Storage account name '$storageName' is available."
 
     # ── 1. Resource Group ──────────────────────────────────────────────
     Write-Step "Creating resource group '$ResourceGroup' in '$Location'..."

@@ -81,15 +81,21 @@ echo " Web PubSub:      $WPS_NAME"
 echo " Location:        $LOCATION"
 echo ""
 
-# ── 0. Pre-flight: Validate storage account name ──────────────────────
-step "Checking storage account name availability..."
-NAME_CHECK=$(az storage account check-name --name "$STORAGE_NAME" --query "nameAvailable" -o tsv)
-if [[ "$NAME_CHECK" != "true" ]]; then
-    NAME_REASON=$(az storage account check-name --name "$STORAGE_NAME" --query "reason" -o tsv 2>/dev/null || echo "unknown")
-    echo "Error: Storage account name '$STORAGE_NAME' is not available (reason: $NAME_REASON). Try a different --app-name."
-    exit 1
+# ── 0. Pre-flight: Check if storage account exists or is available ───
+step "Checking storage account '$STORAGE_NAME'..."
+EXISTING_ACCOUNT=$(az storage account show --name "$STORAGE_NAME" --resource-group "$RESOURCE_GROUP" --query "name" -o tsv 2>/dev/null || echo "")
+if [[ -n "$EXISTING_ACCOUNT" ]]; then
+    done_ "Storage account '$STORAGE_NAME' already exists — reusing."
+else
+    # Storage account doesn't exist — check if name is available
+    NAME_CHECK=$(az storage account check-name --name "$STORAGE_NAME" --query "nameAvailable" -o tsv)
+    if [[ "$NAME_CHECK" != "true" ]]; then
+        NAME_REASON=$(az storage account check-name --name "$STORAGE_NAME" --query "reason" -o tsv 2>/dev/null || echo "unknown")
+        echo "Error: Storage account name '$STORAGE_NAME' is not available (reason: $NAME_REASON). Try a different --app-name."
+        exit 1
+    fi
+    done_ "Storage account name '$STORAGE_NAME' is available."
 fi
-done_ "Storage account name '$STORAGE_NAME' is available."
 
 # ── 1. Resource Group ──────────────────────────────────────────────────
 step "Creating resource group '$RESOURCE_GROUP' in '$LOCATION'..."

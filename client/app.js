@@ -12,9 +12,12 @@
       if (res.ok) {
         const config = await res.json();
         apiBaseUrl = (config.apiBaseUrl || '').replace(/\/+$/, '');
+        console.log('[Config] Loaded config.json, API base URL:', apiBaseUrl || '(relative)');
+      } else {
+        console.log('[Config] config.json not found (status:', res.status, '), using relative paths');
       }
-    } catch {
-      // config.json not found — use relative paths (local development)
+    } catch (err) {
+      console.log('[Config] config.json fetch failed:', err.message, '— using relative paths (local development)');
     }
   }
 
@@ -33,23 +36,34 @@
   // --- DOM References ---
   const $ = (sel) => document.querySelector(sel);
   const screens = {
+    join: $('#screen-join'),
     landing: $('#screen-landing'),
     lobby: $('#screen-lobby'),
     game: $('#screen-game'),
   };
   const els = {
+    // Join screen
+    joinPlayerName: $('#join-player-name'),
+    joinDisplayCode: $('#join-display-code'),
+    btnJoinStart: $('#btn-join-start'),
+    
+    // Landing screen
     playerName: $('#player-name'),
     btnHost: $('#btn-host'),
     btnJoin: $('#btn-join'),
     joinCodeGroup: $('#join-code-group'),
     joinCode: $('#join-code'),
     btnJoinGo: $('#btn-join-go'),
+    
+    // Lobby screen
     lobbyUrl: $('#lobby-url'),
     btnCopyUrl: $('#btn-copy-url'),
     qrCanvas: $('#qr-canvas'),
     lobbyPlayerCount: $('#lobby-player-count'),
     lobbyPlayerList: $('#lobby-player-list'),
     btnStartGame: $('#btn-start-game'),
+    
+    // Game screen
     gameTitle: $('#game-title'),
     gamePlayerCount: $('#game-player-count'),
     gameOutput: $('#game-output'),
@@ -63,6 +77,10 @@
     screens[name].classList.add('active');
     if (name === 'game') {
       els.commandInput.focus();
+    } else if (name === 'join') {
+      els.joinPlayerName.focus();
+    } else if (name === 'landing') {
+      els.playerName.focus();
     }
   }
 
@@ -109,8 +127,9 @@
   // --- WebSocket ---
   async function connectWebSocket(gameId) {
     try {
-      const res = await fetch(`${apiBaseUrl}/api/negotiate?gameId=${encodeURIComponent(gameId)}`);
-      if (!res.ok) throw new Error(`Negotiate failed: ${res.status}`);
+      const negotiateUrl = `${apiBaseUrl}/api/negotiate?gameId=${encodeURIComponent(gameId)}`;
+      const res = await fetch(negotiateUrl);
+      if (!res.ok) throw new Error(`Negotiate failed: ${res.status} when calling ${negotiateUrl}`);
       const data = await res.json();
       const wsUrl = data.url;
 
@@ -119,7 +138,7 @@
 
       ws.addEventListener('open', () => {
         state.connected = true;
-        sendMessage({ type: 'join', playerName: state.playerName });
+        sendMessage({ type: 'join', playerName: state.playerName, gameId: state.gameId });
       });
 
       ws.addEventListener('message', (event) => {
@@ -388,9 +407,48 @@
     els.lobbyPlayerCount.textContent = state.players.length;
   }
 
+  // --- Join Screen Logic ---
+  function initJoin() {
+    const urlGameId = getGameIdFromUrl();
+    
+    // Display the game code
+    els.joinDisplayCode.textContent = urlGameId;
+    state.gameId = urlGameId;
+    
+    // Enable button when name is entered
+    els.joinPlayerName.addEventListener('input', () => {
+      const hasName = els.joinPlayerName.value.trim().length > 0;
+      els.btnJoinStart.disabled = !hasName;
+    });
+    
+    // Handle Enter key in name input
+    els.joinPlayerName.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && els.joinPlayerName.value.trim()) {
+        e.preventDefault();
+        els.btnJoinStart.click();
+      }
+    });
+    
+    // Join button
+    els.btnJoinStart.addEventListener('click', () => {
+      state.playerName = els.joinPlayerName.value.trim();
+      state.isHost = false;
+      startJoin();
+    });
+    
+    // Show join screen and focus name input
+    showScreen('join');
+  }
+
   // --- Landing Screen Logic ---
   function initLanding() {
     const urlGameId = getGameIdFromUrl();
+    
+    // If URL has game code, show join screen instead
+    if (urlGameId) {
+      initJoin();
+      return;
+    }
 
     // Enable/disable buttons based on name input
     els.playerName.addEventListener('input', () => {
@@ -429,14 +487,8 @@
       startJoin();
     });
 
-    // If URL has game code, pre-fill and show join UI
-    if (urlGameId) {
-      els.joinCode.value = urlGameId;
-      els.joinCodeGroup.classList.remove('hidden');
-      els.playerName.focus();
-    } else {
-      els.playerName.focus();
-    }
+    // Focus on name input
+    els.playerName.focus();
   }
 
   function generateGameId() {

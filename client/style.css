@@ -117,6 +117,92 @@ html, body {
   font-size: 16px;
 }
 
+/* ===== Join Screen ===== */
+#screen-join {
+  align-items: center;
+  justify-content: center;
+}
+
+.join-container {
+  text-align: center;
+  max-width: 400px;
+  padding: 24px;
+  width: 100%;
+}
+
+.join-title {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+}
+
+.join-subtitle {
+  color: var(--text-dim);
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.join-game-code {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.join-label {
+  display: block;
+  color: var(--text-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.join-code-display {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.join-form input[type="text"] {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-family: var(--font-mono);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.join-form input[type="text"]:focus {
+  border-color: var(--accent);
+}
+
+.join-host-link {
+  display: block;
+  color: var(--text-dim);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.15s;
+  margin-top: 8px;
+}
+
+.join-host-link:hover {
+  color: var(--accent);
+}
+
 /* ===== Landing Screen ===== */
 #screen-landing {
   align-items: center;
@@ -521,6 +607,14 @@ html, body {
 
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
+  .join-title {
+    font-size: 1.5rem;
+  }
+
+  .join-code-display {
+    font-size: 24px;
+  }
+
   .landing-title {
     font-size: 1.5rem;
   }
