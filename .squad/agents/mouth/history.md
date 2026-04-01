@@ -34,3 +34,13 @@
 - Root `package.json` configured with Jest ESM support
 - Test fixture: `tests/test-world.json`
 - Run tests: `npm test`
+
+### 2026-03-31 — Azure deployment scripts created
+
+- **Deploy scripts:** `deploy/deploy.ps1` (PowerShell) and `deploy/deploy.sh` (Bash) provision all Azure resources and deploy the app in one command.
+- **Architecture for deploy:** Storage Account serves dual purpose — Table Storage for game state AND static website hosting for client files. Keeps resource count minimal.
+- **World file path fix:** `gameHub.js getDefaultWorld()` now tries two paths — deployed (world/ alongside api code at wwwroot level) and local dev (project root). The deploy script copies `world/` into the function app zip.
+- **Client config pattern:** `client/app.js` loads `config.json` on init for the Function App URL. Falls back to relative `/api` path when config is absent (local dev). The deploy script generates `config.json` at upload time — never committed to source.
+- **Key file paths:** `deploy/deploy.ps1`, `deploy/deploy.sh`, `deploy/README.md`.
+- **All tiers are cheapest:** Storage Standard_LRS, Web PubSub Free_F1, Functions Consumption plan on Linux. Estimated cost ~$0/month.
+- **Web PubSub event handler config:** Uses `webpubsub_extension` system key (falls back to master key). Script retries up to 12 times waiting for cold start to generate the key.

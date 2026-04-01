@@ -31,3 +31,11 @@
 - 111 tests (all passing) cover game engine and command parser
 - Run tests with `npm test` from project root
 - ESM modules required (`import`/`export`)
+
+### 2026-03-31 — Azure Deployment Pipeline
+
+**From Mouth (Backend):**
+- `client/app.js` updated to load API endpoint from `config.json` (auto-generated at deploy time)
+- Client falls back to relative paths for local dev
+- Config file is gitignored and never committed
+- Deployment architecture uses single Storage Account (Table Storage + static website hosting)
