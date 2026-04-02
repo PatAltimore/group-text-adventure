@@ -242,3 +242,23 @@
 - **Outcome:** 111 tests pass. Code committed and pushed.
 - **Coordination:** Team consensus that defensive redundancy (re-enable, explicit auth, specific verification) is the right pattern for mission-critical cloud deployments where silent failures are common.
 
+### 2026-04-02 — Fix: Negotiate 404 root cause — silent npm install failures
+
+- **Problem:** Recurring negotiate 404 across multiple sessions. All previous fixes (explicit entry point, EnableWorkerIndexing, ARM REST API for settings, @azure/functions upgrade) were correct for their specific issues but the 404 kept recurring.
+- **Root cause:** Both deploy scripts (`deploy.ps1` and `deploy.sh`) piped `npm install --omit=dev` output to `/dev/null` (or `Out-Null`) with NO exit code check. If npm install failed (network issue, registry timeout, disk space), the deployment zip was created WITHOUT `node_modules`. The Azure Functions worker couldn't load `@azure/functions`, crashed on startup, and returned 404 on ALL routes. This failure was completely invisible.
+- **Fix 1 — npm install error check:** Both scripts now capture npm output, check exit code, and abort with a clear error message on failure.
+- **Fix 2 — Staging verification:** Before creating the zip, both scripts verify 6 required files exist: `package.json`, `host.json`, `src/index.js`, `negotiate.js`, `gameHub.js`, and `node_modules/@azure/functions/package.json`. If any is missing, deployment aborts.
+- **Fix 3 — Post-deploy settings verification:** `deploy.ps1` now verifies ALL critical settings (not just EnableWorkerIndexing) via ARM REST API after zip deploy. Checks for setting drift on `WEBSITE_RUN_FROM_PACKAGE`, `FUNCTIONS_WORKER_RUNTIME`, `FUNCTIONS_EXTENSION_VERSION`. Re-applies via file-based PUT if drifted. `deploy.sh` re-applies critical settings post-deploy.
+- **Fix 4 — Full stop+start:** Replaced `az functionapp restart` with `stop` + 5s pause + `start`. Full stop/start is more thorough than restart for clearing cached state on Linux Consumption.
+- **Fix 5 — Explicit host.json routePrefix:** Added `"extensions": { "http": { "routePrefix": "api" } }` to `host.json`. Removes dependency on implicit default.
+- **Key learning — silent npm failures:** NEVER pipe npm output to null without checking the exit code. `npm install` can fail for many reasons (network, registry, version resolution, disk space). Without an exit code check, the failure is completely invisible and leads to broken deployments.
+- **Key learning — defense in depth for packaging:** Verify the CONTENT of the staging directory before zipping, not just that npm ran. The zip is the artifact that gets deployed — its contents must be validated.
+- **Key file paths:** `api/host.json`, `deploy/deploy.ps1` (steps 8, post-deploy), `deploy/deploy.sh` (steps 8, post-deploy)
+- **All 111 tests still pass. Committed and pushed.**
+- **Requires redeployment** to take effect: `cd deploy && .\deploy.ps1 -AppName patcastle`
+
+### 2026-04-02 — Negotiate 404 debug session logged- **Orchestration log:** `.squad/orchestration-log/2026-04-02T0020-mouth.md` — Agent work output, root cause analysis, fixes applied, test results
+- **Session log:** `.squad/log/2026-04-02T0020-negotiate-404-fix.md` — Brief summary of debug session
+- **Decision merged:** `.squad/decisions.md` — "Deploy Scripts Must Validate Packaging Before Deployment" decision from inbox merged with convention going forward
+- **Status:** 111 tests passing, committed and pushed
+

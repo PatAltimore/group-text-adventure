@@ -194,6 +194,26 @@ The fix (commit `0334f01`) already applied to `deploy.ps1`:
 
 All Azure Storage CLI commands in deploy scripts should use `--connection-string` (not `--account-name`), and batch uploads should verify file count afterward. Both `deploy.ps1` and `deploy.sh` now follow this pattern.
 
+### Decision: Deploy Scripts Must Validate Packaging Before Deployment
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-02  
+
+#### What
+
+Added mandatory npm install error checking and staging directory verification to both deploy scripts. Deploy now aborts if npm install fails or if required files are missing from the deployment package.
+
+#### Why
+
+The recurring negotiate 404 was caused by silent npm install failures. Both scripts piped npm output to null with no exit code check. When npm failed, the zip was deployed without `node_modules`, the Azure Functions worker crashed on startup, and ALL endpoints returned 404. This was completely invisible.
+
+#### Convention Going Forward
+
+1. **NEVER pipe npm/pip/go output to null without checking the exit code.** Build tool failures must be loud and fatal.
+2. **Verify deployment artifacts before deploying.** Check that key files exist in the staging directory before creating the zip. At minimum: entry point, function files, and critical npm packages.
+3. **After zip deploy, verify app settings haven't drifted.** Zip deployment on Azure can reset settings. Always re-check and re-apply critical settings.
+4. **Use full stop+start, not restart,** after deploying to Linux Consumption function apps.
+
 ## Governance
 
 - All meaningful changes require team consensus
