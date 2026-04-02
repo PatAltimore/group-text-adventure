@@ -224,6 +224,30 @@
   1. **Explicit auth for ALL storage commands** — Added `--account-name` and `--account-key` to static website enable, upload-batch, blob list, and service-properties show. Base64 account keys pass safely through `az.cmd` (`%*` preserves trailing `==`, verified empirically).
   2. **Defensive re-enable in step 10** — Re-enable static website hosting immediately before the upload, not just in step 3.
   3. **Post-enable and post-upload verification** — After enabling in step 3, read back status and confirm `enabled=true`. After upload in step 10, verify static website is still enabled AND `index.html` specifically exists. If disabled, automatically re-enable.
+  4. **End-to-end health check** — The deploy script now actually GETs the static website URL and reports HTTP status. If 404, dumps service properties, blob list, and connection string for manual investigation.
+- **Key learning — Azure Storage data plane auth:** `az storage blob` commands (upload-batch, list, delete) require explicit auth credentials — never rely on `AZURE_STORAGE_*` env vars alone. Use `--account-name` + `--account-key` or `--connection-string`.
+- **Key learning — Defensive resource enable:** When a later step depends on a capability being enabled, re-enable it defensively right before that step, not just early in the script. The cost is one extra API call; the benefit is resilience.
+- **All 111 tests still pass. Committed and pushed.**
+
+### 2026-04-02 — Added Health Endpoint & Post-Deploy Verification
+
+- **Problem:** Deploy script was checking negotiate endpoint to verify deployment success, but negotiate has dependencies (Web PubSub connection string, game session state). A healthier primary check would be independent and return diagnostic state.
+- **Solution:** Created `/api/health` endpoint that returns:
+  - `{ ok: true, nodeVersion: "20.x.x", settings: { ... }, functionsLoaded: [ ... ] }`
+  - No external dependencies — checks only runtime state and app settings
+  - Separates "is runtime alive?" from "is app configured?"
+- **Deploy verification (new flow):**
+  - **Primary:** Poll `/api/health` with 10 retries × 15s (2.5min max) — handles Azure cold starts gracefully
+  - **Mid-way:** Restart function app on retry 5 (attempt to clear cold-start state)
+  - **Secondary:** Fallback to negotiate endpoint as confirmation
+  - **Failure mode:** Print warnings + diagnostic steps but don't block deployment
+- **Files:**
+  - Created: `api/src/functions/health.js`
+  - Modified: `api/src/index.js` (import health), `deploy/deploy.ps1` (health polling)
+- **Convention going forward:**
+  - New Azure Functions → add to both `index.js` import AND `health.js` `functionsLoaded` array
+  - New required app settings → add check in health endpoint
+- **All 111 tests pass. Committed and pushed.**
   4. **End-to-end health check** — After deployment, HTTP-request the static website URL (3 retries, 10s apart). If 404 persists, display full diagnostics: static website config, blob names, actionable next steps.
 - **Key learning — explicit auth beats env vars on Windows:** `--account-name` + `--account-key` is more reliable across Azure CLI versions than env vars alone.
 - **Key learning — verify critical state at point of use:** Don't trust that state set in step 3 survives to step 10. Re-enable immediately before the operation that depends on it.
@@ -270,4 +294,15 @@
 - **Tests:** All 111 tests pass
 - **Learning:** Join-Path in Windows PowerShell 5.1 only accepts 2 positional parameters. Always nest calls for cross-version compatibility.
 - **Committed and pushed.**
+
+### 2026-04-02 — Health endpoint + post-deploy verification
+
+- **Problem:** Deploy script had no way to verify the Azure Functions runtime loaded functions correctly. After zip deploy, the only check was calling `/api/negotiate` and hoping for a non-404, with no insight into WHY it failed.
+- **Solution (3 changes):**
+  1. **New health endpoint** (`api/src/functions/health.js`): Anonymous GET at `/api/health` returns JSON with runtime status, Node.js version, loaded function list, and settings configuration (WebPubSub, Table Storage, EnableWorkerIndexing). Registered in `api/src/index.js`.
+  2. **Staging verification** (`deploy/deploy.ps1`): Added `health.js` to `$requiredFiles` array with nested `Join-Path` for PS 5.1 compatibility.
+  3. **Post-deploy verification** (`deploy/deploy.ps1`): Replaced the old negotiate-only check with a two-step verification: (a) Poll `/api/health` up to 10 times with 15s waits (handles cold start), parse response to show settings status and warn about misconfigurations; (b) Check `/api/negotiate` as secondary verification (expects 400 Missing gameId). Clear diagnostic messages with Azure Portal steps if endpoints fail.
+- **Key learning — health endpoints for serverless:** A dedicated health check that reports configuration state is invaluable for diagnosing deploy issues. It separates "runtime loaded" from "app configured correctly" — two distinct failure modes that both manifest as 404.
+- **Key file paths:** `api/src/functions/health.js` (new), `api/src/index.js` (updated), `deploy/deploy.ps1` (steps 8, post-deploy)
+- **All 111 tests still pass. Committed and pushed.**
 

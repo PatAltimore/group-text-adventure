@@ -318,3 +318,37 @@ Hardened the static website hosting setup in `deploy.ps1` with three layers of d
 - Modified: `deploy/deploy.ps1` (steps 3, 10, 12a)
 - All 111 tests pass
 - Committed and pushed
+
+---
+
+## 12. Health Endpoint for Post-Deploy Verification
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-02  
+**Status:** Implemented
+
+### Decision
+
+Added `/api/health` endpoint and post-deploy verification to deploy script with 10 retries × 15s intervals (2.5min max tolerance for Azure cold starts).
+
+### Key Points
+
+1. **Health endpoint returns configuration state** — Not just "ok" but also which settings are configured, what Node.js version is running, and which functions are loaded. This separates "runtime alive" from "app configured correctly."
+
+2. **Deploy script polls health first, negotiate second** — Health is a better primary check because it's anonymous, has no dependencies (no WebPubSub connection string needed), and returns diagnostic JSON. Negotiate is kept as a secondary check.
+
+3. **10 retries × 15s = 2.5 minutes max wait** — Azure Functions Consumption plan cold starts can take 30-60s. Previous check (6 × 15s) sometimes wasn't enough.
+
+4. **Diagnostic, not blocking** — Verification failures print warnings and diagnostic steps but do NOT fail the deployment. The deployment may still be warming up.
+
+### Convention Going Forward
+
+- When adding new Azure Function files, add them to both `api/src/index.js` (import) AND the `functionsLoaded` array in `health.js`.
+- When adding new required app settings, add a check for them in the health endpoint's `settings` object.
+
+### Impact
+
+- Created: `api/src/functions/health.js`
+- Modified: `api/src/index.js`, `deploy/deploy.ps1`
+- All 111 tests pass
+- Committed and pushed
