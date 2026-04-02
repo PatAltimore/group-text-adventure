@@ -224,7 +224,26 @@ cp -r "$WORLD_DIR" "$STAGE_DIR/world"
 
 # Install production dependencies
 info "Installing production dependencies..."
-(cd "$STAGE_DIR" && npm install --omit=dev --quiet 2>&1 | tail -1)
+(cd "$STAGE_DIR" && npm install --omit=dev 2>&1)
+if [ $? -ne 0 ]; then
+    echo "ERROR: npm install failed in staging directory" >&2
+    exit 1
+fi
+
+# Verify staging directory before packaging
+for required_file in \
+    "$STAGE_DIR/package.json" \
+    "$STAGE_DIR/host.json" \
+    "$STAGE_DIR/src/index.js" \
+    "$STAGE_DIR/src/functions/negotiate.js" \
+    "$STAGE_DIR/src/functions/gameHub.js" \
+    "$STAGE_DIR/node_modules/@azure/functions/package.json"; do
+    if [ ! -f "$required_file" ]; then
+        echo "ERROR: Staging verification failed: missing $required_file" >&2
+        exit 1
+    fi
+done
+info "Staging directory verified (all required files present)."
 
 # Create deployment zip
 (cd "$STAGE_DIR" && zip -qr "$ZIP_PATH" .)
@@ -238,6 +257,25 @@ az functionapp deployment source config-zip \
     --src "$ZIP_PATH" \
     --only-show-errors > /dev/null
 done_ "Function App deployed."
+
+# Re-apply critical settings after zip deploy (zip deploy can reset settings)
+info "Ensuring critical settings are intact after deployment..."
+az functionapp config appsettings set \
+    --name "$FUNCTION_APP_NAME" \
+    --resource-group "$RESOURCE_GROUP" \
+    --settings \
+        "AzureWebJobsFeatureFlags=EnableWorkerIndexing" \
+        "WEBSITE_RUN_FROM_PACKAGE=1" \
+        "FUNCTIONS_WORKER_RUNTIME=node" \
+    --only-show-errors > /dev/null
+
+# Full stop + start (more thorough than restart for clearing cached state)
+info "Stopping Function App..."
+az functionapp stop --name "$FUNCTION_APP_NAME" --resource-group "$RESOURCE_GROUP" --only-show-errors 2>/dev/null || true
+sleep 5
+info "Starting Function App..."
+az functionapp start --name "$FUNCTION_APP_NAME" --resource-group "$RESOURCE_GROUP" --only-show-errors > /dev/null
+sleep 15
 
 # ── 9. Configure Web PubSub Event Handler ──────────────────────────────
 step "Configuring Web PubSub event handler..."

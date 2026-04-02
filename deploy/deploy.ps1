@@ -429,10 +429,30 @@ try {
     Write-Info "Installing production dependencies..."
     Push-Location $stageDir
     try {
-        npm install --omit=dev --quiet 2>&1 | Out-Null
+        $npmOutput = npm install --omit=dev 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Pop-Location
+            throw "npm install failed (exit code $LASTEXITCODE):`n$($npmOutput -join "`n")"
+        }
     } finally {
         Pop-Location
     }
+
+    # Verify staging directory before packaging
+    $requiredFiles = @(
+        (Join-Path $stageDir "package.json"),
+        (Join-Path $stageDir "host.json"),
+        (Join-Path $stageDir "src" "index.js"),
+        (Join-Path $stageDir "src" "functions" "negotiate.js"),
+        (Join-Path $stageDir "src" "functions" "gameHub.js"),
+        (Join-Path $stageDir "node_modules" "@azure" "functions" "package.json")
+    )
+    foreach ($f in $requiredFiles) {
+        if (-not (Test-Path $f)) {
+            throw "Staging verification failed: missing required file '$f'"
+        }
+    }
+    Write-Info "Staging directory verified (all required files present)."
 
     # Create deployment zip
     Compress-Archive -Path "$stageDir\*" -DestinationPath $zipPath -Force
@@ -461,18 +481,53 @@ try {
     }
     Write-Done "Function App deployed."
 
-    # Re-apply EnableWorkerIndexing after zip deploy (zip deploy can reset settings)
-    Write-Info "Ensuring EnableWorkerIndexing is set after deployment..."
-    az functionapp config appsettings set `
-        --name $functionAppName `
-        --resource-group $ResourceGroup `
-        --settings "AzureWebJobsFeatureFlags=EnableWorkerIndexing" `
-        --only-show-errors 2>$null | Out-Null
+    # Re-verify all critical settings after zip deploy (zip deploy can reset settings)
+    Write-Info "Verifying app settings after deployment..."
+    $postDeployRaw = (az rest --method POST `
+        --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
+        --only-show-errors 2>$null)
+    $postDeployProps = ($postDeployRaw -join "`n" | ConvertFrom-Json).properties
 
-    # Restart to ensure the runtime picks up v4 worker indexing with new code
-    Write-Info "Restarting Function App after deployment..."
-    az functionapp restart --name $functionAppName --resource-group $ResourceGroup --only-show-errors 2>$null | Out-Null
-    Start-Sleep -Seconds 10
+    $reapplyNeeded = $false
+    $criticalPostDeploy = @{
+        "AzureWebJobsFeatureFlags"  = "EnableWorkerIndexing"
+        "WEBSITE_RUN_FROM_PACKAGE"  = "1"
+        "FUNCTIONS_WORKER_RUNTIME"  = "node"
+        "FUNCTIONS_EXTENSION_VERSION" = "~4"
+    }
+    foreach ($key in $criticalPostDeploy.Keys) {
+        $actual = $postDeployProps.$key
+        $expected = $criticalPostDeploy[$key]
+        if ($actual -ne $expected) {
+            Write-Info "Post-deploy setting drift: $key='$actual' (expected '$expected')"
+            $reapplyNeeded = $true
+        }
+    }
+    if ($reapplyNeeded) {
+        Write-Info "Re-applying critical settings after deployment..."
+        foreach ($key in $criticalPostDeploy.Keys) {
+            $postDeployProps | Add-Member -MemberType NoteProperty -Name $key -Value $criticalPostDeploy[$key] -Force
+        }
+        $postSettingsFile = Join-Path $PSScriptRoot "_post_deploy_settings.json"
+        $postSettingsJson = @{ properties = $postDeployProps } | ConvertTo-Json -Depth 10
+        [System.IO.File]::WriteAllText($postSettingsFile, $postSettingsJson, [System.Text.UTF8Encoding]::new($false))
+        az rest --method PUT `
+            --url "$armBase/config/appsettings?api-version=2022-03-01" `
+            --body "@$postSettingsFile" `
+            --only-show-errors 2>$null | Out-Null
+        Remove-Item $postSettingsFile -Force -ErrorAction SilentlyContinue
+        Write-Done "Critical settings re-applied."
+    } else {
+        Write-Info "All critical settings intact after deployment."
+    }
+
+    # Full stop + start (more thorough than restart for clearing cached state)
+    Write-Info "Stopping Function App..."
+    az functionapp stop --name $functionAppName --resource-group $ResourceGroup --only-show-errors 2>$null | Out-Null
+    Start-Sleep -Seconds 5
+    Write-Info "Starting Function App..."
+    az functionapp start --name $functionAppName --resource-group $ResourceGroup --only-show-errors 2>$null | Out-Null
+    Start-Sleep -Seconds 15
 
     # -- Post-deploy: Verify functions are registered ----------------------
     Write-Step "Verifying function registration..."
@@ -804,6 +859,8 @@ try {
     if (Test-Path $settingsCleanup) { Remove-Item $settingsCleanup -Force -ErrorAction SilentlyContinue }
     $connCleanup = Join-Path $PSScriptRoot "_conn_setting.json"
     if (Test-Path $connCleanup) { Remove-Item $connCleanup -Force -ErrorAction SilentlyContinue }
+    $postDeployCleanup = Join-Path $PSScriptRoot "_post_deploy_settings.json"
+    if (Test-Path $postDeployCleanup) { Remove-Item $postDeployCleanup -Force -ErrorAction SilentlyContinue }
 
     # Clean up generated config.json if it exists
     $configCleanup = Join-Path $clientDir "config.json"
