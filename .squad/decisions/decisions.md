@@ -284,3 +284,37 @@ For deployment-critical app settings, apply them redundantly at every opportunit
 ### Impact
 
 Deployment configuration only. No application code changes needed.
+
+---
+
+## 11. Deploy Script: Static Website Hosting — Three Defensive Layers
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-01  
+**Status:** Implemented
+
+### Decision
+
+Hardened the static website hosting setup in `deploy.ps1` with three layers of defense against the persistent 404 issue.
+
+### Key Decisions
+
+1. **Explicit auth params on ALL storage commands** — Pass `--account-name` + `--account-key` explicitly instead of relying on env vars alone. This matches the `deploy.sh` approach (which uses `--connection-string` and works reliably) while avoiding semicolons on the Windows command line.
+
+2. **Re-enable static website at point of use** — Static website hosting is now enabled TWICE: once in step 3 (early), once in step 10 (right before upload). Steps 4-9 take many minutes and touch many Azure resources. The defensive re-enable costs nothing (idempotent) and guarantees the hosting is active when files are uploaded.
+
+3. **Verify the specific blob, not just count** — The upload verification now checks that `index.html` specifically exists in the `$web` container (the static website's index document), not just that blob count >= 1.
+
+4. **End-to-end health check** — The deploy script now actually requests the static website URL after deployment and reports the HTTP status. If 404, it dumps full diagnostics (service properties, blob names, next steps) so the root cause is immediately visible.
+
+### Convention Going Forward
+
+- All Azure Storage data plane commands in deploy scripts MUST use explicit `--account-name` + `--account-key` (or `--connection-string` in bash). Don't rely on env vars alone.
+- When enabling a capability that a later step depends on (like static website hosting), re-enable defensively at point of use, not just early in the script.
+- Upload verifications should check for the SPECIFIC files needed (e.g., `index.html`), not just "any file exists."
+
+### Impact
+
+- Modified: `deploy/deploy.ps1` (steps 3, 10, 12a)
+- All 111 tests pass
+- Committed and pushed

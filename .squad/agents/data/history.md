@@ -115,3 +115,14 @@
 - **Coordination with Mouth:** Backend issue diagnosed as version bug in `@azure/functions` v4.5.0. Mouth upgraded to v4.12.0. This resolves the 404 when redeployed.
 - **Decision recorded** in `.squad/decisions.md` documenting the investigation and resolution findings.
 
+### 2026-04-01T23:59:00Z — Final Session: Static Site 404 Debug
+
+**Team Update from Scribe:**
+- **Data:** Verified all client file structure is valid. Relative paths correct. QR code CDN fallback properly configured. WebSocket subprotocol implementation matches spec. Minor suggestion: consider `href="."` → `href="./"` for relative path consistency.
+- **Mouth:** Debugged and fixed 3 compounding issues in deploy.ps1:
+  1. Environment variable auth not guaranteed — switched to explicit `--account-name` + `--account-key` params
+  2. Static website hosting could be disabled during operations — added defensive re-enable at step 10
+  3. Upload verification only checked count >= 1 — now verifies `index.html` specifically exists
+- **Outcome:** 111 tests pass. Code committed and pushed.
+- **Coordination:** Client files validated and ready for deployment. All issues were deployment script concerns, not client code.
+

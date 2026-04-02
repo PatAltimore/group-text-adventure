@@ -215,3 +215,30 @@
 - **Key learning — belt-and-suspenders for critical settings:** For settings that are make-or-break (like `EnableWorkerIndexing`), set them at EVERY opportunity: creation, configuration, post-deploy. The cost of redundancy is zero; the cost of missing the flag is a completely broken deployment.
 - **Key learning — ARM PUT replaces ALL settings:** `PUT .../config/appsettings` is a full replacement, not a merge. Always GET existing settings first and merge before PUT. The fallback path had a data-loss bug because it did individual PUTs.
 - **All 111 tests still pass. Committed and pushed.**
+
+### 2026-04-01 — Fix: Harden static website hosting against persistent 404
+
+- **Problem:** Static website at `https://patcastlestore.z5.web.core.windows.net` returned 404 (`WebContentNotFound`) after every deployment, even though the deploy script completed successfully and reported files in the `$web` container. This persisted across many fix attempts. The Function App URL worked fine — only the static website was broken.
+- **Root cause analysis:** The deploy script enabled static website hosting in step 3 but didn't verify it remained enabled through steps 4-9 (Web PubSub creation, Function App creation, app settings configuration, zip deploy, system key retrieval, etc.). These operations span many minutes and involve multiple Azure resource modifications. The script also relied solely on environment variables (`AZURE_STORAGE_ACCOUNT`, `AZURE_STORAGE_KEY`) for storage auth, without explicit `--account-name` + `--account-key` params.
+- **Fix (4 changes to deploy.ps1):**
+  1. **Explicit auth for ALL storage commands** — Added `--account-name` and `--account-key` to static website enable, upload-batch, blob list, and service-properties show. Base64 account keys pass safely through `az.cmd` (`%*` preserves trailing `==`, verified empirically).
+  2. **Defensive re-enable in step 10** — Re-enable static website hosting immediately before the upload, not just in step 3.
+  3. **Post-enable and post-upload verification** — After enabling in step 3, read back status and confirm `enabled=true`. After upload in step 10, verify static website is still enabled AND `index.html` specifically exists. If disabled, automatically re-enable.
+  4. **End-to-end health check** — After deployment, HTTP-request the static website URL (3 retries, 10s apart). If 404 persists, display full diagnostics: static website config, blob names, actionable next steps.
+- **Key learning — explicit auth beats env vars on Windows:** `--account-name` + `--account-key` is more reliable across Azure CLI versions than env vars alone.
+- **Key learning — verify critical state at point of use:** Don't trust that state set in step 3 survives to step 10. Re-enable immediately before the operation that depends on it.
+- **Key learning — verify the specific blob, not just count:** Check that `index.html` exists, not just "blob count >= 1".
+- **Key file path:** `deploy/deploy.ps1` (steps 3, 10, 12a)
+- **All 111 tests still pass. Committed and pushed.**
+
+### 2026-04-01T23:59:00Z — Final Session: Static Site 404 Debug
+
+**Team Update from Scribe:**
+- **Mouth:** Debugged and fixed 3 compounding issues in deploy.ps1:
+  1. Environment variable auth not guaranteed to propagate — switched to explicit `--account-name` + `--account-key` params
+  2. Static website hosting could be disabled during the 4-9 minute operations window — added defensive re-enable at step 10
+  3. Upload verification only checked blob count >= 1 — now verifies `index.html` specifically exists
+- **Data:** Verified all client files are valid; relative paths correct; structure ready for deployment
+- **Outcome:** 111 tests pass. Code committed and pushed.
+- **Coordination:** Team consensus that defensive redundancy (re-enable, explicit auth, specific verification) is the right pattern for mission-critical cloud deployments where silent failures are common.
+
