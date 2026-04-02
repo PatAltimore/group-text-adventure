@@ -445,6 +445,7 @@ try {
         (Join-Path (Join-Path $stageDir "src") "index.js"),
         (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "negotiate.js"),
         (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "gameHub.js"),
+        (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "health.js"),
         (Join-Path (Join-Path (Join-Path (Join-Path $stageDir "node_modules") "@azure") "functions") "package.json")
     )
     foreach ($f in $requiredFiles) {
@@ -529,32 +530,33 @@ try {
     az functionapp start --name $functionAppName --resource-group $ResourceGroup --only-show-errors 2>$null | Out-Null
     Start-Sleep -Seconds 15
 
-    # -- Post-deploy: Verify functions are registered ----------------------
-    Write-Step "Verifying function registration..."
+    # -- Post-deploy: Verify endpoints via health check ----------------------
+    Write-Step "Verifying function endpoints after deployment..."
     $functionAppUrl = "https://${functionAppName}.azurewebsites.net"
 
-    # Give the runtime time to start and index functions
-    Write-Info "Waiting for Function App to start..."
-    Start-Sleep -Seconds 20
-
-    # Check if negotiate endpoint responds (should return 400, not 404)
-    $negotiateOk = $false
-    for ($check = 1; $check -le 6; $check++) {
+    # -- Health endpoint check (primary) --
+    Write-Info "Polling /api/health endpoint (up to 10 attempts, 15s apart)..."
+    $healthOk = $false
+    $healthBody = $null
+    for ($check = 1; $check -le 10; $check++) {
         try {
-            $resp = Invoke-WebRequest -Uri "$functionAppUrl/api/negotiate" -TimeoutSec 15 -ErrorAction Stop
-            $negotiateOk = $true
-            break
-        } catch {
-            $statusCode = $_.Exception.Response.StatusCode.value__
-            if ($statusCode -and $statusCode -ne 404) {
-                # 400 or 500 means the function IS registered (just missing params)
-                $negotiateOk = $true
+            $hResp = Invoke-WebRequest -Uri "$functionAppUrl/api/health" -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+            if ($hResp.StatusCode -eq 200) {
+                $healthOk = $true
+                $healthBody = $hResp.Content | ConvertFrom-Json
                 break
             }
+        } catch {
+            $hStatus = $null
+            try { $hStatus = $_.Exception.Response.StatusCode.value__ } catch { }
+            if ($hStatus -and $hStatus -ne 404) {
+                # Non-404 means the function runtime loaded but something else is wrong
+                Write-Info "Health endpoint returned HTTP $hStatus (attempt $check/10)"
+            }
         }
-        if ($check -lt 6) {
-            Write-Info "Negotiate endpoint not ready (attempt $check/6), waiting..."
-            if ($check -eq 3) {
+        if ($check -lt 10) {
+            Write-Info "Health endpoint not ready (attempt $check/10), waiting 15s..."
+            if ($check -eq 5) {
                 # Mid-way: try restarting the Function App
                 Write-Info "Restarting Function App to pick up configuration..."
                 az functionapp restart `
@@ -565,60 +567,73 @@ try {
             Start-Sleep -Seconds 15
         }
     }
-    if ($negotiateOk) {
-        Write-Done "Function registration verified - negotiate endpoint is live."
+
+    if ($healthOk -and $healthBody) {
+        Write-Done "Health endpoint is live!"
+        Write-Host "   Status:    $($healthBody.status)" -ForegroundColor Green
+        Write-Host "   Runtime:   $($healthBody.runtime)" -ForegroundColor Green
+        Write-Host "   Timestamp: $($healthBody.timestamp)" -ForegroundColor Green
+        Write-Host "   Functions: $($healthBody.functionsLoaded -join ', ')" -ForegroundColor Green
+
+        # Check settings configuration
+        $settings = $healthBody.settings
+        if ($settings) {
+            if (-not $settings.webPubSubConfigured) {
+                Write-Host "   WARNING: WebPubSubConnectionString is NOT configured!" -ForegroundColor Red
+            }
+            if (-not $settings.tableStorageConfigured) {
+                Write-Host "   WARNING: AzureTableStorageConnectionString is NOT configured!" -ForegroundColor Red
+            }
+            $wif = $settings.workerIndexing
+            if ($wif -ne "EnableWorkerIndexing") {
+                Write-Host "   WARNING: AzureWebJobsFeatureFlags = '$wif' (expected 'EnableWorkerIndexing')" -ForegroundColor Red
+            } else {
+                Write-Host "   Settings: All configured correctly" -ForegroundColor Green
+            }
+        }
     } else {
         Write-Host ""
         Write-Host "   ============================================================" -ForegroundColor Red
-        Write-Host "   NEGOTIATE ENDPOINT RETURNED 404 AFTER DEPLOYMENT" -ForegroundColor Red
+        Write-Host "   HEALTH ENDPOINT NOT REACHABLE AFTER 10 ATTEMPTS" -ForegroundColor Red
         Write-Host "   ============================================================" -ForegroundColor Red
         Write-Host ""
-
-        # Diagnostic: dump app settings key names
-        Write-Info "Diagnostic: Reading deployed app settings..."
-        try {
-            $diagRaw = (az rest --method POST `
-                --url "$armBase/config/appsettings/list?api-version=2022-03-01" `
-                --only-show-errors 2>$null)
-            $diagProps = ($diagRaw -join "`n" | ConvertFrom-Json).properties
-            $diagKeys = $diagProps.PSObject.Properties | ForEach-Object { $_.Name }
-            Write-Host "   App setting keys: $($diagKeys -join ', ')" -ForegroundColor Yellow
-            $ewif = $diagProps.AzureWebJobsFeatureFlags
-            if ($ewif) {
-                Write-Host "   AzureWebJobsFeatureFlags = $ewif" -ForegroundColor Yellow
-            } else {
-                Write-Host "   AzureWebJobsFeatureFlags is NOT SET (this is the problem!)" -ForegroundColor Red
-            }
-        } catch {
-            Write-Host "   Could not read app settings: $_" -ForegroundColor Yellow
-        }
-
-        # Diagnostic: list registered functions
-        Write-Info "Diagnostic: Listing registered functions..."
-        try {
-            $funcList = (az functionapp function list `
-                --name $functionAppName `
-                --resource-group $ResourceGroup `
-                --output json --only-show-errors 2>$null)
-            $funcs = ($funcList | ConvertFrom-Json)
-            if ($funcs.Count -eq 0) {
-                Write-Host "   ZERO functions registered — v4 worker indexing is likely not active." -ForegroundColor Red
-            } else {
-                $funcNames = $funcs | ForEach-Object { $_.name }
-                Write-Host "   Registered functions: $($funcNames -join ', ')" -ForegroundColor Yellow
-            }
-        } catch {
-            Write-Host "   Could not list functions: $_" -ForegroundColor Yellow
-        }
-
+        Write-Host "   The Azure Functions runtime did not respond at:" -ForegroundColor Red
+        Write-Host "   $functionAppUrl/api/health" -ForegroundColor Red
         Write-Host ""
-        Write-Host "   Next steps:" -ForegroundColor Yellow
-        Write-Host "   1. Check Azure Portal > Function App > Functions (are any listed?)" -ForegroundColor Yellow
-        Write-Host "   2. Check Azure Portal > Function App > Configuration > Application settings" -ForegroundColor Yellow
-        Write-Host "      Verify AzureWebJobsFeatureFlags = EnableWorkerIndexing" -ForegroundColor Yellow
-        Write-Host "   3. Try restarting the Function App from the Portal" -ForegroundColor Yellow
-        Write-Host "   4. Check Log Stream for startup errors" -ForegroundColor Yellow
+        Write-Host "   This means the runtime failed to discover/load functions." -ForegroundColor Yellow
+        Write-Host "   Common causes:" -ForegroundColor Yellow
+        Write-Host "   - Node.js worker crashed on startup (missing modules, ESM issues)" -ForegroundColor Yellow
+        Write-Host "   - AzureWebJobsFeatureFlags not set to EnableWorkerIndexing" -ForegroundColor Yellow
+        Write-Host "   - Zip package structure issues" -ForegroundColor Yellow
         Write-Host ""
+        Write-Host "   Diagnostic steps:" -ForegroundColor Yellow
+        Write-Host "   1. Azure Portal -> Function App -> Functions blade -> do functions appear?" -ForegroundColor Yellow
+        Write-Host "   2. Azure Portal -> Function App -> Configuration -> verify AzureWebJobsFeatureFlags = EnableWorkerIndexing" -ForegroundColor Yellow
+        Write-Host "   3. Azure Portal -> Function App -> Log stream -> look for startup errors" -ForegroundColor Yellow
+        Write-Host ""
+    }
+
+    # -- Negotiate endpoint check (secondary) --
+    Write-Info "Checking negotiate endpoint..."
+    $negotiateOk = $false
+    try {
+        $nResp = Invoke-WebRequest -Uri "$functionAppUrl/api/negotiate" -UseBasicParsing -TimeoutSec 15 -ErrorAction Stop
+        $negotiateOk = $true
+    } catch {
+        $nStatus = $null
+        try { $nStatus = $_.Exception.Response.StatusCode.value__ } catch { }
+        if ($nStatus -and $nStatus -ne 404) {
+            # 400 = function loaded (missing gameId param), 500 = function loaded (config issue)
+            $negotiateOk = $true
+            if ($nStatus -eq 400) {
+                Write-Done "Negotiate endpoint is live (returned 400 Missing gameId — expected without params)."
+            } else {
+                Write-Info "Negotiate endpoint returned HTTP $nStatus (function is loaded but may have config issues)."
+            }
+        }
+    }
+    if (-not $negotiateOk) {
+        Write-Host "   WARNING: Negotiate endpoint returned 404 — function not discovered by runtime." -ForegroundColor Red
     }
 
     # -- 9. Configure Web PubSub Event Handler --------------------------
