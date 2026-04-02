@@ -262,3 +262,12 @@
 - **Decision merged:** `.squad/decisions.md` — "Deploy Scripts Must Validate Packaging Before Deployment" decision from inbox merged with convention going forward
 - **Status:** 111 tests passing, committed and pushed
 
+### 2026-04-02 — Fix: Join-Path PowerShell 5.1 compatibility
+
+- **Problem:** `deploy/deploy.ps1` uses `Join-Path` with 3-4 positional arguments (lines 445-448). Windows PowerShell 5.1 only accepts 2 positional parameters; PowerShell 7+ added support for multiple arguments. This breaks the deploy script on CI/CD systems using PS 5.1.
+- **Solution:** Refactored all 4 calls to nest Join-Path invocations, each using 2 positional parameters. Example: `Join-Path (Join-Path $dir "api") "src"` instead of `Join-Path $dir "api" "src"`.
+- **Files modified:** `deploy/deploy.ps1` (lines 445-448)
+- **Tests:** All 111 tests pass
+- **Learning:** Join-Path in Windows PowerShell 5.1 only accepts 2 positional parameters. Always nest calls for cross-version compatibility.
+- **Committed and pushed.**
+
