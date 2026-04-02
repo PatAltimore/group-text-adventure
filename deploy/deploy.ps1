@@ -442,10 +442,10 @@ try {
     $requiredFiles = @(
         (Join-Path $stageDir "package.json"),
         (Join-Path $stageDir "host.json"),
-        (Join-Path $stageDir "src" "index.js"),
-        (Join-Path $stageDir "src" "functions" "negotiate.js"),
-        (Join-Path $stageDir "src" "functions" "gameHub.js"),
-        (Join-Path $stageDir "node_modules" "@azure" "functions" "package.json")
+        (Join-Path (Join-Path $stageDir "src") "index.js"),
+        (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "negotiate.js"),
+        (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "gameHub.js"),
+        (Join-Path (Join-Path (Join-Path (Join-Path $stageDir "node_modules") "@azure") "functions") "package.json")
     )
     foreach ($f in $requiredFiles) {
         if (-not (Test-Path $f)) {
