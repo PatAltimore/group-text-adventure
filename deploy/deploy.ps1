@@ -28,6 +28,22 @@ $ErrorActionPreference = 'Stop'
 # Suppress Azure CLI's Python cryptography warning (32-bit Python on 64-bit Windows).
 $env:PYTHONWARNINGS = 'ignore'
 
+# Shadow the 'az' command so stderr warnings don't become terminating errors.
+# With $ErrorActionPreference = 'Stop', any stderr output from native commands
+# triggers a terminating error in PowerShell. The Azure CLI emits a harmless
+# Python cryptography UserWarning to stderr that kills the script.
+# This wrapper suppresses stderr (real failures are caught via $LASTEXITCODE
+# and Assert-AzSuccess) while passing stdout through unchanged.
+$script:azExe = (Get-Command az -CommandType Application -ErrorAction SilentlyContinue |
+                 Select-Object -First 1).Source
+if (-not $script:azExe) { throw "Azure CLI (az) not found in PATH." }
+function script:az {
+    $prevEAP = $ErrorActionPreference
+    $ErrorActionPreference = 'SilentlyContinue'
+    & $script:azExe @args 2>$null
+    $ErrorActionPreference = $prevEAP
+}
+
 # -- Derive resource names ----------------------------------------------
 $appNameLower = $AppName.ToLower()
 $storageName = "${appNameLower}store" -replace '[^a-z0-9]', ''
