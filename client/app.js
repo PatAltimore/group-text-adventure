@@ -621,11 +621,8 @@
     // Connect
     connectWebSocket(state.gameId);
 
-    // Copy URL button
-    els.btnCopyUrl.addEventListener('click', async () => {
-      const copied = await copyToClipboard(joinUrl);
-      showButtonFeedback(els.btnCopyUrl, copied ? 'Copied!' : 'Failed', 'Copy', 2000);
-    });
+    // Share URL button — same flow as game Share button
+    els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, 'Share'));
 
     // Start game button
     els.btnStartGame.addEventListener('click', () => {
@@ -656,37 +653,39 @@
     return false;
   }
 
+  // --- Share Logic ---
+  // Reusable share handler: native share → QR overlay + clipboard fallback
+  async function handleShare(btn, originalText) {
+    const joinUrl = buildJoinUrl(state.gameId);
+
+    // Try native Web Share API first (mobile-friendly)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Join my text adventure!',
+          url: joinUrl,
+        });
+        showButtonFeedback(btn, 'Shared!', originalText, 1500);
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    // Fallback: show QR overlay so user can scan or manually copy
+    els.shareUrl.value = joinUrl;
+    renderQrCode(joinUrl, els.shareQrCanvas);
+    els.shareOverlay.classList.remove('hidden');
+    els.shareOverlayClose.focus();
+
+    const copied = await copyToClipboard(joinUrl);
+    showButtonFeedback(btn, copied ? 'Copied!' : 'Link ready', originalText, 1500);
+  }
+
   // --- Share Overlay ---
   function initShareOverlay() {
-    // Share button click — try native share, fall back to overlay + clipboard
-    els.btnShare.addEventListener('click', async () => {
-      const joinUrl = buildJoinUrl(state.gameId);
-
-      // Try native Web Share API first (mobile-friendly)
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: 'Join my text adventure!',
-            url: joinUrl,
-          });
-          showButtonFeedback(els.btnShare, 'Shared!', 'Share', 1500);
-          return;
-        } catch (err) {
-          // User cancelled → do nothing; other errors → fall through to overlay
-          if (err.name === 'AbortError') return;
-        }
-      }
-
-      // Fallback: show QR overlay so user can scan or manually copy
-      els.shareUrl.value = joinUrl;
-      renderQrCode(joinUrl, els.shareQrCanvas);
-      els.shareOverlay.classList.remove('hidden');
-      els.shareOverlayClose.focus();
-
-      // Also attempt clipboard copy as a convenience
-      const copied = await copyToClipboard(joinUrl);
-      showButtonFeedback(els.btnShare, copied ? 'Copied!' : 'Link ready', 'Share', 1500);
-    });
+    // Share button click
+    els.btnShare.addEventListener('click', () => handleShare(els.btnShare, 'Share'));
     
     // Close button
     els.shareOverlayClose.addEventListener('click', closeShareOverlay);

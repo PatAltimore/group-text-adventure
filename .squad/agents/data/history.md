@@ -123,3 +123,24 @@
 - **Files modified:** `client/app.js`, `client/index.html`
 - **All 204 tests pass** unchanged
 
+### 2026-04-04 — Bugfix: Share Button Non-Functional
+
+- **Root cause:** `copyToClipboard()` returned inverted success/failure values — `Promise<false>` on failure, `Promise<undefined>` on success. All three callers (share button, overlay copy, lobby copy) checked `if (failed === false) return;`, which silently exited on failure with zero visual feedback. In non-secure contexts (HTTP), clipboard API is unavailable, so every click silently did nothing.
+- **Fix 1 — `navigator.share()` support:** Share button now tries the Web Share API first (`navigator.share()`), giving mobile users a native share dialog (SMS, email, etc.). User cancel (`AbortError`) is handled gracefully.
+- **Fix 2 — `copyToClipboard()` rewrite:** Converted to async, returns `true` on success, `false` on failure. Clean boolean semantics.
+- **Fix 3 — Always show feedback:** All three copy/share buttons now always display feedback text: "Copied!" on clipboard success, "Shared!" on native share success, "Link ready" or "Failed" when clipboard is unavailable. Extracted `showButtonFeedback(btn, text, originalText, duration)` helper.
+- **Fallback chain:** `navigator.share()` → QR overlay + `navigator.clipboard.writeText()` → QR overlay with "Link ready" text
+- **Files modified:** `client/app.js`
+- **All 204 tests pass** unchanged
+
+### 2026-04-04 — Lobby Share Button Consolidation
+
+- **Problem:** Lobby "Copy" button (`btnCopyUrl`) only did clipboard copy. On mobile, this missed the native share sheet. On desktop with no clipboard API (HTTP), it silently failed with "Failed" feedback.
+- **Fix:** Extracted share logic into reusable `handleShare(btn, originalText)` function. Both lobby button and game header Share button now call the same function.
+- **Share flow:** `navigator.share()` → QR overlay + `navigator.clipboard.writeText()` → QR overlay with "Link ready" text
+- **HTML change:** Button text changed from "Copy" to "Share", aria-label updated to "Share join URL"
+- **UX improvement:** Lobby button now gives mobile users the native share sheet (SMS, email, AirDrop, etc.) instead of just clipboard copy
+- **No duplication:** Share logic lives in one place (`handleShare`), used by 2 callers (lobby + game header)
+- **Files modified:** `client/app.js`, `client/index.html`
+- **All 204 tests pass** unchanged
+
