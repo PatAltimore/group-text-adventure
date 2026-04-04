@@ -486,6 +486,10 @@
 
   function handleGameInfo(msg) {
     if (msg.gameId) state.gameId = msg.gameId;
+    if (Array.isArray(msg.players)) {
+      state.players = msg.players.slice();
+      updateLobbyPlayerList();
+    }
     if (msg.playerCount != null) {
       updatePlayerCount(msg.playerCount);
     }
