@@ -70,7 +70,10 @@ async function getDefaultWorld() {
  */
 async function sendToConnection(serviceClient, connectionId, message) {
   try {
-    await serviceClient.sendToConnection(connectionId, JSON.stringify(message), {
+    // Pass the object directly — the SDK serializes it via JSON.stringify
+    // internally when contentType is application/json. Pre-stringifying
+    // would cause double-serialization (client receives a string, not an object).
+    await serviceClient.sendToConnection(connectionId, message, {
       contentType: 'application/json',
     });
   } catch (err) {
@@ -84,7 +87,10 @@ async function sendToConnection(serviceClient, connectionId, message) {
  */
 async function sendToGame(serviceClient, gameId, message) {
   try {
-    await serviceClient.sendToGroup(gameId, JSON.stringify(message), {
+    // Use serviceClient.group(gameId).sendToAll() — the service client
+    // does not have a sendToGroup() method. Pass the object directly
+    // (SDK handles JSON serialization internally).
+    await serviceClient.group(gameId).sendToAll(message, {
       contentType: 'application/json',
     });
   } catch (err) {

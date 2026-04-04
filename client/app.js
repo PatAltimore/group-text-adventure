@@ -195,8 +195,12 @@
       return;
     }
 
-    // Web PubSub wraps data in an envelope
-    const msg = raw.data || raw;
+    // Web PubSub wraps data in an envelope — unwrap it.
+    // Defensive: if data is a string (e.g. server double-serialized), parse it.
+    let msg = raw.data || raw;
+    if (typeof msg === 'string') {
+      try { msg = JSON.parse(msg); } catch { return; }
+    }
 
     switch (msg.type) {
       case 'look':
