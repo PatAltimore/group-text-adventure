@@ -237,6 +237,8 @@ for required_file in \
     "$STAGE_DIR/src/index.js" \
     "$STAGE_DIR/src/functions/negotiate.js" \
     "$STAGE_DIR/src/functions/gameHub.js" \
+    "$STAGE_DIR/src/functions/health.js" \
+    "$STAGE_DIR/src/functions/worlds.js" \
     "$STAGE_DIR/node_modules/@azure/functions/package.json"; do
     if [ ! -f "$required_file" ]; then
         echo "ERROR: Staging verification failed: missing $required_file" >&2

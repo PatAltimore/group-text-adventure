@@ -59,8 +59,14 @@ app.http('worlds', {
   methods: ['GET'],
   authLevel: 'anonymous',
   route: 'worlds',
-  handler: async () => {
-    const worlds = await listWorlds();
-    return { jsonBody: worlds };
+  handler: async (request, context) => {
+    try {
+      const worlds = await listWorlds();
+      context.log(`[worlds] Found ${worlds.length} world(s)`);
+      return { jsonBody: worlds };
+    } catch (err) {
+      context.error('[worlds] Failed to list worlds:', err);
+      return { status: 500, jsonBody: { error: 'Failed to list worlds' } };
+    }
   },
 });

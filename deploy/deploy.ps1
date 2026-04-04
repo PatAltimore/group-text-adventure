@@ -465,6 +465,7 @@ try {
         (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "negotiate.js"),
         (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "gameHub.js"),
         (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "health.js"),
+        (Join-Path (Join-Path (Join-Path $stageDir "src") "functions") "worlds.js"),
         (Join-Path (Join-Path (Join-Path (Join-Path $stageDir "node_modules") "@azure") "functions") "package.json")
     )
     foreach ($f in $requiredFiles) {

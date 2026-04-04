@@ -12,7 +12,7 @@ app.http('health', {
         status: 'ok',
         timestamp: new Date().toISOString(),
         runtime: process.version,
-        functionsLoaded: ['negotiate', 'gameHub', 'health'],
+        functionsLoaded: ['negotiate', 'gameHub', 'health', 'worlds'],
         settings: {
           webPubSubConfigured: !!process.env.WebPubSubConnectionString,
           tableStorageConfigured: !!process.env.AzureTableStorageConnectionString,
