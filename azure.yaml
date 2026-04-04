@@ -1,0 +1,224 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: group-text-adventure
+metadata:
+  template: group-text-adventure
+
+infra:
+  provider: bicep
+  path: ./infra
+
+services:
+  api:
+    project: ./api
+    language: js
+    host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: |
+            # Copy world data into the api package so Functions can load it at runtime
+            $worldSrc = Join-Path $env:SERVICE_API_PROJECT_DIR ".." "world"
+            $worldDst = Join-Path $env:SERVICE_API_PROJECT_DIR "world"
+            if (Test-Path $worldDst) { Remove-Item $worldDst -Recurse -Force }
+            Copy-Item $worldSrc -Destination $worldDst -Recurse -Force
+            Write-Host "Copied world/ into api package"
+
+            # Install production dependencies only
+            Push-Location $env:SERVICE_API_PROJECT_DIR
+            npm install --omit=dev
+            Pop-Location
+        posix:
+          shell: sh
+          run: |
+            # Copy world data into the api package so Functions can load it at runtime
+            WORLD_SRC="$(dirname "$SERVICE_API_PROJECT_DIR")/world"
+            WORLD_DST="$SERVICE_API_PROJECT_DIR/world"
+            rm -rf "$WORLD_DST"
+            cp -r "$WORLD_SRC" "$WORLD_DST"
+            echo "Copied world/ into api package"
+
+            # Install production dependencies only
+            cd "$SERVICE_API_PROJECT_DIR"
+            npm install --omit=dev
+
+  web:
+    project: ./client
+    language: js
+    host: staticwebapp
+    # Static files are deployed to Azure Storage $web container via postdeploy hook
+
+hooks:
+  postdeploy:
+    windows:
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        $rgName = $env:AZURE_RESOURCE_GROUP
+        if (-not $rgName) { $rgName = "rg-$env:AZURE_ENV_NAME" }
+
+        # --- Discover resource names from the resource group ---
+        $resources = az resource list --resource-group $rgName --output json | ConvertFrom-Json
+
+        $storageAccount = ($resources | Where-Object { $_.type -eq 'Microsoft.Storage/storageAccounts' }).name
+        $functionApp = ($resources | Where-Object { $_.type -eq 'Microsoft.Web/sites' }).name
+        $webPubSub = ($resources | Where-Object { $_.type -eq 'Microsoft.SignalRService/WebPubSub' }).name
+
+        if (-not $storageAccount -or -not $functionApp -or -not $webPubSub) {
+          throw "Could not discover all resources in resource group '$rgName'. Found: storage=$storageAccount, func=$functionApp, wps=$webPubSub"
+        }
+
+        Write-Host "Discovered resources: storage=$storageAccount, func=$functionApp, wps=$webPubSub"
+
+        # --- 1. Enable static website hosting (data-plane, not possible in Bicep) ---
+        Write-Host "Enabling static website hosting on '$storageAccount'..."
+        $storageKey = (az storage account keys list --account-name $storageAccount --resource-group $rgName --query "[0].value" --output tsv)
+        az storage blob service-properties update `
+          --account-name $storageAccount `
+          --account-key $storageKey `
+          --static-website `
+          --index-document index.html `
+          --404-document index.html `
+          --only-show-errors | Out-Null
+        Write-Host "Static website hosting enabled."
+
+        # --- 2. Generate config.json for the client ---
+        $funcUrl = "https://${functionApp}.azurewebsites.net"
+        $configJson = @{ apiBaseUrl = $funcUrl } | ConvertTo-Json
+        $clientDir = Join-Path $PSScriptRoot "client"
+        $configPath = Join-Path $clientDir "config.json"
+        Set-Content -Path $configPath -Value $configJson -Encoding UTF8
+        Write-Host "Generated client config.json with apiBaseUrl=$funcUrl"
+
+        # --- 3. Upload client files to $web container ---
+        Write-Host "Uploading client files to static website..."
+        az storage blob upload-batch `
+          --source $clientDir `
+          --destination '$web' `
+          --account-name $storageAccount `
+          --account-key $storageKey `
+          --overwrite `
+          --only-show-errors | Out-Null
+        Write-Host "Client files uploaded."
+
+        # Clean up generated config.json from source tree
+        Remove-Item $configPath -Force -ErrorAction SilentlyContinue
+
+        # --- 4. Configure Web PubSub event handler ---
+        Write-Host "Configuring Web PubSub event handler..."
+
+        # Wait for the Function App to be responsive so system keys are available
+        $systemKey = $null
+        for ($i = 0; $i -lt 12; $i++) {
+          try {
+            $keysJson = az functionapp keys list --name $functionApp --resource-group $rgName --only-show-errors 2>$null
+            $keys = $keysJson | ConvertFrom-Json
+            $systemKey = $keys.systemKeys.webpubsub_extension
+            if ($systemKey -and $systemKey -ne "None" -and $systemKey.Length -gt 0) { break }
+          } catch { }
+          Write-Host "Waiting for webpubsub_extension system key... (attempt $($i+1)/12)"
+          Start-Sleep -Seconds 10
+        }
+
+        if (-not $systemKey -or $systemKey -eq "None") {
+          Write-Host "WARNING: webpubsub_extension system key not available. Using master key as fallback."
+          $systemKey = $keys.masterKey
+        }
+
+        if (-not $systemKey) {
+          throw "Could not retrieve any function key. Check the Function App deployment."
+        }
+
+        $eventHandlerUrl = "https://${functionApp}.azurewebsites.net/runtime/webhooks/webpubsub?code=${systemKey}"
+        $hubName = "gameHub"
+
+        az webpubsub hub delete --hub-name $hubName --name $webPubSub --resource-group $rgName --only-show-errors 2>$null
+        az webpubsub hub create `
+          --hub-name $hubName `
+          --name $webPubSub `
+          --resource-group $rgName `
+          --event-handler url-template="$eventHandlerUrl" user-event-pattern="*" system-event="connect" system-event="disconnected" `
+          --only-show-errors | Out-Null
+        Write-Host "Web PubSub hub '$hubName' configured with event handler."
+
+        # --- 5. Update CORS on Function App with static website URL ---
+        $staticWebUrl = (az storage account show --name $storageAccount --resource-group $rgName --query "primaryEndpoints.web" --output tsv).TrimEnd('/')
+        Write-Host "Updating CORS with static website URL: $staticWebUrl"
+        az functionapp cors add --name $functionApp --resource-group $rgName --allowed-origins $staticWebUrl --only-show-errors | Out-Null
+
+        Write-Host ""
+        Write-Host "=== Deployment Complete ==="
+        Write-Host "Static website: $staticWebUrl"
+        Write-Host "Function App:   $funcUrl"
+        Write-Host ""
+    posix:
+      shell: sh
+      run: |
+        set -e
+
+        RG_NAME="${AZURE_RESOURCE_GROUP:-rg-${AZURE_ENV_NAME}}"
+
+        # Discover resource names
+        STORAGE_ACCOUNT=$(az resource list --resource-group "$RG_NAME" --query "[?type=='Microsoft.Storage/storageAccounts'].name | [0]" --output tsv)
+        FUNCTION_APP=$(az resource list --resource-group "$RG_NAME" --query "[?type=='Microsoft.Web/sites'].name | [0]" --output tsv)
+        WEB_PUBSUB=$(az resource list --resource-group "$RG_NAME" --query "[?type=='Microsoft.SignalRService/WebPubSub'].name | [0]" --output tsv)
+
+        echo "Discovered: storage=$STORAGE_ACCOUNT, func=$FUNCTION_APP, wps=$WEB_PUBSUB"
+
+        # 1. Enable static website hosting
+        STORAGE_KEY=$(az storage account keys list --account-name "$STORAGE_ACCOUNT" --resource-group "$RG_NAME" --query "[0].value" --output tsv)
+        az storage blob service-properties update \
+          --account-name "$STORAGE_ACCOUNT" \
+          --account-key "$STORAGE_KEY" \
+          --static-website \
+          --index-document index.html \
+          --404-document index.html \
+          --only-show-errors > /dev/null
+
+        # 2. Generate config.json
+        FUNC_URL="https://${FUNCTION_APP}.azurewebsites.net"
+        CLIENT_DIR="$(dirname "$0")/client"
+        echo "{\"apiBaseUrl\":\"${FUNC_URL}\"}" > "$CLIENT_DIR/config.json"
+
+        # 3. Upload client files
+        az storage blob upload-batch \
+          --source "$CLIENT_DIR" \
+          --destination '$web' \
+          --account-name "$STORAGE_ACCOUNT" \
+          --account-key "$STORAGE_KEY" \
+          --overwrite \
+          --only-show-errors > /dev/null
+
+        rm -f "$CLIENT_DIR/config.json"
+
+        # 4. Configure Web PubSub event handler
+        SYSTEM_KEY=""
+        for i in $(seq 1 12); do
+          SYSTEM_KEY=$(az functionapp keys list --name "$FUNCTION_APP" --resource-group "$RG_NAME" --query "systemKeys.webpubsub_extension" --output tsv 2>/dev/null || true)
+          if [ -n "$SYSTEM_KEY" ] && [ "$SYSTEM_KEY" != "None" ]; then break; fi
+          echo "Waiting for system key... (attempt $i/12)"
+          sleep 10
+        done
+
+        if [ -z "$SYSTEM_KEY" ] || [ "$SYSTEM_KEY" = "None" ]; then
+          SYSTEM_KEY=$(az functionapp keys list --name "$FUNCTION_APP" --resource-group "$RG_NAME" --query "masterKey" --output tsv)
+        fi
+
+        EVENT_URL="https://${FUNCTION_APP}.azurewebsites.net/runtime/webhooks/webpubsub?code=${SYSTEM_KEY}"
+        az webpubsub hub delete --hub-name gameHub --name "$WEB_PUBSUB" --resource-group "$RG_NAME" --only-show-errors 2>/dev/null || true
+        az webpubsub hub create \
+          --hub-name gameHub \
+          --name "$WEB_PUBSUB" \
+          --resource-group "$RG_NAME" \
+          --event-handler url-template="$EVENT_URL" user-event-pattern="*" system-event="connect" system-event="disconnected" \
+          --only-show-errors > /dev/null
+
+        # 5. Update CORS
+        STATIC_URL=$(az storage account show --name "$STORAGE_ACCOUNT" --resource-group "$RG_NAME" --query "primaryEndpoints.web" --output tsv | sed 's:/$::')
+        az functionapp cors add --name "$FUNCTION_APP" --resource-group "$RG_NAME" --allowed-origins "$STATIC_URL" --only-show-errors > /dev/null
+
+        echo ""
+        echo "=== Deployment Complete ==="
+        echo "Static website: $STATIC_URL"
+        echo "Function App:   $FUNC_URL"

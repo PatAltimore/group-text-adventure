@@ -75,12 +75,36 @@
 - **Fallback:** If all 20 adjectives are exhausted (extremely unlikely), appends a number suffix instead.
 - **All 150 existing tests pass.** No changes to `addPlayer` signature.
 
-### 2026-04-04 — Duplicate Player Name Resolution
 
-- **Feature:** When a player joins with a name already in use, the engine auto-renames them by prepending a random silly adjective (e.g., "Sparkly Pat"). Player is notified of their new name.
-- **Pattern:** Added `resolvePlayerName(session, playerName)` as a new pure function in `game-engine.js`. Returns `{ name, wasChanged, originalName }`. Called by `gameHub.js` before `addPlayer`. This avoids changing `addPlayer`'s return type (which would break all 150 tests).
-- **Key files:** `api/src/game-engine.js` (resolvePlayerName + SILLY_ADJECTIVES list), `api/src/functions/gameHub.js` (handleJoin wiring + player notification).
-- **Name comparison is case-insensitive.** "pat" and "Pat" are treated as the same name.
-- **Fallback:** If all 20 adjectives are exhausted (extremely unlikely), appends a number suffix instead.
-- **All 150 existing tests pass.** No changes to `addPlayer` signature.
+### 2026-04-04 — Deployment to Azure (Latest Code)
 
+- **Deployed latest code** including health endpoint, say/yell verbs, share button, duplicate name handling, double-serialization fix.
+- **Deploy script fixes applied:**
+  1. **WEBSITE_RUN_FROM_PACKAGE**: Removed `=1` from initial settings, fallback, and post-deploy verification. On Linux Consumption, `config-zip` correctly sets this to a blob SAS URL. Overriding to `1` causes 503.
+  2. **config-zip deletes local zip**: Added backup copy before retry loop so retries have a file to work with.
+  3. **PYTHONWARNINGS=ignore**: Set at script top to suppress Azure CLI's Python cryptography UserWarning.
+  4. **Function App start on creation**: If provisioning loop finds app in 'Stopped' state, explicitly starts it.
+  5. **Must use `pwsh` (PS 7)** for deploys. PS 5.1 treats stderr warnings as terminating errors.
+- **Endpoint verification:** `/api/health` -> 200, 3 functions loaded, webPubSub + tableStorage configured. Static site -> 200.
+- **Game URL:** https://patcastlestore.z5.web.core.windows.net
+- **Region:** `westus2` -- must pass `-Location westus2`.
+
+### 2026-04-04 — Azure Developer CLI (azd) Template
+
+- **Created azd template** alongside existing `deploy/deploy.ps1`. Existing script untouched.
+- **Files added:**
+  - `azure.yaml` — azd project definition with two services (`api` = Function App, `web` = static site)
+  - `infra/main.bicep` — Subscription-scoped orchestrator (creates resource group, calls resources module)
+  - `infra/resources.bicep` — All resources: Storage Account, Web PubSub (Free_F1), Function App (Linux Consumption Y1)
+  - `infra/main.parameters.json` — azd environment placeholders (`AZURE_ENV_NAME`, `AZURE_LOCATION`)
+  - `infra/abbreviations.json` — Standard azd resource naming abbreviations
+- **Architecture decisions:**
+  1. **Two-file Bicep pattern:** `main.bicep` at subscription scope creates the RG, then `resources.bicep` module deploys into it. This is the standard azd pattern for subscription-scoped deployments.
+  2. **Static website hosting** cannot be enabled via Bicep (data-plane operation). Handled in `azure.yaml` postdeploy hook.
+  3. **Web PubSub event handler** requires the Function App's `webpubsub_extension` system key (chicken-and-egg). Also handled in postdeploy hook with retry polling.
+  4. **Client config.json** generated at deploy time in postdeploy hook (apiBaseUrl pointing to Function App).
+  5. **Prepackage hook** copies `world/` into `api/` and runs `npm install --omit=dev` before packaging.
+  6. **Resource naming:** Uses `uniqueString(subscription, env, location)` token for global uniqueness. Pattern: `st{token}`, `func-{token}`, `wps-{token}`.
+  7. **CORS** set in Bicep to storage static website URL, then reinforced in postdeploy with the actual URL after static website is enabled.
+  8. All app settings match exactly what `deploy/deploy.ps1` configures, including `AzureWebJobsFeatureFlags=EnableWorkerIndexing`.
+- **Validation:** Both Bicep files compile clean (`az bicep build`). All 150 existing tests pass.

@@ -138,6 +138,12 @@
   // --- WebSocket ---
   async function connectWebSocket(gameId) {
     try {
+      // Close existing connection to prevent duplicate listeners
+      if (state.ws) {
+        state.ws.close();
+        state.ws = null;
+      }
+
       const negotiateUrl = `${apiBaseUrl}/api/negotiate?gameId=${encodeURIComponent(gameId)}`;
       const res = await fetch(negotiateUrl);
       if (!res.ok) throw new Error(`Negotiate failed: ${res.status} when calling ${negotiateUrl}`);
@@ -198,6 +204,10 @@
   }
 
   // --- Incoming Messages ---
+  // Debounce duplicate look messages (e.g. from Web PubSub retry/echo)
+  let _lastLookTime = 0;
+  let _lastLookRoom = '';
+
   function handleServerMessage(event) {
     let raw;
     try {
@@ -214,9 +224,17 @@
     }
 
     switch (msg.type) {
-      case 'look':
+      case 'look': {
+        const roomKey = msg.room?.name || '';
+        const now = Date.now();
+        if (roomKey === _lastLookRoom && now - _lastLookTime < 2000) {
+          break; // Skip duplicate look for the same room within 2s
+        }
+        _lastLookTime = now;
+        _lastLookRoom = roomKey;
         renderRoomMessage(msg.room);
         break;
+      }
       case 'message':
         appendNarrativeMessage(msg.text);
         break;
@@ -531,7 +549,8 @@
 
     // Copy URL button
     els.btnCopyUrl.addEventListener('click', () => {
-      navigator.clipboard.writeText(joinUrl).then(() => {
+      copyToClipboard(joinUrl).then((failed) => {
+        if (failed === false) return;
         els.btnCopyUrl.textContent = 'Copied!';
         setTimeout(() => {
           els.btnCopyUrl.textContent = 'Copy';
@@ -554,31 +573,39 @@
     connectWebSocket(state.gameId);
   }
 
+  // --- Clipboard Helper ---
+  function copyToClipboard(text) {
+    try {
+      if (navigator.clipboard) {
+        return navigator.clipboard.writeText(text).catch(() => false);
+      }
+    } catch {
+      // Clipboard API not available (non-secure context, etc.)
+    }
+    return Promise.resolve(false);
+  }
+
   // --- Share Overlay ---
   function initShareOverlay() {
     // Share button click
     els.btnShare.addEventListener('click', () => {
       const joinUrl = buildJoinUrl(state.gameId);
-      
-      // Copy to clipboard
-      navigator.clipboard.writeText(joinUrl).then(() => {
-        // Brief visual feedback on the button
+
+      // Show overlay first — always works regardless of clipboard support
+      els.shareUrl.value = joinUrl;
+      renderQrCode(joinUrl, els.shareQrCanvas);
+      els.shareOverlay.classList.remove('hidden');
+      els.shareOverlayClose.focus();
+
+      // Copy to clipboard as a bonus
+      copyToClipboard(joinUrl).then((failed) => {
+        if (failed === false) return;
         const originalText = els.btnShare.textContent;
         els.btnShare.textContent = 'Copied!';
         setTimeout(() => {
           els.btnShare.textContent = originalText;
         }, 1500);
-      }).catch(() => {
-        // Clipboard API failed, but still show the overlay
       });
-      
-      // Show overlay with QR code
-      els.shareUrl.value = joinUrl;
-      renderQrCode(joinUrl, els.shareQrCanvas);
-      els.shareOverlay.classList.remove('hidden');
-      
-      // Focus close button for accessibility
-      els.shareOverlayClose.focus();
     });
     
     // Close button
@@ -597,7 +624,8 @@
     // Copy button in overlay
     els.btnShareCopy.addEventListener('click', () => {
       const joinUrl = els.shareUrl.value;
-      navigator.clipboard.writeText(joinUrl).then(() => {
+      copyToClipboard(joinUrl).then((failed) => {
+        if (failed === false) return;
         els.btnShareCopy.textContent = 'Copied!';
         setTimeout(() => {
           els.btnShareCopy.textContent = 'Copy';

@@ -74,3 +74,11 @@
 
 **Data's takeaway:** No client-side changes needed. Renamed players receive a standard message notification. Name-change message appears in player output like any other message.
 
+### 2026-04-04 — Bugfix: Share Button + Duplicate Look
+
+- **Share button fix:** `navigator.clipboard` is undefined in non-secure contexts (HTTP). Direct access to `.writeText()` threw synchronous TypeError, crashing the handler before the overlay could open. Extracted a `copyToClipboard()` helper that guards with `if (navigator.clipboard)` and try/catch. Moved overlay-show code before clipboard attempt so overlay always opens.
+- **Duplicate look fix:** Added 2-second debounce on consecutive `look` messages for the same room. If same room name arrives within 2s, skip rendering. Allows intentional re-looks (>2s apart) while preventing server retries/echos from duplicating.
+- **WebSocket cleanup:** Added defensive `state.ws.close()` before creating a new WebSocket in `connectWebSocket()` to prevent orphaned listeners from processing messages.
+- **Clipboard helper reuse:** `copyToClipboard()` is now used by share button, overlay copy button, and lobby copy URL button — all three had the same vulnerability.
+- **All 150 tests pass** unchanged.
+
