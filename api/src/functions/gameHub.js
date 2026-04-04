@@ -237,10 +237,12 @@ app.generic('gameHubDisconnect', {
     });
 
     const playerCount = Object.keys(session.players).length;
+    const players = Object.values(session.players).map((p) => p.name);
     await sendToGame(serviceClient, gameId, {
       type: 'gameInfo',
       gameId,
       playerCount,
+      players,
     });
   },
 });
@@ -302,7 +304,8 @@ async function handleJoin(serviceClient, connectionId, data, context) {
 
   // Send game info — include room view only if game already started (late joiner)
   const playerCount = Object.keys(session.players).length;
-  const gameInfoMsg = { type: 'gameInfo', gameId, playerCount };
+  const players = Object.values(session.players).map((p) => p.name);
+  const gameInfoMsg = { type: 'gameInfo', gameId, playerCount, players };
   if (session.started) {
     gameInfoMsg.room = getPlayerView(session, playerId);
   }
