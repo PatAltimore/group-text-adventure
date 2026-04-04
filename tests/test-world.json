@@ -29,6 +29,41 @@
       "exits": { "south": "room-b" },
       "items": ["treasure"],
       "hazards": []
+    },
+    "room-hub": {
+      "name": "Hub Room",
+      "description": "A large chamber with many passages.",
+      "exits": { "north": "room-hub-n", "east": "room-hub-e", "west": "room-hub-w" },
+      "items": [],
+      "hazards": []
+    },
+    "room-hub-n": {
+      "name": "North Passage",
+      "description": "A narrow passage to the north.",
+      "exits": { "south": "room-hub" },
+      "items": [],
+      "hazards": []
+    },
+    "room-hub-e": {
+      "name": "East Passage",
+      "description": "A wide corridor to the east.",
+      "exits": { "west": "room-hub" },
+      "items": [],
+      "hazards": []
+    },
+    "room-hub-w": {
+      "name": "West Passage",
+      "description": "A dark passage to the west.",
+      "exits": { "east": "room-hub" },
+      "items": [],
+      "hazards": []
+    },
+    "room-isolated": {
+      "name": "Sealed Chamber",
+      "description": "A room with no exits.",
+      "exits": {},
+      "items": [],
+      "hazards": []
     }
   },
   "items": {

@@ -109,7 +109,10 @@
   <section id="screen-game" class="screen" role="region" aria-label="Game interface">
     <header class="game-header">
       <div class="game-title" id="game-title">🏰 Group Text Adventure</div>
-      <div class="game-players" id="game-player-badge" aria-label="Player count">Players: <span id="game-player-count">0</span></div>
+      <div class="game-header-right">
+        <button id="btn-share" class="btn btn-share" aria-label="Share game">Share</button>
+        <div class="game-players" id="game-player-badge" aria-label="Player count">Players: <span id="game-player-count">0</span></div>
+      </div>
     </header>
 
     <div id="game-output" class="game-output" role="log" aria-live="polite" aria-label="Game output">
@@ -129,5 +132,20 @@
       <button type="submit" class="btn btn-send" aria-label="Send command">Send</button>
     </form>
   </section>
+
+  <!-- ===== Share Overlay ===== -->
+  <div id="share-overlay" class="share-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="share-overlay-title">
+    <div class="share-overlay-backdrop" aria-hidden="true"></div>
+    <div class="share-overlay-content">
+      <button id="share-overlay-close" class="share-overlay-close" aria-label="Close share overlay">&times;</button>
+      <h2 id="share-overlay-title" class="share-overlay-title">Share Game</h2>
+      <p class="share-overlay-subtitle">Others can scan this QR code to join</p>
+      <div id="share-qr-canvas" class="share-qr-container" aria-label="QR code for joining the game"></div>
+      <div class="share-url-row">
+        <input id="share-url" type="text" readonly aria-label="Game join URL">
+        <button id="btn-share-copy" class="btn btn-small" aria-label="Copy join URL">Copy</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

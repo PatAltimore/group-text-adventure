@@ -386,10 +386,29 @@ html, body {
   text-overflow: ellipsis;
 }
 
+.game-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .game-players {
   font-size: 13px;
   color: var(--text-dim);
   white-space: nowrap;
+}
+
+.btn-share {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn-share:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .game-output {
@@ -605,6 +624,136 @@ html, body {
   border-color: var(--accent-hover);
 }
 
+/* ===== Share Overlay ===== */
+.share-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlayFadeIn 0.2s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.share-overlay.hidden {
+  display: none;
+}
+
+.share-overlay-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+}
+
+.share-overlay-content {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  animation: overlayContentIn 0.2s ease-out;
+}
+
+@keyframes overlayContentIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.share-overlay-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, color 0.15s;
+}
+
+.share-overlay-close:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.share-overlay-title {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.share-overlay-subtitle {
+  color: var(--text-dim);
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.share-qr-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.share-qr-container canvas {
+  border-radius: var(--radius-sm);
+}
+
+.share-url-row {
+  display: flex;
+  gap: 8px;
+}
+
+.share-url-row input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  outline: none;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   .join-title {
@@ -645,5 +794,19 @@ html, body {
 
   .msg-room .room-name {
     font-size: 16px;
+  }
+
+  .share-overlay-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .btn-share {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .game-header-right {
+    gap: 8px;
   }
 }

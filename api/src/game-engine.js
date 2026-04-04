@@ -3,6 +3,51 @@
 
 import { parseCommand } from './command-parser.js';
 
+// Funny adjectives for resolving duplicate player names
+const SILLY_ADJECTIVES = [
+  'Sparkly', 'Grumpy', 'Wobbly', 'Sneaky', 'Fluffy',
+  'Cranky', 'Dizzy', 'Goofy', 'Jumpy', 'Sassy',
+  'Spooky', 'Wacky', 'Bouncy', 'Clumsy', 'Giggly',
+  'Sleepy', 'Snazzy', 'Zippy', 'Funky', 'Quirky',
+];
+
+/**
+ * Check if a player name is already taken in the session.
+ * If so, prepend a random silly adjective to make it unique.
+ * @param {object} session - Current game session.
+ * @param {string} playerName - Desired display name.
+ * @returns {{ name: string, wasChanged: boolean, originalName: string }}
+ */
+export function resolvePlayerName(session, playerName) {
+  const existingNames = new Set(
+    Object.values(session.players).map((p) => p.name.toLowerCase())
+  );
+
+  if (!existingNames.has(playerName.toLowerCase())) {
+    return { name: playerName, wasChanged: false, originalName: playerName };
+  }
+
+  // Shuffle adjectives to avoid predictable ordering
+  const shuffled = [...SILLY_ADJECTIVES].sort(() => Math.random() - 0.5);
+
+  for (const adj of shuffled) {
+    const candidate = `${adj} ${playerName}`;
+    if (!existingNames.has(candidate.toLowerCase())) {
+      return { name: candidate, wasChanged: true, originalName: playerName };
+    }
+  }
+
+  // Extremely unlikely fallback: all adjectives exhausted, append a number
+  let counter = 2;
+  while (true) {
+    const candidate = `${playerName} ${counter}`;
+    if (!existingNames.has(candidate.toLowerCase())) {
+      return { name: candidate, wasChanged: true, originalName: playerName };
+    }
+    counter++;
+  }
+}
+
 /**
  * Load and validate a world JSON object.
  * @param {object} worldJson - Raw world definition.
@@ -165,6 +210,8 @@ export function processCommand(session, playerId, commandText) {
       return handleGive(session, playerId, cmd);
     case 'say':
       return handleSay(session, playerId, cmd);
+    case 'yell':
+      return handleYell(session, playerId, cmd);
     case 'help':
       return handleHelp(session, playerId);
     default:
@@ -596,6 +643,115 @@ function handleSay(session, playerId, cmd) {
   return { session, responses };
 }
 
+/**
+ * BFS to find the direction of the first step on the shortest path
+ * from one room to another. Returns null if no path exists.
+ */
+function findDirectionToRoom(session, fromRoomId, toRoomId) {
+  const visited = new Set([fromRoomId]);
+  const queue = [];
+
+  const exits = session.roomStates[fromRoomId].exits;
+  for (const [dir, nextRoom] of Object.entries(exits)) {
+    if (nextRoom === toRoomId) return dir;
+    if (!visited.has(nextRoom)) {
+      visited.add(nextRoom);
+      queue.push([nextRoom, dir]);
+    }
+  }
+
+  while (queue.length > 0) {
+    const [currentRoom, firstDir] = queue.shift();
+    const currentExits = session.roomStates[currentRoom].exits;
+
+    for (const [, nextRoom] of Object.entries(currentExits)) {
+      if (nextRoom === toRoomId) return firstDir;
+      if (!visited.has(nextRoom)) {
+        visited.add(nextRoom);
+        queue.push([nextRoom, firstDir]);
+      }
+    }
+  }
+
+  return null;
+}
+
+function handleYell(session, playerId, cmd) {
+  const player = session.players[playerId];
+  const responses = [];
+
+  if (!cmd.noun) {
+    responses.push({ playerId, message: { type: 'error', text: 'Yell what?' } });
+    return { session, responses };
+  }
+
+  const yellerRoom = player.room;
+
+  // Determine adjacent rooms (directly connected via exits from yeller's room)
+  const adjacentRoomIds = new Set();
+  const yellerExits = session.roomStates[yellerRoom].exits;
+  for (const targetRoom of Object.values(yellerExits)) {
+    adjacentRoomIds.add(targetRoom);
+  }
+
+  let sameRoomOthers = false;
+
+  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+    if (otherId === playerId) continue;
+
+    if (otherPlayer.room === yellerRoom) {
+      // Same room — hear the yell clearly
+      sameRoomOthers = true;
+      responses.push({
+        playerId: otherId,
+        message: { type: 'message', text: `${player.name} yells: "${cmd.noun}"` },
+      });
+    } else if (adjacentRoomIds.has(otherPlayer.room)) {
+      // Adjacent room — hear the yell with direction
+      const direction = findDirectionToRoom(session, otherPlayer.room, yellerRoom);
+      if (direction) {
+        responses.push({
+          playerId: otherId,
+          message: {
+            type: 'message',
+            text: `You hear someone yell from the ${direction}: "${cmd.noun}"`,
+          },
+        });
+      }
+    } else {
+      // Far room (2+ away) — muffled yelling with general direction
+      const direction = findDirectionToRoom(session, otherPlayer.room, yellerRoom);
+      if (direction) {
+        responses.push({
+          playerId: otherId,
+          message: {
+            type: 'message',
+            text: `You hear muffled yelling from somewhere to the ${direction}.`,
+          },
+        });
+      }
+    }
+  }
+
+  // Feedback to the yeller
+  if (sameRoomOthers) {
+    responses.push({
+      playerId,
+      message: {
+        type: 'message',
+        text: `You yell: "${cmd.noun}" — the other players in the room look annoyed.`,
+      },
+    });
+  } else {
+    responses.push({
+      playerId,
+      message: { type: 'message', text: `You yell: "${cmd.noun}"` },
+    });
+  }
+
+  return { session, responses };
+}
+
 function handleHelp(session, playerId) {
   const helpText = [
     '📜 Available commands:',
@@ -608,6 +764,7 @@ function handleHelp(session, playerId) {
     '  use <item>      — Use an item (or "use <item> on <target>")',
     '  give <item> to <player> — Give an item to another player',
     '  say <message>   — Say something to players in the same room',
+    '  yell <message>  — Yell something — adjacent rooms hear it too',
     '  help            — Show this help message',
   ].join('\n');
 

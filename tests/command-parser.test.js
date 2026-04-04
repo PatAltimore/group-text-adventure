@@ -179,9 +179,9 @@ describe('Command Parser', () => {
       expect(result.noun).toBe('hello');
     });
 
-    test('parses "shout help" as say', () => {
+    test('parses "shout help" as yell', () => {
       const result = parseCommand('shout help');
-      expect(result.verb).toBe('say');
+      expect(result.verb).toBe('yell');
     });
   });
 

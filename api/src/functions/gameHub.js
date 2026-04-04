@@ -14,6 +14,7 @@ import {
   removePlayer,
   processCommand,
   getPlayerView,
+  resolvePlayerName,
 } from '../game-engine.js';
 
 import {
@@ -260,14 +261,18 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     });
   }
 
+  // Resolve duplicate names
+  const resolved = resolvePlayerName(session, playerName);
+  const finalName = resolved.name;
+
   // Add player
-  session = addPlayer(session, playerId, playerName);
+  session = addPlayer(session, playerId, finalName);
   session.players[playerId].connectionId = connectionId;
 
   // Persist
   await saveGameState(gameId, session);
   await savePlayer(gameId, playerId, {
-    playerName,
+    playerName: finalName,
     currentRoom: session.players[playerId].room,
     inventory: session.players[playerId].inventory,
     connectionId,
@@ -284,11 +289,19 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   const view = getPlayerView(session, playerId);
   await sendToConnection(serviceClient, connectionId, { type: 'look', room: view });
 
+  // If the name was changed, tell the player
+  if (resolved.wasChanged) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'message',
+      text: `The name '${resolved.originalName}' is already taken. You are now known as '${finalName}'!`,
+    });
+  }
+
   // Notify other players
   await sendToGame(serviceClient, gameId, {
     type: 'playerEvent',
     event: 'joined',
-    playerName,
+    playerName: finalName,
   });
 
   // Send game info

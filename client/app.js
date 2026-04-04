@@ -69,6 +69,14 @@
     gameOutput: $('#game-output'),
     commandForm: $('#command-form'),
     commandInput: $('#command-input'),
+    btnShare: $('#btn-share'),
+    
+    // Share overlay
+    shareOverlay: $('#share-overlay'),
+    shareOverlayClose: $('#share-overlay-close'),
+    shareQrCanvas: $('#share-qr-canvas'),
+    shareUrl: $('#share-url'),
+    btnShareCopy: $('#btn-share-copy'),
   };
 
   // --- Screen Management ---
@@ -97,30 +105,33 @@
   }
 
   // --- QR Code ---
-  function renderQrCode(url) {
-    els.qrCanvas.innerHTML = '';
+  function renderQrCode(url, targetContainer) {
+    // Default to lobby QR container if not specified
+    const container = targetContainer || els.qrCanvas;
+    
+    container.innerHTML = '';
     if (typeof QRCode === 'undefined') {
       const fallback = document.createElement('p');
       fallback.textContent = url;
       fallback.style.wordBreak = 'break-all';
       fallback.style.fontSize = '12px';
-      els.qrCanvas.appendChild(fallback);
+      container.appendChild(fallback);
       return;
     }
     const canvas = document.createElement('canvas');
-    els.qrCanvas.appendChild(canvas);
+    container.appendChild(canvas);
     QRCode.toCanvas(canvas, url, {
       width: 200,
       margin: 2,
       color: { dark: '#e6edf3', light: '#0d1117' },
     }).catch(() => {
       // QR rendering failed — show URL as fallback text
-      els.qrCanvas.innerHTML = '';
+      container.innerHTML = '';
       const fallback = document.createElement('p');
       fallback.textContent = url;
       fallback.style.wordBreak = 'break-all';
       fallback.style.fontSize = '12px';
-      els.qrCanvas.appendChild(fallback);
+      container.appendChild(fallback);
     });
   }
 
@@ -531,7 +542,6 @@
     // Start game button
     els.btnStartGame.addEventListener('click', () => {
       showScreen('game');
-      sendMessage({ type: 'command', text: 'look' });
     });
   }
 
@@ -542,6 +552,64 @@
 
     showScreen('game');
     connectWebSocket(state.gameId);
+  }
+
+  // --- Share Overlay ---
+  function initShareOverlay() {
+    // Share button click
+    els.btnShare.addEventListener('click', () => {
+      const joinUrl = buildJoinUrl(state.gameId);
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(joinUrl).then(() => {
+        // Brief visual feedback on the button
+        const originalText = els.btnShare.textContent;
+        els.btnShare.textContent = 'Copied!';
+        setTimeout(() => {
+          els.btnShare.textContent = originalText;
+        }, 1500);
+      }).catch(() => {
+        // Clipboard API failed, but still show the overlay
+      });
+      
+      // Show overlay with QR code
+      els.shareUrl.value = joinUrl;
+      renderQrCode(joinUrl, els.shareQrCanvas);
+      els.shareOverlay.classList.remove('hidden');
+      
+      // Focus close button for accessibility
+      els.shareOverlayClose.focus();
+    });
+    
+    // Close button
+    els.shareOverlayClose.addEventListener('click', closeShareOverlay);
+    
+    // Backdrop click
+    els.shareOverlay.querySelector('.share-overlay-backdrop').addEventListener('click', closeShareOverlay);
+    
+    // Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !els.shareOverlay.classList.contains('hidden')) {
+        closeShareOverlay();
+      }
+    });
+    
+    // Copy button in overlay
+    els.btnShareCopy.addEventListener('click', () => {
+      const joinUrl = els.shareUrl.value;
+      navigator.clipboard.writeText(joinUrl).then(() => {
+        els.btnShareCopy.textContent = 'Copied!';
+        setTimeout(() => {
+          els.btnShareCopy.textContent = 'Copy';
+        }, 2000);
+      });
+    });
+  }
+  
+  function closeShareOverlay() {
+    els.shareOverlay.classList.add('hidden');
+    // Return focus to command input
+    els.commandInput.focus();
   }
 
   // --- Command Input ---
@@ -580,6 +648,7 @@
     await loadConfig();
     initLanding();
     initCommandInput();
+    initShareOverlay();
   }
 
   document.addEventListener('DOMContentLoaded', init);

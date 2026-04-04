@@ -17,7 +17,8 @@ const INVENTORY_VERBS = new Set(['inventory', 'i', 'inv']);
 const USE_VERBS = new Set(['use', 'apply']);
 const GIVE_VERBS = new Set(['give', 'hand', 'offer']);
 const HELP_VERBS = new Set(['help', 'h', '?']);
-const SAY_VERBS = new Set(['say', 'shout', 'yell', 'whisper']);
+const SAY_VERBS = new Set(['say', 'whisper']);
+const YELL_VERBS = new Set(['yell', 'shout']);
 
 /**
  * Parse raw command text into a structured command object.
@@ -99,6 +100,12 @@ export function parseCommand(text) {
       };
     }
     return { verb: 'give', noun: rest || undefined, raw };
+  }
+
+  // Yell
+  if (YELL_VERBS.has(verb)) {
+    const noun = words.slice(1).join(' ');
+    return { verb: 'yell', noun: noun || undefined, raw };
   }
 
   // Say

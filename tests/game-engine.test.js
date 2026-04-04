@@ -47,7 +47,7 @@ describe('World Loading', () => {
     expect(world).toBeDefined();
     expect(world.name).toBe('Test World');
     expect(world.startRoom).toBe('room-a');
-    expect(Object.keys(world.rooms)).toHaveLength(4);
+    expect(Object.keys(world.rooms)).toHaveLength(9);
   });
 
   test('preserves item definitions', () => {
