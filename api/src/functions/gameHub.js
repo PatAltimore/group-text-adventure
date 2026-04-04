@@ -15,6 +15,11 @@ import {
   processCommand,
   getPlayerView,
   resolvePlayerName,
+  disconnectPlayer,
+  findGhostByName,
+  reconnectPlayer,
+  getExpiredGhosts,
+  finalizeGhost,
 } from '../game-engine.js';
 
 import {
@@ -30,6 +35,9 @@ import {
 
 const connectionString = process.env.WebPubSubConnectionString;
 const hubName = process.env.WebPubSubHubName || 'gameHub';
+
+// How long ghosts persist before fading and dropping items (30 minutes)
+const GHOST_TIMEOUT_MS = 30 * 60 * 1000;
 
 let tablesInitialized = false;
 
@@ -196,6 +204,56 @@ app.generic('gameHubMessage', {
   },
 });
 
+// ── Cleanup: Expired Ghosts ────────────────────────────────────────────
+
+/**
+ * Check for ghosts whose timeout has expired.
+ * Drops their items into their room, notifies nearby players, and removes them.
+ * Called at the start of each event handler (Azure Functions has no timers).
+ */
+async function cleanupExpiredGhosts(serviceClient, gameId, session) {
+  const expired = getExpiredGhosts(session, GHOST_TIMEOUT_MS);
+  if (expired.length === 0) return session;
+
+  for (const ghostName of expired) {
+    const { droppedItems, roomId, playerName } = finalizeGhost(
+      session,
+      ghostName
+    );
+
+    // Notify active players in the same room about the ghost fading
+    if (roomId) {
+      for (const [, activePlayer] of Object.entries(session.players)) {
+        if (activePlayer.room === roomId && activePlayer.connectionId) {
+          if (droppedItems.length > 0) {
+            const itemList = droppedItems.join(', ');
+            await sendToConnection(serviceClient, activePlayer.connectionId, {
+              type: 'message',
+              text: `${playerName}'s ghost fades away, scattering: ${itemList}.`,
+            });
+          } else {
+            await sendToConnection(serviceClient, activePlayer.connectionId, {
+              type: 'message',
+              text: `${playerName}'s ghost fades away.`,
+            });
+          }
+        }
+      }
+    }
+
+    // Broadcast that the player has truly left
+    if (playerName) {
+      await sendToGame(serviceClient, gameId, {
+        type: 'playerEvent',
+        event: 'left',
+        playerName,
+      });
+    }
+  }
+
+  return session;
+}
+
 // ── Disconnect Event ──────────────────────────────────────────────────
 
 app.generic('gameHubDisconnect', {
@@ -220,28 +278,40 @@ app.generic('gameHubDisconnect', {
 
     const { gameId, playerId } = found;
 
-    // Load session, remove player, save
+    // Load session, mark player as disconnected (preserve state for reconnection)
     let session = await loadGameState(gameId);
     if (!session) return;
 
     const playerName = session.players[playerId]?.name || 'Unknown';
-    session = removePlayer(session, playerId);
+    const playerRoom = session.players[playerId]?.room;
+    session = disconnectPlayer(session, playerId);
     await saveGameState(gameId, session);
     await deletePlayer(gameId, playerId);
 
-    // Notify remaining players
+    // Notify remaining players — ghost appears in the room
     await sendToGame(serviceClient, gameId, {
       type: 'playerEvent',
-      event: 'left',
+      event: 'disconnected',
       playerName,
     });
 
-    const playerCount = Object.keys(session.players).length;
+    // Announce ghost to players in the same room
+    if (playerRoom) {
+      for (const [, activePlayer] of Object.entries(session.players)) {
+        if (activePlayer.room === playerRoom && activePlayer.connectionId) {
+          await sendToConnection(serviceClient, activePlayer.connectionId, {
+            type: 'message',
+            text: `${playerName}'s ghost lingers here.`,
+          });
+        }
+      }
+    }
+
     const players = Object.values(session.players).map((p) => p.name);
     await sendToGame(serviceClient, gameId, {
       type: 'gameInfo',
       gameId,
-      playerCount,
+      playerCount: players.length,
       players,
     });
   },
@@ -278,7 +348,62 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     });
   }
 
-  // Resolve duplicate names
+  // Cleanup expired ghosts before processing the join
+  session = await cleanupExpiredGhosts(serviceClient, gameId, session);
+
+  // Check for reconnection — does a ghost exist with this name?
+  const ghostMatch = findGhostByName(session, playerName);
+  if (ghostMatch) {
+    // Reconnect: restore the player's state from the ghost
+    session = reconnectPlayer(session, ghostMatch.ghostName, playerId);
+    session.players[playerId].connectionId = connectionId;
+
+    // Update host tracking if needed
+    if (!session.players[session.hostPlayerId]) {
+      session.hostPlayerId = playerId;
+    }
+
+    // Persist
+    await saveGameState(gameId, session);
+    await savePlayer(gameId, playerId, {
+      playerName: session.players[playerId].name,
+      currentRoom: session.players[playerId].room,
+      inventory: session.players[playerId].inventory,
+      connectionId,
+    });
+
+    // Add to Web PubSub group
+    try {
+      await serviceClient.addConnectionToGroup(gameId, connectionId);
+    } catch (err) {
+      context.warn('Failed to add connection to group:', err.message);
+    }
+
+    // Send game info with reconnection flag and restored room view
+    const players = Object.values(session.players).map((p) => p.name);
+    const gameInfoMsg = {
+      type: 'gameInfo',
+      gameId,
+      playerCount: players.length,
+      players,
+      reconnected: true,
+    };
+    if (session.started) {
+      gameInfoMsg.room = getPlayerView(session, playerId);
+    }
+    await sendToConnection(serviceClient, connectionId, gameInfoMsg);
+
+    // Announce reconnection (not "joined")
+    await sendToGame(serviceClient, gameId, {
+      type: 'playerEvent',
+      event: 'reconnected',
+      playerName: session.players[playerId].name,
+    });
+
+    return { body: '', status: 200 };
+  }
+
+  // Normal join flow — resolve duplicate names
   const resolved = resolvePlayerName(session, playerName);
   const finalName = resolved.name;
 
@@ -351,6 +476,9 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
     });
     return { body: '', status: 200 };
   }
+
+  // Cleanup expired ghosts
+  session = await cleanupExpiredGhosts(serviceClient, gameId, session);
 
   // Only the host can start the game
   if (session.hostPlayerId !== playerId) {
@@ -435,6 +563,9 @@ async function handleCommand(serviceClient, connectionId, data, context) {
     });
     return { body: '', status: 200 };
   }
+
+  // Cleanup expired ghosts
+  session = await cleanupExpiredGhosts(serviceClient, gameId, session);
 
   // Process the command
   const result = processCommand(session, playerId, commandText);

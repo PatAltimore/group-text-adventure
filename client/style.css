@@ -609,6 +609,28 @@ html, body {
   color: var(--purple);
 }
 
+.msg-room .room-ghosts {
+  color: #7a8a9e;
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.msg-room .room-ghost-hint {
+  color: var(--text-dim);
+  font-size: 11px;
+  font-style: italic;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* Ghost-styled messages */
+.msg-ghost {
+  color: #7a8a9e;
+  font-style: italic;
+  opacity: 0.8;
+  font-size: 13px;
+}
+
 /* Inventory messages */
 .msg-inventory {
   background: var(--bg-surface);
@@ -690,6 +712,45 @@ html, body {
 .btn-send:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
+}
+
+/* ===== Reconnect Banner ===== */
+.reconnect-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--bg);
+  background: var(--orange);
+  animation: bannerSlideIn 0.3s ease-out;
+}
+
+.reconnect-banner.hidden {
+  display: none;
+}
+
+.reconnect-banner.reconnect-tappable {
+  cursor: pointer;
+  background: var(--red);
+  color: var(--text);
+}
+
+.reconnect-banner.reconnect-tappable:hover {
+  opacity: 0.9;
+}
+
+@keyframes bannerSlideIn {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* ===== Share Overlay ===== */

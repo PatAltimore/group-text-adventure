@@ -178,3 +178,53 @@
   3. Player list removal now only triggers on `event: 'left'` (actual disconnect), not `event: 'moved'`.
 - **Key files:** `api/src/game-engine.js`, `client/app.js`, `tests/game-engine.test.js`.
 - **All 204 tests pass.** One test assertion updated (`'left'` → `'moved'` in departure notification test).
+
+### 2026-04-05 — Synchronized Game Start Flow
+
+- **Feature:** Host sends `{ type: 'startGame' }`, server broadcasts `{ type: 'gameStart', room: {view} }` to all players in the group so everyone transitions from lobby to game simultaneously.
+- **Implementation in `gameHub.js`:**
+  1. **Host tracking:** `session.hostPlayerId` set to the creating player's ID on game creation. Persisted in game state via `saveGameState`.
+  2. **`handleStartGame` handler:** Verifies sender is host, prevents double-start, sets `session.started = true`, builds start room view (name, description, exits, items, all player names, hazards), broadcasts `gameStart` to group.
+  3. **`handleJoin` conditional room view:** Pre-start joins get `gameInfo` WITHOUT `room` (client stays in lobby). Post-start late joiners get `gameInfo` WITH `room` (existing behavior).
+  4. **Message routing:** `startGame` added as third message type alongside `join` and `command`.
+- **Key design:** Room view in `gameStart` broadcast includes ALL player names (not per-player filtered), since it's a group broadcast. Client handles self-filtering.
+- **All 204 tests pass.** No game-engine.js changes needed — all logic is in gameHub.js.
+
+### 2026-04-05 — Fix: Player List Missing Previously-Joined Players
+
+- **Bug:** When a player joined the lobby, their player list only showed players who joined *after* them. Players who joined before were missing because those `playerEvent` broadcasts were sent before the new player's WebSocket connected.
+- **Fix:** Added a `players` array (all current player names) to the `gameInfo` message in `handleJoin`. Now every new joiner gets a complete snapshot of who's already in the game. Also added `players` to the disconnect `gameInfo` broadcast for consistency.
+- **Message contract:** `gameInfo.players` = `string[]` of player names. `gameInfo.playerCount` kept for backward compat.
+- **Key line:** `Object.values(session.players).map((p) => p.name)` — same pattern used in `handleStartGame` for room views.
+- **All 204 tests pass.** Single file changed: `api/src/functions/gameHub.js`.
+
+### 2026-04-06 — Player Reconnection & Inventory Drop
+
+- **Feature 1: Reconnection with state persistence.** When a player disconnects (phone standby, network drop, browser refresh), their state is preserved in `session.disconnectedPlayers` rather than being removed. Rejoining with the same name reconnects them with their room, inventory, and progress intact.
+- **Feature 2: Inventory drop on true disconnect.** After a 5-minute timeout, disconnected players are finalized — their inventory is dropped into their last room, nearby players are notified, and the player is fully removed.
+- **Architecture — Design B (separate map):** Disconnected players are moved to `session.disconnectedPlayers` (a separate object), NOT flagged within `session.players`. This means all existing game logic (movement notifications, say, yell, give, room views) automatically excludes disconnected players with zero changes to those functions.
+- **New game-engine.js exports:** `disconnectPlayer`, `findDisconnectedPlayerByName`, `reconnectPlayer`, `getExpiredDisconnectedPlayers`, `finalizeDisconnectedPlayer`. All pure functions, no Azure dependencies.
+- **gameHub.js changes:**
+  1. Disconnect handler calls `disconnectPlayer` (not `removePlayer`), sends `event: 'disconnected'` (not `'left'`).
+  2. Join handler checks `findDisconnectedPlayerByName` before `resolvePlayerName`. If match found, calls `reconnectPlayer`, sends `event: 'reconnected'` and `gameInfo.reconnected: true`.
+  3. Host player ID updated on reconnection (`session.hostPlayerId`).
+  4. `cleanupExpiredPlayers` called at start of `handleJoin`, `handleCommand`, `handleStartGame` — since Azure Functions is stateless with no timers, cleanup is triggered by next player activity.
+- **Message protocol additions:**
+  - `playerEvent.event: 'disconnected'` — player dropped connection, may reconnect.
+  - `playerEvent.event: 'reconnected'` — player returned.
+  - `playerEvent.event: 'left'` — player truly gone (timeout expired).
+  - `gameInfo.reconnected: true` — tells reconnecting client to restore state.
+- **Timeout:** `DISCONNECT_TIMEOUT_MS = 5 * 60 * 1000` (5 minutes) in gameHub.js.
+- **All 231 tests pass** (204 existing + 27 new reconnection/drop tests).
+### 2026-04-05 — Ghost Player System
+
+- **Replaced disconnectedPlayers map with session.ghosts.** When a player disconnects, a visible ghost entity is created in their room (keyed by player name, not player ID). Ghosts hold the player's inventory and room position.
+- **Ghost structure:** { playerName, room, inventory: [...], disconnectedAt } stored in session.ghosts[playerName].
+- **Room visibility:** getPlayerView now returns ghosts: ["Alice's ghost"] array. Added getGhostsInRoom() helper.
+- **Loot command:** loot Bob's ghost transfers all items from ghost to player. Ghost fades away (deleted) when inventory is emptied. Room notified.
+- **Take from ghost:** 	ake <item> from <name>'s ghost takes a single item. Ghost fades when last item taken.
+- **Reconnection via ghost:** indGhostByName + econnectPlayer(session, ghostName, newPlayerId) — restores player to ghost's room with remaining inventory. Ghost removed.
+- **Ghost timeout:** Changed from 5 minutes (disconnect model) to 30 minutes (GHOST_TIMEOUT_MS). inalizeGhost drops items to room floor when timeout expires.
+- **Command parser:** Added loot verb set. Extended 	ake to parse 	ake <item> from <target> pattern.
+- **gameHub.js:** Disconnect handler announces ghost to room players. Join handler checks for ghost match. Cleanup uses cleanupExpiredGhosts.
+- **250 tests pass** (19 net new: ghost looting, take-from-ghost, multi-ghost rooms, reconnection-after-partial-loot).

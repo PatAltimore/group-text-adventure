@@ -19,6 +19,7 @@ const GIVE_VERBS = new Set(['give', 'hand', 'offer']);
 const HELP_VERBS = new Set(['help', 'h', '?']);
 const SAY_VERBS = new Set(['say', 'whisper']);
 const YELL_VERBS = new Set(['yell', 'shout']);
+const LOOT_VERBS = new Set(['loot']);
 
 /**
  * Parse raw command text into a structured command object.
@@ -45,14 +46,30 @@ export function parseCommand(text) {
     return { verb: 'go', noun: words[1], raw };
   }
 
-  // Take / get / grab / "pick up"
+  // Take / get / grab / "pick up" — also handles "take <item> from <target>"
   if (TAKE_VERBS.has(verb)) {
     let noun = words.slice(1).join(' ');
     // handle "pick up <item>"
     if (verb === 'pick' && words[1] === 'up') {
       noun = words.slice(2).join(' ');
     }
+    // handle "take <item> from <target>" (e.g. "take key from Bob's ghost")
+    const fromIndex = noun.indexOf(' from ');
+    if (fromIndex !== -1) {
+      return {
+        verb: 'take',
+        noun: noun.substring(0, fromIndex).trim(),
+        target: noun.substring(fromIndex + 6).trim(),
+        raw,
+      };
+    }
     return { verb: 'take', noun: noun || undefined, raw };
+  }
+
+  // Loot — "loot <target>"
+  if (LOOT_VERBS.has(verb)) {
+    const noun = words.slice(1).join(' ');
+    return { verb: 'loot', noun: noun || undefined, raw };
   }
 
   // Drop

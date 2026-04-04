@@ -144,3 +144,63 @@
 - **Files modified:** `client/app.js`, `client/index.html`
 - **All 204 tests pass** unchanged
 
+### 2026-04-04 — Live Lobby Player List
+
+- **Problem:** The lobby screen had HTML/CSS for a player list (`#lobby-player-list`, `.lobby-players`) and a working `updateLobbyPlayerList()` function, but `handlePlayerEvent()` never called it. Players joining/leaving only updated the count badge, not the visible list.
+- **Fix:** Added `updateLobbyPlayerList()` call inside `handlePlayerEvent()` after `state.players` is updated. One-line change.
+- **Key insight:** All the infrastructure was already in place — HTML structure, CSS styling (green dot prefix, dark surface cards), and the render function. The only missing link was the call from the event handler.
+- **Files modified:** `client/app.js`
+- **All 204 tests pass** unchanged
+
+### 2026-04-04 — Synchronized Lobby for All Players
+
+- **Problem:** Joining players skipped the lobby and went straight to the game screen. Only the host saw the lobby with QR code, share controls, and player list. "Start Game" only affected the host's local state — no server coordination.
+- **Fix 1 — Joiner lobby:** `startJoin()` now shows the lobby screen instead of the game screen. Joiners see QR code, share button, and player list — same as host — but with a "Waiting for host to start…" message instead of the Start button.
+- **Fix 2 — Server-driven start:** Host's "Start Adventure" button sends `{ type: 'startGame' }` to the server instead of locally transitioning. Button disables and shows "Starting…" while waiting.
+- **Fix 3 — `gameStart` handler:** New `handleGameStart(msg)` function handles server's `{ type: 'gameStart', room }` broadcast. ALL clients (host + joiners) transition from lobby to game screen simultaneously.
+- **Fix 4 — `gameInfo` branching:** When `gameInfo` includes `room` (post-start join), client skips lobby and goes straight to game. When `room` is absent (pre-start join), client stays in lobby. `joinUrl` now updates lobby for all players, not just host.
+- **CSS:** Added `.lobby-waiting-msg` with pulsing opacity animation (`waitingPulse` keyframes).
+- **HTML:** Added `#lobby-waiting-msg` paragraph with `hidden` class, renamed button text to "Start Adventure".
+- **Message contract:** Client sends `{ type: 'startGame' }`, server broadcasts `{ type: 'gameStart', room }`.
+- **Files modified:** `client/app.js`, `client/index.html`, `client/style.css`
+- **All 204 tests pass** unchanged
+
+### 2026-04-04 — Bugfix: Lobby Player List Missing Earlier Players
+
+- **Problem:** When players joined the lobby, their player list only showed players who joined *after* them. Players already in the lobby were missing because `state.players` was initialized with only the local player's name. The `playerEvent` messages only handle incremental adds/removes, so earlier players were never added.
+- **Fix:** Updated `handleGameInfo()` to check for `msg.players` (array of player name strings). When present, initializes `state.players` from this array and calls `updateLobbyPlayerList()` to render immediately. The server now includes a `players` array in the `gameInfo` message with all currently connected player names.
+- **Key insight:** The incremental `playerEvent` approach was correct for ongoing updates, but the initial state was never seeded. The `gameInfo` message is the right place for initial synchronization since it's sent to every player on connect.
+- **Message contract:** `gameInfo.players` = array of player name strings (e.g., `['Alice', 'Bob']`), in addition to existing `gameInfo.playerCount`.
+- **Files modified:** `client/app.js`
+- **All 204 tests pass** unchanged
+
+### 2026-04-04 — Reconnection Support + Inventory Drop Visibility
+
+- **sessionStorage persistence:** `saveSession()` stores `gta_gameId` and `gta_playerName` on WebSocket open. `loadSession()` retrieves them. `sessionStorage` is tab-scoped — auto-clears on tab close (no `beforeunload` clearance needed; that would break refresh-based rejoin).
+- **Auto-rejoin on page load:** `init()` checks sessionStorage. If gameId + playerName exist and URL matches (or has no game param), skips landing screen, shows game screen with "Reconnecting…", and calls `connectWebSocket()`. Server sends `gameInfo` with `reconnected: true`.
+- **Reconnection handling in `handleGameInfo()`:** When `msg.reconnected` is true: skip lobby, render room view, show "Reconnected! You're back in [room]." message, restore inventory display from `msg.inventory`.
+- **WebSocket auto-reconnect:** On unexpected `close` event, `attemptReconnect()` retries up to 5 times with increasing delay (2s base, 1.5x backoff, 10s max). Shows orange banner "Connection lost. Reconnecting… (N/5)". After max retries, shows red tappable banner "Connection lost. Tap to reconnect."
+- **`manualReconnect()`:** Resets attempt counter and tries once more when user taps the red banner.
+- **`beforeunload` handler:** Sets `intentionalDisconnect = true` and clears reconnect timer — suppresses reconnect loop during page unload. Does NOT clear sessionStorage.
+- **`playerDrop` message type:** Handles server broadcasts when a disconnected player's inventory is dropped in a room. Renders as player-event styled message.
+- **Reconnect banner UI:** Fixed position top bar, `z-index: 900`. Orange for auto-reconnecting, red for tappable manual retry. Slide-in animation. Matches dark retro theme.
+- **HTML:** Added `<div id="reconnect-banner">` between lobby and game screens.
+- **CSS:** `.reconnect-banner`, `.reconnect-tappable` classes with `@keyframes bannerSlideIn`.
+- **Files modified:** `client/app.js`, `client/index.html`, `client/style.css`
+- **All 204 tests pass** unchanged
+- **Message contract with backend (Mouth):** Server must send `gameInfo` with `{ reconnected: true, room, inventory }` when same-name player rejoins. Server may send `{ type: 'playerDrop', playerName, text }` when disconnected player's items are dropped.
+
+### 2026-04-04 — Ghost Player UI
+
+- **Ghost display in room views:** `renderRoomMessage()` now checks for `room.ghosts` array. Each ghost rendered as `👻 <name> lingers here.` using faded italic styling (`.room-ghosts` class). Ghost section appears after players, before hazards/exits.
+- **Ghost interaction hint:** When ghosts are present in a room, a subtle hint `(You can 'loot <name>' to take their items)` is shown below the ghost list (`.room-ghost-hint` class).
+- **Reconnection message updated:** When reconnecting, the message now reads `👻 You reclaim your ghostly form. You're back in <room>.` — uses ghost styling instead of plain system message.
+- **`ghostEvent` message type:** New handler in the message switch. Server sends `{ type: 'ghostEvent', text }` for ghost-related broadcasts (e.g., `"Bob's ghost stirs... Bob has reconnected!"`). Rendered with ghost styling.
+- **`playerDrop` repurposed:** Changed from player-event styling to ghost styling. Default text changed from "belongings appear on the ground" to "ghost fades away" — aligns with the ghost loot model.
+- **`appendGhostMessage()` helper:** New function renders text with `msg-ghost` class and 👻 prefix. Used by reconnection, playerDrop, and ghostEvent handlers.
+- **CSS additions:** `.msg-ghost` (faded italic, pale blue-grey `#7a8a9e`, 80% opacity), `.room-ghosts` (italic, 75% opacity in room view), `.room-ghost-hint` (subtle hint text, 70% opacity). All consistent with dark retro theme.
+- **Room section reordering:** Items → Players → Ghosts → Hazards → Exits (exits moved to bottom for better scannability).
+- **Files modified:** `client/app.js`, `client/style.css`
+- **138 tests pass** (game-engine suite has pre-existing ESM parse error unrelated to client changes)
+- **Message contract with backend (Mouth):** Room view must include `ghosts: string[]` array. Server may send `{ type: 'ghostEvent', text }` for ghost lifecycle events. `playerDrop` now expected to describe ghost loot, not floor drops.
+

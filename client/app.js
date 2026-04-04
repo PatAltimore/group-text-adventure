@@ -32,6 +32,10 @@
     commandHistory: [],
     historyIndex: -1,
     connected: false,
+    intentionalDisconnect: false,
+    reconnectAttempts: 0,
+    reconnectTimer: null,
+    maxReconnectAttempts: 5,
   };
 
   // --- DOM References ---
@@ -192,11 +196,57 @@
     });
   }
 
+  // --- Session Persistence ---
+  function saveSession() {
+    try {
+      sessionStorage.setItem('gta_gameId', state.gameId);
+      sessionStorage.setItem('gta_playerName', state.playerName);
+    } catch { /* sessionStorage unavailable */ }
+  }
+
+  function loadSession() {
+    try {
+      return {
+        gameId: sessionStorage.getItem('gta_gameId') || '',
+        playerName: sessionStorage.getItem('gta_playerName') || '',
+      };
+    } catch { return { gameId: '', playerName: '' }; }
+  }
+
+  function clearSession() {
+    try {
+      sessionStorage.removeItem('gta_gameId');
+      sessionStorage.removeItem('gta_playerName');
+    } catch { /* sessionStorage unavailable */ }
+  }
+
+  // --- Reconnect Banner ---
+  function showReconnectBanner(message, tappable) {
+    let banner = document.getElementById('reconnect-banner');
+    if (!banner) return;
+    banner.textContent = message;
+    banner.classList.remove('hidden');
+    if (tappable) {
+      banner.classList.add('reconnect-tappable');
+    } else {
+      banner.classList.remove('reconnect-tappable');
+    }
+  }
+
+  function hideReconnectBanner() {
+    const banner = document.getElementById('reconnect-banner');
+    if (banner) {
+      banner.classList.add('hidden');
+      banner.classList.remove('reconnect-tappable');
+    }
+  }
+
   // --- WebSocket ---
   async function connectWebSocket(gameId) {
     try {
       // Close existing connection to prevent duplicate listeners
       if (state.ws) {
+        state.intentionalDisconnect = true;
         state.ws.close();
         state.ws = null;
       }
@@ -209,14 +259,18 @@
 
       const ws = new WebSocket(wsUrl, 'json.webpubsub.azure.v1');
       state.ws = ws;
+      state.intentionalDisconnect = false;
 
       ws.addEventListener('open', () => {
         state.connected = true;
+        state.reconnectAttempts = 0;
+        hideReconnectBanner();
         const joinMsg = { type: 'join', playerName: state.playerName, gameId: state.gameId };
         if (state.isHost && state.worldId) {
           joinMsg.worldId = state.worldId;
         }
         sendMessage(joinMsg);
+        saveSession();
       });
 
       ws.addEventListener('message', (event) => {
@@ -225,16 +279,47 @@
 
       ws.addEventListener('close', () => {
         state.connected = false;
-        appendSystemMessage('Connection lost. Refresh to reconnect.');
+        if (!state.intentionalDisconnect) {
+          attemptReconnect();
+        }
       });
 
       ws.addEventListener('error', () => {
         state.connected = false;
-        appendSystemMessage('Connection error. Please try again.');
       });
     } catch (err) {
       appendSystemMessage(`Failed to connect: ${err.message}`);
+      throw err;
     }
+  }
+
+  function attemptReconnect() {
+    if (state.reconnectAttempts >= state.maxReconnectAttempts) {
+      showReconnectBanner('Connection lost. Tap to reconnect.', true);
+      return;
+    }
+
+    state.reconnectAttempts++;
+    const delay = Math.min(2000 * Math.pow(1.5, state.reconnectAttempts - 1), 10000);
+    showReconnectBanner(`Connection lost. Reconnecting… (${state.reconnectAttempts}/${state.maxReconnectAttempts})`, false);
+
+    if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
+    state.reconnectTimer = setTimeout(async () => {
+      try {
+        await connectWebSocket(state.gameId);
+      } catch {
+        // connectWebSocket already shows error; retry logic continues via close handler
+      }
+    }, delay);
+  }
+
+  function manualReconnect() {
+    state.reconnectAttempts = 0;
+    hideReconnectBanner();
+    showReconnectBanner('Reconnecting…', false);
+    connectWebSocket(state.gameId).catch(() => {
+      showReconnectBanner('Connection lost. Tap to reconnect.', true);
+    });
   }
 
   function sendMessage(payload) {
@@ -314,6 +399,12 @@
       case 'gameStart':
         handleGameStart(msg);
         break;
+      case 'playerDrop':
+        handlePlayerDrop(msg);
+        break;
+      case 'ghostEvent':
+        appendGhostMessage(msg.text);
+        break;
       default:
         // Unknown message type — show as system text if it has text
         if (msg.text) appendSystemMessage(msg.text);
@@ -361,6 +452,10 @@
     appendToOutput(createMsg('msg-command', text));
   }
 
+  function appendGhostMessage(text) {
+    appendToOutput(createMsg('msg-ghost', `👻 ${text}`));
+  }
+
   function renderRoomMessage(room) {
     const container = document.createElement('div');
 
@@ -376,12 +471,6 @@
       container.appendChild(desc);
     }
 
-    if (room.exits && room.exits.length) {
-      container.appendChild(
-        createRoomSection('Exits', room.exits.join(', '), 'room-exits')
-      );
-    }
-
     if (room.items && room.items.length) {
       container.appendChild(
         createRoomSection('Items', room.items.join(', '), 'room-items')
@@ -394,9 +483,26 @@
       );
     }
 
+    if (room.ghosts && room.ghosts.length) {
+      const ghostText = room.ghosts.map(g => `👻 ${g} lingers here.`).join('  ');
+      container.appendChild(
+        createRoomSection('Ghosts', ghostText, 'room-ghosts')
+      );
+      const hint = document.createElement('div');
+      hint.className = 'room-ghost-hint';
+      hint.textContent = `(You can 'loot <name>' to take their items)`;
+      container.appendChild(hint);
+    }
+
     if (room.hazards && room.hazards.length) {
       container.appendChild(
         createRoomSection('⚠ Hazards', room.hazards.join(', '), 'room-hazard')
+      );
+    }
+
+    if (room.exits && room.exits.length) {
+      container.appendChild(
+        createRoomSection('Exits', room.exits.join(', '), 'room-exits')
       );
     }
 
@@ -497,6 +603,20 @@
       els.lobbyAdventureName.textContent = `Adventure: ${msg.adventureName}`;
     }
 
+    // Reconnection: server restored player state
+    if (msg.reconnected) {
+      showScreen('game');
+      if (msg.room) {
+        renderRoomMessage(msg.room);
+        const roomName = msg.room.name || 'the game';
+        appendGhostMessage(`You reclaim your ghostly form. You're back in ${roomName}.`);
+      }
+      if (msg.inventory && msg.inventory.length > 0) {
+        renderInventoryMessage(msg.inventory);
+      }
+      return;
+    }
+
     // Post-start join: room is present, skip lobby and go straight to game
     if (msg.room) {
       showScreen('game');
@@ -516,6 +636,12 @@
     if (msg.room) {
       renderRoomMessage(msg.room);
     }
+  }
+
+  function handlePlayerDrop(msg) {
+    // Ghost loot: a ghost was looted or faded away
+    const text = msg.text || `${msg.playerName}'s ghost fades away.`;
+    appendGhostMessage(text);
   }
 
   function updatePlayerCount(count) {
@@ -803,10 +929,59 @@
   // --- Init ---
   async function init() {
     await loadConfig();
+
+    // Reconnect banner tap handler
+    const banner = document.getElementById('reconnect-banner');
+    if (banner) {
+      banner.addEventListener('click', () => {
+        if (banner.classList.contains('reconnect-tappable')) {
+          manualReconnect();
+        }
+      });
+    }
+
+    // Check sessionStorage for auto-rejoin
+    const session = loadSession();
+    const urlGameId = getGameIdFromUrl();
+    const sessionGameId = session.gameId;
+    const sessionPlayerName = session.playerName;
+
+    // Auto-rejoin: session exists and URL matches (or no URL game param)
+    if (sessionGameId && sessionPlayerName && (!urlGameId || urlGameId === sessionGameId)) {
+      state.gameId = sessionGameId;
+      state.playerName = sessionPlayerName;
+      state.isHost = false;
+
+      // Update URL to reflect the game
+      window.history.replaceState({}, '', `?game=${encodeURIComponent(sessionGameId)}`);
+
+      // Go straight to game screen — server will send gameInfo with reconnected flag
+      showScreen('game');
+      appendSystemMessage('Reconnecting…');
+      connectWebSocket(sessionGameId);
+      initCommandInput();
+      initShareOverlay();
+
+      window.addEventListener('beforeunload', () => {
+        state.intentionalDisconnect = true;
+        if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
+      });
+      return;
+    }
+
+    // Normal flow
     await loadWorlds();
     initLanding();
     initCommandInput();
     initShareOverlay();
+
+    // Suppress reconnect attempts during page unload.
+    // sessionStorage is tab-scoped — cleared automatically on tab close,
+    // but preserved on refresh (enabling auto-rejoin).
+    window.addEventListener('beforeunload', () => {
+      state.intentionalDisconnect = true;
+      if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
+    });
   }
 
   document.addEventListener('DOMContentLoaded', init);

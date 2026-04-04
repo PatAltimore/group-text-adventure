@@ -6,6 +6,12 @@ import {
   removePlayer,
   processCommand,
   getPlayerView,
+  disconnectPlayer,
+  findGhostByName,
+  reconnectPlayer,
+  getExpiredGhosts,
+  finalizeGhost,
+  getGhostsInRoom,
 } from '../api/src/game-engine.js';
 import { createRequire } from 'module';
 
@@ -603,5 +609,517 @@ describe('Command Processing Edge Cases', () => {
     expect(bobMsg).toBeDefined();
     expect(bobMsg.message.text).toContain('Alice');
     expect(bobMsg.message.text).toContain('hello everyone');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 10. Player Reconnection
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Player Reconnection (Ghost System)', () => {
+  test('disconnectPlayer creates a ghost in session.ghosts', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    expect(session.players['p1']).toBeUndefined();
+    expect(session.ghosts).toBeDefined();
+    expect(session.ghosts['Alice']).toBeDefined();
+    expect(session.ghosts['Alice'].playerName).toBe('Alice');
+  });
+
+  test('ghost preserves room and inventory', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    expect(session.players['p1'].room).toBe('room-b');
+    expect(session.players['p1'].inventory).toContain('key');
+
+    session = disconnectPlayer(session, 'p1');
+    const ghost = session.ghosts['Alice'];
+    expect(ghost.room).toBe('room-b');
+    expect(ghost.inventory).toContain('key');
+  });
+
+  test('ghost has a disconnectedAt timestamp', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    const before = Date.now();
+    session = disconnectPlayer(session, 'p1');
+    const after = Date.now();
+    const ts = session.ghosts['Alice'].disconnectedAt;
+    expect(ts).toBeGreaterThanOrEqual(before);
+    expect(ts).toBeLessThanOrEqual(after);
+  });
+
+  test('disconnectPlayer on non-existent player is a no-op', () => {
+    const session = freshSession();
+    const result = disconnectPlayer(session, 'ghost');
+    expect(result).toBe(session);
+  });
+
+  test('disconnected player does not appear in room view as player', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+    const view = getPlayerView(session, 'p2');
+    expect(view.players).not.toContain('Alice');
+  });
+
+  test('ghost appears in room view ghosts list', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+    const view = getPlayerView(session, 'p2');
+    expect(view.ghosts).toContain("Alice's ghost");
+  });
+
+  test('ghost does not appear in room view of different room', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p2', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+    const view = getPlayerView(session, 'p2');
+    expect(view.ghosts).not.toContain("Alice's ghost");
+  });
+
+  test('disconnected player does not receive movement notifications', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob'], ['p3', 'Charlie']);
+    session = disconnectPlayer(session, 'p2');
+    const { responses } = processCommand(session, 'p1', 'go north');
+    const bobMsg = responses.find(r => r.playerId === 'p2');
+    expect(bobMsg).toBeUndefined();
+  });
+
+  test('findGhostByName finds by exact name', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    const found = findGhostByName(session, 'Alice');
+    expect(found).not.toBeNull();
+    expect(found.ghostName).toBe('Alice');
+    expect(found.ghost.playerName).toBe('Alice');
+  });
+
+  test('findGhostByName is case-insensitive', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    const found = findGhostByName(session, 'alice');
+    expect(found).not.toBeNull();
+    expect(found.ghostName).toBe('Alice');
+  });
+
+  test('findGhostByName returns null when no match', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    expect(findGhostByName(session, 'Bob')).toBeNull();
+  });
+
+  test('findGhostByName returns null on session without ghosts', () => {
+    const session = freshSession();
+    expect(findGhostByName(session, 'Alice')).toBeNull();
+  });
+
+  test('reconnectPlayer restores player from ghost with new ID', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    expect(session.players['p1']).toBeUndefined();
+    expect(session.players['p1-new']).toBeDefined();
+    expect(session.players['p1-new'].name).toBe('Alice');
+    expect(session.players['p1-new'].room).toBe('room-b');
+    expect(session.players['p1-new'].inventory).toContain('key');
+  });
+
+  test('reconnectPlayer removes the ghost', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    expect(session.ghosts['Alice']).toBeUndefined();
+  });
+
+  test('reconnectPlayer on non-existent ghost is a no-op', () => {
+    const session = freshSession();
+    const result = reconnectPlayer(session, 'Nobody', 'ghost-new');
+    expect(result).toBe(session);
+  });
+
+  test('reconnected player appears in room view for others', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+    // Bob should NOT see Alice as a player
+    expect(getPlayerView(session, 'p2').players).not.toContain('Alice');
+
+    // Alice reconnects
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    // Bob should see Alice again
+    expect(getPlayerView(session, 'p2').players).toContain('Alice');
+    // Ghost should be gone
+    expect(getPlayerView(session, 'p2').ghosts).not.toContain("Alice's ghost");
+  });
+
+  test('reconnected player can issue commands', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+
+    const { responses } = processCommand(session, 'p1-new', 'look');
+    const msg = responses.find(r => r.playerId === 'p1-new');
+    expect(msg).toBeDefined();
+    expect(msg.message.type).toBe('look');
+    expect(msg.message.room.name).toBe('Room A');
+  });
+
+  test('reconnected player gets remaining ghost inventory (after partial loot)', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go east'));
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    session = disconnectPlayer(session, 'p1');
+
+    // Bob goes to room-c and takes one item from the ghost
+    ({ session } = processCommand(session, 'p2', 'go east'));
+    ({ session } = processCommand(session, 'p2', 'take old key from Alice\'s ghost'));
+
+    // Alice reconnects — should have only the torch
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    expect(session.players['p1-new'].inventory).toContain('torch');
+    expect(session.players['p1-new'].inventory).not.toContain('key');
+    expect(session.players['p1-new'].room).toBe('room-c');
+  });
+
+  test('full reconnection cycle: disconnect, reconnect, take items, move', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    expect(session.players['p1'].room).toBe('room-b');
+    expect(session.players['p1'].inventory).toContain('key');
+
+    // Alice disconnects — ghost created
+    session = disconnectPlayer(session, 'p1');
+    expect(session.players['p1']).toBeUndefined();
+    expect(session.ghosts['Alice']).toBeDefined();
+
+    // Alice reconnects with new connection
+    session = reconnectPlayer(session, 'Alice', 'p1-reconnected');
+    const alice = session.players['p1-reconnected'];
+    expect(alice.name).toBe('Alice');
+    expect(alice.room).toBe('room-b');
+    expect(alice.inventory).toContain('key');
+
+    // Alice can use the key to solve the puzzle
+    const { session: solved } = processCommand(session, 'p1-reconnected', 'use old key');
+    expect(solved.puzzleStates['locked-passage'].solved).toBe(true);
+    expect(solved.roomStates['room-b'].exits.north).toBe('room-d');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 11. Disconnect Timeout & Inventory Drop
+// ════════════════════════════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════════════════════════
+// 11. Ghost Timeout & Inventory Drop
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Ghost Timeout & Inventory Drop', () => {
+  test('getExpiredGhosts returns empty when no ghosts', () => {
+    const session = freshSession();
+    expect(getExpiredGhosts(session, 1000)).toEqual([]);
+  });
+
+  test('getExpiredGhosts returns empty when timeout not reached', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    expect(getExpiredGhosts(session, 1800000)).toEqual([]);
+  });
+
+  test('getExpiredGhosts returns expired ghosts', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    session.ghosts['Alice'].disconnectedAt = Date.now() - 2000000;
+    const expired = getExpiredGhosts(session, 1800000);
+    expect(expired).toContain('Alice');
+  });
+
+  test('getExpiredGhosts only returns expired, not recent', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+    session = disconnectPlayer(session, 'p2');
+    session.ghosts['Alice'].disconnectedAt = Date.now() - 2000000;
+    const expired = getExpiredGhosts(session, 1800000);
+    expect(expired).toContain('Alice');
+    expect(expired).not.toContain('Bob');
+  });
+
+  test('finalizeGhost drops inventory into room', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    expect(session.roomStates['room-a'].items).not.toContain('key');
+
+    session = disconnectPlayer(session, 'p1');
+    const result = finalizeGhost(session, 'Alice');
+    session = result.session;
+
+    expect(result.droppedItems).toContain('Old Key');
+    expect(result.roomId).toBe('room-a');
+    expect(result.playerName).toBe('Alice');
+    expect(session.roomStates['room-a'].items).toContain('key');
+  });
+
+  test('finalizeGhost removes the ghost', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    const { session: updated } = finalizeGhost(session, 'Alice');
+    expect(updated.ghosts['Alice']).toBeUndefined();
+  });
+
+  test('finalizeGhost on non-existent ghost is a no-op', () => {
+    const session = freshSession();
+    const result = finalizeGhost(session, 'Nobody');
+    expect(result.droppedItems).toEqual([]);
+    expect(result.roomId).toBeNull();
+  });
+
+  test('dropped items are pickable by other players', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+
+    session = disconnectPlayer(session, 'p1');
+    const { session: afterDrop } = finalizeGhost(session, 'Alice');
+
+    expect(afterDrop.roomStates['room-a'].items).toContain('key');
+    const { session: afterTake, responses } = processCommand(afterDrop, 'p2', 'take old key');
+    expect(afterTake.players['p2'].inventory).toContain('key');
+    const msg = responses.find(r => r.playerId === 'p2');
+    expect(msg.message.type).toBe('message');
+  });
+
+  test('dropped items appear in room view (look)', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+    finalizeGhost(session, 'Alice');
+
+    const view = getPlayerView(session, 'p2');
+    expect(view.items).toContain('Old Key');
+  });
+
+  test('multiple items dropped from ghost with full inventory', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go east'));
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    expect(session.players['p1'].inventory).toEqual(['key', 'torch']);
+    expect(session.players['p1'].room).toBe('room-c');
+
+    session = disconnectPlayer(session, 'p1');
+    const result = finalizeGhost(session, 'Alice');
+
+    expect(result.droppedItems).toContain('Old Key');
+    expect(result.droppedItems).toContain('Torch');
+    expect(result.roomId).toBe('room-c');
+    expect(result.session.roomStates['room-c'].items).toContain('key');
+    expect(result.session.roomStates['room-c'].items).toContain('torch');
+  });
+
+  test('ghost with empty inventory — finalize still cleans up', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session = disconnectPlayer(session, 'p1');
+    const result = finalizeGhost(session, 'Alice');
+    expect(result.droppedItems).toEqual([]);
+    expect(result.playerName).toBe('Alice');
+    expect(result.roomId).toBe('room-a');
+    expect(result.session.ghosts['Alice']).toBeUndefined();
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 12. Ghost Looting
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Ghost Looting', () => {
+  test('loot command takes all items from ghost', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+
+    const { session: afterLoot, responses } = processCommand(session, 'p2', "loot Alice's ghost");
+    expect(afterLoot.players['p2'].inventory).toContain('key');
+    const msg = responses.find(r => r.playerId === 'p2' && r.message.text?.includes('loot'));
+    expect(msg).toBeDefined();
+    expect(msg.message.text).toContain('Old Key');
+  });
+
+  test('loot command removes ghost when inventory emptied', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+
+    const { session: afterLoot, responses } = processCommand(session, 'p2', "loot Alice's ghost");
+    expect(afterLoot.ghosts['Alice']).toBeUndefined();
+    const fadeMsg = responses.find(r => r.message.text?.includes('fades away'));
+    expect(fadeMsg).toBeDefined();
+  });
+
+  test('loot transfers multiple items from ghost', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go east'));
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    session = disconnectPlayer(session, 'p1');
+
+    ({ session } = processCommand(session, 'p2', 'go east'));
+    const { session: afterLoot, responses } = processCommand(session, 'p2', "loot Alice's ghost");
+    expect(afterLoot.players['p2'].inventory).toContain('key');
+    expect(afterLoot.players['p2'].inventory).toContain('torch');
+    const msg = responses.find(r => r.playerId === 'p2' && r.message.text?.includes('loot'));
+    expect(msg.message.text).toContain('Old Key');
+    expect(msg.message.text).toContain('Torch');
+  });
+
+  test('loot empty ghost reports nothing to loot', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+
+    const { responses } = processCommand(session, 'p2', "loot Alice's ghost");
+    const msg = responses.find(r => r.playerId === 'p2');
+    expect(msg.message.text).toContain('nothing to loot');
+  });
+
+  test('loot ghost in different room returns error', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+
+    // Bob is in room-a, ghost is in room-b
+    const { responses } = processCommand(session, 'p2', "loot Alice's ghost");
+    const msg = responses.find(r => r.playerId === 'p2');
+    expect(msg.message.type).toBe('error');
+  });
+
+  test('loot non-existent ghost returns error', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    const { responses } = processCommand(session, 'p1', "loot Bob's ghost");
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+  });
+
+  test('loot with no argument returns error', () => {
+    const session = sessionWithPlayer('p1', 'Alice');
+    const { responses } = processCommand(session, 'p1', 'loot');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+  });
+
+  test('loot notifies other players in the room', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob'], ['p3', 'Charlie']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+
+    const { responses } = processCommand(session, 'p2', "loot Alice's ghost");
+    const charlieMsg = responses.find(r => r.playerId === 'p3' && r.message.text?.includes('loots'));
+    expect(charlieMsg).toBeDefined();
+    expect(charlieMsg.message.text).toContain('Bob');
+    expect(charlieMsg.message.text).toContain('Old Key');
+  });
+
+  test('take specific item from ghost', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go east'));
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    session = disconnectPlayer(session, 'p1');
+
+    ({ session } = processCommand(session, 'p2', 'go east'));
+    const { session: afterTake, responses } = processCommand(session, 'p2', "take old key from Alice's ghost");
+    expect(afterTake.players['p2'].inventory).toContain('key');
+    expect(afterTake.players['p2'].inventory).not.toContain('torch');
+    // Ghost should still exist with torch
+    expect(afterTake.ghosts['Alice']).toBeDefined();
+    expect(afterTake.ghosts['Alice'].inventory).toContain('torch');
+    const msg = responses.find(r => r.playerId === 'p2' && r.message.text?.includes('take'));
+    expect(msg).toBeDefined();
+  });
+
+  test('take last item from ghost causes ghost to fade', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+
+    const { session: afterTake, responses } = processCommand(session, 'p2', "take old key from Alice's ghost");
+    expect(afterTake.ghosts['Alice']).toBeUndefined();
+    const fadeMsg = responses.find(r => r.message.text?.includes('fades away'));
+    expect(fadeMsg).toBeDefined();
+  });
+
+  test('take item ghost does not have returns error', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+
+    const { responses } = processCommand(session, 'p2', "take sword from Alice's ghost");
+    const msg = responses.find(r => r.playerId === 'p2');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain("doesn't have");
+  });
+
+  test('take from ghost in different room returns error', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+
+    const { responses } = processCommand(session, 'p2', "take old key from Alice's ghost");
+    const msg = responses.find(r => r.playerId === 'p2');
+    expect(msg.message.type).toBe('error');
+  });
+
+  test('multiple ghosts can exist in different rooms', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob'], ['p3', 'Charlie']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p2', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+    session = disconnectPlayer(session, 'p2');
+
+    expect(session.ghosts['Alice']).toBeDefined();
+    expect(session.ghosts['Alice'].room).toBe('room-a');
+    expect(session.ghosts['Bob']).toBeDefined();
+    expect(session.ghosts['Bob'].room).toBe('room-b');
+
+    // Charlie should see Alice's ghost in room-a
+    const viewA = getPlayerView(session, 'p3');
+    expect(viewA.ghosts).toContain("Alice's ghost");
+    expect(viewA.ghosts).not.toContain("Bob's ghost");
+  });
+
+  test('getGhostsInRoom returns correct ghosts', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p2', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+    session = disconnectPlayer(session, 'p2');
+
+    expect(getGhostsInRoom(session, 'room-a')).toContain("Alice's ghost");
+    expect(getGhostsInRoom(session, 'room-a')).not.toContain("Bob's ghost");
+    expect(getGhostsInRoom(session, 'room-b')).toContain("Bob's ghost");
+  });
+
+  test('loot works without ghost suffix', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+
+    const { session: afterLoot } = processCommand(session, 'p2', 'loot Alice');
+    expect(afterLoot.players['p2'].inventory).toContain('key');
+    expect(afterLoot.ghosts['Alice']).toBeUndefined();
+  });
+
+  test('take from ghost works without ghost suffix on target', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+
+    const { session: afterTake } = processCommand(session, 'p2', "take old key from Alice");
+    // Should fail — "Alice" without "'s ghost" won't match the ghost
+    // Actually our code strips "'s ghost" suffix, but if not present, it uses the raw name
+    // The findGhostByName will match by player name
+    expect(afterTake.players['p2'].inventory).toContain('key');
   });
 });

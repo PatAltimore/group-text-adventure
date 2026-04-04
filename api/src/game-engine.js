@@ -143,6 +143,125 @@ export function removePlayer(session, playerId) {
   return session;
 }
 
+// ── Ghost System (Disconnect Persistence) ─────────────────────────────
+
+/**
+ * Mark a player as disconnected — creates a ghost entity in the room.
+ * The ghost holds the player's inventory and is visible to other players.
+ * @param {object} session - Current game session.
+ * @param {string} playerId - Player to mark as disconnected.
+ * @returns {object} Updated session.
+ */
+export function disconnectPlayer(session, playerId) {
+  const player = session.players[playerId];
+  if (!player) return session;
+
+  if (!session.ghosts) session.ghosts = {};
+  session.ghosts[player.name] = {
+    playerName: player.name,
+    room: player.room,
+    inventory: [...player.inventory],
+    disconnectedAt: Date.now(),
+  };
+
+  delete session.players[playerId];
+  return session;
+}
+
+/**
+ * Find a ghost by player name (case-insensitive).
+ * @param {object} session - Current game session.
+ * @param {string} playerName - Name to search for.
+ * @returns {{ ghostName: string, ghost: object }|null}
+ */
+export function findGhostByName(session, playerName) {
+  if (!session.ghosts) return null;
+  for (const [name, ghost] of Object.entries(session.ghosts)) {
+    if (name.toLowerCase() === playerName.toLowerCase()) {
+      return { ghostName: name, ghost };
+    }
+  }
+  return null;
+}
+
+/**
+ * Reconnect a player via their ghost — restores room + remaining inventory.
+ * @param {object} session - Current game session.
+ * @param {string} ghostName - The ghost's player name key.
+ * @param {string} newPlayerId - The new connection-based player ID.
+ * @returns {object} Updated session.
+ */
+export function reconnectPlayer(session, ghostName, newPlayerId) {
+  if (!session.ghosts || !session.ghosts[ghostName]) {
+    return session;
+  }
+
+  const ghost = session.ghosts[ghostName];
+  session.players[newPlayerId] = {
+    name: ghost.playerName,
+    room: ghost.room,
+    inventory: [...ghost.inventory],
+  };
+
+  delete session.ghosts[ghostName];
+  return session;
+}
+
+/**
+ * Get names of all ghosts whose timeout has expired.
+ * @param {object} session - Current game session.
+ * @param {number} timeoutMs - Timeout in milliseconds.
+ * @returns {string[]} Array of expired ghost name keys.
+ */
+export function getExpiredGhosts(session, timeoutMs = 1800000) {
+  if (!session.ghosts) return [];
+  const now = Date.now();
+  return Object.entries(session.ghosts)
+    .filter(([, ghost]) => now - ghost.disconnectedAt >= timeoutMs)
+    .map(([name]) => name);
+}
+
+/**
+ * Finalize a ghost: drop inventory into room, remove the ghost.
+ * @param {object} session - Current game session.
+ * @param {string} ghostName - The ghost's player name key.
+ * @returns {{ session: object, droppedItems: string[], roomId: string|null, playerName: string|null }}
+ */
+export function finalizeGhost(session, ghostName) {
+  if (!session.ghosts || !session.ghosts[ghostName]) {
+    return { session, droppedItems: [], roomId: null, playerName: null };
+  }
+
+  const ghost = session.ghosts[ghostName];
+  const droppedItems = [];
+  const roomState = session.roomStates[ghost.room];
+
+  for (const itemId of ghost.inventory) {
+    roomState.items.push(itemId);
+    const item = session.world.items[itemId];
+    droppedItems.push(item ? item.name : itemId);
+  }
+
+  const playerName = ghost.playerName;
+  const roomId = ghost.room;
+
+  delete session.ghosts[ghostName];
+  return { session, droppedItems, roomId, playerName };
+}
+
+/**
+ * Get ghosts in a specific room.
+ * @param {object} session - Current game session.
+ * @param {string} roomId - Room to check.
+ * @returns {string[]} Array of ghost display strings (e.g. "Bob's ghost").
+ */
+export function getGhostsInRoom(session, roomId) {
+  if (!session.ghosts) return [];
+  return Object.values(session.ghosts)
+    .filter((ghost) => ghost.room === roomId)
+    .map((ghost) => `${ghost.playerName}'s ghost`);
+}
+
 /**
  * Build the view of a room for a specific player.
  * @param {object} session - Current game session.
@@ -172,6 +291,7 @@ export function getPlayerView(session, playerId) {
     items: itemNames,
     players: otherPlayers,
     hazards: room.hazards || [],
+    ghosts: getGhostsInRoom(session, player.room),
   };
 }
 
@@ -200,6 +320,8 @@ export function processCommand(session, playerId, commandText) {
       return handleLook(session, playerId, cmd);
     case 'take':
       return handleTake(session, playerId, cmd);
+    case 'loot':
+      return handleLoot(session, playerId, cmd);
     case 'drop':
       return handleDrop(session, playerId, cmd);
     case 'inventory':
@@ -349,6 +471,11 @@ function handleTake(session, playerId, cmd) {
     return { session, responses };
   }
 
+  // "take <item> from <name>'s ghost" — take a specific item from a ghost
+  if (cmd.target) {
+    return handleTakeFromGhost(session, playerId, cmd);
+  }
+
   const noun = cmd.noun.toLowerCase();
   const idx = roomState.items.findIndex((itemId) => {
     const item = session.world.items[itemId];
@@ -388,6 +515,163 @@ function handleTake(session, playerId, cmd) {
         playerId: otherId,
         message: { type: 'message', text: `${player.name} picked up the ${item.name}.` },
       });
+    }
+  }
+
+  return { session, responses };
+}
+
+/**
+ * Take a specific item from a ghost: "take key from Bob's ghost"
+ */
+function handleTakeFromGhost(session, playerId, cmd) {
+  const player = session.players[playerId];
+  const responses = [];
+
+  // Parse ghost name from target — strip "'s ghost" suffix
+  const targetLower = cmd.target.toLowerCase();
+  const ghostSuffix = "'s ghost";
+  let ghostOwner = cmd.target;
+  if (targetLower.endsWith(ghostSuffix)) {
+    ghostOwner = cmd.target.slice(0, -ghostSuffix.length);
+  }
+
+  const found = findGhostByName(session, ghostOwner);
+  if (!found || found.ghost.room !== player.room) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: `You don't see ${ghostOwner}'s ghost here.` },
+    });
+    return { session, responses };
+  }
+
+  const ghost = found.ghost;
+  const noun = cmd.noun.toLowerCase();
+  const idx = ghost.inventory.findIndex((itemId) => {
+    const item = session.world.items[itemId];
+    return item && item.name.toLowerCase() === noun;
+  });
+
+  if (idx === -1) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: `${ghost.playerName}'s ghost doesn't have "${cmd.noun}".` },
+    });
+    return { session, responses };
+  }
+
+  const itemId = ghost.inventory[idx];
+  const item = session.world.items[itemId];
+  ghost.inventory.splice(idx, 1);
+  player.inventory.push(itemId);
+
+  responses.push({
+    playerId,
+    message: { type: 'message', text: `You take the ${item.name} from ${ghost.playerName}'s ghost.` },
+  });
+
+  // Notify others in room
+  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+    if (otherId !== playerId && otherPlayer.room === player.room) {
+      responses.push({
+        playerId: otherId,
+        message: {
+          type: 'message',
+          text: `${player.name} takes the ${item.name} from ${ghost.playerName}'s ghost.`,
+        },
+      });
+    }
+  }
+
+  // If ghost inventory is now empty, ghost fades away
+  if (ghost.inventory.length === 0) {
+    delete session.ghosts[found.ghostName];
+    const fadeMsg = { type: 'message', text: `${ghost.playerName}'s ghost fades away.` };
+    responses.push({ playerId, message: fadeMsg });
+    for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+      if (otherId !== playerId && otherPlayer.room === player.room) {
+        responses.push({ playerId: otherId, message: fadeMsg });
+      }
+    }
+  }
+
+  return { session, responses };
+}
+
+/**
+ * Loot all items from a ghost: "loot Bob's ghost"
+ */
+function handleLoot(session, playerId, cmd) {
+  const player = session.players[playerId];
+  const responses = [];
+
+  if (!cmd.noun) {
+    responses.push({ playerId, message: { type: 'error', text: 'Loot what? Try "loot Bob\'s ghost".' } });
+    return { session, responses };
+  }
+
+  // Parse ghost name — strip "'s ghost" suffix if present
+  const nounLower = cmd.noun.toLowerCase();
+  const ghostSuffix = "'s ghost";
+  let ghostOwner = cmd.noun;
+  if (nounLower.endsWith(ghostSuffix)) {
+    ghostOwner = cmd.noun.slice(0, -ghostSuffix.length);
+  }
+
+  const found = findGhostByName(session, ghostOwner);
+  if (!found || found.ghost.room !== player.room) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: `You don't see ${ghostOwner}'s ghost here.` },
+    });
+    return { session, responses };
+  }
+
+  const ghost = found.ghost;
+
+  if (ghost.inventory.length === 0) {
+    responses.push({
+      playerId,
+      message: { type: 'message', text: `${ghost.playerName}'s ghost has nothing to loot.` },
+    });
+    return { session, responses };
+  }
+
+  // Transfer all items
+  const takenNames = [];
+  for (const itemId of ghost.inventory) {
+    player.inventory.push(itemId);
+    const item = session.world.items[itemId];
+    takenNames.push(item ? item.name : itemId);
+  }
+  ghost.inventory = [];
+
+  const itemList = takenNames.join(', ');
+  responses.push({
+    playerId,
+    message: { type: 'message', text: `You loot ${ghost.playerName}'s ghost, taking: ${itemList}.` },
+  });
+
+  // Notify others in room
+  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+    if (otherId !== playerId && otherPlayer.room === player.room) {
+      responses.push({
+        playerId: otherId,
+        message: {
+          type: 'message',
+          text: `${player.name} loots ${ghost.playerName}'s ghost, taking: ${itemList}.`,
+        },
+      });
+    }
+  }
+
+  // Ghost fades away (inventory is empty)
+  delete session.ghosts[found.ghostName];
+  const fadeMsg = { type: 'message', text: `${ghost.playerName}'s ghost fades away.` };
+  responses.push({ playerId, message: fadeMsg });
+  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+    if (otherId !== playerId && otherPlayer.room === player.room) {
+      responses.push({ playerId: otherId, message: fadeMsg });
     }
   }
 
@@ -759,6 +1043,8 @@ function handleHelp(session, playerId) {
     '  look            — Look around the room',
     '  examine <item>  — Examine an item',
     '  take <item>     — Pick up an item',
+    '  take <item> from <name>\'s ghost — Take a specific item from a ghost',
+    '  loot <name>\'s ghost — Take all items from a ghost',
     '  drop <item>     — Drop an item',
     '  inventory       — Check your inventory (shortcut: i)',
     '  use <item>      — Use an item (or "use <item> on <target>")',
