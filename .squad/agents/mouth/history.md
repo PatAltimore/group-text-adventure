@@ -141,3 +141,9 @@
   - `worldId` is optional in join message — full backward compatibility
   - World files validated: all room/item/puzzle cross-references verified, all hazard strings match exactly
   - All 150 existing tests pass. No regressions.
+
+### 2026-04-05 — Fix: Remove `web` Service from azure.yaml
+
+- **Problem:** `azd up` failed during deploy with `resource not found: unable to find a resource tagged with 'azd-service-name: web'`. The `web` service was declared as `host: staticwebapp`, but the Bicep infra provisions a Storage Account, not a Static Web App.
+- **Fix:** Removed the `web:` service block (5 lines) from `azure.yaml`. Client deployment was already handled by the global `postdeploy` hook, which uploads files to the Storage Account's `$web` blob container, generates `config.json`, and configures CORS.
+- **Lesson:** When the deployment mechanism for a service is a custom hook (not azd's built-in service deployment), do NOT declare it as an azd service. azd will try to find a matching tagged Azure resource and fail.

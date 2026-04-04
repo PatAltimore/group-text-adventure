@@ -1,0 +1,207 @@
+{
+  "name": "The Derelict Station",
+  "description": "A deep-space research station gone dark three months ago. No distress signal, no survivors found. Your salvage crew has docked at the only open airlock — but the station's AI keeps cycling power to random sections. Something happened here. The logs might tell you what, if you can reach the command deck before life support fails.",
+  "startRoom": "airlock",
+  "rooms": {
+    "airlock": {
+      "name": "Docking Airlock",
+      "description": "The airlock seals behind you with a hiss that echoes too long. Emergency strips on the floor pulse dim amber, painting the ribbed metal walls in sickly light. Your mag-boots clank against the grated deck. A viewport to the south shows your shuttle tethered outside — but the docking clamps have already locked. The only way is forward. A corridor stretches north into flickering darkness, and a maintenance hatch to the east is marked 'SUBSYSTEMS — AUTHORIZED ONLY'.",
+      "exits": { "north": "main-corridor", "east": "maintenance-bay" },
+      "items": ["flashlight"],
+      "hazards": []
+    },
+    "main-corridor": {
+      "name": "Main Corridor — Section A",
+      "description": "A long central spine of the station, its ceiling lined with conduit bundles and dead light panels. Every third panel flickers to life, then dies — the AI cycling power. Scorch marks streak the east wall near a ruptured panel. The air tastes metallic, recycled too many times. To the south is the airlock. To the north, a sealed bulkhead leads to the crew quarters. To the west, frosted glass doors are stenciled 'MEDICAL BAY'. To the east, a cargo lift door stands open.",
+      "exits": { "south": "airlock", "west": "medical-bay", "east": "cargo-hold" },
+      "items": [],
+      "hazards": ["Sparking conduits above crackle with arcing electricity — do not touch the walls."]
+    },
+    "maintenance-bay": {
+      "name": "Maintenance Bay",
+      "description": "A cramped workshop crammed with diagnostic screens, coiled cabling, and the smell of burnt solder. Tool racks line the walls, most stripped bare. A single monitor still glows green, scrolling system status too fast to read. Someone was repairing something here in a hurry — a half-disassembled circuit board sits on the workbench. To the west is the airlock.",
+      "exits": { "west": "airlock" },
+      "items": ["circuit-board", "welding-tool"],
+      "hazards": []
+    },
+    "medical-bay": {
+      "name": "Medical Bay",
+      "description": "White tiles stained with something dark. Overturned gurneys. A surgical lamp swings gently, though there is no breeze. Medical cabinets line the far wall, most smashed open and emptied. The quarantine chamber to the north is sealed with a biometric lock glowing red. The main corridor is back to the east.",
+      "exits": { "east": "main-corridor" },
+      "items": ["medkit"],
+      "hazards": ["Broken glass covers the floor — step carefully."]
+    },
+    "cargo-hold": {
+      "name": "Cargo Hold",
+      "description": "A cavernous bay two decks high, stacked with shipping containers magnetically locked to the deck. The overhead lights are dead here — only the glow of container status LEDs breaks the dark, twinkling like groundbound stars. A cargo manifest terminal flickers near the north wall. The main corridor is west. A freight elevator to the north has power but the call panel is dark.",
+      "exits": { "west": "main-corridor" },
+      "items": ["power-cell"],
+      "hazards": ["A loose shipping container groans against its mag-locks overhead — it could shift at any moment."]
+    },
+    "crew-quarters": {
+      "name": "Crew Quarters",
+      "description": "Personal bunks stacked three high, each with a privacy curtain drawn shut. Personal effects are scattered — a floating pen, a cracked photo frame, a half-eaten ration bar. The silence here is heavier than elsewhere, as if the room is holding its breath. A comm terminal on the wall blinks with one unread message. The corridor is south. To the east, a reinforced door is labeled 'LABORATORY'.",
+      "exits": { "south": "main-corridor", "east": "laboratory" },
+      "items": ["keycard-blue"],
+      "hazards": []
+    },
+    "laboratory": {
+      "name": "Research Laboratory",
+      "description": "Banks of specimen tanks line the walls, most cracked and drained. One still hums with power, its contents obscured by condensation. Holographic displays project half-corrupted data — molecular diagrams, gene sequences, something that looks disturbingly organic. Lab benches are covered in shattered beakers and data pads. The crew quarters are west. A heavy blast door to the north reads 'REACTOR — LEVEL 5 CLEARANCE'.",
+      "exits": { "west": "crew-quarters" },
+      "items": ["data-pad"],
+      "hazards": ["An acrid chemical smell burns your nostrils — the ventilation has failed in this section."]
+    },
+    "quarantine-chamber": {
+      "name": "Quarantine Chamber",
+      "description": "A sealed room within a room. Thick observation glass surrounds a central containment area where something was held — the restraint clamps are bent outward, snapped open from the inside. Biohazard warnings plaster every surface. A decontamination shower stands unused by the south exit. Whatever was in here got out. On a shelf near the observation window sits an access badge that might open restricted areas.",
+      "exits": { "south": "medical-bay" },
+      "items": ["keycard-red"],
+      "hazards": []
+    },
+    "reactor-room": {
+      "name": "Reactor Control Room",
+      "description": "The heart of the station thrums with deep, resonant vibration. A cylindrical reactor core rises through the center of the room, encased in shielding that pulses with blue-white light. Control consoles ring the perimeter, most dark. One console labeled 'LIFE SUPPORT OVERRIDE' has power but requires an authorization chip. The temperature here is ten degrees warmer than anywhere else. The lab is south. A ladder to the north climbs toward the command deck, but an energy barrier blocks the way.",
+      "exits": { "south": "laboratory" },
+      "items": [],
+      "hazards": ["Radiation warnings flash on every console — don't linger."]
+    },
+    "command-deck": {
+      "name": "Command Deck",
+      "description": "The bridge of the station. A panoramic viewport wraps the forward wall, showing an endless field of stars and the cold blue curve of a gas giant below. Captain's chair in the center, navigation and comms stations flanking it. Every screen is alive now — the AI has restored power here, as if it wanted you to arrive. The main display reads: 'STATION LOG — FINAL ENTRY — PLAY?' A slot beneath the display is shaped for a data pad. The reactor room is back south. This is where the answers are.",
+      "exits": { "south": "reactor-room" },
+      "items": ["station-log"],
+      "hazards": []
+    }
+  },
+  "items": {
+    "flashlight": {
+      "name": "Flashlight",
+      "description": "A heavy-duty magnetic flashlight with a wide beam. Standard salvage crew issue. The battery indicator shows half charge.",
+      "pickupText": "You pull the flashlight from its charging dock. The beam cuts through the gloom like a blade.",
+      "portable": true
+    },
+    "circuit-board": {
+      "name": "Circuit Board",
+      "description": "A half-repaired circuit board labeled 'LIFT CTRL — CARGO BAY'. Someone was trying to fix the cargo elevator.",
+      "pickupText": "You slide the circuit board off the workbench and into your pack. It's warm to the touch.",
+      "portable": true
+    },
+    "welding-tool": {
+      "name": "Welding Tool",
+      "description": "A compact plasma welding tool, still charged. Could cut through light metals or fuse broken circuits.",
+      "pickupText": "You grab the welding tool. Its grip is ergonomic and reassuring in your hand.",
+      "portable": true
+    },
+    "medkit": {
+      "name": "Emergency Medkit",
+      "description": "A standard-issue station medkit. The seal is intact — unused. Contains wound sealant, stimulants, and a decontamination hypo.",
+      "pickupText": "You take the medkit from the cabinet. It's heavier than expected — fully stocked.",
+      "portable": true
+    },
+    "power-cell": {
+      "name": "Power Cell",
+      "description": "A cylindrical fusion power cell from one of the cargo containers. It hums faintly and glows amber through its casing. Enough juice to power a small console.",
+      "pickupText": "You pry the power cell from its housing. It's warm and vibrates gently in your hands.",
+      "portable": true
+    },
+    "keycard-blue": {
+      "name": "Blue Keycard",
+      "description": "A crew-level access keycard with a blue stripe. The name 'Dr. Vasquez' is printed on the back. Grants access to medical and quarantine areas.",
+      "pickupText": "You pick up the blue keycard from the bunk. Dr. Vasquez won't be needing it anymore.",
+      "portable": true
+    },
+    "data-pad": {
+      "name": "Data Pad",
+      "description": "A researcher's data pad with a cracked screen. It still displays partial notes: '...specimen broke containment at 0347... AI initiated lockdown... reactor override required...' The rest is corrupted.",
+      "pickupText": "You take the data pad. The partial log entries make your skin crawl.",
+      "portable": true
+    },
+    "keycard-red": {
+      "name": "Red Keycard",
+      "description": "A high-security access badge with a red stripe and the station commander's insignia. Grants Level 5 clearance — reactor and command deck access.",
+      "pickupText": "You take the red keycard from the shelf. Whatever broke out of quarantine, this badge was left behind in the chaos.",
+      "portable": true
+    },
+    "station-log": {
+      "name": "Station Log",
+      "description": "The final station log — a crystalline data core that contains the full record of what happened aboard the station. The truth, at last.",
+      "pickupText": "You eject the station log from the command console. It's warm and pulses with stored data. You now hold the record of everything that happened here.",
+      "portable": true
+    },
+    "auth-chip": {
+      "name": "Authorization Chip",
+      "description": "A small biometric authorization chip keyed to the station's reactor controls. It pulses with a faint green light.",
+      "pickupText": "You take the authorization chip. It hums softly, recognizing nearby reactor systems.",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "unlock-crew-quarters": {
+      "room": "main-corridor",
+      "description": "The bulkhead to the north is sealed tight. A panel beside it reads 'ELECTRICAL FAULT — MANUAL BYPASS REQUIRED'. The welding tool from maintenance might fuse the broken circuit.",
+      "requiredItem": "welding-tool",
+      "solvedText": "You aim the welding tool at the ruptured panel beside the bulkhead. Sparks fly as you fuse the broken connection. With a grinding hiss, the bulkhead unseals and slides open, revealing the crew quarters to the north.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "crew-quarters"
+      }
+    },
+    "secure-cargo": {
+      "room": "cargo-hold",
+      "description": "The loose shipping container overhead groans dangerously. The cargo manifest terminal might accept the circuit board to re-engage the magnetic locks and stabilize it.",
+      "requiredItem": "circuit-board",
+      "solvedText": "You slot the circuit board into the cargo manifest terminal. The screen flickers to life — 'MAG-LOCK OVERRIDE: ENGAGED.' The groaning container above locks down with a solid CLUNK. As it settles, something clatters to the deck from between the containers — an authorization chip that must have been knocked loose months ago.",
+      "action": {
+        "type": "addItem",
+        "room": "cargo-hold",
+        "itemId": "auth-chip"
+      }
+    },
+    "unlock-quarantine": {
+      "room": "medical-bay",
+      "description": "The quarantine chamber door is sealed with a biometric lock glowing red. It requires a medical-level access card.",
+      "requiredItem": "keycard-blue",
+      "solvedText": "You press Dr. Vasquez's blue keycard against the biometric reader. It flashes green, and the quarantine seal disengages with a sharp hiss. The heavy door to the north swings inward, releasing a wave of cold, sterile air.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "quarantine-chamber"
+      }
+    },
+    "unlock-reactor": {
+      "room": "laboratory",
+      "description": "The blast door to the reactor room requires Level 5 clearance. A red keycard slot blinks expectantly beside the door.",
+      "requiredItem": "keycard-red",
+      "solvedText": "You slide the red keycard into the slot. The blast door's magnetic locks disengage one by one — CLUNK, CLUNK, CLUNK — and the massive door rolls aside. Heat and a deep thrumming wash over you as the reactor room is revealed to the north.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "reactor-room"
+      }
+    },
+    "activate-life-support": {
+      "room": "reactor-room",
+      "description": "The Life Support Override console has power but requires an authorization chip to activate. The slot is shaped for a standard-issue biometric chip.",
+      "requiredItem": "auth-chip",
+      "solvedText": "You slot the authorization chip into the Life Support Override console. It chirps — 'AUTHORIZATION ACCEPTED. RESTORING VENTILATION.' Fans spin up across the station. In the laboratory below, the acrid chemical fumes vent into space, replaced by clean recycled air.",
+      "action": {
+        "type": "removeHazard",
+        "room": "laboratory",
+        "hazard": "An acrid chemical smell burns your nostrils — the ventilation has failed in this section."
+      }
+    },
+    "unlock-command-deck": {
+      "room": "reactor-room",
+      "description": "An energy barrier shimmers across the ladder to the command deck. A console nearby reads 'INSERT POWER CELL TO DEACTIVATE BARRIER'.",
+      "requiredItem": "power-cell",
+      "solvedText": "You slot the power cell into the barrier console. It drinks the energy greedily — the barrier flickers, stutters, and collapses. The ladder to the north is clear. The command deck awaits.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "command-deck"
+      }
+    }
+  }
+}
