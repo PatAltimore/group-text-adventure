@@ -57,6 +57,13 @@
           aria-label="Your player name"
         >
 
+        <div id="world-selector-group" class="world-selector-group">
+          <label for="world-selector" class="world-selector-label">Choose Adventure</label>
+          <select id="world-selector" aria-label="Select adventure world">
+            <option value="default-world">Loading...</option>
+          </select>
+        </div>
+
         <div class="landing-buttons">
           <button id="btn-host" class="btn btn-primary" disabled aria-label="Host a new game">
             Host New Game
@@ -86,6 +93,7 @@
   <section id="screen-lobby" class="screen" role="region" aria-label="Game lobby waiting room">
     <div class="lobby-container">
       <h2 class="lobby-title">🏰 Waiting for Players…</h2>
+      <p id="lobby-adventure-name" class="lobby-adventure-name"></p>
 
       <div class="lobby-share">
         <p class="lobby-label">Share this link or scan the QR code:</p>

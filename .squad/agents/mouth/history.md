@@ -117,3 +117,27 @@
 - **Look message deduplication** — Added 2-second same-room window in `handleServerMessage`. Prevents duplicate `look` messages (likely Web PubSub service echo) from rendering room twice, while still allowing intentional player-initiated "look" commands.
 - **WebSocket cleanup** — `connectWebSocket()` closes any existing `state.ws` before new connection to prevent orphaned event listeners.
 - **Mouth's takeaway:** No server-side changes needed. Client-side fixes are defensive and don't affect backend game logic. All 150 tests pass.
+
+### 2026-04-05 — Multi-World Support: World Selection + Two New Adventures
+
+- **New worlds created:**
+  - `world/space-adventure.json` — "The Derelict Station": 10 rooms, 10 items, 6 puzzles. Derelict space station theme. Players explore airlock→corridors→medical/cargo/crew→lab→reactor→command deck. Puzzles use `openExit` (4), `removeHazard` (1), `addItem` (1). Items scattered across maintenance bay, cargo hold, crew quarters, quarantine requiring multi-player coordination.
+  - `world/escape-room.json` — "The Clockmaker's Mansion": 10 rooms, 10 items, 7 puzzles. Escape room theme. Players explore ground floor → upper floor → secret workshop → observatory. Heavy puzzle density. Multi-step chains (fix music box with gear piece, then use it as a key). Puzzles use `openExit` (5), `removeHazard` (1), `addItem` (1).
+
+- **New endpoint: `GET /api/worlds`** (`api/src/functions/worlds.js`)
+  - Scans `world/` directory for JSON files, returns `[{ id, name, description }]`
+  - Uses same candidate-directory pattern as `gameHub.js` (deployed + local dev paths)
+  - Registered in `api/src/index.js`
+
+- **`gameHub.js` changes:**
+  - `getDefaultWorld()` refactored into `getWorld(worldId)` — loads `world/{worldId}.json`
+  - `getDefaultWorld()` preserved as backward-compatible wrapper
+  - `handleJoin` reads `data.worldId` when creating new session (first player = host). Defaults to `'default-world'` if not provided.
+  - `worldId` saved in `saveGameSession()` metadata alongside `worldName`, `createdAt`, `hostConnectionId`
+  - Players joining an existing game are unaffected — `worldId` only matters at session creation
+
+- **Key design decisions:**
+  - World ID = filename without `.json` (e.g., `space-adventure`, `escape-room`, `default-world`)
+  - `worldId` is optional in join message — full backward compatibility
+  - World files validated: all room/item/puzzle cross-references verified, all hazard strings match exactly
+  - All 150 existing tests pass. No regressions.

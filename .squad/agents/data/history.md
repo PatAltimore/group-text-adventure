@@ -101,3 +101,15 @@
 
 **Data's takeaway:** No client-side changes needed. azd template provisions identical infrastructure to PowerShell script, so all existing frontend code works unchanged.
 
+### 2026-04-04 — World/Adventure Selector UI
+
+- **World selector dropdown:** Added `<select id="world-selector">` to landing screen between player name input and Host/Join buttons
+- **`loadWorlds()` function:** Fetches `GET /api/worlds`, populates dropdown with `{id, name, description}`. On failure, falls back to single "The Forgotten Castle" option with value `default-world`
+- **State management:** Added `worldId` to client state. Set from dropdown when host clicks "Host New Game"
+- **Join message:** Host's WebSocket join message includes `worldId`; joiners do NOT send `worldId` (world already set by host)
+- **Lobby subtitle:** `<p id="lobby-adventure-name">` shows "Adventure: {name}" in lobby screen
+- **CSS:** Custom-styled `<select>` matching dark theme — uses same dimensions/colors as player name input, custom SVG chevron, proper option styling
+- **Mobile:** Select uses `font-size: 16px` to prevent iOS zoom, full-width layout
+- **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
+- **All 150 tests pass** unchanged
+

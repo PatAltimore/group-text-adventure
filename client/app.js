@@ -25,6 +25,7 @@
   const state = {
     playerName: '',
     gameId: '',
+    worldId: '',
     isHost: false,
     ws: null,
     players: [],
@@ -71,6 +72,11 @@
     commandInput: $('#command-input'),
     btnShare: $('#btn-share'),
     
+    // World selector
+    worldSelectorGroup: $('#world-selector-group'),
+    worldSelector: $('#world-selector'),
+    lobbyAdventureName: $('#lobby-adventure-name'),
+
     // Share overlay
     shareOverlay: $('#share-overlay'),
     shareOverlayClose: $('#share-overlay-close'),
@@ -89,6 +95,32 @@
       els.joinPlayerName.focus();
     } else if (name === 'landing') {
       els.playerName.focus();
+    }
+  }
+
+  // --- World Loading ---
+  async function loadWorlds() {
+    try {
+      const res = await fetch(`${apiBaseUrl}/api/worlds`);
+      if (!res.ok) throw new Error(`Failed: ${res.status}`);
+      const worlds = await res.json();
+      if (!Array.isArray(worlds) || worlds.length === 0) throw new Error('Empty response');
+
+      els.worldSelector.innerHTML = '';
+      worlds.forEach((world) => {
+        const opt = document.createElement('option');
+        opt.value = world.id;
+        opt.textContent = world.name;
+        if (world.description) opt.title = world.description;
+        els.worldSelector.appendChild(opt);
+      });
+    } catch (err) {
+      console.log('[Worlds] Failed to load worlds:', err.message, '— using default');
+      els.worldSelector.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = 'default-world';
+      opt.textContent = 'The Forgotten Castle';
+      els.worldSelector.appendChild(opt);
     }
   }
 
@@ -155,7 +187,11 @@
 
       ws.addEventListener('open', () => {
         state.connected = true;
-        sendMessage({ type: 'join', playerName: state.playerName, gameId: state.gameId });
+        const joinMsg = { type: 'join', playerName: state.playerName, gameId: state.gameId };
+        if (state.isHost && state.worldId) {
+          joinMsg.worldId = state.worldId;
+        }
+        sendMessage(joinMsg);
       });
 
       ws.addEventListener('message', (event) => {
@@ -501,6 +537,7 @@
       state.playerName = els.playerName.value.trim();
       state.isHost = true;
       state.gameId = generateGameId();
+      state.worldId = els.worldSelector.value;
       startHost();
     });
 
@@ -541,6 +578,10 @@
     renderQrCode(joinUrl);
     state.players = [state.playerName];
     updateLobbyPlayerList();
+
+    // Show selected adventure name in lobby
+    const selectedOption = els.worldSelector.options[els.worldSelector.selectedIndex];
+    els.lobbyAdventureName.textContent = selectedOption ? `Adventure: ${selectedOption.textContent}` : '';
 
     showScreen('lobby');
 
@@ -674,6 +715,7 @@
   // --- Init ---
   async function init() {
     await loadConfig();
+    await loadWorlds();
     initLanding();
     initCommandInput();
     initShareOverlay();

@@ -2,3 +2,4 @@
 import './functions/negotiate.js';
 import './functions/gameHub.js';
 import './functions/health.js';
+import './functions/worlds.js';

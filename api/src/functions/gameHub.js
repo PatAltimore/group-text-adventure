@@ -45,15 +45,16 @@ function getServiceClient() {
 }
 
 /**
- * Load the default world JSON from disk.
+ * Load a world JSON file by its ID (filename without .json).
  * Checks two paths: deployed (world/ alongside api code) and local dev (project root).
  */
-async function getDefaultWorld() {
+async function getWorld(worldId) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
+  const filename = `${worldId}.json`;
   const candidates = [
-    join(__dirname, '..', '..', 'world', 'default-world.json'),
-    join(__dirname, '..', '..', '..', 'world', 'default-world.json'),
+    join(__dirname, '..', '..', 'world', filename),
+    join(__dirname, '..', '..', '..', 'world', filename),
   ];
   for (const worldPath of candidates) {
     try {
@@ -63,7 +64,14 @@ async function getDefaultWorld() {
       continue;
     }
   }
-  throw new Error('Could not find default-world.json');
+  throw new Error(`Could not find world file: ${filename}`);
+}
+
+/**
+ * Load the default world JSON from disk (backward-compatible wrapper).
+ */
+async function getDefaultWorld() {
+  return getWorld('default-world');
 }
 
 /**
@@ -251,10 +259,12 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   // Load or create game session
   let session = await loadGameState(gameId);
   if (!session) {
-    const worldJson = await getDefaultWorld();
+    const worldId = data.worldId || 'default-world';
+    const worldJson = await getWorld(worldId);
     const world = loadWorld(worldJson);
     session = createGameSession(world);
     await saveGameSession(gameId, {
+      worldId,
       worldName: world.name,
       createdAt: session.createdAt,
       hostConnectionId: connectionId,

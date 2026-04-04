@@ -17,29 +17,38 @@ services:
         windows:
           shell: pwsh
           run: |
-            # Copy world data into the api package so Functions can load it at runtime
-            $worldSrc = Join-Path $env:SERVICE_API_PROJECT_DIR ".." "world"
-            $worldDst = Join-Path $env:SERVICE_API_PROJECT_DIR "world"
+            # For service hooks, azd sets CWD to the service project dir (./api)
+            $apiDir = $PWD.Path
+            $repoRoot = Split-Path $apiDir -Parent
+            $worldSrc = Join-Path $repoRoot "world"
+            $worldDst = Join-Path $apiDir "world"
+
+            Write-Host "api dir: $apiDir"
+            Write-Host "world src: $worldSrc"
+            if (-not (Test-Path $worldSrc)) { throw "world/ not found at $worldSrc" }
+
             if (Test-Path $worldDst) { Remove-Item $worldDst -Recurse -Force }
             Copy-Item $worldSrc -Destination $worldDst -Recurse -Force
             Write-Host "Copied world/ into api package"
 
-            # Install production dependencies only
-            Push-Location $env:SERVICE_API_PROJECT_DIR
             npm install --omit=dev
-            Pop-Location
         posix:
           shell: sh
           run: |
-            # Copy world data into the api package so Functions can load it at runtime
-            WORLD_SRC="$(dirname "$SERVICE_API_PROJECT_DIR")/world"
-            WORLD_DST="$SERVICE_API_PROJECT_DIR/world"
+            # For service hooks, azd sets CWD to the service project dir (./api)
+            API_DIR="$(pwd)"
+            REPO_ROOT="$(dirname "$API_DIR")"
+            WORLD_SRC="$REPO_ROOT/world"
+            WORLD_DST="$API_DIR/world"
+
+            echo "api dir: $API_DIR"
+            echo "world src: $WORLD_SRC"
+            if [ ! -d "$WORLD_SRC" ]; then echo "world/ not found at $WORLD_SRC"; exit 1; fi
+
             rm -rf "$WORLD_DST"
             cp -r "$WORLD_SRC" "$WORLD_DST"
             echo "Copied world/ into api package"
 
-            # Install production dependencies only
-            cd "$SERVICE_API_PROJECT_DIR"
             npm install --omit=dev
 
   web:
@@ -54,6 +63,15 @@ hooks:
       shell: pwsh
       run: |
         $ErrorActionPreference = 'Stop'
+
+        # Resolve project root — azd writes hooks to temp files, so $PSScriptRoot is unreliable
+        $projectRoot = if ($env:AZD_PROJECT_DIR) { $env:AZD_PROJECT_DIR } else { $PWD.Path }
+        if (-not (Test-Path (Join-Path $projectRoot "azure.yaml"))) {
+          # Last resort: walk up from CWD looking for azure.yaml
+          $d = $PWD.Path
+          while ($d -and -not (Test-Path (Join-Path $d "azure.yaml"))) { $d = Split-Path $d -Parent }
+          if ($d) { $projectRoot = $d }
+        }
 
         $rgName = $env:AZURE_RESOURCE_GROUP
         if (-not $rgName) { $rgName = "rg-$env:AZURE_ENV_NAME" }
@@ -86,7 +104,7 @@ hooks:
         # --- 2. Generate config.json for the client ---
         $funcUrl = "https://${functionApp}.azurewebsites.net"
         $configJson = @{ apiBaseUrl = $funcUrl } | ConvertTo-Json
-        $clientDir = Join-Path $PSScriptRoot "client"
+        $clientDir = Join-Path $projectRoot "client"
         $configPath = Join-Path $clientDir "config.json"
         Set-Content -Path $configPath -Value $configJson -Encoding UTF8
         Write-Host "Generated client config.json with apiBaseUrl=$funcUrl"
@@ -178,7 +196,9 @@ hooks:
 
         # 2. Generate config.json
         FUNC_URL="https://${FUNCTION_APP}.azurewebsites.net"
-        CLIENT_DIR="$(dirname "$0")/client"
+        # Resolve project root — azd writes hooks to temp files
+        PROJECT_ROOT="${AZD_PROJECT_DIR:-$(pwd)}"
+        CLIENT_DIR="$PROJECT_ROOT/client"
         echo "{\"apiBaseUrl\":\"${FUNC_URL}\"}" > "$CLIENT_DIR/config.json"
 
         # 3. Upload client files

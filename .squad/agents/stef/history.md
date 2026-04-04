@@ -48,3 +48,12 @@
   - 13 tests fail awaiting implementation: 4 parser (yell→distinct verb), 9 engine (multi-room propagation, direction, muffled yelling, annoyed feedback)
   - Implementation needs: (1) parser must return `verb: 'yell'` not `verb: 'say'` for yell/shout, (2) engine needs `handleYell` with BFS room traversal for distance, exit-direction resolution for "from the south", muffled text for 2+ rooms away, annoyed feedback for same-room
 
+- **2026-04-02 — World selection tests (32 tests: 11 pass, 21 skip awaiting world files)**
+  - File: `/tests/world-selection.test.js`
+  - Reusable `validateWorldJson()` function checks 10 invariants: schema, startRoom, exit connectivity, item refs, puzzle refs, orphan items, room reachability (BFS with puzzle-unlocked exits), room count (10)
+  - Tests use `test.skip` when world files don't exist yet — will auto-activate when Mouth creates `space-adventure.json` and `escape-room.json`
+  - Gameplay integration tests: loadWorld, createGameSession, navigation, item pickup, full puzzle solve (pick up item → navigate → use item)
+  - Edge cases: invalid/null/empty loadWorld input, missing startRoom, default-world fallback
+  - Test framework: Jest with `@jest/globals`, ESM, `--experimental-vm-modules` (matches existing suite)
+  - BFS pathfinding helper for navigating player to specific rooms during tests
+  - All 172 existing tests still pass (204 total with skips)

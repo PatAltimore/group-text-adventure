@@ -251,6 +251,60 @@ html, body {
   border-color: var(--accent);
 }
 
+/* ===== World Selector ===== */
+.world-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.world-selector-label {
+  color: var(--text-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+}
+
+#world-selector {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: var(--font-mono);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b949e' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+#world-selector:focus {
+  border-color: var(--accent);
+}
+
+#world-selector option {
+  background: var(--bg-surface);
+  color: var(--text);
+  padding: 8px;
+}
+
+/* ===== Lobby Adventure Name ===== */
+.lobby-adventure-name {
+  color: var(--accent);
+  font-size: 14px;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
 .landing-buttons {
   display: flex;
   gap: 12px;
