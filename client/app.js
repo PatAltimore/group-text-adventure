@@ -63,6 +63,7 @@
     lobbyPlayerCount: $('#lobby-player-count'),
     lobbyPlayerList: $('#lobby-player-list'),
     btnStartGame: $('#btn-start-game'),
+    lobbyWaitingMsg: $('#lobby-waiting-msg'),
     
     // Game screen
     gameTitle: $('#game-title'),
@@ -310,6 +311,9 @@
       case 'gameInfo':
         handleGameInfo(msg);
         break;
+      case 'gameStart':
+        handleGameStart(msg);
+        break;
       default:
         // Unknown message type — show as system text if it has text
         if (msg.text) appendSystemMessage(msg.text);
@@ -485,12 +489,28 @@
     if (msg.playerCount != null) {
       updatePlayerCount(msg.playerCount);
     }
-    if (msg.room) {
-      renderRoomMessage(msg.room);
+    if (msg.adventureName && els.lobbyAdventureName) {
+      els.lobbyAdventureName.textContent = `Adventure: ${msg.adventureName}`;
     }
-    if (msg.joinUrl && state.isHost) {
+
+    // Post-start join: room is present, skip lobby and go straight to game
+    if (msg.room) {
+      showScreen('game');
+      renderRoomMessage(msg.room);
+      return;
+    }
+
+    // Pre-start join (no room): stay in lobby, update share info
+    if (msg.joinUrl) {
       els.lobbyUrl.value = msg.joinUrl;
       renderQrCode(msg.joinUrl);
+    }
+  }
+
+  function handleGameStart(msg) {
+    showScreen('game');
+    if (msg.room) {
+      renderRoomMessage(msg.room);
     }
   }
 
@@ -607,7 +627,12 @@
   function startHost() {
     const joinUrl = buildJoinUrl(state.gameId);
 
-    // Set up lobby
+    // Set up lobby — host sees Start Adventure button, not waiting message
+    els.btnStartGame.classList.remove('hidden');
+    els.lobbyWaitingMsg.classList.add('hidden');
+    els.btnStartGame.disabled = false;
+    els.btnStartGame.textContent = 'Start Adventure';
+
     els.lobbyUrl.value = joinUrl;
     renderQrCode(joinUrl);
     state.players = [state.playerName];
@@ -625,9 +650,12 @@
     // Share URL button — same flow as game Share button
     els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, 'Share'));
 
-    // Start game button
+    // Start game button — send startGame to server; actual transition
+    // happens when the server broadcasts gameStart back to all clients
     els.btnStartGame.addEventListener('click', () => {
-      showScreen('game');
+      sendMessage({ type: 'startGame' });
+      els.btnStartGame.disabled = true;
+      els.btnStartGame.textContent = 'Starting…';
     });
   }
 
@@ -636,7 +664,24 @@
     const joinUrl = buildJoinUrl(state.gameId);
     window.history.replaceState({}, '', `?game=${encodeURIComponent(state.gameId)}`);
 
-    showScreen('game');
+    // Show lobby for joiners (not game screen) — host-only controls hidden
+    els.btnStartGame.classList.add('hidden');
+    els.lobbyWaitingMsg.classList.remove('hidden');
+
+    // Set up lobby share info
+    els.lobbyUrl.value = joinUrl;
+    renderQrCode(joinUrl);
+    state.players = [state.playerName];
+    updateLobbyPlayerList();
+
+    // Show adventure name if available (will be updated by gameInfo)
+    els.lobbyAdventureName.textContent = '';
+
+    showScreen('lobby');
+
+    // Share URL button
+    els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, 'Share'));
+
     connectWebSocket(state.gameId);
   }
 

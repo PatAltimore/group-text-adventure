@@ -415,6 +415,20 @@ html, body {
   color: var(--green);
 }
 
+/* ===== Lobby Waiting Message ===== */
+.lobby-waiting-msg {
+  color: var(--text-dim);
+  font-size: 14px;
+  font-style: italic;
+  padding: 14px 0;
+  animation: waitingPulse 2s ease-in-out infinite;
+}
+
+@keyframes waitingPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 /* ===== Game Screen ===== */
 #screen-game {
   flex-direction: column;
