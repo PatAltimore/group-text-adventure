@@ -352,3 +352,52 @@ Added `/api/health` endpoint and post-deploy verification to deploy script with 
 - Modified: `api/src/index.js`, `deploy/deploy.ps1`
 - All 111 tests pass
 - Committed and pushed
+
+---
+
+## 13. Deploy Script: Resilience & WEBSITE_RUN_FROM_PACKAGE Handling
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-04  
+**Status:** Needs Implementation
+
+### Decision
+
+Two fixes required in `deploy/deploy.ps1`:
+
+1. **Provisioning loop stderr resilience (step 5, lines 230-242):** Wrap loop body in `try/catch` to handle Azure CLI Python warnings that trigger `$ErrorActionPreference = 'Stop'` even with `2>$null` redirection. PowerShell treats native command stderr as terminating exception in strict mode.
+
+2. **WEBSITE_RUN_FROM_PACKAGE handling (post-deploy, lines 493-523):** On Linux Consumption, `config-zip` deploys to blob storage and sets `WEBSITE_RUN_FROM_PACKAGE` to a SAS URL (correct). Do NOT override to hardcoded `1` — Linux Consumption with blob deployment requires the SAS URL, not `1`. Overriding causes persistent 503.
+
+### Problem Resolved
+
+**2026-04-04 deployment session:**
+
+- Subscription switched successfully, but `deploy.ps1 -Location westus2` failed at provisioning check (step 5) when Azure CLI emitted Python cryptography warnings. Loop doesn't handle native command stderr properly.
+
+- Manual deployment succeeded via `az functionapp deployment source config-zip`. Post-deploy, `WEBSITE_RUN_FROM_PACKAGE` was correctly set to blob SAS URL. Initially overwrote to `1` (per old logic), which broke the deployment (persistent 503). Removing the override and letting the blob URL persist fixed the issue.
+
+### Key Learnings
+
+1. **PowerShell stderr + $ErrorActionPreference:** Native command stderr (e.g., Python warnings from Azure CLI) can trigger exceptions when `$ErrorActionPreference = 'Stop'`, even with `2>$null` redirection. This is inconsistent across PowerShell 5.1 vs 7+. Solution: wrap in `try/catch`.
+
+2. **WEBSITE_RUN_FROM_PACKAGE on Linux Consumption:** `config-zip` manages this value automatically. It sets it to a blob SAS URL (correct for blob-based deployment). Do NOT override to `1` — that's only correct for traditional "Run from Package" deployments in /home/data. On Consumption Linux with blob storage, the runtime reads from the blob URL, not the local directory.
+
+3. **Zip deploy behavior:** `az functionapp deployment source config-zip` can reset or wipe custom app settings. The post-deploy re-apply logic is essential. However, `WEBSITE_RUN_FROM_PACKAGE` should be excluded from the drift check — let the deploy command manage it. Only re-apply connection strings, feature flags, and other non-deployment-specific settings.
+
+### Convention Going Forward
+
+- Provisioning loops in deploy scripts MUST wrap native command calls in `try/catch` to handle stderr output gracefully.
+- WEBSITE_RUN_FROM_PACKAGE is managed by the deploy command (config-zip). Do not override it post-deploy. Post-deploy settings re-apply should exclude this value.
+- After blob-based zip deployment (`config-zip`), verify `WEBSITE_RUN_FROM_PACKAGE` is non-empty (has a blob URL), but do not check for a specific value.
+
+### Impact
+
+- Modified: `deploy/deploy.ps1` (step 5 provisioning loop, post-deploy settings verification)
+- No application code changes needed
+- Requires redeployment to verify fix
+- All 111 tests still pass
+
+### Files
+
+- `deploy/deploy.ps1` (lines 230-242 provisioning loop, lines 493-523 post-deploy settings)
