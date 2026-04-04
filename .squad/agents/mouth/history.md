@@ -108,3 +108,12 @@
   7. **CORS** set in Bicep to storage static website URL, then reinforced in postdeploy with the actual URL after static website is enabled.
   8. All app settings match exactly what `deploy/deploy.ps1` configures, including `AzureWebJobsFeatureFlags=EnableWorkerIndexing`.
 - **Validation:** Both Bicep files compile clean (`az bicep build`). All 150 existing tests pass.
+
+### 2026-04-04 — Cross-Team Update: Data's Client Fixes
+
+**From Data (Frontend Dev):**
+
+- **Clipboard helper** — Centralized clipboard access behind guard. All three clipboard sites (share button, overlay copy, lobby copy) now use `copyToClipboard()` with try/catch. If clipboard unavailable, UI continues normally (graceful degradation).
+- **Look message deduplication** — Added 2-second same-room window in `handleServerMessage`. Prevents duplicate `look` messages (likely Web PubSub service echo) from rendering room twice, while still allowing intentional player-initiated "look" commands.
+- **WebSocket cleanup** — `connectWebSocket()` closes any existing `state.ws` before new connection to prevent orphaned event listeners.
+- **Mouth's takeaway:** No server-side changes needed. Client-side fixes are defensive and don't affect backend game logic. All 150 tests pass.

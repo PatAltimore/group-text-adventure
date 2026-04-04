@@ -401,3 +401,63 @@ Two fixes required in `deploy/deploy.ps1`:
 ### Files
 
 - `deploy/deploy.ps1` (lines 230-242 provisioning loop, lines 493-523 post-deploy settings)
+
+---
+
+## 14. Client Clipboard & Look Deduplication
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+### Decision
+
+Fixed two client bugs: (1) share button crash when clipboard API unavailable, and (2) duplicate room view after host join.
+
+### Key Decisions
+
+1. **Clipboard helper (`copyToClipboard`)** — Centralized clipboard access behind a guard (`if (navigator.clipboard)`) + try/catch. All three clipboard call sites (share button, overlay copy, lobby copy) now use this helper. Clipboard is treated as optional enhancement; UI actions always complete even without it.
+
+2. **Look message debounce** — Added 2-second same-room deduplication in `handleServerMessage`. If the same room name arrives in a `look` message within 2 seconds of the last, it's skipped. This prevents server-side retries or Web PubSub echo from rendering duplicate room views, while still allowing intentional player-initiated "look" commands.
+
+3. **WebSocket cleanup** — `connectWebSocket()` now closes any existing `state.ws` before creating a new connection, preventing orphaned event listeners from processing stale messages.
+
+### Impact
+
+- Modified: `client/app.js` (clipboard helper, share overlay, look deduplication, WebSocket cleanup)
+- No server-side changes
+- All 150 tests pass unchanged
+
+### Open Question
+
+The exact server-side cause of the duplicate look was not pinpointed. Investigation confirmed `handleJoin` sends exactly one `look` via `sendToConnection`. The most likely cause is Web PubSub service behavior (response echo or retry on cold start). The client-side debounce is a robust fix regardless of root cause. If duplicate looks persist with >2s gaps, the server team should investigate the upstream handler's response format.
+
+---
+
+## 15. Azure Developer CLI (azd) Template
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+### Context
+
+Pat requested an azd template to complement the existing `deploy/deploy.ps1` script. The azd template provisions the same infrastructure and deploys the same code, giving the team an alternative deployment path using `azd up`.
+
+### Decision
+
+Created a full azd template (`azure.yaml` + `infra/` Bicep files) that provisions Storage Account, Web PubSub (Free), and Function App (Linux Consumption). Data-plane operations (static website hosting, Web PubSub event handler, client config generation) are handled via azure.yaml hooks.
+
+### Key Trade-offs
+
+1. **Two deployment paths coexist.** The PowerShell script is battle-tested with extensive retry logic and error handling. The azd template is cleaner but relies on azd's deployment machinery. Both provision identical resources.
+
+2. **Postdeploy hook complexity.** Static website hosting and Web PubSub event handler require data-plane operations that Bicep can't do. The postdeploy hook handles both, plus client config generation and CORS updates. This is unavoidable but means `azd up` isn't purely declarative.
+
+3. **Resource naming divergence.** The existing script uses `{appName}store` / `{appName}-func` / `{appName}-wps`. The azd template uses `st{token}` / `func-{token}` / `wps-{token}` with a uniqueString token. This means azd deployments create NEW resources, not reuse existing ones. This is intentional — azd environments are isolated.
+
+### Impact
+
+- **No existing files modified.** deploy/deploy.ps1 is untouched. All 150 tests pass.
+- **New files:** `azure.yaml`, `infra/main.bicep`, `infra/resources.bicep`, `infra/main.parameters.json`, `infra/abbreviations.json`
+- **Team usage:** Run `azd init` then `azd up` from repo root. Environment name and location are prompted.

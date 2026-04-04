@@ -82,3 +82,22 @@
 - **Clipboard helper reuse:** `copyToClipboard()` is now used by share button, overlay copy button, and lobby copy URL button — all three had the same vulnerability.
 - **All 150 tests pass** unchanged.
 
+### 2026-04-04 — Cross-Team: Mouth's Azure Developer CLI (azd) Template
+
+**From Mouth (Backend Dev):**
+
+- **New azd template** created alongside existing `deploy/deploy.ps1`. Two deployment paths coexist:
+  - PowerShell script: battle-tested, extensive error handling, idempotent
+  - azd template: cleaner interface, standard Azure tooling, same infrastructure
+- **Files added:**
+  - `azure.yaml` — azd project definition with postdeploy hooks for data-plane operations
+  - `infra/main.bicep` — Subscription-scoped orchestrator (creates resource group)
+  - `infra/resources.bicep` — All IaC (Storage Account, Web PubSub Free_F1, Function App Y1)
+  - `infra/main.parameters.json` — azd environment placeholders
+  - `infra/abbreviations.json` — Standard resource naming abbreviations
+- **Key design:** Two-file Bicep pattern (main + resources module) is standard azd for subscription-scoped deployments. Data-plane operations (static website, event handler, client config) handled in postdeploy hook.
+- **Resource naming:** Uses `uniqueString(subscription, env, location)` for global uniqueness — azd deployments create NEW resources, not reuse existing ones (intentional isolation)
+- **All 150 tests pass** unchanged. No existing files modified.
+
+**Data's takeaway:** No client-side changes needed. azd template provisions identical infrastructure to PowerShell script, so all existing frontend code works unchanged.
+
