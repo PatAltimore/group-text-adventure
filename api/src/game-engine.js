@@ -260,7 +260,7 @@ function handleGo(session, playerId, cmd) {
         playerId: otherId,
         message: {
           type: 'playerEvent',
-          event: 'left',
+          event: 'moved',
           playerName: player.name,
           text: `${player.name} went ${cmd.noun}.`,
         },

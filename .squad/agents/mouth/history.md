@@ -158,3 +158,23 @@
   3. `deploy.ps1` + `deploy.sh`: Added `worlds.js` to required staging file validation.
 - **Client-side fix (by Pat):** Separate commit added 5-second AbortController timeout and resilient fallback to `loadWorlds()`.
 - **Key lesson:** Every new Azure Function endpoint needs: (1) logging in handler, (2) health.js list update, (3) deploy script validation entry. Silent error paths in production are invisible.
+
+### 2026-04-05 — World Selector: Timeout + Loading Indicator Fix
+
+- **Problem 1:** `loadWorlds()` had a 5-second AbortController timeout that was too aggressive for Azure Functions Consumption plan cold starts (10-30s). The fetch would time out and the fallback kicked in, showing only "The Forgotten Castle" instead of all 3 adventures.
+- **Fix:** Increased timeout from 5000ms to 15000ms. Added "Loading adventures..." disabled placeholder option while fetch is in progress, replaced with actual worlds on success. Dropdown is disabled during load and re-enabled in `finally` block.
+- **Problem 2 (non-issue):** World selector CSS was already fully styled — `#world-selector`, `.world-selector-group`, `.world-selector-label` all had matching dark theme styles (same bg, text, border, font as input fields). Custom dropdown arrow SVG included. No CSS changes needed.
+- **All 204 tests pass.** No server-side changes.
+
+### 2026-04-05 — Fix: "Left the Game" Shown on Room Movement
+
+- **Bug:** When a player moved rooms (e.g., "go north"), other players in the old room saw "PlayerName has left the game." instead of "PlayerName went north." The player was also incorrectly removed from the client-side player list.
+- **Root cause (two-part):**
+  1. **game-engine.js:** Movement departure events used `event: 'left'` — same event name as disconnects. The `text` field had the correct directional message but the client ignored it.
+  2. **client/app.js:** `handlePlayerEvent()` hardcoded `'has left the game.'` for all non-join events, ignoring `msg.text`. Also removed player from `state.players` on any `event: 'left'`, including room movement.
+- **Fix:**
+  1. Changed movement departure event from `event: 'left'` to `event: 'moved'` in `game-engine.js` (line 263). This makes movement and disconnect semantically distinct.
+  2. Updated `handlePlayerEvent()` in `client/app.js` to use `msg.text` when present (covers movement and arrival messages). Falls back to "has joined/left the game" for events without text (join/disconnect).
+  3. Player list removal now only triggers on `event: 'left'` (actual disconnect), not `event: 'moved'`.
+- **Key files:** `api/src/game-engine.js`, `client/app.js`, `tests/game-engine.test.js`.
+- **All 204 tests pass.** One test assertion updated (`'left'` → `'moved'` in departure notification test).

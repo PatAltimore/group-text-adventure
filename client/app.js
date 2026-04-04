@@ -460,11 +460,17 @@
   }
 
   function handlePlayerEvent(msg) {
-    const action = msg.event === 'joined' ? 'has joined the game.' : 'has left the game.';
-    const text = `${msg.playerName} ${action}`;
+    let text;
+    if (msg.text) {
+      text = msg.text;
+    } else if (msg.event === 'joined') {
+      text = `${msg.playerName} has joined the game.`;
+    } else {
+      text = `${msg.playerName} has left the game.`;
+    }
     appendToOutput(createMsg('msg-player-event', text));
 
-    // Update player list
+    // Update player list (only on actual join/disconnect, not room movement)
     if (msg.event === 'joined' && !state.players.includes(msg.playerName)) {
       state.players.push(msg.playerName);
     } else if (msg.event === 'left') {

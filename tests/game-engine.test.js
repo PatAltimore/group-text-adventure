@@ -215,7 +215,7 @@ describe('Movement', () => {
     const bobMsg = responses.find(r => r.playerId === 'p2');
     expect(bobMsg).toBeDefined();
     expect(bobMsg.message.type).toBe('playerEvent');
-    expect(bobMsg.message.event).toBe('left');
+    expect(bobMsg.message.event).toBe('moved');
     expect(bobMsg.message.playerName).toBe('Alice');
   });
 
