@@ -1255,4 +1255,38 @@ describe('Reconnection Edge Cases', () => {
     expect(session.players['p1']).toBeUndefined();
     expect(session.players['p1-new'].connectionId).toBe('conn-new');
   });
+
+  test('gameInfo inventory after ghost reclamation has name+description objects', () => {
+    // Simulate the gameHub reconnection flow: player picks up items, disconnects,
+    // reconnects, then build the gameInfo inventory exactly as gameHub.js does.
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go east'));
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    expect(session.players['p1'].inventory).toEqual(['key', 'torch']);
+
+    session = disconnectPlayer(session, 'p1');
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+
+    // Build inventory the same way gameHub.js does for gameInfo
+    const restoredPlayer = session.players['p1-new'];
+    const inventoryItems = restoredPlayer.inventory.map((itemId) => {
+      const item = session.world.items[itemId];
+      return item
+        ? { name: item.name, description: item.description }
+        : { name: itemId };
+    });
+
+    // Must be objects with name + description (not bare strings)
+    expect(inventoryItems).toHaveLength(2);
+    expect(inventoryItems[0]).toEqual({ name: 'Old Key', description: 'A brass key.' });
+    expect(inventoryItems[1]).toEqual(
+      expect.objectContaining({ name: 'Torch' })
+    );
+    // Each item must have a .name property (client renderInventoryMessage requires this)
+    inventoryItems.forEach((item) => {
+      expect(item).toHaveProperty('name');
+      expect(typeof item.name).toBe('string');
+    });
+  });
 });

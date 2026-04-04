@@ -427,9 +427,11 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       ? Object.values(session.ghosts).map((g) => g.playerName)
       : [];
 
-    const inventoryNames = restoredPlayer.inventory.map((itemId) => {
+    const inventoryItems = restoredPlayer.inventory.map((itemId) => {
       const item = session.world.items[itemId];
-      return item ? item.name : itemId;
+      return item
+        ? { name: item.name, description: item.description }
+        : { name: itemId };
     });
 
     const gameInfoMsg = {
@@ -438,7 +440,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       playerCount: players.length,
       players,
       reconnected: true,
-      inventory: inventoryNames,
+      inventory: inventoryItems,
       ghosts: ghostNames,
     };
     if (session.started) {

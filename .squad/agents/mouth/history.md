@@ -242,3 +242,13 @@
 - **Join handler (active player takeover):** New code path — if no ghost exists but an active player has the same name with a different connectionId, takes over that player's state directly (handles the race where disconnect hasn't fired yet).
 - **Normal join gameInfo:** Now includes `reconnected: false` and `ghosts` array for consistency.
 - **256 tests pass** (6 net new: reconnection edge cases).
+
+### 2026-04-04 — Fix: Stale Inventory on Reconnection (gameInfo Format Bug)
+
+**Bug:** When a player reconnected via ghost reclamation, the `gameInfo` response sent inventory as an array of plain strings (item names). The client's `renderInventoryMessage` expects an array of objects with `.name` and `.description` properties. This caused blank/undefined inventory display on reconnect.
+
+**Root cause:** `gameHub.js` `handleJoin` built `inventoryNames` using `item.name` strings, but the client uses `item.name` as an object property access — so string items produced `undefined`.
+
+**Fix:** Changed `gameHub.js` lines 430-433 to build inventory as `{ name, description }` objects (matching the format from `handleInventory` in `game-engine.js`). The reconnection `gameInfo.inventory` now matches the regular `inventory` message format the client already handles correctly.
+
+**Test added:** `gameInfo inventory after ghost reclamation has name+description objects` — verifies the inventory format after ghost reclamation produces objects with `name` and `description` fields, not bare strings. **257 tests pass.**
