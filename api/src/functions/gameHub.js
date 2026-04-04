@@ -183,9 +183,13 @@ app.generic('gameHubMessage', {
       return await handleCommand(serviceClient, connectionId, data, context);
     }
 
+    if (messageType === 'startGame') {
+      return await handleStartGame(serviceClient, connectionId, data, context);
+    }
+
     await sendToConnection(serviceClient, connectionId, {
       type: 'error',
-      text: `Unknown message type: "${messageType}". Send "join" or "command".`,
+      text: `Unknown message type: "${messageType}". Send "join", "command", or "startGame".`,
     });
 
     return { body: '', status: 200 };
@@ -263,6 +267,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     const worldJson = await getWorld(worldId);
     const world = loadWorld(worldJson);
     session = createGameSession(world);
+    session.hostPlayerId = playerId;
     await saveGameSession(gameId, {
       worldId,
       worldName: world.name,
@@ -295,15 +300,13 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     context.warn('Failed to add connection to group:', err.message);
   }
 
-  // Send game info with initial room view (combined to prevent duplicate room renders)
-  const view = getPlayerView(session, playerId);
+  // Send game info — include room view only if game already started (late joiner)
   const playerCount = Object.keys(session.players).length;
-  await sendToConnection(serviceClient, connectionId, {
-    type: 'gameInfo',
-    gameId,
-    playerCount,
-    room: view,
-  });
+  const gameInfoMsg = { type: 'gameInfo', gameId, playerCount };
+  if (session.started) {
+    gameInfoMsg.room = getPlayerView(session, playerId);
+  }
+  await sendToConnection(serviceClient, connectionId, gameInfoMsg);
 
   // If the name was changed, tell the player
   if (resolved.wasChanged) {
@@ -318,6 +321,79 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     type: 'playerEvent',
     event: 'joined',
     playerName: finalName,
+  });
+
+  return { body: '', status: 200 };
+}
+
+// ── Handler: Start Game ───────────────────────────────────────────────
+
+async function handleStartGame(serviceClient, connectionId, data, context) {
+  const found = await findPlayerByConnectionId(connectionId);
+  if (!found) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'You need to join a game first.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const { gameId, playerId } = found;
+
+  let session = await loadGameState(gameId);
+  if (!session) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Game session not found.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  // Only the host can start the game
+  if (session.hostPlayerId !== playerId) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Only the host can start the game.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.started) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Game has already started.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  // Mark the game as started and persist
+  session.started = true;
+  await saveGameState(gameId, session);
+
+  // Build the initial room view for the starting room
+  const startRoomId = session.world.startRoom;
+  const room = session.world.rooms[startRoomId];
+  const roomState = session.roomStates[startRoomId];
+
+  const playerNames = Object.values(session.players).map((p) => p.name);
+  const itemNames = roomState.items.map((itemId) => {
+    const item = session.world.items[itemId];
+    return item ? item.name : itemId;
+  });
+
+  const roomView = {
+    name: room.name,
+    description: room.description,
+    exits: Object.keys(roomState.exits),
+    items: itemNames,
+    players: playerNames,
+    hazards: room.hazards || [],
+  };
+
+  // Broadcast gameStart to all players in the group
+  await sendToGame(serviceClient, gameId, {
+    type: 'gameStart',
+    room: roomView,
   });
 
   return { body: '', status: 200 };
