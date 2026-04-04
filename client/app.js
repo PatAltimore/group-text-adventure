@@ -112,9 +112,19 @@
   }
 
   async function loadWorlds() {
+    // Show loading indicator while fetching
+    els.worldSelector.innerHTML = '';
+    const loadingOpt = document.createElement('option');
+    loadingOpt.value = '';
+    loadingOpt.textContent = 'Loading adventures...';
+    loadingOpt.disabled = true;
+    loadingOpt.selected = true;
+    els.worldSelector.appendChild(loadingOpt);
+    els.worldSelector.disabled = true;
+
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
+      const timeout = setTimeout(() => controller.abort(), 15000);
       const res = await fetch(`${apiBaseUrl}/api/worlds`, { signal: controller.signal });
       clearTimeout(timeout);
 
@@ -133,6 +143,8 @@
     } catch (err) {
       console.log('[Worlds] Failed to load worlds:', err.message, '— using default');
       setDefaultWorld();
+    } finally {
+      els.worldSelector.disabled = false;
     }
   }
 
