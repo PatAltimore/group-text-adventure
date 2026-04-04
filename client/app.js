@@ -604,14 +604,9 @@
     connectWebSocket(state.gameId);
 
     // Copy URL button
-    els.btnCopyUrl.addEventListener('click', () => {
-      copyToClipboard(joinUrl).then((failed) => {
-        if (failed === false) return;
-        els.btnCopyUrl.textContent = 'Copied!';
-        setTimeout(() => {
-          els.btnCopyUrl.textContent = 'Copy';
-        }, 2000);
-      });
+    els.btnCopyUrl.addEventListener('click', async () => {
+      const copied = await copyToClipboard(joinUrl);
+      showButtonFeedback(els.btnCopyUrl, copied ? 'Copied!' : 'Failed', 'Copy', 2000);
     });
 
     // Start game button
@@ -630,38 +625,49 @@
   }
 
   // --- Clipboard Helper ---
-  function copyToClipboard(text) {
+  // Returns true on success, false on failure
+  async function copyToClipboard(text) {
     try {
-      if (navigator.clipboard) {
-        return navigator.clipboard.writeText(text).catch(() => false);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
       }
     } catch {
-      // Clipboard API not available (non-secure context, etc.)
+      // Clipboard API blocked or unavailable (non-secure context, etc.)
     }
-    return Promise.resolve(false);
+    return false;
   }
 
   // --- Share Overlay ---
   function initShareOverlay() {
-    // Share button click
-    els.btnShare.addEventListener('click', () => {
+    // Share button click — try native share, fall back to overlay + clipboard
+    els.btnShare.addEventListener('click', async () => {
       const joinUrl = buildJoinUrl(state.gameId);
 
-      // Show overlay first — always works regardless of clipboard support
+      // Try native Web Share API first (mobile-friendly)
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Join my text adventure!',
+            url: joinUrl,
+          });
+          showButtonFeedback(els.btnShare, 'Shared!', 'Share', 1500);
+          return;
+        } catch (err) {
+          // User cancelled → do nothing; other errors → fall through to overlay
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      // Fallback: show QR overlay so user can scan or manually copy
       els.shareUrl.value = joinUrl;
       renderQrCode(joinUrl, els.shareQrCanvas);
       els.shareOverlay.classList.remove('hidden');
       els.shareOverlayClose.focus();
 
-      // Copy to clipboard as a bonus
-      copyToClipboard(joinUrl).then((failed) => {
-        if (failed === false) return;
-        const originalText = els.btnShare.textContent;
-        els.btnShare.textContent = 'Copied!';
-        setTimeout(() => {
-          els.btnShare.textContent = originalText;
-        }, 1500);
-      });
+      // Also attempt clipboard copy as a convenience
+      const copied = await copyToClipboard(joinUrl);
+      showButtonFeedback(els.btnShare, copied ? 'Copied!' : 'Link ready', 'Share', 1500);
     });
     
     // Close button
@@ -678,15 +684,10 @@
     });
     
     // Copy button in overlay
-    els.btnShareCopy.addEventListener('click', () => {
+    els.btnShareCopy.addEventListener('click', async () => {
       const joinUrl = els.shareUrl.value;
-      copyToClipboard(joinUrl).then((failed) => {
-        if (failed === false) return;
-        els.btnShareCopy.textContent = 'Copied!';
-        setTimeout(() => {
-          els.btnShareCopy.textContent = 'Copy';
-        }, 2000);
-      });
+      const copied = await copyToClipboard(joinUrl);
+      showButtonFeedback(els.btnShareCopy, copied ? 'Copied!' : 'Failed', 'Copy', 2000);
     });
   }
   
@@ -694,6 +695,11 @@
     els.shareOverlay.classList.add('hidden');
     // Return focus to command input
     els.commandInput.focus();
+  }
+
+  function showButtonFeedback(btn, text, originalText, duration) {
+    btn.textContent = text;
+    setTimeout(() => { btn.textContent = originalText; }, duration);
   }
 
   // --- Command Input ---
