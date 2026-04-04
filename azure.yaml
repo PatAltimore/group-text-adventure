@@ -51,12 +51,6 @@ services:
 
             npm install --omit=dev
 
-  web:
-    project: ./client
-    language: js
-    host: staticwebapp
-    # Static files are deployed to Azure Storage $web container via postdeploy hook
-
 hooks:
   postdeploy:
     windows:
