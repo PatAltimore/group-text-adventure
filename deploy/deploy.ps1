@@ -475,11 +475,31 @@ try {
     }
     Write-Info "Staging directory verified (all required files present)."
 
-    # Create deployment zip using .NET ZipFile (handles long paths that Compress-Archive cannot)
+    # Create deployment zip — iterate files manually to skip broken symlinks
+    # that npm sometimes creates on Windows (CreateFromDirectory crashes on them).
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($stageDir, $zipPath, [System.IO.Compression.CompressionLevel]::Optimal, $false)
+    $skippedFiles = 0
+    $archive = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
+    try {
+        $basePath = (Resolve-Path $stageDir).Path.TrimEnd('\') + '\'
+        Get-ChildItem $stageDir -Recurse -File -Force | ForEach-Object {
+            $entryName = $_.FullName.Substring($basePath.Length).Replace('\', '/')
+            try {
+                # Test that the file is readable (catches broken symlinks)
+                $null = [System.IO.File]::OpenRead($_.FullName).Dispose()
+                [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+                    $archive, $_.FullName, $entryName,
+                    [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+            } catch {
+                $skippedFiles++
+            }
+        }
+    } finally {
+        $archive.Dispose()
+    }
     $zipSize = [math]::Round((Get-Item $zipPath).Length / 1MB, 2)
+    if ($skippedFiles -gt 0) { Write-Info "Skipped $skippedFiles unreadable files (broken symlinks)." }
     Write-Done "Package created ($zipSize MB)."
 
     Write-Step "Deploying Function App code..."
