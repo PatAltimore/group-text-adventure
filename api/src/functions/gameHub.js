@@ -295,9 +295,15 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     context.warn('Failed to add connection to group:', err.message);
   }
 
-  // Send the player their initial room view
+  // Send game info with initial room view (combined to prevent duplicate room renders)
   const view = getPlayerView(session, playerId);
-  await sendToConnection(serviceClient, connectionId, { type: 'look', room: view });
+  const playerCount = Object.keys(session.players).length;
+  await sendToConnection(serviceClient, connectionId, {
+    type: 'gameInfo',
+    gameId,
+    playerCount,
+    room: view,
+  });
 
   // If the name was changed, tell the player
   if (resolved.wasChanged) {
@@ -307,19 +313,11 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     });
   }
 
-  // Notify other players
+  // Notify all players (including joining player via group broadcast)
   await sendToGame(serviceClient, gameId, {
     type: 'playerEvent',
     event: 'joined',
     playerName: finalName,
-  });
-
-  // Send game info
-  const playerCount = Object.keys(session.players).length;
-  await sendToConnection(serviceClient, connectionId, {
-    type: 'gameInfo',
-    gameId,
-    playerCount,
   });
 
   return { body: '', status: 200 };

@@ -147,3 +147,14 @@
 - **Problem:** `azd up` failed during deploy with `resource not found: unable to find a resource tagged with 'azd-service-name: web'`. The `web` service was declared as `host: staticwebapp`, but the Bicep infra provisions a Storage Account, not a Static Web App.
 - **Fix:** Removed the `web:` service block (5 lines) from `azure.yaml`. Client deployment was already handled by the global `postdeploy` hook, which uploads files to the Storage Account's `$web` blob container, generates `config.json`, and configures CORS.
 - **Lesson:** When the deployment mechanism for a service is a custom hook (not azd's built-in service deployment), do NOT declare it as an azd service. azd will try to find a matching tagged Azure resource and fail.
+
+### 2026-04-05 — Investigation: /api/worlds Dropdown "Loading..." Issue
+
+- **Symptom:** World selector dropdown on live site showed "Loading..." and never populated. Suspected backend `/api/worlds` endpoint failure.
+- **Root cause (backend):** The worlds endpoint code was structurally correct — path resolution matched gameHub.js pattern, index.js imported it, and the live endpoint returned data. The real issue was **observability**: silent error handling meant failures wouldn't surface in Application Insights, and health.js's hardcoded `functionsLoaded` list didn't include `'worlds'`, making diagnostics misleading. Deploy scripts also didn't validate `worlds.js` was in the staging package.
+- **Fixes applied:**
+  1. `worlds.js` handler: Added try/catch with `context.log` and `context.error` for Application Insights visibility. Returns 500 with error body on failure instead of crashing.
+  2. `health.js`: Updated `functionsLoaded` list to include `'worlds'`.
+  3. `deploy.ps1` + `deploy.sh`: Added `worlds.js` to required staging file validation.
+- **Client-side fix (by Pat):** Separate commit added 5-second AbortController timeout and resilient fallback to `loadWorlds()`.
+- **Key lesson:** Every new Azure Function endpoint needs: (1) logging in handler, (2) health.js list update, (3) deploy script validation entry. Silent error paths in production are invisible.

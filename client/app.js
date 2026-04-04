@@ -466,6 +466,9 @@
     if (msg.playerCount != null) {
       updatePlayerCount(msg.playerCount);
     }
+    if (msg.room) {
+      renderRoomMessage(msg.room);
+    }
     if (msg.joinUrl && state.isHost) {
       els.lobbyUrl.value = msg.joinUrl;
       renderQrCode(msg.joinUrl);

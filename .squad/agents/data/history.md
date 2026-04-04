@@ -113,3 +113,13 @@
 - **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
 - **All 150 tests pass** unchanged
 
+### 2026-04-04 — Bugfix: World Selector Stuck on "Loading..."
+
+- **Root cause:** `loadWorlds()` used a bare `fetch()` with no timeout. If the Azure Function was cold-starting or unreachable, `fetch()` hung indefinitely. Neither the success nor error path executed, leaving the dropdown stuck on the "Loading..." placeholder.
+- **Fix 1 — Fetch timeout:** Added `AbortController` with 5-second timeout to the `/api/worlds` fetch. If the API doesn't respond in 5s, the request aborts and the fallback fires.
+- **Fix 2 — Bulletproof fallback:** Extracted `setDefaultWorld()` helper with its own `try/catch`. Even if `els.worldSelector` is somehow unavailable, the error is caught and logged rather than crashing the entire init chain.
+- **Fix 3 — HTML default:** Changed the initial `<option>` from `Loading...` to `The Forgotten Castle` (value `default-world`). The dropdown is now usable immediately, even before JavaScript executes or if the script fails entirely.
+- **Key insight:** The catch block in the original code was correct, but unreachable if `fetch()` never resolved. The AbortController timeout ensures the promise always settles.
+- **Files modified:** `client/app.js`, `client/index.html`
+- **All 204 tests pass** unchanged
+
