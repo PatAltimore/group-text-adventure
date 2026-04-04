@@ -99,10 +99,26 @@
   }
 
   // --- World Loading ---
+  function setDefaultWorld() {
+    try {
+      els.worldSelector.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = 'default-world';
+      opt.textContent = 'The Forgotten Castle';
+      els.worldSelector.appendChild(opt);
+    } catch (e) {
+      console.error('[Worlds] Could not set fallback option:', e);
+    }
+  }
+
   async function loadWorlds() {
     try {
-      const res = await fetch(`${apiBaseUrl}/api/worlds`);
-      if (!res.ok) throw new Error(`Failed: ${res.status}`);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch(`${apiBaseUrl}/api/worlds`, { signal: controller.signal });
+      clearTimeout(timeout);
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const worlds = await res.json();
       if (!Array.isArray(worlds) || worlds.length === 0) throw new Error('Empty response');
 
@@ -116,11 +132,7 @@
       });
     } catch (err) {
       console.log('[Worlds] Failed to load worlds:', err.message, '— using default');
-      els.worldSelector.innerHTML = '';
-      const opt = document.createElement('option');
-      opt.value = 'default-world';
-      opt.textContent = 'The Forgotten Castle';
-      els.worldSelector.appendChild(opt);
+      setDefaultWorld();
     }
   }
 
