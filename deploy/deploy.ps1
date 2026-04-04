@@ -25,6 +25,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Suppress Azure CLI's Python cryptography warning (32-bit Python on 64-bit Windows).
+$env:PYTHONWARNINGS = 'ignore'
+
 # -- Derive resource names ----------------------------------------------
 $appNameLower = $AppName.ToLower()
 $storageName = "${appNameLower}store" -replace '[^a-z0-9]', ''
@@ -221,7 +224,7 @@ try {
         --runtime-version 20 `
         --functions-version 4 `
         --os-type Linux `
-        --only-show-errors | Out-Null
+        --only-show-errors 2>$null | Out-Null
     Assert-AzSuccess "Failed to create Function App '$functionAppName'"
 
     # Wait for Function App to be fully provisioned (Linux Consumption can
@@ -241,7 +244,9 @@ try {
         Start-Sleep -Seconds 10
     }
     if (-not $provisionReady) {
-        Write-Info "Function App not yet in 'Running' state (state=$state), proceeding anyway..."
+        Write-Info "Function App not yet in 'Running' state (state=$state), starting it..."
+        az functionapp start --name $functionAppName --resource-group $ResourceGroup --only-show-errors 2>$null | Out-Null
+        Start-Sleep -Seconds 5
     }
     Write-Done "Function App created (Consumption plan)."
 
@@ -270,7 +275,6 @@ try {
         "FUNCTIONS_EXTENSION_VERSION"       = "~4"
         "FUNCTIONS_WORKER_RUNTIME"          = "node"
         "WEBSITE_NODE_DEFAULT_VERSION"      = "~20"
-        "WEBSITE_RUN_FROM_PACKAGE"          = "1"
         "SCM_DO_BUILD_DURING_DEPLOYMENT"    = "false"
         "AzureWebJobsFeatureFlags"          = "EnableWorkerIndexing"
     }
@@ -320,7 +324,6 @@ try {
             "AzureWebJobsFeatureFlags=EnableWorkerIndexing"
             "FUNCTIONS_WORKER_RUNTIME=node"
             "WEBSITE_NODE_DEFAULT_VERSION=~20"
-            "WEBSITE_RUN_FROM_PACKAGE=1"
             "SCM_DO_BUILD_DURING_DEPLOYMENT=false"
             "WebPubSubHubName=$hubName"
         )
@@ -410,8 +413,8 @@ try {
     # -- 8. Build and Deploy Function App -------------------------------
     Write-Step "Building and packaging Function App..."
 
-    # Clean previous staging
-    if (Test-Path $stageDir) { Remove-Item $stageDir -Recurse -Force }
+    # Clean previous staging (use cmd /c rd for long paths in node_modules)
+    if (Test-Path $stageDir) { cmd /c "rd /s /q `"$stageDir`"" 2>$null }
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 
     New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
@@ -455,8 +458,10 @@ try {
     }
     Write-Info "Staging directory verified (all required files present)."
 
-    # Create deployment zip
-    Compress-Archive -Path "$stageDir\*" -DestinationPath $zipPath -Force
+    # Create deployment zip using .NET ZipFile (handles long paths that Compress-Archive cannot)
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($stageDir, $zipPath, [System.IO.Compression.CompressionLevel]::Optimal, $false)
     $zipSize = [math]::Round((Get-Item $zipPath).Length / 1MB, 2)
     Write-Done "Package created ($zipSize MB)."
 
@@ -492,10 +497,12 @@ try {
     $reapplyNeeded = $false
     $criticalPostDeploy = @{
         "AzureWebJobsFeatureFlags"  = "EnableWorkerIndexing"
-        "WEBSITE_RUN_FROM_PACKAGE"  = "1"
         "FUNCTIONS_WORKER_RUNTIME"  = "node"
         "FUNCTIONS_EXTENSION_VERSION" = "~4"
     }
+    # Note: WEBSITE_RUN_FROM_PACKAGE is NOT in this list because config-zip
+    # on Linux Consumption correctly sets it to a blob SAS URL. Overriding
+    # to '1' breaks the runtime (it looks for a nonexistent local path).
     foreach ($key in $criticalPostDeploy.Keys) {
         $actual = $postDeployProps.$key
         $expected = $criticalPostDeploy[$key]
@@ -773,7 +780,7 @@ try {
     Write-Done "Client files uploaded."
 
     # -- 11. Clean Up ---------------------------------------------------
-    if (Test-Path $stageDir) { Remove-Item $stageDir -Recurse -Force }
+    if (Test-Path $stageDir) { cmd /c "rd /s /q `"$stageDir`"" 2>$null }
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 
     # -- 12. Output Summary ---------------------------------------------
@@ -867,8 +874,8 @@ try {
     $env:AZURE_STORAGE_ACCOUNT = $null
     $env:AZURE_STORAGE_KEY = $null
 
-    # Clean up staging and temp files on failure
-    if (Test-Path $stageDir) { Remove-Item $stageDir -Recurse -Force }
+    # Clean up staging and temp files on failure (use cmd /c rd for long paths)
+    if (Test-Path $stageDir) { cmd /c "rd /s /q `"$stageDir`"" 2>$null }
     if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
     $settingsCleanup = Join-Path $PSScriptRoot "_appsettings.json"
     if (Test-Path $settingsCleanup) { Remove-Item $settingsCleanup -Force -ErrorAction SilentlyContinue }
