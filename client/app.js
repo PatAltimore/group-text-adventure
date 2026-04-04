@@ -477,6 +477,7 @@
       state.players = state.players.filter((p) => p !== msg.playerName);
     }
     updatePlayerCount();
+    updateLobbyPlayerList();
   }
 
   function handleGameInfo(msg) {
