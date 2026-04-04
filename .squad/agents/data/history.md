@@ -204,3 +204,18 @@
 - **138 tests pass** (game-engine suite has pre-existing ESM parse error unrelated to client changes)
 - **Message contract with backend (Mouth):** Room view must include `ghosts: string[]` array. Server may send `{ type: 'ghostEvent', text }` for ghost lifecycle events. `playerDrop` now expected to describe ghost loot, not floor drops.
 
+### 2026-04-04 — Bugfix: Reconnection Reliability (Pat's Bug Report)
+
+- **Problem:** Pat reported refresh didn't reliably reconnect. Other players saw repeated ghost leave/join cycles on each reconnect attempt. Session data was fragile.
+- **Root cause — sessionStorage fragility:** `sessionStorage` is tab-scoped and cleared on tab close. If a mobile browser kills the tab (phone standby, memory pressure), session data is lost. Refresh worked in theory but was unreliable across mobile browsers.
+- **Fix 1 — localStorage:** Switched `saveSession()`, `loadSession()`, `clearSession()` from `sessionStorage` to `localStorage`. Survives tab close, enabling true "rejoin later" capability. Keys: `gta_gameId`, `gta_playerName`.
+- **Fix 2 — Save on gameInfo:** Added `saveSession()` call in `handleGameInfo()` immediately after gameId confirmation. Previously only saved on WebSocket open (before server acknowledged the join).
+- **Fix 3 — URL mismatch handling:** In `init()`, if URL has `?game=X` but localStorage has a different gameId, clears stale session before proceeding. Prevents rejoining the wrong game.
+- **Fix 4 — Auto-rejoin failure fallback:** Wrapped `connectWebSocket()` in try/catch during auto-rejoin. On failure: clears `pendingRejoin`, clears localStorage, wipes "Reconnecting…" message, loads worlds, and shows landing page. Previously user was stuck on blank game screen.
+- **Fix 5 — Pre-start rejoin to lobby:** Added `state.pendingRejoin` flag. If server responds to auto-rejoin with `gameInfo` that has no `reconnected` and no `room` (game hasn't started), client switches from game screen to lobby with waiting message.
+- **Fix 6 — Reconnect retry chain:** `attemptReconnect()` now calls itself on negotiate failure. Previously, if `fetch(/api/negotiate)` threw, no WebSocket was created, so the `close` handler never fired and the retry chain silently broke.
+- **Fix 7 — Single beforeunload:** Moved `beforeunload` handler before the auto-rejoin branch so it registers in all code paths (previously duplicated in two branches).
+- **Files modified:** `client/app.js`
+- **All 250 tests pass** unchanged
+- **Message contract:** No changes. Server still sends `gameInfo` with `{ reconnected: true/false, room?, inventory? }`.
+

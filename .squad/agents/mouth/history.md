@@ -228,3 +228,17 @@
 - **Command parser:** Added loot verb set. Extended 	ake to parse 	ake <item> from <target> pattern.
 - **gameHub.js:** Disconnect handler announces ghost to room players. Join handler checks for ghost match. Cleanup uses cleanupExpiredGhosts.
 - **250 tests pass** (19 net new: ghost looting, take-from-ghost, multi-ghost rooms, reconnection-after-partial-loot).
+
+### 2026-04-05 — Reconnection Bug Fix (Ghost Reclamation + Stale Disconnect)
+
+**Root cause:** Three issues combined to break the reconnect flow:
+1. **Missing `text` on reconnection playerEvent** — server sent `event: 'reconnected'` without a `text` field, so the client fell through to "has left the game" for other players.
+2. **Missing `inventory` and `ghosts` on reconnection gameInfo** — client checked `msg.inventory` but server never sent it; reconnecting player didn't see their restored items.
+3. **Stale disconnect race condition** — if the new join arrived before the old disconnect was processed, the old player entry was still active. No ghost existed, so the reconnecting player got a silly name instead of reclaiming their session.
+
+**Fixes in gameHub.js:**
+- **Disconnect handler:** Added guards to skip ghost creation when the player is already removed from session or has reconnected with a new connectionId.
+- **Join handler (ghost reclamation):** Now sends `inventory` (item display names) and `ghosts` array in the gameInfo response. Adds `text` field to the reconnected playerEvent broadcast.
+- **Join handler (active player takeover):** New code path — if no ghost exists but an active player has the same name with a different connectionId, takes over that player's state directly (handles the race where disconnect hasn't fired yet).
+- **Normal join gameInfo:** Now includes `reconnected: false` and `ghosts` array for consistency.
+- **256 tests pass** (6 net new: reconnection edge cases).

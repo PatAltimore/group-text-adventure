@@ -282,8 +282,22 @@ app.generic('gameHubDisconnect', {
     let session = await loadGameState(gameId);
     if (!session) return;
 
-    const playerName = session.players[playerId]?.name || 'Unknown';
-    const playerRoom = session.players[playerId]?.room;
+    const player = session.players[playerId];
+    if (!player) {
+      // Player already removed from session (stale disconnect) — clean up Table Storage
+      await deletePlayer(gameId, playerId);
+      return;
+    }
+
+    // If the player has reconnected with a new connectionId, this is a stale
+    // disconnect from the old connection — ignore it to avoid duplicate ghosts.
+    if (player.connectionId && player.connectionId !== connectionId) {
+      await deletePlayer(gameId, playerId);
+      return;
+    }
+
+    const playerName = player.name || 'Unknown';
+    const playerRoom = player.room;
     session = disconnectPlayer(session, playerId);
     await saveGameState(gameId, session);
     await deletePlayer(gameId, playerId);
@@ -353,9 +367,36 @@ async function handleJoin(serviceClient, connectionId, data, context) {
 
   // Check for reconnection — does a ghost exist with this name?
   const ghostMatch = findGhostByName(session, playerName);
-  if (ghostMatch) {
-    // Reconnect: restore the player's state from the ghost
-    session = reconnectPlayer(session, ghostMatch.ghostName, playerId);
+
+  // Also check for an active player with the same name but a different
+  // connectionId. This handles the race where the player refreshes and the
+  // new join arrives before the server processes the old disconnect.
+  let activeMatch = null;
+  if (!ghostMatch) {
+    const entry = Object.entries(session.players).find(
+      ([id, p]) =>
+        p.name.toLowerCase() === playerName.toLowerCase() && id !== playerId
+    );
+    if (entry) {
+      activeMatch = { oldPlayerId: entry[0], oldPlayer: entry[1] };
+    }
+  }
+
+  if (ghostMatch || activeMatch) {
+    if (ghostMatch) {
+      // Reconnect via ghost: restore the player's state from the ghost
+      session = reconnectPlayer(session, ghostMatch.ghostName, playerId);
+    } else {
+      // Reconnect via active player takeover (stale connection still in session)
+      const { oldPlayerId, oldPlayer } = activeMatch;
+      session.players[playerId] = {
+        name: oldPlayer.name,
+        room: oldPlayer.room,
+        inventory: [...oldPlayer.inventory],
+      };
+      delete session.players[oldPlayerId];
+      await deletePlayer(gameId, oldPlayerId);
+    }
     session.players[playerId].connectionId = connectionId;
 
     // Update host tracking if needed
@@ -379,25 +420,39 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       context.warn('Failed to add connection to group:', err.message);
     }
 
-    // Send game info with reconnection flag and restored room view
+    // Build reconnection gameInfo with inventory + ghosts
+    const restoredPlayer = session.players[playerId];
     const players = Object.values(session.players).map((p) => p.name);
+    const ghostNames = session.ghosts
+      ? Object.values(session.ghosts).map((g) => g.playerName)
+      : [];
+
+    const inventoryNames = restoredPlayer.inventory.map((itemId) => {
+      const item = session.world.items[itemId];
+      return item ? item.name : itemId;
+    });
+
     const gameInfoMsg = {
       type: 'gameInfo',
       gameId,
       playerCount: players.length,
       players,
       reconnected: true,
+      inventory: inventoryNames,
+      ghosts: ghostNames,
     };
     if (session.started) {
       gameInfoMsg.room = getPlayerView(session, playerId);
     }
     await sendToConnection(serviceClient, connectionId, gameInfoMsg);
 
-    // Announce reconnection (not "joined")
+    // Announce reconnection with descriptive text (not "joined")
+    const rName = restoredPlayer.name;
     await sendToGame(serviceClient, gameId, {
       type: 'playerEvent',
       event: 'reconnected',
-      playerName: session.players[playerId].name,
+      playerName: rName,
+      text: `${rName}'s ghost stirs... ${rName} has reconnected!`,
     });
 
     return { body: '', status: 200 };
@@ -430,7 +485,18 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   // Send game info — include room view only if game already started (late joiner)
   const playerCount = Object.keys(session.players).length;
   const players = Object.values(session.players).map((p) => p.name);
-  const gameInfoMsg = { type: 'gameInfo', gameId, playerCount, players };
+  const ghostNames = session.ghosts
+    ? Object.values(session.ghosts).map((g) => g.playerName)
+    : [];
+
+  const gameInfoMsg = {
+    type: 'gameInfo',
+    gameId,
+    playerCount,
+    players,
+    reconnected: false,
+    ghosts: ghostNames,
+  };
   if (session.started) {
     gameInfoMsg.room = getPlayerView(session, playerId);
   }

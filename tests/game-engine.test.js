@@ -1123,3 +1123,136 @@ describe('Ghost Looting', () => {
     expect(afterTake.players['p2'].inventory).toContain('key');
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// 13. Reconnection Edge Cases
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Reconnection Edge Cases', () => {
+  test('rejoin when ghost exists → reclaims ghost room and inventory', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+
+    expect(session.ghosts['Alice']).toBeDefined();
+    expect(session.ghosts['Alice'].room).toBe('room-b');
+    expect(session.ghosts['Alice'].inventory).toContain('key');
+
+    // Reconnect with new id
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+
+    expect(session.ghosts['Alice']).toBeUndefined();
+    expect(session.players['p1-new']).toBeDefined();
+    expect(session.players['p1-new'].name).toBe('Alice');
+    expect(session.players['p1-new'].room).toBe('room-b');
+    expect(session.players['p1-new'].inventory).toContain('key');
+  });
+
+  test('rejoin when ghost was partially looted → gets remaining inventory only', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go east'));
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    expect(session.players['p1'].inventory).toEqual(['key', 'torch']);
+
+    session = disconnectPlayer(session, 'p1');
+
+    // Bob loots one item
+    ({ session } = processCommand(session, 'p2', 'go east'));
+    ({ session } = processCommand(session, 'p2', "take old key from Alice's ghost"));
+    expect(session.ghosts['Alice'].inventory).toEqual(['torch']);
+
+    // Alice reconnects — gets only the torch (key was looted)
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    expect(session.players['p1-new'].inventory).toEqual(['torch']);
+    expect(session.players['p1-new'].inventory).not.toContain('key');
+    expect(session.players['p1-new'].room).toBe('room-c');
+  });
+
+  test('stale disconnect after reconnection does not create duplicate ghost', () => {
+    // Simulate: Alice connects as p1, disconnects (ghost created), reconnects as p1-new
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session.players['p1'].connectionId = 'conn-A';
+
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+
+    // Alice disconnects — ghost created
+    session = disconnectPlayer(session, 'p1');
+    expect(session.ghosts['Alice']).toBeDefined();
+
+    // Alice reconnects with new id
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    session.players['p1-new'].connectionId = 'conn-B';
+    expect(session.ghosts['Alice']).toBeUndefined();
+    expect(session.players['p1-new'].name).toBe('Alice');
+
+    // Stale disconnect for conn-A arrives — player p1 no longer exists in session
+    const stalePlayer = session.players['p1'];
+    expect(stalePlayer).toBeUndefined();
+
+    // Even if we tried to disconnect p1 again, it's a no-op
+    const afterStale = disconnectPlayer(session, 'p1');
+    expect(afterStale.ghosts?.['Alice']).toBeUndefined();
+    expect(afterStale.players['p1-new'].name).toBe('Alice');
+  });
+
+  test('ghost fully looted and faded → rejoin creates new player at start', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+
+    // Bob loots everything from ghost, causing it to fade
+    ({ session } = processCommand(session, 'p2', 'go north'));
+    ({ session } = processCommand(session, 'p2', "loot Alice's ghost"));
+    expect(session.ghosts['Alice']).toBeUndefined();
+
+    // Alice tries to rejoin — no ghost to reclaim
+    const ghostResult = findGhostByName(session, 'Alice');
+    expect(ghostResult).toBeNull();
+
+    // Normal join: new player at start room with empty inventory
+    session = addPlayer(session, 'p1-new', 'Alice');
+    expect(session.players['p1-new'].room).toBe('room-a');
+    expect(session.players['p1-new'].inventory).toEqual([]);
+  });
+
+  test('ghost fully expired and finalized → rejoin creates new player at start', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+
+    // Force ghost to expire
+    session.ghosts['Alice'].disconnectedAt = Date.now() - 2000000;
+    const expired = getExpiredGhosts(session, 1800000);
+    expect(expired).toContain('Alice');
+
+    // Finalize the ghost (drops items, removes ghost)
+    const result = finalizeGhost(session, 'Alice');
+    session = result.session;
+    expect(session.ghosts['Alice']).toBeUndefined();
+
+    // Alice tries to rejoin — no ghost to reclaim
+    expect(findGhostByName(session, 'Alice')).toBeNull();
+
+    // Normal join: new player at start room
+    session = addPlayer(session, 'p1-new', 'Alice');
+    expect(session.players['p1-new'].room).toBe('room-a');
+    expect(session.players['p1-new'].inventory).toEqual([]);
+  });
+
+  test('reconnected player connectionId is independent of old player entry', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    session.players['p1'].connectionId = 'conn-old';
+
+    session = disconnectPlayer(session, 'p1');
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    session.players['p1-new'].connectionId = 'conn-new';
+
+    // Only the new player entry should exist
+    expect(session.players['p1']).toBeUndefined();
+    expect(session.players['p1-new'].connectionId).toBe('conn-new');
+  });
+});

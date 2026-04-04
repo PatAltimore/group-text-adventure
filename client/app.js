@@ -36,6 +36,7 @@
     reconnectAttempts: 0,
     reconnectTimer: null,
     maxReconnectAttempts: 5,
+    pendingRejoin: false,
   };
 
   // --- DOM References ---
@@ -196,28 +197,28 @@
     });
   }
 
-  // --- Session Persistence ---
+  // --- Session Persistence (localStorage for cross-tab-close survival) ---
   function saveSession() {
     try {
-      sessionStorage.setItem('gta_gameId', state.gameId);
-      sessionStorage.setItem('gta_playerName', state.playerName);
-    } catch { /* sessionStorage unavailable */ }
+      localStorage.setItem('gta_gameId', state.gameId);
+      localStorage.setItem('gta_playerName', state.playerName);
+    } catch { /* storage unavailable */ }
   }
 
   function loadSession() {
     try {
       return {
-        gameId: sessionStorage.getItem('gta_gameId') || '',
-        playerName: sessionStorage.getItem('gta_playerName') || '',
+        gameId: localStorage.getItem('gta_gameId') || '',
+        playerName: localStorage.getItem('gta_playerName') || '',
       };
     } catch { return { gameId: '', playerName: '' }; }
   }
 
   function clearSession() {
     try {
-      sessionStorage.removeItem('gta_gameId');
-      sessionStorage.removeItem('gta_playerName');
-    } catch { /* sessionStorage unavailable */ }
+      localStorage.removeItem('gta_gameId');
+      localStorage.removeItem('gta_playerName');
+    } catch { /* storage unavailable */ }
   }
 
   // --- Reconnect Banner ---
@@ -308,7 +309,8 @@
       try {
         await connectWebSocket(state.gameId);
       } catch {
-        // connectWebSocket already shows error; retry logic continues via close handler
+        // Negotiate failed (no WebSocket created) — continue retry chain
+        attemptReconnect();
       }
     }, delay);
   }
@@ -592,6 +594,8 @@
 
   function handleGameInfo(msg) {
     if (msg.gameId) state.gameId = msg.gameId;
+    saveSession();
+
     if (Array.isArray(msg.players)) {
       state.players = msg.players.slice();
       updateLobbyPlayerList();
@@ -605,6 +609,7 @@
 
     // Reconnection: server restored player state
     if (msg.reconnected) {
+      state.pendingRejoin = false;
       showScreen('game');
       if (msg.room) {
         renderRoomMessage(msg.room);
@@ -619,12 +624,21 @@
 
     // Post-start join: room is present, skip lobby and go straight to game
     if (msg.room) {
+      state.pendingRejoin = false;
       showScreen('game');
       renderRoomMessage(msg.room);
       return;
     }
 
-    // Pre-start join (no room): stay in lobby, update share info
+    // Pre-start: no room yet — show lobby
+    if (state.pendingRejoin) {
+      state.pendingRejoin = false;
+      // Auto-rejoin landed before the game started — switch to lobby
+      els.btnStartGame.classList.add('hidden');
+      els.lobbyWaitingMsg.classList.remove('hidden');
+      showScreen('lobby');
+    }
+
     if (msg.joinUrl) {
       els.lobbyUrl.value = msg.joinUrl;
       renderQrCode(msg.joinUrl);
@@ -940,32 +954,48 @@
       });
     }
 
-    // Check sessionStorage for auto-rejoin
+    // Check localStorage for auto-rejoin
     const session = loadSession();
     const urlGameId = getGameIdFromUrl();
     const sessionGameId = session.gameId;
     const sessionPlayerName = session.playerName;
+
+    // Suppress reconnect loop during page unload (refresh keeps localStorage intact)
+    window.addEventListener('beforeunload', () => {
+      state.intentionalDisconnect = true;
+      if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
+    });
+
+    // URL points to a different game than stored session — clear stale data
+    if (urlGameId && sessionGameId && urlGameId !== sessionGameId) {
+      clearSession();
+    }
 
     // Auto-rejoin: session exists and URL matches (or no URL game param)
     if (sessionGameId && sessionPlayerName && (!urlGameId || urlGameId === sessionGameId)) {
       state.gameId = sessionGameId;
       state.playerName = sessionPlayerName;
       state.isHost = false;
+      state.pendingRejoin = true;
 
-      // Update URL to reflect the game
       window.history.replaceState({}, '', `?game=${encodeURIComponent(sessionGameId)}`);
 
-      // Go straight to game screen — server will send gameInfo with reconnected flag
+      // Show game screen with reconnecting indicator
       showScreen('game');
       appendSystemMessage('Reconnecting…');
-      connectWebSocket(sessionGameId);
       initCommandInput();
       initShareOverlay();
 
-      window.addEventListener('beforeunload', () => {
-        state.intentionalDisconnect = true;
-        if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
-      });
+      try {
+        await connectWebSocket(sessionGameId);
+      } catch {
+        // Reconnection failed — fall back to normal landing flow
+        state.pendingRejoin = false;
+        clearSession();
+        els.gameOutput.innerHTML = '';
+        await loadWorlds();
+        initLanding();
+      }
       return;
     }
 
@@ -974,14 +1004,6 @@
     initLanding();
     initCommandInput();
     initShareOverlay();
-
-    // Suppress reconnect attempts during page unload.
-    // sessionStorage is tab-scoped — cleared automatically on tab close,
-    // but preserved on refresh (enabling auto-rejoin).
-    window.addEventListener('beforeunload', () => {
-      state.intentionalDisconnect = true;
-      if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
-    });
   }
 
   document.addEventListener('DOMContentLoaded', init);
