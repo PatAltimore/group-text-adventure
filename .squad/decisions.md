@@ -214,6 +214,145 @@ The recurring negotiate 404 was caused by silent npm install failures. Both scri
 3. **After zip deploy, verify app settings haven't drifted.** Zip deployment on Azure can reset settings. Always re-check and re-apply critical settings.
 4. **Use full stop+start, not restart,** after deploying to Linux Consumption function apps.
 
+### Decision: Say & Yell Verb Implementation
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-04
+
+#### What
+
+Added two communication verbs to the game engine:
+
+- **`say <text>`** — Room-local. Only players in the same room receive the message.
+- **`yell <text>`** — Three-tier reach:
+  1. **Same room:** Clear text, yeller gets "annoyed" feedback
+  2. **Adjacent room** (1 exit away): Text with directional hint (e.g., "from the south")
+  3. **Far room** (2+ exits away): Muffled yelling with general direction
+
+#### Key Decisions
+
+1. **BFS pathfinding for direction** — `findDirectionToRoom()` does a breadth-first search from listener to yeller using `session.roomStates[].exits`. This respects puzzle-opened exits and gives the first-step direction for far rooms.
+
+2. **Parser split: yell vs say** — `yell`/`shout` now produce verb `'yell'`; `say`/`whisper` produce verb `'say'`. Previously all four mapped to `'say'`.
+
+3. **No gameHub.js changes** — The engine returns per-player `{ playerId, message }` tuples. The existing `routeResponses` function handles routing without modification.
+
+4. **Engine stays pure** — No Azure dependencies added. All player lookups and pathfinding use the session object passed in.
+
+#### Impact
+
+- Modified: `api/src/command-parser.js`, `api/src/game-engine.js`, `tests/command-parser.test.js`
+- All 150 tests pass (including 38 new communication tests)
+
+#### Convention
+
+When adding new multi-player interactions, follow this pattern: engine returns `{ playerId, message }` arrays and the hub routes them. No need to modify `gameHub.js` for new verbs.
+
+### Decision: TDD Tests for SAY and YELL Communication Verbs
+
+**By:** Stef (Tester)  
+**Date:** 2026-04-04
+
+#### What
+
+Created 39 TDD tests in `tests/communication.test.js` covering the new `say` and `yell` verbs before implementation lands. Updated `tests/test-world.json` with 5 new rooms for directional and multi-room testing.
+
+#### Key Decisions
+
+1. **`yell` must be a distinct verb from `say`.** Currently the parser lumps `yell`, `shout`, `whisper` all into `say`. Tests expect `parseCommand('yell hello')` to return `{ verb: 'yell' }` so the engine can route to a separate handler with multi-room logic.
+
+2. **Direction is relative to the listener.** If yeller is in Room A and Room B connects to Room A via its "south" exit, then Room B players hear yelling "from the south". Tests verify this for multiple directions.
+
+3. **Distance tiers: same-room / adjacent / non-adjacent.** Same-room = full text + "annoyed" feedback. Adjacent (1 room away) = full text + direction. Non-adjacent (2+ rooms) = "muffled yelling" + general direction, text NOT included.
+
+4. **Test world expanded.** Added `room-hub` (3 exits), `room-hub-n/e/w`, and `room-isolated` (no exits). Existing room count assertion updated 4→9.
+
+#### Impact
+
+- New file: `tests/communication.test.js` (39 tests)
+- Modified: `tests/test-world.json` (5 new rooms)
+- Modified: `tests/game-engine.test.js` (room count fix)
+- All 111 pre-existing tests still pass
+- 13 new tests fail awaiting implementation (expected for TDD)
+
+#### For Implementation
+
+The implementer needs to:
+1. Split `yell` out of `SAY_VERBS` in `command-parser.js` into its own set, returning `verb: 'yell'`
+2. Add `case 'yell'` to the `processCommand` switch in `game-engine.js`
+3. Write `handleYell` that does BFS/adjacency check on `session.roomStates[...].exits` to find adjacent and non-adjacent rooms, then sends appropriate messages with direction info
+
+### Decision: Fix Double Serialization + Missing sendToGroup API
+
+**By:** Data (Frontend Dev)  
+**Date:** 2026-04-04
+
+#### What
+
+Fixed two compounding bugs in `api/src/functions/gameHub.js` that caused ALL server-to-client messages to be silently dropped in the deployed game.
+
+#### Bugs Found
+
+##### Bug 1: Double JSON Serialization
+
+`sendToConnection` and `sendToGame` called `JSON.stringify(message)` before passing to the `@azure/web-pubsub` SDK. But the SDK's internal `getPayloadForMessage()` also calls `JSON.stringify()` when `contentType: 'application/json'`. This double-serialized the payload — the client received `raw.data` as a string (e.g., `'{"type":"look","room":{...}}'`) instead of an object. The string had no `.type` property, so the client's switch/case fell to default and silently dropped every message.
+
+**Fix:** Remove `JSON.stringify()` — pass the object directly to the SDK.
+
+##### Bug 2: `sendToGroup()` Doesn't Exist
+
+The code called `serviceClient.sendToGroup(gameId, ...)` but `WebPubSubServiceClient` has no `sendToGroup()` method. The correct API is `serviceClient.group(gameId).sendToAll(message, options)`. The `TypeError` was caught by the try/catch wrapper and logged as a warning, making the failure invisible.
+
+**Fix:** Use `serviceClient.group(gameId).sendToAll(message, { contentType: 'application/json' })`.
+
+#### Client-Side Hardening
+
+Added defensive string-parsing in the client's `handleServerMessage` — if `raw.data` is a string, try to `JSON.parse` it before processing. This makes the client resilient to any future serialization mishaps from the server.
+
+#### Convention Going Forward
+
+1. **NEVER call `JSON.stringify()` before passing to the Web PubSub SDK with `contentType: 'application/json'`.** The SDK handles serialization internally.
+2. **Use `serviceClient.group(name).sendToAll()` for group messages.** There is no `sendToGroup()` on the service client.
+3. **Log error names in catch blocks**, not just messages — `TypeError: X is not a function` would have immediately identified Bug 2.
+
+#### Impact
+
+- Modified: `api/src/functions/gameHub.js`, `client/app.js`
+- All 111 tests pass
+- Committed: `ed0f9f5`
+- **Requires redeployment** to take effect
+
+### Decision: Web PubSub Hub Must Use Extension System Key
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-04
+
+#### What
+
+The Web PubSub hub event handler URL must use the `webpubsub_extension` system key, NOT the Function App master key. This was the primary reason the deployed game appeared broken — events from Web PubSub were silently rejected by the Function App.
+
+#### Why
+
+The Azure Functions `/runtime/webhooks/webpubsub` endpoint validates incoming requests against the `webpubsub_extension` system key specifically. The master key does NOT work as a fallback for extension webhook endpoints, unlike regular HTTP trigger endpoints where the master key authorizes everything.
+
+#### Key Points
+
+1. **Get the correct key:** `az functionapp keys list --name <app> --resource-group <rg>` → use `systemKeys.webpubsub_extension`, not `masterKey`.
+2. **Deploy scripts must re-sync the key after zip deploy.** Zip deployment can rotate system keys. The deploy script should always re-read the extension key and update the hub event handler URL post-deploy.
+3. **Hub update command:** `az webpubsub hub update --name <pubsub> --hub-name <hub> --resource-group <rg> --event-handler url-template="https://<func>.azurewebsites.net/runtime/webhooks/webpubsub?code=<webpubsub_extension_key>" user-event-pattern="*" system-event=connect system-event=disconnected`
+
+#### Impact
+
+- Fixed: Web PubSub hub configuration (runtime fix, no code change)
+- Also deployed: commit `ed0f9f5` (double-serialization fix) which was committed but never pushed to Azure
+- **Action needed:** Update `deploy.ps1` and `deploy.sh` to re-sync the hub event handler key after zip deploy
+
+#### Convention Going Forward
+
+- Always use the `webpubsub_extension` system key for hub event handler URLs
+- After any deployment, verify the hub event handler key matches the current system key
+- The deploy script should automate this verification
+
 ## Governance
 
 - All meaningful changes require team consensus

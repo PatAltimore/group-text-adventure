@@ -9,7 +9,31 @@
 
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
-- **Client structure:** `client/index.html`, `client/style.css`, `client/app.js` — vanilla JS, no build step.
+### 2026-04-04 — Share Button + QR Overlay UI
+
+- **Share button placement:** Game header (top right), next to player count
+- **Copy-to-clipboard:** Click copies `https://patcastlestore.z5.web.core.windows.net/?game=<gameId>` to clipboard
+- **Toast feedback:** 3-second auto-dismiss toast shows "Copied!" with checkmark
+- **QR overlay:** Dismissible via X button (top-right), backdrop click, or Escape key
+- **Responsive QR:** Sized to fit mobile and desktop viewports, semi-transparent dark backdrop
+- **Fallback handling:** If QR generation fails, overlay shows text URL with copy button
+- **Accessibility:** ARIA labels on buttons, semantic HTML (`<button>`, `<dialog>`), proper focus management
+- **No backend changes:** Share feature entirely client-side; URL generated from `state.currentGameId`
+
+### 2026-04-04 — Cross-Team: Mouth's Say & Yell Implementation
+
+**From Mouth (Backend Dev):**
+- **Say verb:** Room-local only. Already working; no changes needed.
+- **Yell verb:** Implemented with 3-tier reach:
+  1. Same room: clear text + "players look annoyed" feedback
+  2. Adjacent (1 exit): full text + directional hint (e.g., "from the south")
+  3. Far (2+ exits): muffled text, no content, general direction
+- **Parser split:** `yell`/`shout` now map to distinct verb `'yell'` (not grouped with `'say'`)
+- **BFS pathfinding:** `findDirectionToRoom()` helper respects dynamically opened exits from puzzles
+- **Hub routing unchanged:** Existing `routeResponses` function handles per-player message tuples
+- **All 150 tests pass** (111 pre-existing + 39 new communication tests from Stef)
+
+**Data's takeaway:** No client-side changes needed for say/yell. Backend sends regular `message` type responses; client displays with same styling as other player messages.
 - **QR code:** Using `qrcode` npm package via CDN (`https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js`). Falls back to plain text if CDN fails.
 - **WebSocket subprotocol:** `json.webpubsub.azure.v1` — messages wrapped in `sendToGroup` envelope with `dataType: json`. Server messages unwrapped from `data` field.
 - **Screens:** Three screens — landing (name + host/join), lobby (QR + player list, host only), game (output + command input).
@@ -125,4 +149,64 @@
   3. Upload verification only checked count >= 1 — now verifies `index.html` specifically exists
 - **Outcome:** 111 tests pass. Code committed and pushed.
 - **Coordination:** Client files validated and ready for deployment. All issues were deployment script concerns, not client code.
+
+### 2026-04-04 — Root Cause Found: Double Serialization + Missing SDK Method
+
+**Issue:** Deployed game at `https://patcastlestore.z5.web.core.windows.net` — commands return nothing, player count shows 0, `look` doesn't return room description. Every server-to-client message silently dropped.
+
+**Investigation findings — TWO compounding bugs in gameHub.js:**
+
+1. **Double serialization in `sendToConnection`:** Server called `JSON.stringify(message)` before passing to the SDK, but the SDK's `getPayloadForMessage()` (in `@azure/web-pubsub/dist/esm/utils.js:22`) ALSO calls `JSON.stringify()` when `contentType: 'application/json'`. Result: client received `raw.data` as a JSON string instead of an object → `msg.type` was `undefined` → silently fell through to default case → dropped.
+
+2. **`sendToGroup()` doesn't exist on `WebPubSubServiceClient`:** The correct API is `serviceClient.group(gameId).sendToAll(message, options)`. The non-existent method threw `TypeError`, caught and swallowed by try/catch → ALL group broadcasts (playerEvent, gameInfo) silently failed.
+
+**Fixes applied (commit `ed0f9f5`):**
+- **Server (`api/src/functions/gameHub.js`):** Removed `JSON.stringify()` from `sendToConnection` and `sendToGame` — pass objects directly to SDK. Changed `serviceClient.sendToGroup(gameId, ...)` to `serviceClient.group(gameId).sendToAll(...)`.
+- **Client (`client/app.js`):** Added defensive string-parsing in `handleServerMessage` — if `raw.data` is a string, `JSON.parse` it before processing. Makes client resilient to future serialization mishaps.
+- All 111 tests pass.
+
+**Key learnings:**
+- The `@azure/web-pubsub` SDK auto-serializes when `contentType: 'application/json'` — NEVER pre-stringify.
+- `WebPubSubServiceClient` does NOT have `sendToGroup()`. Use `serviceClient.group(name).sendToAll()`.
+- When `try/catch` swallows errors (like the `sendToGame` wrapper), method-not-found bugs become invisible. Always log the error name, not just message.
+- **Requires redeployment** to take effect.
+
+### 2026-04-04 — Share Button Feature (In-Game QR Code)
+
+**Feature:** Added "Share" button to game screen header that lets players share the current game with others.
+
+**Implementation:**
+- **HTML (`client/index.html`):**
+  - Added Share button in `.game-header` (wrapped player badge and button in `.game-header-right` for flex layout)
+  - Created `#share-overlay` modal with backdrop, QR code container, URL input, and copy button
+  - Overlay is positioned above all game content with `z-index: 1000`
+  
+- **CSS (`client/style.css`):**
+  - `.btn-share` — compact button matching header style (6px/12px padding, 12px font)
+  - `.share-overlay` — full-screen modal with backdrop blur and fade-in animation
+  - `.share-overlay-content` — centered card with scale-up animation
+  - Mobile responsive: smaller padding and button size on mobile
+
+- **JavaScript (`client/app.js`):**
+  - Modified `renderQrCode()` to accept optional `targetContainer` param (defaults to lobby canvas, reused for share overlay)
+  - Added `initShareOverlay()` function with:
+    - Share button click: copies URL to clipboard with "Copied!" feedback, renders QR code, shows overlay
+    - Close handlers: X button, backdrop click, Escape key
+    - Copy button in overlay with "Copied!" feedback
+    - Focus management: close button on open, command input on close
+  - Called `initShareOverlay()` in `init()`
+
+**UX patterns:**
+- Clipboard copy happens IMMEDIATELY on Share button click (non-blocking)
+- QR overlay appears simultaneously for scanning
+- Overlay is dismissible (click outside, X, Escape) — game remains functional underneath
+- Focus trap: overlay grabs focus when opened, returns to command input when closed
+- Reuses existing QR code library and rendering logic from lobby screen
+- Consistent dark theme styling with existing UI
+
+**Files modified:** `client/index.html`, `client/style.css`, `client/app.js`
+
+**Accessibility:** aria-labels on all interactive elements, keyboard navigation (Escape to close), focus management, modal role with aria-modal
+
+**Mobile-first:** Responsive styles for small screens, QR code overlay sized appropriately for phones
 

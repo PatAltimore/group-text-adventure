@@ -26,8 +26,29 @@
 5. **Current status (2026-04-04)** — Successfully deployed all 5 functions to patcastle-func. Health endpoint returns 200, negotiate returns 400 (expected), static website serving. Deploy script issues identified: provisioning loop stderr crash, WEBSITE_RUN_FROM_PACKAGE override breaking Linux Consumption. Fixes needed.
 
 ## Learnings
-
+
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
+
+### 2026-04-04 — Cross-Team: Data's Share Button + QR Overlay
+
+**From Data (Frontend Dev):**
+- **Share button UI:** Placed in game header (top right), accessible with keyboard navigation. Click copies game URL to clipboard.
+- **Toast feedback:** 3-second auto-dismiss feedback on successful copy with visual indicator.
+- **QR overlay:** Dismissible via X button, backdrop click, or Escape key. Responsive sizing for mobile and desktop.
+- **Fallback:** If QR generation fails, overlay shows text URL with copy option.
+- **Accessibility:** ARIA labels, semantic HTML, proper focus management.
+- **No test regressions:** All 150 tests pass with new feature.
+
+**Mouth's takeaway:** Share URL is game-specific (`?game=<6-char-code>`). Client generates it from `state.currentGameId`. QR is generated client-side only; no backend changes needed.
+
+### 2026-04-04 — Say & Yell Verbs Implementation
+
+- **Say verb:** Room-local only. `handleSay` sends `"PlayerName says: <text>"` to all other players in the same room, plus confirmation to the speaker. Already existed; no changes needed.
+- **Yell verb:** Three-tier reach using BFS pathfinding. Same room: clear text + "players look annoyed" feedback. Adjacent room (1 exit away): text with directional hint from listener's perspective. Far room (2+ away): muffled yelling with general direction.
+- **Command parser split:** `yell`/`shout` now map to verb `'yell'` (separate from `say`/`whisper` → `'say'`).
+- **`findDirectionToRoom` BFS helper:** Uses `session.roomStates[].exits` (not `world.rooms[].exits`) so dynamically opened exits (from puzzles) are respected.
+- **No gameHub.js changes needed:** The existing `routeResponses` function already handles per-player message routing — yell just generates more `{ playerId, message }` response entries.
+- **All 150 tests pass** (including 38 new communication tests from Stef).
 
 ### 2026-03-31 — Backend v1 built (greenfield)
 
@@ -73,4 +94,17 @@
 - **Key learning — PowerShell stderr + $ErrorActionPreference:** Native command stderr output (like Python warnings in Azure CLI) can trigger exceptions when `$ErrorActionPreference = 'Stop'`, even with `2>$null`. The deploy script's `az functionapp show` provisioning loop needs a `try/catch` wrapper. This is a known PS5.1/PS7 behavior difference.
 - **Deploy script bug:** `deploy.ps1` step 5 provisioning check (lines 230-242) fails on systems where Azure CLI emits Python warnings to stderr. Needs fix: wrap the loop body in `try/catch` or temporarily set `$ErrorActionPreference = 'Continue'`.
 - **URLs:** Function App: `https://patcastle-func.azurewebsites.net`, Static Website: `https://patcastlestore.z5.web.core.windows.net`
+
+### 2026-04-04 — Game Now Functional End-to-End (Two Bugs Fixed + Redeployment)
+
+- **Symptoms:** Commands returned nothing, player count showed 0, `look` didn't show room description. Client connected but no server responses appeared.
+- **Root cause #1 — Wrong webhook key in Web PubSub hub:** The hub event handler URL used the Function App's **master key** but the `/runtime/webhooks/webpubsub` endpoint requires the **`webpubsub_extension` system key**. Web PubSub events were silently rejected (401) by the Function App. Fix: `az webpubsub hub update` with the correct system key.
+- **Root cause #2 — Code not deployed:** The local `gameHub.js` had already been fixed to remove `JSON.stringify()` double-encoding on `sendToConnection`/`sendToGroup` (commit `ed0f9f5`), but this commit was never deployed to Azure. The deployed code was still double-serializing game messages, causing the client to receive raw strings instead of parsed JSON objects — the client's `msg.type` was `undefined` and all messages were silently dropped.
+- **Fix applied:**
+  1. Updated Web PubSub hub event handler URL to use `webpubsub_extension` system key (configuration fix, immediate).
+  2. Deployed latest code via manual zip deploy (staging → npm install → zip → config-zip → verify settings → stop+start).
+- **Verification:** Full WebSocket test confirmed: negotiate → connect → join → receive room description ("Castle Entrance") and playerCount=1 → `look` command returns room view. All working.
+- **Key learning — extension webhook keys:** The `/runtime/webhooks/webpubsub` endpoint in Azure Functions validates ONLY against the `webpubsub_extension` system key, NOT the master key. When configuring Web PubSub hub event handlers, always use `az functionapp keys list` to get the `webpubsub_extension` key specifically. The master key does NOT work as a substitute for extension webhook endpoints.
+- **Key learning — deploy scripts must update hub key:** After zip deploy (which can rotate system keys), the deploy script should re-read the `webpubsub_extension` key and update the Web PubSub hub event handler URL. This is not currently in the deploy script.
+- **Web PubSub resource name:** `patcastle-wps` (not `patcastlepubsub`).
 

@@ -39,3 +39,12 @@
 - Vanilla JS, no build step
 - QR code generation via CDN
 - Azure Web PubSub subprotocol integration for real-time updates
+
+- **2026-04-02 — TDD tests for SAY and YELL verbs (39 new tests, 13 expected failures)**
+  - File: `/tests/communication.test.js` — 39 tests covering say (room-local) and yell (multi-room) communication
+  - Updated `/tests/test-world.json` — added 5 rooms: `room-hub` (3 exits), `room-hub-n`, `room-hub-e`, `room-hub-w`, `room-isolated` (no exits)
+  - Updated `/tests/game-engine.test.js` line 50 — room count 4→9 to account for new test rooms
+  - 26 tests pass now (say works, basic yell same-room works via existing handleSay)
+  - 13 tests fail awaiting implementation: 4 parser (yell→distinct verb), 9 engine (multi-room propagation, direction, muffled yelling, annoyed feedback)
+  - Implementation needs: (1) parser must return `verb: 'yell'` not `verb: 'say'` for yell/shout, (2) engine needs `handleYell` with BFS room traversal for distance, exit-direction resolution for "from the south", muffled text for 2+ rooms away, annoyed feedback for same-room
+
