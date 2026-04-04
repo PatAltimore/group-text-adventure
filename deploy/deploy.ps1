@@ -467,7 +467,14 @@ try {
 
     Write-Step "Deploying Function App code..."
     $deploySuccess = $false
+    # config-zip uploads the zip to blob storage then may delete the local file.
+    # Copy it so retries have a file to work with.
+    $zipBackup = "${zipPath}.bak"
+    Copy-Item $zipPath $zipBackup -Force
     for ($attempt = 1; $attempt -le 3; $attempt++) {
+        if (-not (Test-Path $zipPath)) {
+            Copy-Item $zipBackup $zipPath -Force
+        }
         az functionapp deployment source config-zip `
             --name $functionAppName `
             --resource-group $ResourceGroup `
@@ -482,6 +489,7 @@ try {
             Start-Sleep -Seconds 15
         }
     }
+    Remove-Item $zipBackup -Force -ErrorAction SilentlyContinue
     if (-not $deploySuccess) {
         throw "Failed to deploy Function App code after 3 attempts"
     }
