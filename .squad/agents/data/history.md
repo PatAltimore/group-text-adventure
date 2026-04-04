@@ -61,3 +61,16 @@
 
 **Data's takeaway:** No client-side changes needed for say/yell. Backend sends regular `message` type responses; client displays with same styling as other player messages.
 
+### 2026-04-04 — Cross-Team: Mouth's Duplicate Player Name Resolution
+
+**From Mouth (Backend Dev):**
+- **New feature:** `resolvePlayerName(session, playerName)` in game-engine.js automatically renames duplicate players
+- **Process:** When a player joins with an existing name, engine prepends a random silly adjective (20-adjective pool, case-insensitive comparison)
+- **Player notification:** Hub sends `type: 'message'` to renamed player explaining the new name
+- **Hub integration:** Hub calls `resolvePlayerName` before `addPlayer`, no changes to game logic routing
+- **Fallback:** If all 20 adjectives exhausted (21+ duplicates), appends numeric suffix
+- **All 150 tests pass** unchanged
+- **Convention:** Player-facing name logic in game-engine as pure functions; hub handles messaging
+
+**Data's takeaway:** No client-side changes needed. Renamed players receive a standard message notification. Name-change message appears in player output like any other message.
+

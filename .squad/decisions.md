@@ -353,6 +353,38 @@ The Azure Functions `/runtime/webhooks/webpubsub` endpoint validates incoming re
 - After any deployment, verify the hub event handler key matches the current system key
 - The deploy script should automate this verification
 
+### Decision: Duplicate Player Name Resolution
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-04
+
+#### What
+
+When a player joins a game with a name already in use, the engine automatically prepends a random silly adjective to make it unique (e.g., "Pat" → "Sparkly Pat"). The player receives a message explaining the rename.
+
+#### Key Decisions
+
+1. **New function, not a modified `addPlayer`.**  
+   Added `resolvePlayerName(session, playerName)` as a separate exported function in `game-engine.js`. This avoids changing `addPlayer`'s return signature, which is used everywhere in tests. The hub calls `resolvePlayerName` first, then passes the resolved name to `addPlayer`.
+
+2. **Case-insensitive comparison.** "pat" and "Pat" are treated as duplicates.
+
+3. **20 silly adjectives, randomly shuffled.** The adjective is picked randomly (not sequentially) so different players with the same name get different adjectives. If all 20 are exhausted (theoretically possible with 21+ duplicate names), falls back to numeric suffix.
+
+4. **Notification via `type: 'message'`** sent to the joining player after their room view, before the join broadcast. Uses the existing message type — no new protocol types needed.
+
+#### Impact
+
+- Modified: `api/src/game-engine.js` (new `resolvePlayerName` export + `SILLY_ADJECTIVES` constant)
+- Modified: `api/src/functions/gameHub.js` (import + usage in `handleJoin`)
+- Modified: `client/app.js` (removed duplicate look command)
+- All 150 existing tests pass unchanged
+- **Requires redeployment** to take effect
+
+#### Convention
+
+When adding player-facing name logic, keep it in `game-engine.js` as a pure function. The hub (`gameHub.js`) handles messaging/notification but delegates all name resolution logic to the engine.
+
 ## Governance
 
 - All meaningful changes require team consensus

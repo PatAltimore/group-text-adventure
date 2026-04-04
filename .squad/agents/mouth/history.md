@@ -108,3 +108,12 @@
 - **Key learning — deploy scripts must update hub key:** After zip deploy (which can rotate system keys), the deploy script should re-read the `webpubsub_extension` key and update the Web PubSub hub event handler URL. This is not currently in the deploy script.
 - **Web PubSub resource name:** `patcastle-wps` (not `patcastlepubsub`).
 
+### 2026-04-04 — Duplicate Player Name Resolution
+
+- **Feature:** When a player joins with a name already in use, the engine auto-renames them by prepending a random silly adjective (e.g., "Sparkly Pat"). Player is notified of their new name.
+- **Pattern:** Added `resolvePlayerName(session, playerName)` as a new pure function in `game-engine.js`. Returns `{ name, wasChanged, originalName }`. Called by `gameHub.js` before `addPlayer`. This avoids changing `addPlayer`'s return type (which would break all 150 tests).
+- **Key files:** `api/src/game-engine.js` (resolvePlayerName + SILLY_ADJECTIVES list), `api/src/functions/gameHub.js` (handleJoin wiring + player notification).
+- **Name comparison is case-insensitive.** "pat" and "Pat" are treated as the same name.
+- **Fallback:** If all 20 adjectives are exhausted (extremely unlikely), appends a number suffix instead.
+- **All 150 existing tests pass.** No changes to `addPlayer` signature.
+
