@@ -106,15 +106,27 @@
   }
 
   // --- World Loading ---
-  function setDefaultWorld() {
+
+  // Fallback world list when the /api/worlds endpoint is unreachable
+  // (cold start, local dev without API, transient network error).
+  const FALLBACK_WORLDS = [
+    { id: 'default-world', name: 'The Forgotten Castle', description: 'An ancient castle shrouded in mist, perched atop a cliff that the locals dare not climb.' },
+    { id: 'escape-room', name: 'The Clockmaker\'s Mansion', description: 'You awaken in the foyer of an old mansion. Find the seven keys hidden in the home, or remain here forever.' },
+    { id: 'space-adventure', name: 'The Derelict Station', description: 'A deep-space research station gone dark. Reach the command deck before life support fails.' },
+  ];
+
+  function populateWorldSelector(worlds) {
     try {
       els.worldSelector.innerHTML = '';
-      const opt = document.createElement('option');
-      opt.value = 'default-world';
-      opt.textContent = 'The Forgotten Castle';
-      els.worldSelector.appendChild(opt);
+      worlds.forEach((world) => {
+        const opt = document.createElement('option');
+        opt.value = world.id;
+        opt.textContent = world.name;
+        if (world.description) opt.title = world.description;
+        els.worldSelector.appendChild(opt);
+      });
     } catch (e) {
-      console.error('[Worlds] Could not set fallback option:', e);
+      console.error('[Worlds] Could not populate world selector:', e);
     }
   }
 
@@ -131,7 +143,7 @@
 
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
+      const timeout = setTimeout(() => controller.abort(), 30000);
       const res = await fetch(`${apiBaseUrl}/api/worlds`, { signal: controller.signal });
       clearTimeout(timeout);
 
@@ -139,17 +151,10 @@
       const worlds = await res.json();
       if (!Array.isArray(worlds) || worlds.length === 0) throw new Error('Empty response');
 
-      els.worldSelector.innerHTML = '';
-      worlds.forEach((world) => {
-        const opt = document.createElement('option');
-        opt.value = world.id;
-        opt.textContent = world.name;
-        if (world.description) opt.title = world.description;
-        els.worldSelector.appendChild(opt);
-      });
+      populateWorldSelector(worlds);
     } catch (err) {
-      console.log('[Worlds] Failed to load worlds:', err.message, '— using default');
-      setDefaultWorld();
+      console.log('[Worlds] Failed to load worlds:', err.message, '— using fallback list');
+      populateWorldSelector(FALLBACK_WORLDS);
     } finally {
       els.worldSelector.disabled = false;
     }
