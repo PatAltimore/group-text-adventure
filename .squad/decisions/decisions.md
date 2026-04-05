@@ -461,3 +461,443 @@ Created a full azd template (`azure.yaml` + `infra/` Bicep files) that provision
 - **No existing files modified.** deploy/deploy.ps1 is untouched. All 150 tests pass.
 - **New files:** `azure.yaml`, `infra/main.bicep`, `infra/resources.bicep`, `infra/main.parameters.json`, `infra/abbreviations.json`
 - **Team usage:** Run `azd init` then `azd up` from repo root. Environment name and location are prompted.
+
+---
+
+## 18. Copilot Directive — Ghost Player Design
+
+**Author:** Pat Altimore (via Copilot)  
+**Date:** 2026-04-04  
+**Status:** Design Accepted
+
+### Decision
+
+When a player disconnects, their character becomes a "ghost" (e.g., "Bob's ghost") that remains in the room. Other players in the same room can take the ghost's inventory. When reconnecting, the player can choose their ghost to rejoin with their previous state. This is the preferred design for disconnect/reconnect and inventory reclamation.
+
+### Rationale
+
+Creative alternative to simple inventory drop + auto-reconnect. User request.
+
+---
+
+## 19. Multi-World Support — Server-Side World Selection
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-05  
+**Status:** Implemented
+
+### Decision
+
+- World ID = filename without `.json` (e.g., `space-adventure.json` → `space-adventure`)
+- `GET /api/worlds` endpoint scans `world/` directory dynamically
+- `worldId` in join message is optional, defaults to `default-world`
+- `worldId` persisted in session metadata
+- `getWorld(worldId)` generalized loader; `getDefaultWorld()` kept for backward compatibility
+
+### Impact
+
+- **New files:** `world/space-adventure.json`, `world/escape-room.json`, `api/src/functions/worlds.js`
+- **Modified:** `api/src/functions/gameHub.js`, `api/src/index.js`
+- **All 150 existing tests pass** — no regressions
+- **Client changes needed:** Frontend should call `GET /api/worlds` to show world picker, then send `worldId` in the join message
+
+---
+
+## 20. World/Adventure Selector Frontend Integration
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+### Decision
+
+- Selector placement: Between player name input and Host/Join buttons
+- Graceful fallback: If `/api/worlds` fails, show "The Forgotten Castle" with value `default-world`
+- `worldId` only sent by hosts; joiners' join messages remain unchanged
+- Lobby shows adventure name in subtitle
+- CSS custom select (no JavaScript dropdown library)
+
+### API Contract
+
+```
+GET /api/worlds → [{ id: string, name: string, description: string }, ...]
+```
+
+### Impact
+
+- Modified: `client/index.html`, `client/app.js`, `client/style.css`
+- All 150 tests pass unchanged
+- Depends on: Mouth's `/api/worlds` endpoint (falls back gracefully if not yet deployed)
+
+---
+
+## 21. World Selector Fetch Timeout & Fallback
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+### Decision
+
+- 5-second fetch timeout via AbortController handles cold-start delays and hung connections
+- HTML default is "The Forgotten Castle" (not a placeholder); dropdown usable before JS runs
+- Extracted `setDefaultWorld()` with isolated try/catch to prevent error cascades
+
+### Impact
+
+- Modified: `client/app.js`, `client/index.html`
+- All 204 tests pass unchanged
+- No backend changes needed
+
+---
+
+## 22. World Validation Test Strategy
+
+**Author:** Stef (Tester)  
+**Date:** 2026-04-02  
+**Status:** Implemented
+
+### Decision
+
+- Reusable `validateWorldJson()` function runs 10 checks (schema, connectivity, items, puzzles, reachability)
+- `test.skip` for missing world files so CI doesn't break while backends build them
+- BFS reachability includes puzzle-unlocked exits
+- Gameplay tests use BFS pathfinding to walk player to correct room
+
+### Impact
+
+- New file: `tests/world-selection.test.js` (32 tests)
+- All 172 existing tests still pass
+- Future world authors: add world ID to `worldEntries` array and get full validation
+
+---
+
+## 23. Ghost Player System
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-05  
+**Status:** Implemented
+
+### Decision
+
+- Ghosts keyed by player name (not player ID)
+- Ghosts visible in room view via `ghosts` array in `getPlayerView`
+- Two interaction commands: `loot <name>'s ghost` (all items, ghost fades) and `take <item> from <name>'s ghost` (one item)
+- Ghost timeout 30 minutes (extended from 5 because players can loot ghosts)
+- Reconnection restores remaining inventory; empty ghost fades immediately
+- Timed-out ghost scatters items to room floor
+
+### Impact
+
+- Modified: `api/src/game-engine.js`, `api/src/functions/gameHub.js`, `api/src/command-parser.js`
+- Updated: `tests/game-engine.test.js`
+- Exports changed: `findDisconnectedPlayerByName` → `findGhostByName`, etc.
+- **250 tests pass** (was 231)
+
+### Convention
+
+Disconnect state lives in `session.ghosts`. Ghost names match player display names (case-sensitive keys). New ghost-interaction commands use `findGhostByName()`.
+
+---
+
+## 24. Ghost Player UI Display
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+### Decision
+
+- Ghost section ordering: Items → Players → Ghosts → Hazards → Exits
+- Ghost styling: Faded italic text at 75-80% opacity in pale blue-grey (`#7a8a9e`), ethereal but muted
+- Loot hint contextual: only appears when ghosts are present
+- Reconnection message: "You reclaim your ghostly form" (ghost-themed)
+- `playerDrop` repurposed with ghost styling; new `ghostEvent` message type for ghost lifecycle
+- Room view messages should include `ghosts: string[]`
+
+### Contract with Backend
+
+- `ghosts: string[]` in room views (e.g., `["Bob's ghost"]`)
+- Ghost lifecycle events: `{ type: 'ghostEvent', text: '...' }` or `playerDrop`
+- Reconnection: `gameInfo` with `{ reconnected: true, room, inventory }`
+
+### Impact
+
+- Modified: `client/app.js`, `client/style.css`
+- New CSS classes: `.msg-ghost`, `.room-ghosts`, `.room-ghost-hint`
+- Backward compatible with existing `playerDrop` messages
+
+---
+
+## 25. Player Reconnection & Inventory Drop
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-06  
+**Status:** Implemented
+
+### Decision
+
+- Disconnected players' state (room, inventory) preserved for 5 minutes via separate `session.disconnectedPlayers` map
+- Rejoining with same name restores state
+- After 5 minutes without reconnection, items drop into last room and become pickable by anyone
+- Design B: Separate `disconnectedPlayers` map (not a `disconnected` flag) means all existing game logic excludes disconnected players automatically
+- Name = identity for reconnection (checked via `findDisconnectedPlayerByName` before `resolvePlayerName`)
+- Three disconnect states: `'disconnected'`, `'reconnected'`, `'left'`
+- Lazy cleanup via activity triggers in `handleJoin`, `handleCommand`, `handleStartGame`
+- `gameInfo.reconnected: true` flag signals client to skip lobby
+
+### Impact
+
+- Modified: `api/src/game-engine.js` (5 new exported functions), `api/src/functions/gameHub.js`
+- 27 new tests in `tests/game-engine.test.js`
+- **231 tests pass** (204 existing + 27 new)
+
+### Client Impact
+
+- Handle `playerEvent.event === 'disconnected'` (show "Alice lost connection")
+- Handle `playerEvent.event === 'reconnected'` (show "Alice reconnected")
+- Handle `gameInfo.reconnected === true` (skip lobby, restore game view)
+
+---
+
+## 26. Reconnection Flow Fix (Ghost Reclamation + Stale Disconnect)
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-05  
+**Status:** Implemented
+
+### Decision
+
+- Three-path reconnection in `handleJoin`: Ghost match (normal), active player takeover (race condition), fresh join (ghost looted/expired). Ghost match takes priority.
+- Stale disconnect protection: Disconnect handler checks that disconnecting connectionId matches player's active connectionId. Stale disconnects silently ignored.
+- Reconnection `gameInfo` includes `inventory` and `ghosts` (e.g., `{ reconnected: true, inventory, ghosts }`)
+- Reconnection `playerEvent` includes text (e.g., `"Bob's ghost stirs... Bob has reconnected!"`)
+
+### Impact
+
+- Modified: `api/src/functions/gameHub.js`, `tests/game-engine.test.js`
+- +6 reconnection edge case tests
+- **256 tests pass** (was 250)
+- No client changes needed (server now sends text client already handles)
+
+---
+
+## 27. Reconnect vs Duplicate Name — Rejoin Flag Protocol
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-05  
+**Status:** Implemented
+
+### Decision
+
+- Client sends `rejoin: true` on auto-rejoin only (from localStorage; fresh joins do NOT include flag)
+- Server gates ghost reclamation behind `rejoin` flag in `handleJoin`
+- `resolvePlayerName` now checks ghost names too (new players picking ghost names get adjective prefix)
+
+### Impact
+
+- Modified: `client/app.js` (1 line), `api/src/functions/gameHub.js`, `api/src/game-engine.js`
+- 6 new tests; **263 tests pass**
+- Cross-team: Data should know join message now optionally includes `rejoin: true`
+
+---
+
+## 28. Auto-Reconnect Missing pendingRejoin Flag (Fix)
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-06  
+**Status:** Fixed
+
+### Issue
+
+WebSocket auto-reconnect and manual "tap to reconnect" created new players instead of reclaiming ghosts. Full page refreshes worked (init() set pendingRejoin), but network drops didn't.
+
+### Root Cause
+
+`attemptReconnect()` and `manualReconnect()` called `connectWebSocket()` without setting `state.pendingRejoin = true`.
+
+### Key Decision
+
+Guard `pendingRejoin` behind `state.playerId` check: `if (state.playerId) state.pendingRejoin = true`. Players with identity rejoin; players without (shouldn't happen) do normal join.
+
+### Impact
+
+- Modified: `client/app.js` (2 lines), `api/src/functions/gameHub.js` (logging + BinaryData-safe parsing)
+- **274 tests pass**
+- Requires redeployment
+
+---
+
+## 29. Player ID System — Ghost Matching by playerId
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-06  
+**Status:** Implemented
+
+### Decision
+
+- Server generates `playerId` on first join using `crypto.randomUUID()`, stored in `session.players[connectionId].playerId`
+- `playerId` sent in `gameInfo` response (both first join and reconnect); client must persist
+- Ghost stores `playerId`; `findGhostByPlayerId()` searches by this field
+- Reconnection requires both `rejoin: true` AND `data.playerId`
+- Active player takeover (race condition) also uses `playerId` matching
+- Name is display-only; `resolvePlayerName` handles collisions
+
+### Protocol Change
+
+`gameInfo` message now includes `playerId: string` — client must store and send back on rejoin
+
+### Impact
+
+- Modified: `api/src/game-engine.js`, `api/src/functions/gameHub.js`, `tests/game-engine.test.js`
+- 11 new tests, 2 updated
+- **274 tests pass** (was 263)
+
+---
+
+## 30. Reconnection Persistence — localStorage over sessionStorage
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+### Decision
+
+- `localStorage` instead of `sessionStorage` (survives tab close, true "rejoin later" capability). Keys prefixed `gta_` to avoid collisions.
+- Graceful fallback on rejoin failure: if auto-rejoin fails, clear stored session and fall back to landing page
+- URL mismatch clears stale session: if URL has `?game=X` but localStorage has different gameId, clear before showing join screen
+- Negotiate failure doesn't break retry chain: `attemptReconnect()` self-retries on negotiate failure
+
+### Impact
+
+- Modified: `client/app.js`
+- **250 tests pass** unchanged
+- No backend changes needed
+- Players can reliably reconnect by refreshing, even after closing and reopening tab
+
+---
+
+## 31. Client-Side Reconnection & Session Persistence
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+### Decision
+
+- `sessionStorage` (tab-scoped) for session persistence: cleared on tab close, persists on refresh (note: later replaced with `localStorage` in Decision #30)
+- No sessionStorage clear on `beforeunload` (fires on refresh too, breaks reconnection)
+- Exponential backoff for auto-reconnect: 2s base × 1.5^attempt, capped at 10s, max 5 attempts
+- Reconnect skips lobby entirely: when server sends `gameInfo` with `reconnected: true`, go straight to game screen
+- `playerDrop` message type for dropped inventory (displayed as player-event text)
+
+### Message Contract
+
+- Server sends `gameInfo` with `{ reconnected: true, room, inventory }` on same-name rejoin
+- Server may send `{ type: 'playerDrop', playerName, text }` for inventory drops
+
+### Impact
+
+- Modified: `client/app.js`, `client/index.html`, `client/style.css`
+- **204 tests pass** unchanged
+
+---
+
+## 32. Do NOT Declare `web` as an azd Service
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-05  
+**Status:** Decision
+
+### Context
+
+The `web` (client) service was declared in `azure.yaml` as `host: staticwebapp`, but Bicep infrastructure creates a Storage Account with static website hosting — not an Azure Static Web App resource. This mismatch caused `azd up` to fail because azd couldn't find a resource tagged `azd-service-name: web`.
+
+### Decision
+
+Removed `web` service block from `azure.yaml`. Client files deployed entirely by global `postdeploy` hook, which:
+1. Enables static website hosting on Storage Account
+2. Generates `config.json` with Function App URL
+3. Uploads client files to `$web` blob container
+4. Configures Web PubSub and CORS
+
+### Rule
+
+If a service's deployment is fully handled by a custom hook, do NOT declare it as an azd service. azd expects each declared service to have a corresponding tagged Azure resource.
+
+---
+
+## 33. New Azure Function Endpoint Checklist
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-05  
+**Status:** Decision
+
+### Context
+
+The `/api/worlds` endpoint was deployed but had no error logging, wasn't listed in `health.js`, and deploy scripts didn't validate its presence.
+
+### Decision
+
+Every new Azure Function endpoint must include:
+
+1. **Handler error handling** — Wrap handler body in try/catch. Log with `context.log` (success) and `context.error` (failure). Return structured error response on failure.
+2. **health.js update** — Add function name to `functionsLoaded` array so diagnostics reflect deployed functions.
+3. **Deploy script validation** — Add function file to required files list in `deploy/deploy.ps1` and `deploy/deploy.sh`.
+
+### Rationale
+
+Silent production failures with no Application Insights logs. Health endpoint inaccurate. Deploy scripts could package incomplete zips.
+
+---
+
+## 34. Ghost Persistence — No Expiration, Loot Keeps Ghost
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-06  
+**Status:** Implemented
+
+### What
+
+Changed ghost behavior in three ways:
+
+1. **Looting a ghost only takes inventory, ghost stays.** `handleLoot` and `handleTakeFromGhost` transfer items; ghost entity remains in room with empty inventory. No "fades away" on loot.
+2. **Rejoining starts in ghost's room.** `reconnectPlayer` already did this — no change needed. Even fully-looted ghost preserves player's room position.
+3. **Ghosts never expire.** Removed `getExpiredGhosts`, `finalizeGhost`, `cleanupExpiredGhosts`, `GHOST_TIMEOUT_MS` entirely. Ghosts persist until player reconnects.
+
+### Why
+
+Ghosts are placeholders for disconnected players. Removing them on loot or timeout meant players who reconnected after being looted lost their position and had to start over. Now: ghost = "your seat is saved."
+
+### Impact
+
+- Modified: `api/src/game-engine.js` (2 functions removed, 2 modified), `api/src/functions/gameHub.js` (1 function + 3 call sites + 1 constant removed)
+- Updated: `tests/game-engine.test.js` (13 tests removed, 4 updated, 1 added)
+- **262 tests pass** (was 274; net -12 from removed expiration tests)
+- No client changes needed
+
+---
+
+## 35. Ghost Persistence Test Coverage
+
+**Author:** Stef (Tester)  
+**Date:** 2026-04-06  
+**Status:** Implemented
+
+### What
+
+Added 17 acceptance tests in new `describe('Ghost Persistence')` block in `tests/game-engine.test.js` covering three ghost behavior changes:
+
+1. **Looting keeps ghost alive** — Ghost persists in `session.ghosts` after loot; only inventory taken. Empty ghosts remain visible in room descriptions.
+2. **Rejoin uses ghost's room** — `reconnectPlayer` places returning player in ghost's room (not start room), even if ghost fully looted.
+3. **Ghosts never expire** — `getExpiredGhosts` and `finalizeGhost` no longer exported. Ghosts with arbitrarily old timestamps persist and remain lootable/reconnectable.
+
+### Impact
+
+- Fixed broken imports in `game-engine.test.js` (removed expired functions from import list)
+- **279 tests pass** across all 4 test suites
+- These tests serve as acceptance criteria for ghost persistence
+
+### Convention
+
+Ghost persistence tests live in the `Ghost Persistence` describe block (section 17). Future ghost behavior changes should add tests there, not in older `Ghost Looting` or `Reconnection Edge Cases` blocks.
