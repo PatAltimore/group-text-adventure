@@ -332,3 +332,11 @@
 - **Fix:** Changed `targetId,` to `playerId: targetId,` so the message routes correctly.
 - **Added bystander notifications:** Other players in the same room now see `"{Player} gave {item} to {Target}."` — consistent with how `say`, `yell`, and `loot` notify room occupants.
 - **Tests:** Added 2 new test cases — one verifying the receiver gets `playerId`-keyed notification, one verifying bystanders see the exchange. All 142 game-engine tests pass.
+
+### 2026-04-05 — World JSON Validation Module Completed
+
+- **Status:** `world/validate-world.js` finished with 13 validation rules + 4 warning types. Universal ES module (browser + Node.js).
+- **Integration:** Imported in `api/src/game-engine.js` `loadWorld()`. Errors throw; warnings logged via `console.warn` (visible in Azure Application Insights).
+- **Coverage:** All 3 world files pass validation. escape-room has 2 expected empty-room warnings (puzzle-gated rooms with no initial items).
+- **Test status:** All 279 tests passing. 55 new validation tests from Stef, 53 pass immediately, 2 gaps found and fixed.
+- **Deployment:** Code merged and deployed to Azure. `/api/health` endpoint returning 200. Game fully operational end-to-end.

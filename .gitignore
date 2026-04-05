@@ -10,8 +10,11 @@ deploy/api.zip
 client/config.json
 
 # Squad: ignore runtime state (logs, inbox, sessions)
+# But keep recent orchestration logs and session logs for team coordination
 .squad/orchestration-log/
+!.squad/orchestration-log/2026-04-*.md
 .squad/log/
+!.squad/log/2026-04-*.md
 .squad/decisions/inbox/
 .squad/sessions/
 # Squad: SubSquad activation file (local to this machine)

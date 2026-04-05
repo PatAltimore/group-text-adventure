@@ -77,3 +77,9 @@
   - 2 expected failures: `addItem`/`removeHazard` puzzle action types use `action.room` instead of `action.targetRoom`; Mouth's validator only checks `action.targetRoom` currently
   - Key discovery: world files use `north/south/east/west` for directions, NOT abbreviated `n/s/e/w`
   - Total: 333 tests pass across 5 suites (2 known-gap failures)
+
+- **2026-04-07 — World Validation Test Gaps Fixed**
+  - **Gaps:** `addItem` and `removeHazard` puzzle action types use `action.room` (not `action.targetRoom`) to reference rooms; Mouth's validator initially only checked `action.targetRoom`.
+  - **Fix (Mouth):** Added validation for `action.room` when action type is `addItem` or `removeHazard`. Both referenced rooms are checked for existence.
+  - **Result:** All 55 validation tests now pass (previously 53 pass + 2 gaps).
+  - **Test status:** 335 tests passing across all suites (game-engine, command-parser, communication, world-selection, validate-world).

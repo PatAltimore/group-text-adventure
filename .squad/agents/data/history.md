@@ -247,3 +247,11 @@
 - **Technical:** Vanilla JS, no frameworks, IIFE pattern, ~600 lines JS, separate CSS/JS files. SVG for map (not Canvas). Live-save on input (no explicit Apply button).
 - **Files created:** `client/editor.html`, `client/editor.css`, `client/editor.js`
 
+### 2026-04-05 — World JSON Editor + Validation Integration
+
+- **Status:** World JSON editor completed with all features (SVG map, editors, file I/O, dark theme). Integration with backend validation module in progress.
+- **Editor features:** Auto-layout, drag/zoom, room/item/puzzle/hazard editors, file operations (load/save/presets), dark theme with accessibility.
+- **Validation module (from Mouth):** Import `validateWorld()` from `world/validate-world.js` — returns `{ valid, errors[], warnings[] }`. Puzzle-aware (ignores one-way openExit on validation). Supports browser + Node.js.
+- **Next integration:** Call `validateWorld(editorWorldData)` on each save; display errors as UI toasts/panels; warn on publish but don't block.
+- **Test status:** All 150 client tests pass unchanged.
+

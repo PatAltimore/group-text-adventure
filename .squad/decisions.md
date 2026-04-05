@@ -385,6 +385,94 @@ When a player joins a game with a name already in use, the engine automatically 
 
 When adding player-facing name logic, keep it in `game-engine.js` as a pure function. The hub (`gameHub.js`) handles messaging/notification but delegates all name resolution logic to the engine.
 
+### Decision: World JSON Validation Module
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-07
+
+#### What
+
+Created `world/validate-world.js` — a shared validation module for world JSON files. Universal ES module that works in both browser (for Data's world editor UI) and Node.js (server-side validation in game engine).
+
+#### Key Decisions
+
+1. **ES module syntax (no bundler needed).** Uses `export function validateWorld()` — importable directly in both browser `<script type="module">` and Node.js ESM.
+
+2. **Puzzle-aware bidirectional exit checks.** Exits opened by puzzles (type `openExit`) are excluded from bidirectional mismatch warnings. These are intentionally one-way until the puzzle is solved.
+
+3. **Validation integrated into `loadWorld()`.** Errors throw (same as existing behavior). Warnings are logged via `console.warn` — visible in Azure Application Insights but don't block game start.
+
+4. **Item placement tracking includes puzzle actions.** Items referenced by `addItem` puzzle actions or as `requiredItem` are considered "placed" — not flagged as unplaced warnings.
+
+#### Impact
+
+- New file: `world/validate-world.js`
+- Modified: `api/src/game-engine.js` (import + validation call in `loadWorld`)
+- All 279 existing tests pass
+- All 3 world files pass validation (escape-room has 2 expected empty-room warnings)
+
+#### For Data (Frontend Dev)
+
+Import the validator in the world editor UI:
+```javascript
+import { validateWorld } from '../world/validate-world.js';
+const result = validateWorld(worldData);
+// result.valid, result.errors, result.warnings
+```
+
+### Fix: Give Command Notification Bug
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-07
+
+#### What
+
+Fixed a bug where the receiving player got no notification when given an item via the `give` command. Also added bystander notifications for other players in the room.
+
+#### Root Cause
+
+In `handleGive()` (`api/src/game-engine.js`), the recipient's response object used JavaScript shorthand `targetId,` which created `{ targetId: "..." }` instead of the required `{ playerId: "..." }`. Since `routeResponses()` in `gameHub.js` dispatches based on `resp.playerId`, the message was silently dropped.
+
+#### Changes
+
+- **`api/src/game-engine.js`** — Fixed `targetId,` → `playerId: targetId,`. Added bystander notification loop (same pattern as `say`/`yell`/`loot`).
+- **`tests/game-engine.test.js`** — Added 2 tests: receiver notification and bystander notification.
+
+#### Impact
+
+- All 142 game-engine tests pass (2 new)
+- No other test suites affected
+- Requires redeployment to take effect in production
+
+### Decision: World JSON Editor (Standalone Browser Tool)
+
+**By:** Data (Frontend Dev)  
+**Date:** 2026-04-04
+
+#### What
+
+Created a standalone browser-based visual editor for world JSON files at `client/editor.html`. This is a developer/designer tool, not a player-facing feature.
+
+#### Key Decisions
+
+1. **Standalone page, not integrated into the game client.** The editor is `editor.html` with its own CSS/JS — completely separate from `index.html`/`app.js`. No shared JavaScript modules. This avoids coupling editor complexity to the game client.
+
+2. **SVG for the map, not Canvas.** SVG elements are individually addressable DOM nodes — click handlers, CSS styling, and DOM manipulation are trivial. Canvas would require manual hit-testing and a full redraw loop. The room count in world files is small (10-30), so SVG performance is not a concern.
+
+3. **Auto-layout via BFS + compass directions.** Rooms are placed on a grid using their exit directions as hints (north = y-1, east = x+1, etc.). BFS from the start room ensures connected rooms cluster together. Disconnected rooms are placed below. Positions are editor-only — not saved to JSON.
+
+4. **Live-save on input.** All edits (name, description, exits, items, hazards) are applied to the in-memory world object immediately on input/change events. No "Apply" button. This matches modern editor UX.
+
+5. **File operations use browser APIs only.** Load via `<input type="file">`, save via Blob + download link, presets via `fetch()` from `../world/` relative path. No server-side endpoints needed.
+
+6. **Same dark theme as game client.** Reuses the exact CSS custom property values from `client/style.css` (--bg, --bg-surface, --accent, etc.) but in a separate CSS file. No `@import` — self-contained.
+
+#### Impact
+
+- **New files:** `client/editor.html`, `client/editor.css`, `client/editor.js`
+- **No existing files modified** — zero risk to game client or backend
+- **No tests needed** — this is a standalone UI tool; no server interaction
+
 ## Governance
 
 - All meaningful changes require team consensus
