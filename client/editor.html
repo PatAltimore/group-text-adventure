@@ -112,10 +112,9 @@
           <!-- Hazards -->
           <fieldset class="field-group">
             <legend>Hazards</legend>
-            <div id="room-hazards-list" class="tag-list"></div>
-            <div class="tag-add-row">
-              <input type="text" id="hazard-input" placeholder="New hazard text…">
-              <button class="btn btn-small" id="btn-add-hazard">+</button>
+            <div id="room-hazards-list" class="hazard-card-list"></div>
+            <div class="hazard-add-row">
+              <button class="btn btn-small" id="btn-add-hazard">+ Add Hazard</button>
             </div>
           </fieldset>
           <!-- Delete -->
@@ -162,6 +161,10 @@
             <div class="field">
               <label for="item-pickup">Pickup Text</label>
               <textarea id="item-pickup" rows="2" placeholder="Text when picked up…"></textarea>
+            </div>
+            <div class="field">
+              <label for="item-room-text">Room Text</label>
+              <textarea id="item-room-text" rows="2" placeholder="Descriptive prose shown in room view…"></textarea>
             </div>
             <div class="field field-row">
               <label class="check-label">

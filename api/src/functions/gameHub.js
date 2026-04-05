@@ -20,6 +20,8 @@ import {
   findGhostByName,
   findGhostByPlayerId,
   reconnectPlayer,
+  killPlayer,
+  respawnPlayer,
 } from '../game-engine.js';
 
 import {
@@ -198,6 +200,14 @@ app.generic('gameHubMessage', {
 
     if (messageType === 'startGame') {
       return await handleStartGame(serviceClient, connectionId, data, context);
+    }
+
+    if (messageType === 'setDeathTimeout') {
+      return await handleSetDeathTimeout(serviceClient, connectionId, data, context);
+    }
+
+    if (messageType === 'revive') {
+      return await handleRevive(serviceClient, connectionId, data, context);
     }
 
     await sendToConnection(serviceClient, connectionId, {
@@ -549,6 +559,13 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
 
     // Mark the game as started and persist
     session.started = true;
+
+    // Apply death timeout if provided by host
+    if (data.deathTimeout) {
+      const timeout = Math.max(15, Math.min(60, parseInt(data.deathTimeout) || 30));
+      session.deathTimeout = timeout;
+    }
+
     await saveGameState(gameId, session);
 
     // Send personalized gameStart to each player via direct connection.
@@ -564,6 +581,7 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
           await sendToConnection(serviceClient, player.connectionId, {
             type: 'gameStart',
             room: view,
+            deathTimeout: session.deathTimeout || 30,
           });
         }
       }
@@ -620,10 +638,13 @@ async function handleCommand(serviceClient, connectionId, data, context) {
   const result = processCommand(session, playerId, commandText);
   session = result.session;
 
+  // Check if the player died
+  const hasDeath = result.responses.some(r => r.message.type === 'death');
+
   // Persist updated state
   await saveGameState(gameId, session);
 
-  // Update player record
+  // Update player record (if player is still alive)
   const player = session.players[playerId];
   if (player) {
     await savePlayer(gameId, playerId, {
@@ -632,10 +653,149 @@ async function handleCommand(serviceClient, connectionId, data, context) {
       inventory: player.inventory,
       connectionId,
     });
+  } else if (!hasDeath) {
+    // Player removed for non-death reason — clean up
+    await deletePlayer(gameId, playerId);
+  }
+  // On death, keep the player record so revive can find the game
+
+  // Route responses — use captured connectionId for dead player's messages
+  for (const resp of result.responses) {
+    if (resp.playerId === 'all') {
+      await sendToGame(serviceClient, gameId, resp.message);
+    } else if (resp.playerId === playerId) {
+      await sendToConnection(serviceClient, connectionId, resp.message);
+    } else {
+      const targetPlayer = session.players[resp.playerId];
+      if (targetPlayer && targetPlayer.connectionId) {
+        await sendToConnection(serviceClient, targetPlayer.connectionId, resp.message);
+      }
+    }
   }
 
-  // Route responses to the right clients
-  await routeResponses(serviceClient, gameId, session, result.responses);
+  return { body: '', status: 200 };
+}
+
+// ── Handler: Set Death Timeout ────────────────────────────────────────
+
+async function handleSetDeathTimeout(serviceClient, connectionId, data, context) {
+  const found = await findPlayerByConnectionId(connectionId);
+  if (!found) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'You need to join a game first.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const { gameId, playerId } = found;
+  let session = await loadGameState(gameId);
+  if (!session) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Game session not found.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.hostPlayerId !== playerId) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Only the host can set the death timeout.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.started) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Cannot change death timeout after the game has started.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const timeout = Math.min(60, Math.max(15, Number(data.timeout) || 30));
+  session.deathTimeout = timeout;
+  await saveGameState(gameId, session);
+
+  await sendToConnection(serviceClient, connectionId, {
+    type: 'message',
+    text: `Death timeout set to ${timeout} seconds.`,
+  });
+
+  return { body: '', status: 200 };
+}
+
+// ── Handler: Revive ───────────────────────────────────────────────────
+
+async function handleRevive(serviceClient, connectionId, data, context) {
+  const found = await findPlayerByConnectionId(connectionId);
+  if (!found) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'You need to join a game first.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const { gameId, playerId } = found;
+  let session = await loadGameState(gameId);
+  if (!session) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Game session not found.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  // Find the death ghost for this player by UUID
+  const clientPlayerId = data.playerId || null;
+  let ghostMatch = null;
+  if (clientPlayerId) {
+    ghostMatch = findGhostByPlayerId(session, clientPlayerId);
+  }
+
+  if (!ghostMatch) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'No ghost found to revive.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const ghostName = ghostMatch.ghostName;
+  const reviveRoom = ghostMatch.ghost.room;
+
+  session = respawnPlayer(session, ghostName, playerId);
+  session.players[playerId].connectionId = connectionId;
+
+  await saveGameState(gameId, session);
+  await savePlayer(gameId, playerId, {
+    playerName: session.players[playerId].name,
+    currentRoom: session.players[playerId].room,
+    inventory: session.players[playerId].inventory,
+    connectionId,
+  });
+
+  // Send room view to the revived player
+  const view = getPlayerView(session, playerId);
+  await sendToConnection(serviceClient, connectionId, {
+    type: 'revived',
+    room: view,
+  });
+
+  // Notify others in the room
+  const playerName = session.players[playerId].name;
+  for (const [, activePlayer] of Object.entries(session.players)) {
+    if (activePlayer.connectionId && activePlayer.connectionId !== connectionId && activePlayer.room === reviveRoom) {
+      await sendToConnection(serviceClient, activePlayer.connectionId, {
+        type: 'playerEvent',
+        event: 'revived',
+        playerName,
+        text: `${playerName} has returned from the dead!`,
+      });
+    }
+  }
 
   return { body: '', status: 200 };
 }

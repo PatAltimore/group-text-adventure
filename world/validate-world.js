@@ -108,15 +108,63 @@ export function validateWorld(worldData) {
       }
     }
 
+    // 8b. Validate hazards — must be objects with { description, probability, deathText }
+    if (Array.isArray(room.hazards)) {
+      for (let i = 0; i < room.hazards.length; i++) {
+        const hazard = room.hazards[i];
+        if (typeof hazard === 'string') {
+          warnings.push(`Room \"${roomId}\": hazard[${i}] is a plain string. Consider using object format { description, probability, deathText }.`);
+        } else if (hazard && typeof hazard === 'object') {
+          if (!hazard.description || typeof hazard.description !== 'string') {
+            errors.push(`Room \"${roomId}\": hazard[${i}].description is required and must be a string.`);
+          }
+          if (typeof hazard.probability !== 'number') {
+            errors.push(`Room \"${roomId}\": hazard[${i}].probability is required and must be a number.`);
+          } else if (hazard.probability < 0 || hazard.probability > 1) {
+            errors.push(`Room \"${roomId}\": hazard[${i}].probability must be between 0 and 1.`);
+          }
+          if (typeof hazard.deathText !== 'string') {
+            errors.push(`Room \"${roomId}\": hazard[${i}].deathText is required and must be a string.`);
+          }
+        } else {
+          errors.push(`Room \"${roomId}\": hazard[${i}] must be a string or an object with { description, probability, deathText }.`);
+        }
+      }
+    }
+
     // Warning: rooms with no items and no hazards (empty rooms)
     const hasItems = Array.isArray(room.items) && room.items.length > 0;
     const hasHazards = Array.isArray(room.hazards) && room.hazards.length > 0;
     if (!hasItems && !hasHazards) {
       warnings.push(`Room \"${roomId}\" has no items and no hazards (empty room).`);
     }
+
+    // Validate hazard entries
+    if (Array.isArray(room.hazards)) {
+      for (let i = 0; i < room.hazards.length; i++) {
+        const hazard = room.hazards[i];
+        if (typeof hazard === 'string') {
+          // Old format — valid (normalized by loadWorld)
+          continue;
+        }
+        if (typeof hazard === 'object' && hazard !== null) {
+          if (typeof hazard.description !== 'string' || !hazard.description.trim()) {
+            errors.push(`Room \"${roomId}\": hazard[${i}] must have a non-empty \"description\" string.`);
+          }
+          if (typeof hazard.probability !== 'number' || hazard.probability < 0 || hazard.probability > 1) {
+            errors.push(`Room \"${roomId}\": hazard[${i}] \"probability\" must be a number between 0 and 1.`);
+          }
+          if (typeof hazard.deathText !== 'string') {
+            errors.push(`Room \"${roomId}\": hazard[${i}] must have a \"deathText\" string.`);
+          }
+        } else {
+          errors.push(`Room \"${roomId}\": hazard[${i}] must be a string or a hazard object.`);
+        }
+      }
+    }
   }
 
-  // 9. Each item must have name (string) and description (string)
+  // 9. Each item must have name (string) and description (string); roomText is optional
   for (const [itemId, item] of Object.entries(items)) {
     if (!item || typeof item !== 'object') {
       errors.push(`Item \"${itemId}\" must be an object.`);
@@ -127,6 +175,9 @@ export function validateWorld(worldData) {
     }
     if (!item.description || typeof item.description !== 'string') {
       errors.push(`Item \"${itemId}\": \"description\" is required and must be a string.`);
+    }
+    if (item.roomText !== undefined && typeof item.roomText !== 'string') {
+      errors.push(`Item \"${itemId}\": \"roomText\" must be a string when provided.`);
     }
   }
 

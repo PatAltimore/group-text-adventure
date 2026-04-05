@@ -111,6 +111,17 @@
         <ul id="lobby-player-list" aria-label="Connected players"></ul>
       </div>
 
+      <div id="death-timeout-group" class="death-timeout-group hidden">
+        <label for="death-timeout-select" class="death-timeout-label">⏱ Respawn Timer</label>
+        <select id="death-timeout-select" aria-label="Death respawn timeout">
+          <option value="15">15 seconds</option>
+          <option value="20">20 seconds</option>
+          <option value="30" selected>30 seconds</option>
+          <option value="45">45 seconds</option>
+          <option value="60">60 seconds</option>
+        </select>
+      </div>
+
       <button id="btn-start-game" class="btn btn-primary btn-large">Start Adventure</button>
       <p id="lobby-waiting-msg" class="lobby-waiting-msg hidden">Waiting for host to start…</p>
     </div>
@@ -159,6 +170,15 @@
         <input id="share-url" type="text" readonly aria-label="Game join URL">
         <button id="btn-share-copy" class="btn btn-small" aria-label="Copy join URL">Copy</button>
       </div>
+    </div>
+  </div>
+  <!-- ===== Death Overlay ===== -->
+  <div id="death-overlay" class="death-overlay hidden" role="alertdialog" aria-modal="true" aria-labelledby="death-overlay-title">
+    <div class="death-overlay-backdrop"></div>
+    <div class="death-overlay-content">
+      <h2 id="death-overlay-title" class="death-overlay-title">💀 You Died</h2>
+      <p id="death-text" class="death-overlay-text"></p>
+      <p id="death-countdown" class="death-overlay-countdown"></p>
     </div>
   </div>
 </body>

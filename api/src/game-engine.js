@@ -80,11 +80,24 @@ export function loadWorld(worldJson) {
     }
   }
 
+  // Normalize hazards: convert old-style strings to structured objects
+  const clonedRooms = structuredClone(rooms);
+  for (const room of Object.values(clonedRooms)) {
+    if (Array.isArray(room.hazards)) {
+      room.hazards = room.hazards.map((h) => {
+        if (typeof h === 'string') {
+          return { description: h, probability: 0, deathText: '' };
+        }
+        return h;
+      });
+    }
+  }
+
   return {
     name,
     description: description || '',
     startRoom,
-    rooms: structuredClone(rooms),
+    rooms: clonedRooms,
     items: structuredClone(items || {}),
     puzzles: structuredClone(puzzles || {}),
   };
@@ -117,6 +130,7 @@ export function createGameSession(world) {
     roomStates,
     puzzleStates,
     players: {},
+    deathTimeout: 30,
     createdAt: new Date().toISOString(),
   };
 }
@@ -246,6 +260,90 @@ export function reconnectPlayer(session, ghostName, newPlayerId) {
 }
 
 /**
+ * Kill a player — creates a death ghost in the room holding their inventory.
+ * Other players can loot the ghost. The player can revive after a timeout.
+ * @param {object} session - Current game session.
+ * @param {string} playerId - Player to kill.
+ * @returns {object} Updated session.
+ */
+export function killPlayer(session, playerId) {
+  const player = session.players[playerId];
+  if (!player) return session;
+
+  if (!session.ghosts) session.ghosts = {};
+  session.ghosts[player.name] = {
+    playerName: player.name,
+    playerId: player.playerId || null,
+    room: player.room,
+    inventory: [...player.inventory],
+    disconnectedAt: Date.now(),
+    diedAt: Date.now(),
+    isDeath: true,
+  };
+
+  delete session.players[playerId];
+  return session;
+}
+
+/**
+ * Respawn a dead player — removes their death ghost, drops remaining ghost
+ * items into the room, and recreates the player with empty inventory.
+ * @param {object} session - Current game session.
+ * @param {string} ghostName - The ghost's player name key.
+ * @param {string} newPlayerId - The new connection-based player ID.
+ * @returns {object} Updated session.
+ */
+export function respawnPlayer(session, ghostName, newPlayerId) {
+  if (!session.ghosts || !session.ghosts[ghostName]) return session;
+
+  const ghost = session.ghosts[ghostName];
+  if (!ghost.isDeath) return session;
+
+  // Drop remaining ghost items into the room
+  const roomState = session.roomStates[ghost.room];
+  if (roomState) {
+    for (const itemId of ghost.inventory) {
+      roomState.items.push(itemId);
+    }
+  }
+
+  session.players[newPlayerId] = {
+    name: ghost.playerName,
+    playerId: ghost.playerId,
+    room: ghost.room,
+    inventory: [],
+  };
+
+  delete session.ghosts[ghostName];
+  return session;
+}
+
+/**
+ * Revive a player from death — restores the player from their ghost
+ * with remaining inventory. The ghost is removed on revive.
+ * @param {object} session - Current game session.
+ * @param {string} ghostName - The ghost's player name key.
+ * @param {string} newPlayerId - The new connection-based player ID.
+ * @returns {object} Updated session.
+ */
+export function revivePlayer(session, ghostName, newPlayerId) {
+  if (!session.ghosts || !session.ghosts[ghostName]) {
+    return session;
+  }
+
+  const ghost = session.ghosts[ghostName];
+  session.players[newPlayerId] = {
+    name: ghost.playerName,
+    playerId: ghost.playerId || null,
+    room: ghost.room,
+    inventory: [...ghost.inventory],
+  };
+
+  delete session.ghosts[ghostName];
+  return session;
+}
+
+/**
  * Get ghosts in a specific room.
  * @param {object} session - Current game session.
  * @param {string} roomId - Room to check.
@@ -275,18 +373,24 @@ export function getPlayerView(session, playerId) {
     .filter(([id]) => id !== playerId && session.players[id].room === player.room)
     .map(([, p]) => p.name);
 
-  const itemNames = roomState.items.map((itemId) => {
+  const items = roomState.items.map((itemId) => {
     const item = session.world.items[itemId];
-    return item ? item.name : itemId;
+    if (!item) return { name: itemId, roomText: `A ${itemId} lies here.` };
+    return {
+      name: item.name,
+      roomText: item.roomText || `A ${item.name.toLowerCase()} lies here.`,
+    };
   });
 
   return {
     name: room.name,
     description: room.description,
     exits: Object.keys(roomState.exits),
-    items: itemNames,
+    items,
     players: otherPlayers,
-    hazards: room.hazards || [],
+    hazards: (room.hazards || []).map((h) =>
+      typeof h === 'string' ? h : h.description
+    ),
     ghosts: getGhostsInRoom(session, player.room),
   };
 }
@@ -401,6 +505,51 @@ function handleGo(session, playerId, cmd) {
           text: `${player.name} arrived.`,
         },
       });
+    }
+  }
+
+  // Check hazards in the new room
+  const newRoom = session.world.rooms[targetRoom];
+  const hazards = newRoom.hazards || [];
+  for (const hazard of hazards) {
+    const h = typeof hazard === 'string'
+      ? { description: hazard, probability: 0, deathText: '' }
+      : hazard;
+    if (h.probability > 0 && Math.random() < h.probability) {
+      const playerName = player.name;
+      session = killPlayer(session, playerId);
+
+      responses.push({
+        playerId,
+        message: {
+          type: 'death',
+          text: h.deathText,
+          deathTimeout: session.deathTimeout || 30,
+        },
+      });
+
+      for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+        if (otherPlayer.room === targetRoom) {
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'playerEvent',
+              event: 'died',
+              playerName,
+              text: `${playerName} has died! ${h.deathText}`,
+            },
+          });
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'ghostEvent',
+              text: `${playerName}'s ghost appears.`,
+            },
+          });
+        }
+      }
+
+      return { session, responses };
     }
   }
 
@@ -694,7 +843,7 @@ function handleInventory(session, playerId) {
   const player = session.players[playerId];
   const items = player.inventory.map((itemId) => {
     const item = session.world.items[itemId];
-    return { name: item.name, description: item.description };
+    return { id: itemId, name: item.name, description: item.description };
   });
 
   return {
@@ -793,7 +942,9 @@ function applyPuzzleAction(session, action) {
     case 'removeHazard': {
       const room = session.world.rooms[action.room];
       if (room && room.hazards) {
-        const idx = room.hazards.indexOf(action.hazard);
+        const idx = room.hazards.findIndex(
+          (h) => (typeof h === 'string' ? h : h.description) === action.hazard
+        );
         if (idx !== -1) room.hazards.splice(idx, 1);
       }
       break;

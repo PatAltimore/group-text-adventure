@@ -83,3 +83,13 @@
   - **Fix (Mouth):** Added validation for `action.room` when action type is `addItem` or `removeHazard`. Both referenced rooms are checked for existence.
   - **Result:** All 55 validation tests now pass (previously 53 pass + 2 gaps).
   - **Test status:** 335 tests passing across all suites (game-engine, command-parser, communication, world-selection, validate-world).
+
+- **2026-04-07 — Item Description + Hazard Death System tests (30 new tests, all passing)**
+  - Added 23 tests to `/tests/game-engine.test.js` across two new describe blocks:
+    1. **Item Descriptions (Stef)** (5 tests): getPlayerView returns `{id, name, description}` objects, picked-up items disappear from room view, inventory shows descriptions, give transfers descriptions
+    2. **Hazard Death System (Stef)** (18 tests): killPlayer creates ghost with inventory, killPlayer death message + notifications, looting dead player's ghost, respawnPlayer removes ghost and recreates with empty inventory, probability 0 never kills, probability 1 always kills, hazard check only on room entry (not look/inventory/help), deathTimeout defaults to 30, old string hazards backward compatible (normalized to probability 0), multiple hazards checked independently, integration: die→loot→respawn cycle, death notifications to other players
+  - Added 7 tests to `/tests/validate-world.test.js` in `Hazard validation (Stef)` block: probability 0/1 valid, probability out of range invalid, old string hazards pass, mixed hazards pass, empty deathText with probability 0 valid
+  - All 30 Stef tests pass against Mouth's current implementation
+  - 12 of Mouth's own tests fail due to API mismatch: `revivePlayer` doesn't exist (actual: `respawnPlayer`), `diedAt` not set on ghost, `deathTimeout` not in death message, `roomText` not in getPlayerView output, old tests still expect string items instead of objects
+  - Key API discoveries: `killPlayer(session, playerId)` takes 2 args (not 3), returns session (not `{session, responses}`). `respawnPlayer(session, ghostName, newPlayerId)` drops ghost items to room floor and gives empty inventory. Ghost has `isDeath: true` flag. `getPlayerView` items now `[{id, name, description}]`. `loadWorld` normalizes string hazards to `{description, probability: 0, deathText: ''}`. Hazard check in handleGo uses `Math.random() < hazard.probability`.
+  - Total: 396 tests across 5 suites (384 pass, 12 fail from Mouth's stale tests)

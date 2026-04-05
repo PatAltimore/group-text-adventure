@@ -267,3 +267,31 @@
 - **Fix (client/index.html):** Updated the `<select>` to include all 3 worlds in the initial HTML (no flash of single option before JS runs)
 - **Server endpoint verified:** `api/src/functions/worlds.js` correctly scans the `world/` directory and returns all 3 worlds. Registered in `src/index.js`, included in deploy zip.
 - **Test status:** All 335 tests pass unchanged.
+
+### 2026-04-04 — Item Descriptions, Hazard Death System, Editor Upgrades
+
+**Three frontend features implemented:**
+
+1. **Item descriptions in room view & inventory:**
+   - Room items now render as individual rows with name + description (`🎒 Torch — A sturdy wooden torch...`)
+   - Inventory display updated to match
+   - Backward compatible: string items still render as plain names
+
+2. **Hazard death system UI:**
+   - **Death overlay:** Full-screen dark overlay with `💀 You Died` title, death text, countdown timer
+   - **Countdown:** Ticks down from `timeout` seconds, sends `{ type: 'respawn' }` at zero
+   - **Input disabled:** Command input locked while dead; `sendCommand()` short-circuits
+   - **Auto-dismiss:** Overlay clears on `look`, `gameStart`, or `gameInfo` (server sends room after respawn)
+   - **Lobby setting:** Host-only dropdown (15/20/30/45/60s) sends `{ type: 'setDeathTimeout', timeout }`
+   - **Death notifications:** `playerDeath` → red alert; `playerRespawn` → green italic
+
+3. **World editor hazard upgrade:**
+   - Hazards changed from plain text tags to card-based editor with description, probability (0-1 step 0.05), and deathText fields
+   - Legacy string hazards auto-normalized to objects on load
+   - Item editor already had all required fields (name, description, pickupText, portable)
+
+4. **Room hazard rendering:** Hazard objects show `description` text; backward compat for string format
+
+- **State additions:** `isDead`, `deathTimer` in client state
+- **New DOM elements:** `death-overlay`, `death-timeout-group` (lobby)
+- **All 346 tests pass** unchanged.

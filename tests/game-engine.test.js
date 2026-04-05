@@ -1,4 +1,4 @@
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect, jest } from '@jest/globals';
 import {
   loadWorld,
   createGameSession,
@@ -12,7 +12,10 @@ import {
   reconnectPlayer,
   getGhostsInRoom,
   resolvePlayerName,
+  killPlayer,
+  respawnPlayer,
 } from '../api/src/game-engine.js';
+import * as GameEngine from '../api/src/game-engine.js';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
@@ -534,7 +537,9 @@ describe('Look / View', () => {
     expect(view.name).toBe('Room A');
     expect(view.description).toBe('Starting room.');
     expect(view.exits).toEqual(expect.arrayContaining(['north', 'east']));
-    expect(view.items).toContain('Old Key');
+    expect(view.items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'Old Key' })])
+    );
     expect(view.hazards).toEqual([]);
   });
 
@@ -549,7 +554,9 @@ describe('Look / View', () => {
     let session = sessionWithPlayer('p1', 'Alice');
     ({ session } = processCommand(session, 'p1', 'take old key'));
     const view = getPlayerView(session, 'p1');
-    expect(view.items).not.toContain('Old Key');
+    expect(view.items).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'Old Key' })])
+    );
   });
 
   test('getPlayerView after puzzle solved — new exit visible', () => {
@@ -586,8 +593,9 @@ describe('Look / View', () => {
     const session = sessionWithPlayer('p1', 'Alice');
     const view = getPlayerView(session, 'p1');
     // Should show "Old Key" (display name), not "key" (item ID)
-    expect(view.items).toContain('Old Key');
-    expect(view.items).not.toContain('key');
+    const names = view.items.map((i) => (typeof i === 'object' ? i.name : i));
+    expect(names).toContain('Old Key');
+    expect(names).not.toContain('key');
   });
 });
 
@@ -1648,7 +1656,7 @@ describe('Start Game — Initial Room View', () => {
     expect(view.name).toBe('Room A');
     expect(view.description).toBe('Starting room.');
     expect(view.exits).toEqual(expect.arrayContaining(['north', 'east']));
-    expect(view.items).toEqual(['Old Key']);
+    expect(view.items).toEqual([expect.objectContaining({ name: 'Old Key' })]);
     expect(view.players).toEqual([]);
     expect(view.hazards).toEqual([]);
     expect(view.ghosts).toEqual([]);
@@ -1692,7 +1700,9 @@ describe('Start Game — Initial Room View', () => {
   test('getPlayerView includes items from start room', () => {
     const session = sessionWithPlayer('p1', 'Alice');
     const view = getPlayerView(session, 'p1');
-    expect(view.items).toContain('Old Key');
+    expect(view.items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'Old Key' })])
+    );
   });
 
   test('getPlayerView returns null for non-existent player', () => {
@@ -1739,7 +1749,9 @@ describe('Start Game — Initial Room View', () => {
     expect(view).not.toBeNull();
     expect(view.name).toBe('Room A');
     expect(view.players).toContain('Bob');
-    expect(view.items).toContain('Old Key');
+    expect(view.items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'Old Key' })])
+    );
   });
 
   test('getPlayerView with ghosts after JSON round-trip', () => {
@@ -1748,5 +1760,842 @@ describe('Start Game — Initial Room View', () => {
     const restored = JSON.parse(JSON.stringify(session));
     const view = getPlayerView(restored, 'p2');
     expect(view.ghosts).toContain("Alice's ghost");
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 20. Item Descriptions
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Item descriptions', () => {
+  // Helper: build a world where items carry roomText
+  function worldWithRoomText() {
+    return loadWorld({
+      name: 'RoomText World',
+      startRoom: 'room1',
+      rooms: {
+        room1: {
+          name: 'Room 1',
+          description: 'The first room.',
+          exits: { north: 'room2' },
+          items: ['gem', 'coin'],
+          hazards: [],
+        },
+        room2: {
+          name: 'Room 2',
+          description: 'The second room.',
+          exits: { south: 'room1' },
+          items: [],
+          hazards: [],
+        },
+      },
+      items: {
+        gem: {
+          name: 'Ruby Gem',
+          description: 'A sparkling red gem.',
+          roomText: 'A ruby gem glimmers on the floor.',
+          pickupText: 'You pick up the gem.',
+          portable: true,
+        },
+        coin: {
+          name: 'Gold Coin',
+          description: 'A shiny gold coin.',
+          roomText: 'A gold coin catches the light.',
+          pickupText: 'You pocket the coin.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  test('getPlayerView returns items with roomText', () => {
+    const world = worldWithRoomText();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    const view = getPlayerView(session, 'p1');
+    expect(view.items).toBeDefined();
+    expect(view.items.length).toBe(2);
+
+    // Items should be objects with at least name; when roomText feature is
+    // complete each should also carry roomText.
+    for (const item of view.items) {
+      expect(typeof item).toBe('object');
+      expect(item).toHaveProperty('name');
+      expect(item).toHaveProperty('roomText');
+    }
+  });
+
+  test('getPlayerView omits roomText for taken items', () => {
+    const world = worldWithRoomText();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Take the gem
+    ({ session } = processCommand(session, 'p1', 'take ruby gem'));
+
+    const view = getPlayerView(session, 'p1');
+    // The gem should no longer appear in the room items
+    const gemEntry = view.items.find((i) =>
+      typeof i === 'object' ? i.name === 'Ruby Gem' : i === 'Ruby Gem'
+    );
+    expect(gemEntry).toBeUndefined();
+
+    // The coin should still be there
+    const coinEntry = view.items.find((i) =>
+      typeof i === 'object' ? i.name === 'Gold Coin' : i === 'Gold Coin'
+    );
+    expect(coinEntry).toBeDefined();
+  });
+
+  test('handleInventory shows item descriptions', () => {
+    const world = worldWithRoomText();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    ({ session } = processCommand(session, 'p1', 'take ruby gem'));
+
+    const { responses } = processCommand(session, 'p1', 'inventory');
+    const msg = responses.find((r) => r.playerId === 'p1');
+    expect(msg.message.type).toBe('inventory');
+    expect(msg.message.items.length).toBe(1);
+    expect(msg.message.items[0]).toHaveProperty('name', 'Ruby Gem');
+    expect(msg.message.items[0]).toHaveProperty('description', 'A sparkling red gem.');
+  });
+
+  test('items with no roomText get a default', () => {
+    // Item without roomText should still work in getPlayerView
+    const world = loadWorld({
+      name: 'No RoomText World',
+      startRoom: 'room1',
+      rooms: {
+        room1: {
+          name: 'Room 1',
+          description: 'A room.',
+          exits: {},
+          items: ['key'],
+          hazards: [],
+        },
+      },
+      items: {
+        key: {
+          name: 'Old Key',
+          description: 'A brass key.',
+          pickupText: 'You take the key.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    const view = getPlayerView(session, 'p1');
+    expect(view.items).toBeDefined();
+    expect(view.items.length).toBe(1);
+
+    // The item should still be present and have a name regardless of roomText
+    const item = view.items[0];
+    if (typeof item === 'object') {
+      expect(item.name).toBe('Old Key');
+    } else {
+      expect(item).toBe('Old Key');
+    }
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 21. Hazard Death System
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Hazard Death System', () => {
+  // Helper: create a world with a hazard room
+  function hazardWorld(probability = 1.0) {
+    return loadWorld({
+      name: 'Hazard World',
+      startRoom: 'safe-room',
+      rooms: {
+        'safe-room': {
+          name: 'Safe Room',
+          description: 'A safe room with no hazards.',
+          exits: { north: 'danger-room' },
+          items: ['sword', 'shield'],
+          hazards: [],
+        },
+        'danger-room': {
+          name: 'Danger Room',
+          description: 'A dangerous room.',
+          exits: { south: 'safe-room' },
+          items: [],
+          hazards: [
+            {
+              description: 'Poisonous gas fills the room.',
+              probability: probability,
+              deathText: 'You succumb to the poisonous gas!',
+            },
+          ],
+        },
+      },
+      items: {
+        sword: {
+          name: 'Iron Sword',
+          description: 'A sturdy blade.',
+          pickupText: 'You grab the sword.',
+          portable: true,
+        },
+        shield: {
+          name: 'Wooden Shield',
+          description: 'A simple shield.',
+          pickupText: 'You grab the shield.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  function hazardSession(probability = 1.0) {
+    const world = hazardWorld(probability);
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    return session;
+  }
+
+  // ── killPlayer / respawnPlayer ───────────────────────────────────────
+
+  const describeIfKillPlayer = killPlayer ? describe : describe.skip;
+
+  describeIfKillPlayer('killPlayer / respawnPlayer', () => {
+    test('killPlayer creates a death ghost and removes player', () => {
+      let session = hazardSession();
+      ({ session } = processCommand(session, 'p1', 'take iron sword'));
+
+      session = killPlayer(session, 'p1');
+
+      // Player should be removed
+      expect(session.players['p1']).toBeUndefined();
+
+      // A death ghost should exist
+      const ghost = session.ghosts?.['Alice'];
+      expect(ghost).toBeDefined();
+      expect(ghost.room).toBe('safe-room');
+      expect(ghost.inventory).toContain('sword');
+      expect(ghost.isDeath).toBe(true);
+    });
+
+    test('killPlayer ghost has disconnectedAt timestamp', () => {
+      let session = hazardSession();
+      const before = Date.now();
+      session = killPlayer(session, 'p1');
+      const after = Date.now();
+
+      const ghost = session.ghosts['Alice'];
+      expect(ghost.diedAt).toBeDefined();
+      expect(ghost.diedAt).toBeGreaterThanOrEqual(before);
+      expect(ghost.diedAt).toBeLessThanOrEqual(after);
+    });
+
+    test('respawnPlayer restores player from death ghost', () => {
+      let session = hazardSession();
+      ({ session } = processCommand(session, 'p1', 'take iron sword'));
+      session = killPlayer(session, 'p1');
+
+      expect(session.ghosts['Alice']).toBeDefined();
+
+      // Respawn — drops ghost items into room, player gets empty inventory
+      session = respawnPlayer(session, 'Alice', 'p1-revived');
+
+      expect(session.players['p1-revived']).toBeDefined();
+      expect(session.players['p1-revived'].name).toBe('Alice');
+      expect(session.players['p1-revived'].room).toBe('safe-room');
+      // respawnPlayer drops items back into the room; player starts fresh
+      expect(session.players['p1-revived'].inventory).toEqual([]);
+      // Items should be back in the room
+      expect(session.roomStates['safe-room'].items).toContain('sword');
+
+      // Ghost removed
+      expect(session.ghosts['Alice']).toBeUndefined();
+    });
+
+    test('respawnPlayer restores with remaining inventory after partial loot', () => {
+      let session = hazardSession();
+      session = addPlayer(session, 'p2', 'Bob');
+      ({ session } = processCommand(session, 'p1', 'take iron sword'));
+      ({ session } = processCommand(session, 'p1', 'take wooden shield'));
+
+      session = killPlayer(session, 'p1');
+
+      // Bob loots one item from the ghost
+      ({ session } = processCommand(session, 'p2', "take iron sword from Alice's ghost"));
+
+      // Respawn Alice — only shield remains on ghost, gets dropped to room
+      session = respawnPlayer(session, 'Alice', 'p1-revived');
+
+      expect(session.players['p1-revived'].inventory).toEqual([]);
+      // Shield dropped into room, sword was already looted by Bob
+      expect(session.roomStates['safe-room'].items).toContain('shield');
+      expect(session.players['p2'].inventory).toContain('sword');
+    });
+
+    test('respawnPlayer ignores non-death ghosts', () => {
+      let session = hazardSession();
+      // Create a disconnect ghost (not death)
+      session = disconnectPlayer(session, 'p1');
+      expect(session.ghosts['Alice']).toBeDefined();
+      expect(session.ghosts['Alice'].isDeath).toBeUndefined();
+
+      // respawnPlayer should not touch non-death ghosts
+      const result = respawnPlayer(session, 'Alice', 'p1-new');
+      expect(result).toBe(session);
+    });
+  });
+
+  // ── Hazard triggers on room entry ────────────────────────────────────
+
+  test('hazard triggers death on room entry', () => {
+    let session = hazardSession(1.0);
+
+    // Mock Math.random to always trigger the hazard
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+
+    const { session: afterMove, responses } = processCommand(session, 'p1', 'go north');
+
+    Math.random.mockRestore();
+
+    // Player should be dead (removed from players)
+    expect(afterMove.players['p1']).toBeUndefined();
+
+    // Should have a death-type response
+    const deathMsg = responses.find(
+      (r) => r.playerId === 'p1' && r.message.type === 'death'
+    );
+    expect(deathMsg).toBeDefined();
+    expect(deathMsg.message.text).toBe('You succumb to the poisonous gas!');
+
+    // Ghost should be created
+    expect(afterMove.ghosts?.['Alice']).toBeDefined();
+    expect(afterMove.ghosts['Alice'].isDeath).toBe(true);
+  });
+
+  test('hazard with probability 0 never triggers', () => {
+    let session = hazardSession(0.0);
+
+    // Even with a low random value, probability 0 should never trigger
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+
+    const { session: afterMove, responses } = processCommand(session, 'p1', 'go north');
+
+    Math.random.mockRestore();
+
+    // Player should still be alive
+    expect(afterMove.players['p1']).toBeDefined();
+    expect(afterMove.players['p1'].room).toBe('danger-room');
+
+    // Should get a normal look response, not a death
+    const lookMsg = responses.find(
+      (r) => r.playerId === 'p1' && r.message.type === 'look'
+    );
+    expect(lookMsg).toBeDefined();
+
+    const deathMsg = responses.find(
+      (r) => r.playerId === 'p1' && r.message.type === 'death'
+    );
+    expect(deathMsg).toBeUndefined();
+  });
+
+  test('getPlayerView returns hazard descriptions from objects', () => {
+    let session = hazardSession();
+
+    // Move Alice to the danger room (without triggering death)
+    jest.spyOn(Math, 'random').mockReturnValue(1.0);
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    Math.random.mockRestore();
+
+    const view = getPlayerView(session, 'p1');
+    expect(view.hazards).toBeDefined();
+    expect(view.hazards.length).toBe(1);
+
+    // hazards should contain the description string (not the full object)
+    expect(view.hazards[0]).toBe('Poisonous gas fills the room.');
+  });
+
+  // ── Session defaults ─────────────────────────────────────────────────
+
+  test('deathTimeout defaults to 30', () => {
+    const world = hazardWorld();
+    const session = createGameSession(world);
+    expect(session.deathTimeout).toBe(30);
+  });
+
+  test('death response includes timeout from session', () => {
+    let session = hazardSession(1.0);
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+
+    const { responses } = processCommand(session, 'p1', 'go north');
+
+    Math.random.mockRestore();
+
+    const deathMsg = responses.find(
+      (r) => r.playerId === 'p1' && r.message.type === 'death'
+    );
+    expect(deathMsg).toBeDefined();
+    expect(deathMsg.message.deathTimeout).toBe(30);
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 22. Item Descriptions — Stef's Tests
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Item Descriptions (Stef)', () => {
+  test('getPlayerView returns item objects with name and roomText', () => {
+    // Room A starts with "key" item
+    const session = sessionWithPlayer('p1', 'Alice');
+    const view = getPlayerView(session, 'p1');
+    expect(view.items).toHaveLength(1);
+    const item = view.items[0];
+    expect(typeof item).toBe('object');
+    expect(item).toEqual(expect.objectContaining({
+      name: 'Old Key',
+      roomText: 'An old brass key lies on the ground.',
+    }));
+  });
+
+  test('getPlayerView only shows items still in room (not picked up)', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    // Room A has "key"
+    expect(getPlayerView(session, 'p1').items).toHaveLength(1);
+
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    const view = getPlayerView(session, 'p1');
+    expect(view.items).toHaveLength(0);
+  });
+
+  test('inventory command shows item descriptions', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    const { responses } = processCommand(session, 'p1', 'inventory');
+    const inv = responses.find(r => r.playerId === 'p1' && r.message.type === 'inventory');
+    expect(inv).toBeDefined();
+    expect(inv.message.items).toHaveLength(1);
+    expect(inv.message.items[0]).toEqual(expect.objectContaining({
+      name: 'Old Key',
+      description: 'A brass key.',
+    }));
+  });
+
+  test('pick up item — disappears from room, appears in inventory with description', () => {
+    let session = sessionWithPlayer('p1', 'Alice');
+    // Before pick-up: room has one item object
+    let view = getPlayerView(session, 'p1');
+    expect(view.items.length).toBe(1);
+
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+
+    // After: room empty
+    view = getPlayerView(session, 'p1');
+    expect(view.items).toHaveLength(0);
+
+    // Inventory has item with description
+    const { responses } = processCommand(session, 'p1', 'inventory');
+    const inv = responses.find(r => r.message.type === 'inventory');
+    expect(inv.message.items).toHaveLength(1);
+    expect(inv.message.items[0].name).toBe('Old Key');
+    expect(inv.message.items[0].description).toBe('A brass key.');
+  });
+
+  test('items given to another player show descriptions in their inventory', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'give old key to Bob'));
+
+    // Bob checks inventory
+    const { responses } = processCommand(session, 'p2', 'inventory');
+    const inv = responses.find(r => r.message.type === 'inventory');
+    expect(inv.message.items).toHaveLength(1);
+    expect(inv.message.items[0]).toEqual(expect.objectContaining({
+      name: 'Old Key',
+      description: 'A brass key.',
+    }));
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 23. Hazard Death System — Stef's Tests
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Hazard Death System (Stef)', () => {
+  // Resolve from namespace (handles case where functions don't exist yet)
+  const _killPlayer = GameEngine.killPlayer;
+  const _respawnPlayer = GameEngine.respawnPlayer;
+
+  function hazardWorldStef() {
+    return loadWorld({
+      name: 'Hazard Test World (Stef)',
+      startRoom: 'safe-room',
+      rooms: {
+        'safe-room': {
+          name: 'Safe Room',
+          description: 'A safe starting room.',
+          exits: {
+            north: 'deadly-room',
+            east: 'harmless-room',
+            west: 'multi-hazard-room',
+            south: 'old-hazard-room',
+          },
+          items: ['sword', 'potion'],
+          hazards: [],
+        },
+        'deadly-room': {
+          name: 'Deadly Room',
+          description: 'Extremely dangerous.',
+          exits: { south: 'safe-room' },
+          items: ['gem'],
+          hazards: [
+            {
+              description: 'Toxic gas fills the room.',
+              probability: 1,
+              deathText: 'You choke on toxic gas and die!',
+            },
+          ],
+        },
+        'harmless-room': {
+          name: 'Harmless Room',
+          description: 'Looks dangerous but is not.',
+          exits: { west: 'safe-room' },
+          items: [],
+          hazards: [
+            {
+              description: 'A gentle breeze.',
+              probability: 0,
+              deathText: 'The breeze kills you.',
+            },
+          ],
+        },
+        'multi-hazard-room': {
+          name: 'Multi-Hazard Room',
+          description: 'Multiple dangers.',
+          exits: { east: 'safe-room' },
+          items: [],
+          hazards: [
+            { description: 'Falling rocks.', probability: 0, deathText: 'Crushed by rocks!' },
+            { description: 'A pit of spikes.', probability: 1, deathText: 'You fall into the spikes!' },
+          ],
+        },
+        'old-hazard-room': {
+          name: 'Old Hazard Room',
+          description: 'Room with old-style hazards.',
+          exits: { north: 'safe-room' },
+          items: [],
+          hazards: ['A cold draft chills you.'],
+        },
+      },
+      items: {
+        sword: { name: 'Sword', description: 'A sharp sword.', pickupText: 'You grab the sword.', portable: true },
+        potion: { name: 'Potion', description: 'A healing potion.', pickupText: 'You take the potion.', portable: true },
+        gem: { name: 'Ruby Gem', description: 'A sparkling ruby.', pickupText: 'You pocket the gem.', portable: true },
+      },
+      puzzles: {},
+    });
+  }
+
+  function hazardSessionStef() {
+    const world = hazardWorldStef();
+    return createGameSession(world);
+  }
+
+  function hazardSessionWithPlayerStef(id = 'p1', name = 'Alice') {
+    const session = hazardSessionStef();
+    return addPlayer(session, id, name);
+  }
+
+  function hazardSessionWithPlayersStef(...players) {
+    let session = hazardSessionStef();
+    for (const [id, name] of players) {
+      session = addPlayer(session, id, name);
+    }
+    return session;
+  }
+
+  // ── killPlayer ──────────────────────────────────────────────────────
+
+  describe('killPlayer', () => {
+    const it = _killPlayer ? test : test.skip;
+
+    it('creates a ghost with the player inventory', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+      ({ session } = processCommand(session, 'p1', 'take sword'));
+      ({ session } = processCommand(session, 'p1', 'take potion'));
+
+      session = _killPlayer(session, 'p1');
+
+      expect(session.players['p1']).toBeUndefined();
+      expect(session.ghosts).toBeDefined();
+      const ghost = session.ghosts['Alice'];
+      expect(ghost).toBeDefined();
+      expect(ghost.playerName).toBe('Alice');
+      expect(ghost.room).toBe('safe-room');
+      expect(ghost.inventory).toContain('sword');
+      expect(ghost.inventory).toContain('potion');
+    });
+
+    it('drops items accessible in the room via ghost', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+      ({ session } = processCommand(session, 'p1', 'take sword'));
+
+      session = _killPlayer(session, 'p1');
+
+      // Items should be accessible — either on ghost or in roomState
+      const ghost = session.ghosts['Alice'];
+      const roomItems = session.roomStates['safe-room'].items;
+      const onGhost = ghost && ghost.inventory.includes('sword');
+      const onFloor = roomItems.includes('sword');
+      expect(onGhost || onFloor).toBe(true);
+    });
+
+    it('sends death message to the player (via handleGo hazard trigger)', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const { responses } = processCommand(session, 'p1', 'go north');
+      Math.random.mockRestore();
+
+      const deathMsg = responses.find(
+        r => r.playerId === 'p1' && (r.message.type === 'death' || r.message.deathText)
+      );
+      expect(deathMsg).toBeDefined();
+    });
+
+    it('notifies other players in the room on death', () => {
+      let session = hazardSessionWithPlayersStef(['p1', 'Alice'], ['p2', 'Bob']);
+      // Move Bob to deadly-room first (survive by mocking random high)
+      jest.spyOn(Math, 'random').mockReturnValue(1.0);
+      ({ session } = processCommand(session, 'p2', 'go north'));
+      Math.random.mockRestore();
+
+      // Now Alice enters deadly room and dies
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const { session: afterDeath, responses } = processCommand(session, 'p1', 'go north');
+      Math.random.mockRestore();
+
+      // Bob should see a death notification
+      const bobMsg = responses.find(
+        r => r.playerId === 'p2' &&
+          (r.message.event === 'death' || (r.message.text && r.message.text.match(/died|death|Alice/i)))
+      );
+      expect(bobMsg).toBeDefined();
+    });
+
+    it('dead player inventory can be looted by others', () => {
+      let session = hazardSessionWithPlayersStef(['p1', 'Alice'], ['p2', 'Bob']);
+      ({ session } = processCommand(session, 'p1', 'take sword'));
+
+      session = _killPlayer(session, 'p1');
+
+      // Bob loots Alice's ghost
+      const { session: afterLoot, responses } = processCommand(session, 'p2', "loot Alice's ghost");
+      expect(afterLoot.players['p2'].inventory).toContain('sword');
+    });
+  });
+
+  // ── respawnPlayer ───────────────────────────────────────────────────
+
+  describe('respawnPlayer', () => {
+    const it = (_killPlayer && _respawnPlayer) ? test : test.skip;
+
+    it('removes the ghost', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+      session = _killPlayer(session, 'p1');
+      expect(session.ghosts['Alice']).toBeDefined();
+
+      session = _respawnPlayer(session, 'Alice', 'p1-new');
+      expect(session.ghosts['Alice']).toBeUndefined();
+    });
+
+    it('recreates the player in the ghost room with empty inventory', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+      ({ session } = processCommand(session, 'p1', 'take sword'));
+      ({ session } = processCommand(session, 'p1', 'take potion'));
+
+      session = _killPlayer(session, 'p1');
+      const ghostRoom = session.ghosts['Alice'].room;
+
+      session = _respawnPlayer(session, 'Alice', 'p1-new');
+
+      expect(session.players['p1-new']).toBeDefined();
+      expect(session.players['p1-new'].name).toBe('Alice');
+      expect(session.players['p1-new'].room).toBe(ghostRoom);
+      expect(session.players['p1-new'].inventory).toEqual([]);
+    });
+
+    it('sends room view to the respawned player', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+      session = _killPlayer(session, 'p1');
+      session = _respawnPlayer(session, 'Alice', 'p1-new');
+
+      // After respawn, player should be able to see the room
+      const view = getPlayerView(session, 'p1-new');
+      expect(view).not.toBeNull();
+      expect(view.name).toBeDefined();
+    });
+  });
+
+  // ── Hazard probability ──────────────────────────────────────────────
+
+  describe('Hazard probability', () => {
+    test('probability 0 never kills', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const { session: after, responses } = processCommand(session, 'p1', 'go east');
+      Math.random.mockRestore();
+
+      expect(after.players['p1']).toBeDefined();
+      expect(after.players['p1'].room).toBe('harmless-room');
+      const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+      expect(death).toBeUndefined();
+    });
+
+    test('probability 1 always kills', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const { session: after, responses } = processCommand(session, 'p1', 'go north');
+      Math.random.mockRestore();
+
+      expect(after.players['p1']).toBeUndefined();
+      const death = responses.find(
+        r => r.playerId === 'p1' && (r.message.type === 'death' || r.message.deathText)
+      );
+      expect(death).toBeDefined();
+    });
+
+    test('hazard check only happens on room entry (not look, inventory, help)', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+      // Place player directly in deadly room (bypass go)
+      session.players['p1'].room = 'deadly-room';
+
+      // These commands should NOT trigger death
+      let result = processCommand(session, 'p1', 'look');
+      expect(result.session.players['p1']).toBeDefined();
+
+      result = processCommand(result.session, 'p1', 'inventory');
+      expect(result.session.players['p1']).toBeDefined();
+
+      result = processCommand(result.session, 'p1', 'help');
+      expect(result.session.players['p1']).toBeDefined();
+    });
+  });
+
+  // ── Session defaults ────────────────────────────────────────────────
+
+  describe('Session defaults', () => {
+    test('deathTimeout is included in session and defaults to 30', () => {
+      const session = hazardSessionStef();
+      expect(session.deathTimeout).toBe(30);
+    });
+
+    test('deathTimeout is passed to clients on game start (present on session)', () => {
+      const session = hazardSessionStef();
+      expect(typeof session.deathTimeout).toBe('number');
+      expect(session.deathTimeout).toBeGreaterThanOrEqual(15);
+      expect(session.deathTimeout).toBeLessThanOrEqual(60);
+    });
+  });
+
+  // ── Backward compatibility ──────────────────────────────────────────
+
+  describe('Backward compatibility', () => {
+    test('old string hazards are backward compatible (display-only, never kill)', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const { session: after } = processCommand(session, 'p1', 'go south');
+      Math.random.mockRestore();
+
+      // Player should survive — old string hazards have probability 0
+      expect(after.players['p1']).toBeDefined();
+      expect(after.players['p1'].room).toBe('old-hazard-room');
+    });
+
+    test('old string hazards normalized to objects with probability 0', () => {
+      const world = hazardWorldStef();
+      const room = world.rooms['old-hazard-room'];
+      for (const hazard of room.hazards) {
+        expect(typeof hazard).toBe('object');
+        expect(hazard.probability).toBe(0);
+        expect(hazard.description).toBe('A cold draft chills you.');
+        expect(hazard.deathText).toBe('');
+      }
+    });
+  });
+
+  // ── Multiple hazards ────────────────────────────────────────────────
+
+  describe('Multiple hazards', () => {
+    test('multiple hazards — each checked independently', () => {
+      let session = hazardSessionWithPlayerStef('p1', 'Alice');
+
+      // multi-hazard-room: prob 0 (rocks) + prob 1 (spikes)
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const { session: after, responses } = processCommand(session, 'p1', 'go west');
+      Math.random.mockRestore();
+
+      // Prob 0 should not trigger, prob 1 should kill
+      expect(after.players['p1']).toBeUndefined();
+      const death = responses.find(
+        r => r.playerId === 'p1' && (r.message.type === 'death' || r.message.deathText)
+      );
+      expect(death).toBeDefined();
+    });
+  });
+
+  // ── Integration scenarios ───────────────────────────────────────────
+
+  describe('Integration', () => {
+    const it = (_killPlayer && _respawnPlayer) ? test : test.skip;
+
+    it('player dies, gets looted, respawns with empty inventory in same room', () => {
+      let session = hazardSessionWithPlayersStef(['p1', 'Alice'], ['p2', 'Bob']);
+      ({ session } = processCommand(session, 'p1', 'take sword'));
+      ({ session } = processCommand(session, 'p1', 'take potion'));
+
+      session = _killPlayer(session, 'p1');
+      const ghostRoom = session.ghosts['Alice'].room;
+
+      // Bob loots everything
+      ({ session } = processCommand(session, 'p2', "loot Alice's ghost"));
+      expect(session.players['p2'].inventory).toContain('sword');
+      expect(session.players['p2'].inventory).toContain('potion');
+
+      // Respawn Alice
+      session = _respawnPlayer(session, 'Alice', 'p1-new');
+
+      expect(session.players['p1-new']).toBeDefined();
+      expect(session.players['p1-new'].room).toBe(ghostRoom);
+      expect(session.players['p1-new'].inventory).toEqual([]);
+      expect(session.ghosts['Alice']).toBeUndefined();
+    });
+
+    it('player dies in room with others — others see death notification', () => {
+      let session = hazardSessionWithPlayersStef(['p1', 'Alice'], ['p2', 'Bob']);
+      // Move both to deadly room: Bob survives via mock, Alice dies
+      jest.spyOn(Math, 'random').mockReturnValue(1.0);
+      ({ session } = processCommand(session, 'p2', 'go north'));
+      Math.random.mockRestore();
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const { responses } = processCommand(session, 'p1', 'go north');
+      Math.random.mockRestore();
+
+      const bobNotif = responses.find(
+        r => r.playerId === 'p2' &&
+          (r.message.event === 'death' || (r.message.text && r.message.text.match(/Alice|died/i)))
+      );
+      expect(bobNotif).toBeDefined();
+    });
   });
 });

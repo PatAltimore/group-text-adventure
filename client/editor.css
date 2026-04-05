@@ -610,6 +610,55 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ===== Hazard Cards ===== */
+.hazard-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hazard-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.hazard-card label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.hazard-card input[type="text"],
+.hazard-card input[type="number"] {
+  padding: 6px 8px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.hazard-card input:focus { border-color: var(--accent); }
+
+.hazard-card input[type="number"] { width: 100px; }
+
+.hazard-remove-btn { margin-top: 4px; align-self: flex-end; }
+
+.hazard-add-row {
+  display: flex;
+  gap: 6px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .editor-main { flex-direction: column; }

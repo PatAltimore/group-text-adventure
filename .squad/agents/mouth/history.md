@@ -267,6 +267,31 @@
 
 - **Bug fixed:** Reconnection was broken after the `rejoin: true` gate was added — it matched by name, so returning players created new players instead of reclaiming their ghost. A different player picking the same name could also steal the ghost if they somehow sent `rejoin: true`.
 - **Design change:** Introduced a unique `playerId` (UUID via `crypto.randomUUID()`) as the persistent identity. Name is now just a display label.
+
+### 2026-04-06 — Inventory Item Descriptions + Hazard Death System
+
+Two features implemented:
+
+**Feature 1: Item Descriptions Separated from Room Descriptions**
+- Room descriptions in all 3 world JSONs (`default-world.json`, `escape-room.json`, `space-adventure.json`) no longer mention portable items (e.g., removed "clutching a golden key" from dungeon description).
+- `getPlayerView()` now returns items as `{id, name, description}` objects instead of name strings.
+- `handleInventory()` also returns items with `{id, name, description}`.
+- Items are discovered via the room's item list, not embedded in description prose.
+
+**Feature 2: Hazard Death System**
+- Hazards are now structured objects: `{ description, probability, deathText }`.
+- Old string hazards normalized by `loadWorld()` to `{ description: str, probability: 0, deathText: '' }` (backward compatible).
+- `validate-world.js` updated to validate both old-style strings and structured hazard objects.
+- `killPlayer(session, playerId)` creates a death ghost (`isDeath: true`, `diedAt` timestamp); player can be looted.
+- `respawnPlayer(session, ghostName, newPlayerId)` drops remaining ghost items into the room, recreates player with empty inventory.
+- `handleGo` checks hazards on room entry; `Math.random() < probability` triggers death.
+- Death response: `{ type: 'death', deathText, timeout }`.
+- `gameHub.js`: added `setDeathTimeout` (host-only, lobby-only, 15-60s range) and `respawn` message handlers.
+- `gameStart` message now includes `deathTimeout`.
+- Dead player message routing in `handleCommand`: if player is killed, their responses are sent directly via `connectionId`.
+- `applyPuzzleAction` `removeHazard` updated to match on `h.description` for structured hazards.
+- `createGameSession` sets `deathTimeout: 30` as default.
+- All 397 tests pass (346 original + 51 new pre-written tests for these features).
 - **game-engine.js changes:**
   1. `disconnectPlayer` now copies `player.playerId` into the ghost entity.
   2. New `findGhostByPlayerId(session, playerId)` function — searches `session.ghosts` by the stored `playerId` field (exact match, not case-insensitive like name).

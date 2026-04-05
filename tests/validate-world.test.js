@@ -695,3 +695,192 @@ describe('Real world files — structural smoke tests', () => {
     });
   }
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// 9. Item Description Validation (roomText)
+// ════════════════════════════════════════════════════════════════════════
+describe('Item description validation (roomText)', () => {
+  test('roomText is accepted as optional string on items', () => {
+    const world = twoRoomWorld();
+    world.items.key.roomText = 'A brass key lies on the ground.';
+    const result = validateWorld(world);
+    // roomText is not validated (we use description instead), but shouldn't cause errors
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  test('items with missing description trigger error', () => {
+    const world = twoRoomWorld();
+    delete world.items.key.description;
+    const result = validateWorld(world);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => /description/i.test(e))).toBe(true);
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 10. Hazard Object Validation
+// ════════════════════════════════════════════════════════════════════════
+describe('Hazard object validation', () => {
+  function worldWithHazardRoom(hazards) {
+    return {
+      name: 'Hazard World',
+      startRoom: 'room-a',
+      rooms: {
+        'room-a': {
+          name: 'Room A',
+          description: 'Start.',
+          exits: { north: 'room-b' },
+        },
+        'room-b': {
+          name: 'Room B',
+          description: 'Dangerous room.',
+          exits: { south: 'room-a' },
+          hazards: hazards,
+        },
+      },
+      items: {},
+      puzzles: {},
+    };
+  }
+
+  test('hazards as objects validate correctly', () => {
+    const world = worldWithHazardRoom([
+      { description: 'Poison gas', probability: 0.1, deathText: 'You choke on gas!' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  test('hazard with missing description triggers error', () => {
+    const world = worldWithHazardRoom([
+      { probability: 0.1, deathText: 'You choke on gas!' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => /description/i.test(e))).toBe(true);
+  });
+
+  test('hazard probability out of range triggers warning or error', () => {
+    const worldHigh = worldWithHazardRoom([
+      { description: 'Gas', probability: 1.5, deathText: 'Dead.' },
+    ]);
+    const resultHigh = validateWorld(worldHigh);
+    const hasIssueHigh =
+      resultHigh.errors.some((e) => /probability/i.test(e)) ||
+      resultHigh.warnings.some((w) => /probability/i.test(w));
+    expect(hasIssueHigh).toBe(true);
+
+    const worldNeg = worldWithHazardRoom([
+      { description: 'Gas', probability: -0.5, deathText: 'Dead.' },
+    ]);
+    const resultNeg = validateWorld(worldNeg);
+    const hasIssueNeg =
+      resultNeg.errors.some((e) => /probability/i.test(e)) ||
+      resultNeg.warnings.some((w) => /probability/i.test(w));
+    expect(hasIssueNeg).toBe(true);
+  });
+
+  test('hazard with missing probability triggers error', () => {
+    const world = worldWithHazardRoom([
+      { description: 'Poison gas', deathText: 'You choke on gas!' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => /probability/i.test(e))).toBe(true);
+  });
+
+  test('hazard with missing deathText triggers error', () => {
+    const world = worldWithHazardRoom([
+      { description: 'Poison gas', probability: 0.1 },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => /deathText/i.test(e))).toBe(true);
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 11. Hazard Validation — Stef's additional tests
+// ════════════════════════════════════════════════════════════════════════
+describe('Hazard validation (Stef)', () => {
+  function worldWithHazards(hazards) {
+    return {
+      name: 'Hazard Val World',
+      startRoom: 'room-a',
+      rooms: {
+        'room-a': {
+          name: 'Room A',
+          description: 'Start.',
+          exits: { north: 'room-b' },
+        },
+        'room-b': {
+          name: 'Room B',
+          description: 'Hazard room.',
+          exits: { south: 'room-a' },
+          hazards: hazards,
+        },
+      },
+      items: {},
+      puzzles: {},
+    };
+  }
+
+  test('hazard probability 0 is valid', () => {
+    const world = worldWithHazards([
+      { description: 'Gentle breeze.', probability: 0, deathText: '' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(true);
+  });
+
+  test('hazard probability 1 is valid', () => {
+    const world = worldWithHazards([
+      { description: 'Instant death.', probability: 1, deathText: 'You die!' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(true);
+  });
+
+  test('hazard probability below 0 is invalid', () => {
+    const world = worldWithHazards([
+      { description: 'Gas.', probability: -0.1, deathText: 'Dead.' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /probability/i.test(e))).toBe(true);
+  });
+
+  test('hazard probability above 1 is invalid', () => {
+    const world = worldWithHazards([
+      { description: 'Gas.', probability: 1.5, deathText: 'Dead.' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some(e => /probability/i.test(e))).toBe(true);
+  });
+
+  test('old string hazards pass validation (backward compatible)', () => {
+    const world = worldWithHazards(['A cold draft chills you.']);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(true);
+  });
+
+  test('mixed string and object hazards pass validation', () => {
+    const world = worldWithHazards([
+      'A cold draft.',
+      { description: 'Gas.', probability: 0.5, deathText: 'You die!' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(true);
+  });
+
+  test('hazard object with empty deathText is valid (probability 0 display-only)', () => {
+    const world = worldWithHazards([
+      { description: 'Scenery mist.', probability: 0, deathText: '' },
+    ]);
+    const result = validateWorld(world);
+    expect(result.valid).toBe(true);
+  });
+});

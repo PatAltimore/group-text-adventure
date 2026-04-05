@@ -65,7 +65,6 @@
     exitWest: $('#exit-west'),
     roomItemsList: $('#room-items-list'),
     roomHazardsList: $('#room-hazards-list'),
-    hazardInput: $('#hazard-input'),
     btnAddHazard: $('#btn-add-hazard'),
     btnDeleteRoom: $('#btn-delete-room'),
     itemsList: $('#items-list'),
@@ -75,6 +74,7 @@
     itemName: $('#item-name'),
     itemDescription: $('#item-description'),
     itemPickup: $('#item-pickup'),
+    itemRoomText: $('#item-room-text'),
     itemPortable: $('#item-portable'),
     btnAddItem: $('#btn-add-item'),
     btnDeleteItem: $('#btn-delete-item'),
@@ -623,21 +623,65 @@
   function renderHazardsList(room) {
     const container = dom.roomHazardsList;
     container.innerHTML = '';
+
+    // Normalize legacy string hazards to objects
     for (let i = 0; i < room.hazards.length; i++) {
-      const div = document.createElement('div');
-      div.className = 'tag-item';
-      const span = document.createElement('span');
-      span.textContent = room.hazards[i];
-      const btn = document.createElement('button');
-      btn.textContent = '✕';
-      btn.title = 'Remove hazard';
-      btn.addEventListener('click', () => {
+      if (typeof room.hazards[i] === 'string') {
+        room.hazards[i] = { description: room.hazards[i], probability: 0.3, deathText: '' };
+      }
+    }
+
+    for (let i = 0; i < room.hazards.length; i++) {
+      const hazard = room.hazards[i];
+      const card = document.createElement('div');
+      card.className = 'hazard-card';
+
+      // Description
+      const descLabel = document.createElement('label');
+      descLabel.textContent = 'Description';
+      const descInput = document.createElement('input');
+      descInput.type = 'text';
+      descInput.value = hazard.description || '';
+      descInput.placeholder = 'What the player sees…';
+      descInput.addEventListener('input', () => { hazard.description = descInput.value; });
+      card.appendChild(descLabel);
+      card.appendChild(descInput);
+
+      // Probability
+      const probLabel = document.createElement('label');
+      probLabel.textContent = 'Probability';
+      const probInput = document.createElement('input');
+      probInput.type = 'number';
+      probInput.min = '0';
+      probInput.max = '1';
+      probInput.step = '0.05';
+      probInput.value = hazard.probability != null ? hazard.probability : 0.3;
+      probInput.addEventListener('input', () => { hazard.probability = parseFloat(probInput.value) || 0; });
+      card.appendChild(probLabel);
+      card.appendChild(probInput);
+
+      // Death text
+      const deathLabel = document.createElement('label');
+      deathLabel.textContent = 'Death Text';
+      const deathInput = document.createElement('input');
+      deathInput.type = 'text';
+      deathInput.value = hazard.deathText || '';
+      deathInput.placeholder = 'How the player dies…';
+      deathInput.addEventListener('input', () => { hazard.deathText = deathInput.value; });
+      card.appendChild(deathLabel);
+      card.appendChild(deathInput);
+
+      // Remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'btn btn-small btn-danger hazard-remove-btn';
+      removeBtn.textContent = '✕ Remove';
+      removeBtn.addEventListener('click', () => {
         room.hazards.splice(i, 1);
         renderHazardsList(room);
       });
-      div.appendChild(span);
-      div.appendChild(btn);
-      container.appendChild(div);
+      card.appendChild(removeBtn);
+
+      container.appendChild(card);
     }
   }
 
@@ -663,10 +707,11 @@
 
   function addHazard() {
     if (!selectedRoomId || !world.rooms[selectedRoomId]) return;
-    const text = dom.hazardInput.value.trim();
-    if (!text) return;
-    world.rooms[selectedRoomId].hazards.push(text);
-    dom.hazardInput.value = '';
+    world.rooms[selectedRoomId].hazards.push({
+      description: 'New hazard',
+      probability: 0.3,
+      deathText: '',
+    });
     renderHazardsList(world.rooms[selectedRoomId]);
   }
 
@@ -759,6 +804,7 @@
     dom.itemName.value = item.name || '';
     dom.itemDescription.value = item.description || '';
     dom.itemPickup.value = item.pickupText || '';
+    dom.itemRoomText.value = item.roomText || '';
     dom.itemPortable.checked = item.portable !== false;
   }
 
@@ -768,6 +814,7 @@
     item.name = dom.itemName.value;
     item.description = dom.itemDescription.value;
     item.pickupText = dom.itemPickup.value;
+    item.roomText = dom.itemRoomText.value;
     item.portable = dom.itemPortable.checked;
     renderItemsList();
     // Refresh room editor in case item names changed
@@ -780,6 +827,7 @@
       name: 'New Item',
       description: '',
       pickupText: '',
+      roomText: '',
       portable: true,
     };
     selectItem(id);
@@ -974,7 +1022,6 @@
     dom.exitEast.addEventListener('change', saveRoomEdits);
     dom.exitWest.addEventListener('change', saveRoomEdits);
     dom.btnAddHazard.addEventListener('click', addHazard);
-    dom.hazardInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addHazard(); });
     dom.btnDeleteRoom.addEventListener('click', deleteRoom);
 
     // Item editor
@@ -983,6 +1030,7 @@
     dom.itemName.addEventListener('input', saveItemEdits);
     dom.itemDescription.addEventListener('input', saveItemEdits);
     dom.itemPickup.addEventListener('input', saveItemEdits);
+    dom.itemRoomText.addEventListener('input', saveItemEdits);
     dom.itemPortable.addEventListener('change', saveItemEdits);
 
     // Puzzle editor

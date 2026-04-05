@@ -1,4 +1,4 @@
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect, jest } from '@jest/globals';
 import {
   loadWorld,
   createGameSession,
@@ -380,9 +380,15 @@ describe('World Selection — Game Engine Integration', () => {
     const startExits = Object.entries(world.rooms[startRoom].exits);
     expect(startExits.length).toBeGreaterThan(0);
 
+    // Mock Math.random to prevent hazard deaths during navigation
+    jest.spyOn(Math, 'random').mockReturnValue(0.99);
+
     // Move in the first available direction
     const [direction, targetRoomId] = startExits[0];
     const { session: moved, responses } = processCommand(withPlayer, 'p1', `go ${direction}`);
+
+    Math.random.mockRestore();
+
     expect(moved.players['p1'].room).toBe(targetRoomId);
 
     // Should get a look response
@@ -399,8 +405,13 @@ describe('World Selection — Game Engine Integration', () => {
     const startExits = Object.entries(world.rooms[startRoom].exits);
     expect(startExits.length).toBeGreaterThan(0);
 
+    jest.spyOn(Math, 'random').mockReturnValue(0.99);
+
     const [direction, targetRoomId] = startExits[0];
     const { session: moved, responses } = processCommand(withPlayer, 'p1', `go ${direction}`);
+
+    Math.random.mockRestore();
+
     expect(moved.players['p1'].room).toBe(targetRoomId);
 
     const lookResp = responses.find(r => r.playerId === 'p1' && r.message.type === 'look');
@@ -624,7 +635,11 @@ function navigateToRoom(session, playerId, world, targetRoomId) {
   const maxSteps = 20;
   let steps = 0;
 
-  while (current.players[playerId].room !== targetRoomId && steps < maxSteps) {
+  // Prevent hazard deaths during test navigation
+  const origRandom = Math.random;
+  Math.random = () => 0.99;
+
+  while (current.players[playerId] && current.players[playerId].room !== targetRoomId && steps < maxSteps) {
     const currentRoom = current.players[playerId].room;
     const path = bfsPath(world, currentRoom, targetRoomId, current);
     if (!path || path.length === 0) break;
@@ -635,6 +650,7 @@ function navigateToRoom(session, playerId, world, targetRoomId) {
     steps++;
   }
 
+  Math.random = origRandom;
   return current;
 }
 

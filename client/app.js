@@ -38,6 +38,8 @@
     reconnectTimer: null,
     maxReconnectAttempts: 5,
     pendingRejoin: false,
+    isDead: false,
+    deathTimer: null,
   };
 
   // --- DOM References ---
@@ -90,6 +92,15 @@
     shareQrCanvas: $('#share-qr-canvas'),
     shareUrl: $('#share-url'),
     btnShareCopy: $('#btn-share-copy'),
+
+    // Death overlay
+    deathOverlay: $('#death-overlay'),
+    deathText: $('#death-text'),
+    deathCountdown: $('#death-countdown'),
+
+    // Lobby death timeout (host-only)
+    deathTimeoutGroup: $('#death-timeout-group'),
+    deathTimeoutSelect: $('#death-timeout-select'),
   };
 
   // --- Screen Management ---
@@ -357,6 +368,7 @@
   function sendCommand(text) {
     const trimmed = text.trim();
     if (!trimmed) return;
+    if (state.isDead) return;
 
     // Local echo
     appendCommandEcho(trimmed);
@@ -397,6 +409,7 @@
         }
         _lastLookTime = now;
         _lastLookRoom = roomKey;
+        dismissDeathOverlay();
         renderRoomMessage(msg.room);
         break;
       }
@@ -416,13 +429,29 @@
         handleGameInfo(msg);
         break;
       case 'gameStart':
+        dismissDeathOverlay();
         handleGameStart(msg);
         break;
       case 'playerDrop':
         handlePlayerDrop(msg);
         break;
+      case 'revived':
+        dismissDeathOverlay();
+        if (msg.room) renderRoomMessage(msg.room);
+        appendSystemMessage('You have returned from the dead!');
+        break;
       case 'ghostEvent':
         appendGhostMessage(msg.text);
+        break;
+      case 'death':
+        appendToOutput(createMsg('msg-death-notification', `☠️ ${msg.deathText || 'You have died.'}`));
+        showDeathScreen(msg.deathText, msg.deathTimeout);
+        break;
+      case 'playerDeath':
+        appendToOutput(createMsg('msg-death-notification', `💀 ${msg.playerName} has been killed by a hazard!`));
+        break;
+      case 'playerRespawn':
+        appendToOutput(createMsg('msg-respawn-notification', `${msg.playerName} has respawned.`));
         break;
       default:
         // Unknown message type — show as system text if it has text
@@ -491,9 +520,28 @@
     }
 
     if (room.items && room.items.length) {
-      container.appendChild(
-        createRoomSection('Items', room.items.join(', '), 'room-items')
-      );
+      const section = document.createElement('div');
+      section.className = 'room-section';
+      const lbl = document.createElement('span');
+      lbl.className = 'room-section-label';
+      lbl.textContent = 'Items';
+      section.appendChild(lbl);
+      const itemsContainer = document.createElement('div');
+      itemsContainer.className = 'room-section-value room-items';
+      room.items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'room-item-desc';
+        if (typeof item === 'object' && item.roomText) {
+          row.textContent = item.roomText;
+        } else {
+          // Backward compat: plain string or object without roomText
+          const name = typeof item === 'string' ? item : (item.name || item.id || 'Unknown');
+          row.textContent = `You see ${name} here.`;
+        }
+        itemsContainer.appendChild(row);
+      });
+      section.appendChild(itemsContainer);
+      container.appendChild(section);
     }
 
     if (room.players && room.players.length) {
@@ -514,8 +562,11 @@
     }
 
     if (room.hazards && room.hazards.length) {
+      const hazardTexts = room.hazards.map((h) =>
+        typeof h === 'string' ? h : (h.description || 'Unknown hazard')
+      );
       container.appendChild(
-        createRoomSection('⚠ Hazards', room.hazards.join(', '), 'room-hazard')
+        createRoomSection('⚠ Hazards', hazardTexts.join(', '), 'room-hazard')
       );
     }
 
@@ -566,16 +617,23 @@
         const row = document.createElement('div');
         row.className = 'inv-item';
 
-        const itemName = document.createElement('span');
-        itemName.className = 'inv-item-name';
-        itemName.textContent = item.name;
-        row.appendChild(itemName);
+        if (typeof item === 'string') {
+          const itemName = document.createElement('span');
+          itemName.className = 'inv-item-name';
+          itemName.textContent = item;
+          row.appendChild(itemName);
+        } else {
+          const itemName = document.createElement('span');
+          itemName.className = 'inv-item-name';
+          itemName.textContent = item.name || item.id || 'Unknown';
+          row.appendChild(itemName);
 
-        if (item.description) {
-          const itemDesc = document.createElement('span');
-          itemDesc.className = 'inv-item-desc';
-          itemDesc.textContent = ` — ${item.description}`;
-          row.appendChild(itemDesc);
+          if (item.description) {
+            const itemDesc = document.createElement('span');
+            itemDesc.className = 'inv-item-desc';
+            itemDesc.textContent = ` — ${item.description}`;
+            row.appendChild(itemDesc);
+          }
         }
 
         container.appendChild(row);
@@ -664,6 +722,7 @@
   }
 
   function handleGameStart(msg) {
+    dismissDeathOverlay();
     showScreen('game');
     if (msg.room) {
       renderRoomMessage(msg.room);
@@ -674,6 +733,42 @@
     // Ghost loot: a ghost was looted or faded away
     const text = msg.text || `${msg.playerName}'s ghost fades away.`;
     appendGhostMessage(text);
+  }
+
+  // --- Death Screen ---
+  function showDeathScreen(deathText, timeout) {
+    state.isDead = true;
+    els.commandInput.disabled = true;
+    els.deathOverlay.classList.remove('hidden');
+    els.deathText.textContent = deathText || 'You have died.';
+
+    let remaining = timeout || 30;
+    els.deathCountdown.textContent = `Respawning in ${remaining} seconds...`;
+
+    if (state.deathTimer) clearInterval(state.deathTimer);
+    state.deathTimer = setInterval(() => {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(state.deathTimer);
+        state.deathTimer = null;
+        els.deathCountdown.textContent = 'Respawning...';
+        sendMessage({ type: 'revive', playerId: state.playerId });
+      } else {
+        els.deathCountdown.textContent = `Respawning in ${remaining} second${remaining !== 1 ? 's' : ''}...`;
+      }
+    }, 1000);
+  }
+
+  function dismissDeathOverlay() {
+    if (!state.isDead) return;
+    state.isDead = false;
+    if (state.deathTimer) {
+      clearInterval(state.deathTimer);
+      state.deathTimer = null;
+    }
+    els.deathOverlay.classList.add('hidden');
+    els.commandInput.disabled = false;
+    els.commandInput.focus();
   }
 
   function updatePlayerCount(count) {
@@ -795,6 +890,15 @@
     els.btnStartGame.disabled = false;
     els.btnStartGame.textContent = 'Start Adventure';
 
+    // Show death timeout control for host
+    if (els.deathTimeoutGroup) {
+      els.deathTimeoutGroup.classList.remove('hidden');
+      els.deathTimeoutSelect.addEventListener('change', () => {
+        const timeout = parseInt(els.deathTimeoutSelect.value, 10);
+        sendMessage({ type: 'setDeathTimeout', timeout });
+      });
+    }
+
     els.lobbyUrl.value = joinUrl;
     renderQrCode(joinUrl);
     state.players = [state.playerName];
@@ -815,7 +919,8 @@
     // Start game button — send startGame to server; actual transition
     // happens when the server broadcasts gameStart back to all clients
     els.btnStartGame.addEventListener('click', () => {
-      sendMessage({ type: 'startGame' });
+      const deathTimeout = els.deathTimeoutSelect ? parseInt(els.deathTimeoutSelect.value, 10) : 30;
+      sendMessage({ type: 'startGame', deathTimeout });
       els.btnStartGame.disabled = true;
       els.btnStartGame.textContent = 'Starting…';
     });

@@ -883,6 +883,158 @@ html, body {
   outline: none;
 }
 
+/* ===== Room Item Rows ===== */
+.msg-room .room-item-row {
+  margin-bottom: 2px;
+}
+
+.msg-room .room-item-name {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.msg-room .room-item-desc {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-bottom: 2px;
+  line-height: 1.5;
+}
+
+/* ===== Death Overlay ===== */
+.death-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: deathFadeIn 0.5s ease-out;
+}
+
+@keyframes deathFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.death-overlay.hidden {
+  display: none;
+}
+
+.death-overlay-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.death-overlay-content {
+  position: relative;
+  text-align: center;
+  max-width: 480px;
+  width: 90%;
+  padding: 40px 32px;
+  animation: deathPulse 3s ease-in-out infinite;
+}
+
+@keyframes deathPulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+.death-overlay-title {
+  font-family: var(--font-sans);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--red);
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px rgba(248, 81, 73, 0.5);
+}
+
+.death-overlay-text {
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.death-overlay-countdown {
+  font-size: 14px;
+  color: var(--text-dim);
+  font-style: italic;
+  animation: countdownPulse 1s ease-in-out infinite;
+}
+
+@keyframes countdownPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ===== Death / Respawn Notifications ===== */
+.msg-death-notification {
+  color: var(--red);
+  font-weight: 600;
+  background: rgba(248, 81, 73, 0.08);
+  border-left: 3px solid var(--red);
+}
+
+.msg-respawn-notification {
+  color: var(--green);
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* ===== Death Timeout (Lobby) ===== */
+.death-timeout-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.death-timeout-label {
+  color: var(--text-dim);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+#death-timeout-select {
+  padding: 8px 32px 8px 12px;
+  font-size: 14px;
+  font-family: var(--font-mono);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b949e' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+
+#death-timeout-select:focus {
+  border-color: var(--accent);
+}
+
+#death-timeout-select option {
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   .join-title {

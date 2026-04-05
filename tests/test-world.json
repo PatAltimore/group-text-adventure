@@ -14,7 +14,7 @@
       "description": "A locked room.",
       "exits": { "south": "room-a" },
       "items": [],
-      "hazards": ["A cold draft chills you."]
+      "hazards": [{ "description": "A cold draft chills you.", "probability": 0, "deathText": "" }]
     },
     "room-c": {
       "name": "Room C",
@@ -70,18 +70,21 @@
     "key": {
       "name": "Old Key",
       "description": "A brass key.",
+      "roomText": "An old brass key lies on the ground.",
       "pickupText": "You take the key.",
       "portable": true
     },
     "torch": {
       "name": "Torch",
       "description": "A burning torch.",
+      "roomText": "A burning torch is propped against the wall.",
       "pickupText": "You grab the torch.",
       "portable": true
     },
     "treasure": {
       "name": "Golden Treasure",
       "description": "A pile of gold!",
+      "roomText": "A pile of golden treasure glitters in the corner.",
       "pickupText": "You grab the treasure!",
       "portable": true
     }
