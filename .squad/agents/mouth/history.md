@@ -340,3 +340,15 @@
 - **Coverage:** All 3 world files pass validation. escape-room has 2 expected empty-room warnings (puzzle-gated rooms with no initial items).
 - **Test status:** All 279 tests passing. 55 new validation tests from Stef, 53 pass immediately, 2 gaps found and fixed.
 - **Deployment:** Code merged and deployed to Azure. `/api/health` endpoint returning 200. Game fully operational end-to-end.
+
+### 2026-04-07 — Fix: Start Adventure Button Grays Out But Game Doesn't Start
+
+- **Bug:** Host clicks "Start Adventure" → button disables → game never starts. All players stuck in lobby.
+- **Root cause:** `handleStartGame` sent `gameStart` exclusively via `sendToGame` (Web PubSub group broadcast using `serviceClient.group(gameId).sendToAll()`). The `sendToGame` helper wraps the call in try/catch and silently logs failures. If the group broadcast failed (stale group membership, service hiccup, connection not in group), the message was dropped and nobody received `gameStart`. Zero error handling in `handleStartGame` meant all exceptions were invisible to the client — the Azure Functions runtime swallowed them.
+- **Fix (3 changes):**
+  1. **Per-player `sendToConnection` instead of group broadcast.** `handleStartGame` now iterates `session.players` and sends `gameStart` to each player's `connectionId` directly — the same reliable delivery path used for `gameInfo`, errors, and all other direct messages. Each player also gets a personalized room view via `getPlayerView` (correct "other players" list + ghosts).
+  2. **try/catch with client notification.** The entire handler is wrapped in try/catch. On error: logs via `context.error` (visible in Application Insights) AND sends `{ type: 'error', text }` to the host's connection so the failure is visible in the UI.
+  3. **Diagnostic logging.** `[START]` prefixed logs trace connectionId, gameId, hostPlayerId match result, player count, and success/failure.
+- **Tests:** 11 new tests in "Start Game — Initial Room View" block: getPlayerView correctness for startGame, JSON round-trip integrity, hostPlayerId persistence, ghost visibility, multi-player views.
+- **All 346 tests pass** (335 existing + 11 new).
+- **Key lesson:** Never rely solely on Web PubSub group broadcast for critical state transitions. `sendToConnection` (direct to known connectionId) is more reliable. Group broadcast is fire-and-forget with no delivery guarantee to the caller. Always pair critical broadcasts with error handling and client-visible error paths.

@@ -255,3 +255,15 @@
 - **Next integration:** Call `validateWorld(editorWorldData)` on each save; display errors as UI toasts/panels; warn on publish but don't block.
 - **Test status:** All 150 client tests pass unchanged.
 
+
+### 2026-04-05 — World Selector Bug Fix
+
+- **Problem:** World selector dropdown only showed "The Forgotten Castle" (default-world) instead of all 3 available worlds. The `loadWorlds()` function fetches `/api/worlds` from the server, but any failure (cold start timeout, local dev without API, network error) triggered `setDefaultWorld()` which had only 1 hardcoded world.
+- **Root cause:** The fallback in `setDefaultWorld()` only included the default world. Additionally, the fetch timeout (15s) was too short for Azure Functions Consumption plan cold starts.
+- **Fix (client/app.js):**
+  1. Replaced `setDefaultWorld()` with `FALLBACK_WORLDS` array containing all 3 worlds and a shared `populateWorldSelector()` function
+  2. Increased fetch timeout from 15s to 30s to accommodate cold starts
+  3. Fallback now shows all worlds (default-world, escape-room, space-adventure) with names and descriptions
+- **Fix (client/index.html):** Updated the `<select>` to include all 3 worlds in the initial HTML (no flash of single option before JS runs)
+- **Server endpoint verified:** `api/src/functions/worlds.js` correctly scans the `world/` directory and returns all 3 worlds. Registered in `src/index.js`, included in deploy zip.
+- **Test status:** All 335 tests pass unchanged.
