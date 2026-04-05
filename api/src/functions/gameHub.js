@@ -7,6 +7,7 @@ import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
+import { randomUUID } from 'crypto';
 import {
   loadWorld,
   createGameSession,
@@ -17,6 +18,7 @@ import {
   resolvePlayerName,
   disconnectPlayer,
   findGhostByName,
+  findGhostByPlayerId,
   reconnectPlayer,
   getExpiredGhosts,
   finalizeGhost,
@@ -344,7 +346,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   }
 
   const gameId = data.gameId || 'default';
-  const playerId = connectionId; // Use connection ID as player ID
+  const playerId = connectionId; // session.players key = connection ID
 
   // Load or create game session
   let session = await loadGameState(gameId);
@@ -365,25 +367,21 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   // Cleanup expired ghosts before processing the join
   session = await cleanupExpiredGhosts(serviceClient, gameId, session);
 
-  // Only attempt reconnection if the client signals this is a rejoin
-  // (i.e., auto-rejoin from localStorage). Without this flag a new player
-  // who picks the same name would incorrectly reclaim the ghost.
+  // Reconnection: use playerId as PRIMARY matching key, rejoin flag as gate
   const isRejoin = data.rejoin === true;
+  const clientPlayerId = data.playerId || null;
 
   let ghostMatch = null;
   let activeMatch = null;
 
-  if (isRejoin) {
-    // Check for reconnection — does a ghost exist with this name?
-    ghostMatch = findGhostByName(session, playerName);
+  if (isRejoin && clientPlayerId) {
+    // Match ghost by unique playerId (not name)
+    ghostMatch = findGhostByPlayerId(session, clientPlayerId);
 
-    // Also check for an active player with the same name but a different
-    // connectionId. This handles the race where the player refreshes and the
-    // new join arrives before the server processes the old disconnect.
+    // Active player takeover by playerId (race condition: new join before old disconnect)
     if (!ghostMatch) {
       const entry = Object.entries(session.players).find(
-        ([id, p]) =>
-          p.name.toLowerCase() === playerName.toLowerCase() && id !== playerId
+        ([id, p]) => p.playerId === clientPlayerId && id !== playerId
       );
       if (entry) {
         activeMatch = { oldPlayerId: entry[0], oldPlayer: entry[1] };
@@ -400,6 +398,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       const { oldPlayerId, oldPlayer } = activeMatch;
       session.players[playerId] = {
         name: oldPlayer.name,
+        playerId: oldPlayer.playerId,
         room: oldPlayer.room,
         inventory: [...oldPlayer.inventory],
       };
@@ -446,6 +445,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     const gameInfoMsg = {
       type: 'gameInfo',
       gameId,
+      playerId: restoredPlayer.playerId,
       playerCount: players.length,
       players,
       reconnected: true,
@@ -473,9 +473,13 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   const resolved = resolvePlayerName(session, playerName);
   const finalName = resolved.name;
 
-  // Add player
+  // Generate a unique playerId for this new player
+  const uniquePlayerId = randomUUID();
+
+  // Add player and attach the persistent playerId
   session = addPlayer(session, playerId, finalName);
   session.players[playerId].connectionId = connectionId;
+  session.players[playerId].playerId = uniquePlayerId;
 
   // Persist
   await saveGameState(gameId, session);
@@ -493,7 +497,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     context.warn('Failed to add connection to group:', err.message);
   }
 
-  // Send game info — include room view only if game already started (late joiner)
+  // Send game info — include playerId so the client can persist it
   const playerCount = Object.keys(session.players).length;
   const players = Object.values(session.players).map((p) => p.name);
   const ghostNames = session.ghosts
@@ -503,6 +507,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   const gameInfoMsg = {
     type: 'gameInfo',
     gameId,
+    playerId: uniquePlayerId,
     playerCount,
     players,
     reconnected: false,

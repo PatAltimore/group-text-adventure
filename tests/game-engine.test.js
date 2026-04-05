@@ -8,6 +8,7 @@ import {
   getPlayerView,
   disconnectPlayer,
   findGhostByName,
+  findGhostByPlayerId,
   reconnectPlayer,
   getExpiredGhosts,
   finalizeGhost,
@@ -629,6 +630,7 @@ describe('Player Reconnection (Ghost System)', () => {
 
   test('ghost preserves room and inventory', () => {
     let session = sessionWithPlayer('p1', 'Alice');
+    session.players['p1'].playerId = 'uuid-alice';
     ({ session } = processCommand(session, 'p1', 'take old key'));
     ({ session } = processCommand(session, 'p1', 'go north'));
     expect(session.players['p1'].room).toBe('room-b');
@@ -638,6 +640,7 @@ describe('Player Reconnection (Ghost System)', () => {
     const ghost = session.ghosts['Alice'];
     expect(ghost.room).toBe('room-b');
     expect(ghost.inventory).toContain('key');
+    expect(ghost.playerId).toBe('uuid-alice');
   });
 
   test('ghost has a disconnectedAt timestamp', () => {
@@ -716,6 +719,7 @@ describe('Player Reconnection (Ghost System)', () => {
 
   test('reconnectPlayer restores player from ghost with new ID', () => {
     let session = sessionWithPlayer('p1', 'Alice');
+    session.players['p1'].playerId = 'uuid-alice';
     ({ session } = processCommand(session, 'p1', 'take old key'));
     ({ session } = processCommand(session, 'p1', 'go north'));
     session = disconnectPlayer(session, 'p1');
@@ -724,6 +728,7 @@ describe('Player Reconnection (Ghost System)', () => {
     expect(session.players['p1']).toBeUndefined();
     expect(session.players['p1-new']).toBeDefined();
     expect(session.players['p1-new'].name).toBe('Alice');
+    expect(session.players['p1-new'].playerId).toBe('uuid-alice');
     expect(session.players['p1-new'].room).toBe('room-b');
     expect(session.players['p1-new'].inventory).toContain('key');
   });
@@ -1367,5 +1372,140 @@ describe('Duplicate Name vs Reconnection', () => {
     // New player has the adjective name
     expect(session.players['p2'].name).toBe(resolved.name);
     expect(session.players['p2'].name).not.toBe('Alice');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 16. Player ID System
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Player ID System', () => {
+  function sessionWithPlayersAndIds(...specs) {
+    const world = loadWorld(testWorldData);
+    let session = createGameSession(world);
+    session.started = true;
+    for (const [id, name, uid] of specs) {
+      session = addPlayer(session, id, name);
+      if (uid) session.players[id].playerId = uid;
+    }
+    return session;
+  }
+
+  test('disconnectPlayer copies playerId into ghost', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    session = disconnectPlayer(session, 'p1');
+    expect(session.ghosts['Alice'].playerId).toBe('uuid-alice');
+  });
+
+  test('disconnectPlayer sets ghost.playerId to null when player has no playerId', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice']);
+    session = disconnectPlayer(session, 'p1');
+    expect(session.ghosts['Alice'].playerId).toBeNull();
+  });
+
+  test('findGhostByPlayerId finds ghost with matching playerId', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    session = disconnectPlayer(session, 'p1');
+    const found = findGhostByPlayerId(session, 'uuid-alice');
+    expect(found).not.toBeNull();
+    expect(found.ghostName).toBe('Alice');
+    expect(found.ghost.playerId).toBe('uuid-alice');
+  });
+
+  test('findGhostByPlayerId returns null when no playerId matches', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    session = disconnectPlayer(session, 'p1');
+    expect(findGhostByPlayerId(session, 'uuid-different')).toBeNull();
+  });
+
+  test('findGhostByPlayerId returns null with null/undefined playerId', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    session = disconnectPlayer(session, 'p1');
+    expect(findGhostByPlayerId(session, null)).toBeNull();
+    expect(findGhostByPlayerId(session, undefined)).toBeNull();
+  });
+
+  test('findGhostByPlayerId returns null on session without ghosts', () => {
+    const session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    expect(findGhostByPlayerId(session, 'uuid-alice')).toBeNull();
+  });
+
+  test('ghost reclamation by playerId restores room and inventory', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    session = disconnectPlayer(session, 'p1');
+
+    // Find by playerId, then reconnect
+    const ghostMatch = findGhostByPlayerId(session, 'uuid-alice');
+    expect(ghostMatch).not.toBeNull();
+    session = reconnectPlayer(session, ghostMatch.ghostName, 'p1-new');
+
+    expect(session.players['p1-new'].name).toBe('Alice');
+    expect(session.players['p1-new'].playerId).toBe('uuid-alice');
+    expect(session.players['p1-new'].room).toBe('room-b');
+    expect(session.players['p1-new'].inventory).toContain('key');
+    expect(session.ghosts['Alice']).toBeUndefined();
+  });
+
+  test('different player with same name gets adjective when playerId does not match ghost', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    session = disconnectPlayer(session, 'p1');
+
+    // New player sends playerId that does NOT match the ghost
+    const ghostMatch = findGhostByPlayerId(session, 'uuid-stranger');
+    expect(ghostMatch).toBeNull();
+
+    // Falls through to name resolution — ghost name is treated as taken
+    const resolved = resolvePlayerName(session, 'Alice');
+    expect(resolved.wasChanged).toBe(true);
+    expect(resolved.name).not.toBe('Alice');
+
+    session = addPlayer(session, 'p2', resolved.name);
+    // Ghost should still exist (not reclaimed)
+    expect(session.ghosts['Alice']).toBeDefined();
+    expect(session.ghosts['Alice'].playerId).toBe('uuid-alice');
+  });
+
+  test('reconnectPlayer preserves playerId across reconnection', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    session = disconnectPlayer(session, 'p1');
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    expect(session.players['p1-new'].playerId).toBe('uuid-alice');
+  });
+
+  test('findGhostByPlayerId picks correct ghost when multiple ghosts exist', () => {
+    let session = sessionWithPlayersAndIds(
+      ['p1', 'Alice', 'uuid-alice'],
+      ['p2', 'Bob', 'uuid-bob']
+    );
+    session = disconnectPlayer(session, 'p1');
+    session = disconnectPlayer(session, 'p2');
+
+    const found = findGhostByPlayerId(session, 'uuid-bob');
+    expect(found).not.toBeNull();
+    expect(found.ghostName).toBe('Bob');
+    expect(found.ghost.playerId).toBe('uuid-bob');
+
+    // Alice's ghost should still be there
+    expect(session.ghosts['Alice']).toBeDefined();
+  });
+
+  test('rejoin with playerId but ghost expired falls through to normal join', () => {
+    let session = sessionWithPlayersAndIds(['p1', 'Alice', 'uuid-alice']);
+    session = disconnectPlayer(session, 'p1');
+
+    // Expire and finalize the ghost
+    session.ghosts['Alice'].disconnectedAt = Date.now() - 2000000;
+    const expired = getExpiredGhosts(session, 1800000);
+    finalizeGhost(session, expired[0]);
+
+    // No ghost to match
+    expect(findGhostByPlayerId(session, 'uuid-alice')).toBeNull();
+
+    // Normal join: new player at start room
+    session = addPlayer(session, 'p1-new', 'Alice');
+    expect(session.players['p1-new'].room).toBe('room-a');
+    expect(session.players['p1-new'].inventory).toEqual([]);
   });
 });

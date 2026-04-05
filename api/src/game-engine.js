@@ -165,6 +165,7 @@ export function disconnectPlayer(session, playerId) {
   if (!session.ghosts) session.ghosts = {};
   session.ghosts[player.name] = {
     playerName: player.name,
+    playerId: player.playerId || null,
     room: player.room,
     inventory: [...player.inventory],
     disconnectedAt: Date.now(),
@@ -191,7 +192,24 @@ export function findGhostByName(session, playerName) {
 }
 
 /**
+ * Find a ghost by its unique playerId (not display name).
+ * @param {object} session - Current game session.
+ * @param {string} playerId - Unique player ID to search for.
+ * @returns {{ ghostName: string, ghost: object }|null}
+ */
+export function findGhostByPlayerId(session, playerId) {
+  if (!session.ghosts || !playerId) return null;
+  for (const [name, ghost] of Object.entries(session.ghosts)) {
+    if (ghost.playerId === playerId) {
+      return { ghostName: name, ghost };
+    }
+  }
+  return null;
+}
+
+/**
  * Reconnect a player via their ghost — restores room + remaining inventory.
+ * Preserves the original playerId so the identity survives across reconnections.
  * @param {object} session - Current game session.
  * @param {string} ghostName - The ghost's player name key.
  * @param {string} newPlayerId - The new connection-based player ID.
@@ -205,6 +223,7 @@ export function reconnectPlayer(session, ghostName, newPlayerId) {
   const ghost = session.ghosts[ghostName];
   session.players[newPlayerId] = {
     name: ghost.playerName,
+    playerId: ghost.playerId || null,
     room: ghost.room,
     inventory: [...ghost.inventory],
   };

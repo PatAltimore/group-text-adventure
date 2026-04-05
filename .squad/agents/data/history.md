@@ -219,3 +219,18 @@
 - **All 250 tests pass** unchanged
 - **Message contract:** No changes. Server still sends `gameInfo` with `{ reconnected: true/false, room?, inventory? }`.
 
+### 2026-04-04 — PlayerId-Based Reconnection (Client Side)
+
+- **Design change:** Switched from name-based to playerId-based reconnection. Server generates a unique `playerId` on first join and returns it in `gameInfo`. Client persists it and sends it back on rejoin.
+- **State:** Added `playerId` to client `state` object (default `''`).
+- **saveSession():** Now stores `gta_playerId` in localStorage alongside `gta_gameId` and `gta_playerName`. Only writes if `state.playerId` is truthy (avoids overwriting with empty string on legacy servers).
+- **loadSession():** Returns `playerId` from localStorage (defaults to `''`).
+- **clearSession():** Removes `gta_playerId` from localStorage. Called on stale session clear and new game starts.
+- **handleGameInfo():** Reads `msg.playerId` from server response and sets `state.playerId`. Backward-compatible — only updates if field is present.
+- **Join message:** On rejoin (`pendingRejoin`), includes `playerId` in the join message if available. Format: `{ type: 'join', gameId, playerName, rejoin: true, playerId }`.
+- **Auto-rejoin init:** Loads `session.playerId` into `state.playerId` before calling `connectWebSocket()`.
+- **Backward compat:** Missing `playerId` in localStorage (legacy) or missing `msg.playerId` from server both handled gracefully — falls back to name-based behavior.
+- **Files modified:** `client/app.js`
+- **All 263 tests pass** unchanged
+- **Message contract update:** Server `gameInfo` may now include `playerId: string`. Client rejoin message may include `playerId: string`.
+

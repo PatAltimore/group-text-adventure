@@ -25,6 +25,7 @@
   const state = {
     playerName: '',
     gameId: '',
+    playerId: '',
     worldId: '',
     isHost: false,
     ws: null,
@@ -202,6 +203,7 @@
     try {
       localStorage.setItem('gta_gameId', state.gameId);
       localStorage.setItem('gta_playerName', state.playerName);
+      if (state.playerId) localStorage.setItem('gta_playerId', state.playerId);
     } catch { /* storage unavailable */ }
   }
 
@@ -210,14 +212,16 @@
       return {
         gameId: localStorage.getItem('gta_gameId') || '',
         playerName: localStorage.getItem('gta_playerName') || '',
+        playerId: localStorage.getItem('gta_playerId') || '',
       };
-    } catch { return { gameId: '', playerName: '' }; }
+    } catch { return { gameId: '', playerName: '', playerId: '' }; }
   }
 
   function clearSession() {
     try {
       localStorage.removeItem('gta_gameId');
       localStorage.removeItem('gta_playerName');
+      localStorage.removeItem('gta_playerId');
     } catch { /* storage unavailable */ }
   }
 
@@ -272,6 +276,7 @@
         }
         if (state.pendingRejoin) {
           joinMsg.rejoin = true;
+          if (state.playerId) joinMsg.playerId = state.playerId;
         }
         sendMessage(joinMsg);
         saveSession();
@@ -597,6 +602,7 @@
 
   function handleGameInfo(msg) {
     if (msg.gameId) state.gameId = msg.gameId;
+    if (msg.playerId) state.playerId = msg.playerId;
     saveSession();
 
     if (Array.isArray(msg.players)) {
@@ -978,6 +984,7 @@
     if (sessionGameId && sessionPlayerName && (!urlGameId || urlGameId === sessionGameId)) {
       state.gameId = sessionGameId;
       state.playerName = sessionPlayerName;
+      state.playerId = session.playerId || '';
       state.isHost = false;
       state.pendingRejoin = true;
 

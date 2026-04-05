@@ -262,3 +262,22 @@
 **Fix:** Changed `gameHub.js` lines 430-433 to build inventory as `{ name, description }` objects (matching the format from `handleInventory` in `game-engine.js`). The reconnection `gameInfo.inventory` now matches the regular `inventory` message format the client already handles correctly.
 
 **Test added:** `gameInfo inventory after ghost reclamation has name+description objects` — verifies the inventory format after ghost reclamation produces objects with `name` and `description` fields, not bare strings. **257 tests pass.**
+
+### 2026-04-06 — Player ID System (Ghost Matching by playerId, Not Name)
+
+- **Bug fixed:** Reconnection was broken after the `rejoin: true` gate was added — it matched by name, so returning players created new players instead of reclaiming their ghost. A different player picking the same name could also steal the ghost if they somehow sent `rejoin: true`.
+- **Design change:** Introduced a unique `playerId` (UUID via `crypto.randomUUID()`) as the persistent identity. Name is now just a display label.
+- **game-engine.js changes:**
+  1. `disconnectPlayer` now copies `player.playerId` into the ghost entity.
+  2. New `findGhostByPlayerId(session, playerId)` function — searches `session.ghosts` by the stored `playerId` field (exact match, not case-insensitive like name).
+  3. `reconnectPlayer` now preserves `ghost.playerId` in the restored player state.
+- **gameHub.js changes:**
+  1. `import { randomUUID } from 'crypto'` and `findGhostByPlayerId`.
+  2. Normal join: generates `uniquePlayerId = randomUUID()`, stores in `session.players[id].playerId`.
+  3. Reconnection: uses `findGhostByPlayerId(session, data.playerId)` as primary match (not `findGhostByName`).
+  4. Active player takeover: matches by `p.playerId === clientPlayerId` (not name).
+  5. Both normal join and reconnect gameInfo include `playerId` field so client can persist it.
+  6. Gate logic: `isRejoin && clientPlayerId` — both flags must be present for reconnection attempt.
+- **Message protocol change:** `gameInfo` now includes `playerId: string` (UUID) on both first join and reconnect.
+- **Key principle:** `playerId` is identity, `name` is display label. Ghost matching uses playerId; name collisions go to adjective resolution.
+- **11 new tests** in `Player ID System` describe block + 2 updated existing tests. **All 274 tests pass.**
