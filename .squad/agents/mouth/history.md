@@ -281,3 +281,21 @@
 - **Message protocol change:** `gameInfo` now includes `playerId: string` (UUID) on both first join and reconnect.
 - **Key principle:** `playerId` is identity, `name` is display label. Ghost matching uses playerId; name collisions go to adjective resolution.
 - **11 new tests** in `Player ID System` describe block + 2 updated existing tests. **All 274 tests pass.**
+
+### 2026-04-06 — Fix: Auto-Reconnect Missing pendingRejoin Flag
+
+**Bug:** When a player's WebSocket dropped (network blip, phone standby) and the client auto-reconnected via `attemptReconnect()` or the "tap to reconnect" banner (`manualReconnect()`), the server created a new player instead of reclaiming the ghost.
+
+**Root cause:** `attemptReconnect()` and `manualReconnect()` called `connectWebSocket()` without setting `state.pendingRejoin = true`. The on-open handler only sends `rejoin: true` and `playerId` when `pendingRejoin` is set. Without the flag, the join message was a plain join — no rejoin, no playerId — so the server's ghost matching was never even attempted.
+
+**Fix (client/app.js):**
+- `attemptReconnect()`: Added `if (state.playerId) state.pendingRejoin = true;` before `connectWebSocket()` call.
+- `manualReconnect()`: Same fix.
+- Guard on `state.playerId` ensures we only attempt rejoin when we have an identity to reclaim.
+
+**Also committed (gameHub.js diagnostics):**
+- BinaryData-safe parsing of `request.data` (handles Buffer, ArrayBuffer, string, object).
+- `[JOIN]` diagnostic logs: rejoin flag type, ghost list + playerIds, active player list, match outcomes, fallthrough to new-player path.
+- These logs appear in Azure Application Insights for live debugging.
+
+**All 274 tests pass.**
