@@ -67,3 +67,13 @@
   - Also fixed broken imports (`getExpiredGhosts`, `finalizeGhost` removed from import) and updated stale test referencing removed functions
   - Concurrent editing note: Mouth was simultaneously modifying `game-engine.test.js` to update existing ghost tests. Coordinated by only appending a new describe block.
   - Total: 279 tests pass across 4 suites
+
+- **2026-04-02 — World JSON validation tests (55 tests: 53 pass, 2 known gaps)**
+  - File: `/tests/validate-world.test.js` — 55 tests across 8 describe blocks
+  - Tests `validateWorld()` from `world/validate-world.js` (created concurrently by Mouth)
+  - API: `validateWorld(worldData)` → `{ valid: boolean, errors: string[], warnings: string[] }`
+  - Categories: valid worlds (6), required fields (8), exit validation (3), item validation (4), puzzle validation (4), warnings (5), edge cases (10), real world file smoke tests (15)
+  - Validates all 3 world JSON files: `default-world.json`, `escape-room.json`, `space-adventure.json`
+  - 2 expected failures: `addItem`/`removeHazard` puzzle action types use `action.room` instead of `action.targetRoom`; Mouth's validator only checks `action.targetRoom` currently
+  - Key discovery: world files use `north/south/east/west` for directions, NOT abbreviated `n/s/e/w`
+  - Total: 333 tests pass across 5 suites (2 known-gap failures)

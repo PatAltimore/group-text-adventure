@@ -316,3 +316,19 @@
 - `tests/game-engine.test.js` — removed 13 expiration/finalize tests, updated 4 loot/take tests to expect ghost persistence, added 1 new visibility test
 
 **All 262 tests pass** (274 - 13 removed + 1 new).
+
+### 2026-04-07 — World JSON Validation Utility
+
+- **Created `world/validate-world.js`** — universal ES module that exports `validateWorld(worldData)`. Works in both browser and Node.js. Returns `{ valid: boolean, errors: string[], warnings: string[] }`.
+- **Validation errors (block game start):** missing/empty name, invalid startRoom, no rooms, rooms missing name/description/exits, invalid exit directions, exits to non-existent rooms, items referenced in rooms not defined in items section, items missing name/description, puzzle room/requiredItem/targetRoom referencing non-existent entities.
+- **Validation warnings (logged, don't block):** non-bidirectional exits (excluding puzzle-gated ones), orphan rooms with no inbound connections, items defined but never placed, empty rooms (no items or hazards).
+- **Integrated into `loadWorld()` in `api/src/game-engine.js`:** validation runs on every world load. Errors throw (blocking). Warnings are logged via `console.warn`.
+- **All 3 existing worlds pass validation.** escape-room has 2 expected warnings (empty rooms: upper-hallway, guest-bedroom — those rooms have puzzle interactions but no initial items/hazards).
+- **All 279 tests pass.** No test changes needed.
+
+### 2026-04-07 — Fix: Give Command Notification Bug
+
+- **Bug:** `handleGive` in `game-engine.js` used JS shorthand `targetId,` in the response object, creating `{ targetId: "..." }` instead of `{ playerId: "..." }`. The `routeResponses` function in `gameHub.js` keys on `resp.playerId`, so the recipient's notification was silently dropped.
+- **Fix:** Changed `targetId,` to `playerId: targetId,` so the message routes correctly.
+- **Added bystander notifications:** Other players in the same room now see `"{Player} gave {item} to {Target}."` — consistent with how `say`, `yell`, and `loot` notify room occupants.
+- **Tests:** Added 2 new test cases — one verifying the receiver gets `playerId`-keyed notification, one verifying bystanders see the exchange. All 142 game-engine tests pass.

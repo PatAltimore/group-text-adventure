@@ -234,3 +234,16 @@
 - **All 263 tests pass** unchanged
 - **Message contract update:** Server `gameInfo` may now include `playerId: string`. Client rejoin message may include `playerId: string`.
 
+### 2026-04-04 — World JSON Editor
+
+- **New standalone tool:** `client/editor.html` + `client/editor.css` + `client/editor.js` — a browser-based visual editor for world JSON files.
+- **Layout:** Top toolbar (world name/desc, file operations), left panel (interactive SVG map ~60%), right panel (room editor ~40%), bottom tabs (items + puzzles).
+- **SVG map features:** Auto-layout using BFS + compass direction hints, room dragging, pan (click-drag background), zoom (scroll wheel + buttons), start room highlighted green, selected room highlighted blue, puzzle indicator (🧩) on rooms with puzzles, exit lines with direction labels (N/S/E/W).
+- **Room editor:** Name, description (textarea), start-room checkbox, exit dropdowns (N/S/E/W → other rooms), item checkboxes, hazard list with add/remove, delete room button.
+- **Item editor:** Tab-based list + detail pane. Fields: id, name, description, pickupText, portable checkbox. Add/delete.
+- **Puzzle editor:** Tab-based list + detail pane. Fields: id, room dropdown, description, requiredItem dropdown, solvedText, action (type/direction/targetRoom). Add/delete.
+- **File operations:** Load from disk (file picker), Save (download JSON), Save As (prompt filename), New (blank world with 1 room), Preset dropdown for built-in worlds (`../world/*.json` fetch).
+- **Design:** Dark theme using same CSS custom properties as `client/style.css` (--bg, --bg-surface, --accent, etc.). Professional editor feel, desktop-focused.
+- **Technical:** Vanilla JS, no frameworks, IIFE pattern, ~600 lines JS, separate CSS/JS files. SVG for map (not Canvas). Live-save on input (no explicit Apply button).
+- **Files created:** `client/editor.html`, `client/editor.css`, `client/editor.js`
+
