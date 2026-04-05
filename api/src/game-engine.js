@@ -2,6 +2,7 @@
 // All state is passed in and returned; functions are side-effect free.
 
 import { parseCommand } from './command-parser.js';
+import { validateWorld } from '../../world/validate-world.js';
 
 // Funny adjectives for resolving duplicate player names
 const SILLY_ADJECTIVES = [
@@ -67,6 +68,18 @@ export function loadWorld(worldJson) {
   if (!rooms[startRoom]) {
     throw new Error(`Invalid world: startRoom "${startRoom}" not found in rooms.`);
   }
+
+  // Run full validation — errors block, warnings are logged
+  const validation = validateWorld(worldJson);
+  if (!validation.valid) {
+    throw new Error(`Invalid world: ${validation.errors.join('; ')}`);
+  }
+  if (validation.warnings.length > 0) {
+    for (const warning of validation.warnings) {
+      console.warn(`[world-validation] ${warning}`);
+    }
+  }
+
   return {
     name,
     description: description || '',
@@ -851,12 +864,22 @@ function handleGive(session, playerId, cmd) {
   });
 
   responses.push({
-    targetId,
+    playerId: targetId,
     message: {
       type: 'message',
-      text: `${player.name} gives you the ${item.name}.`,
+      text: `${player.name} gave you ${item.name}.`,
     },
   });
+
+  // Notify other players in the room
+  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+    if (otherId !== playerId && otherId !== targetId && otherPlayer.room === player.room) {
+      responses.push({
+        playerId: otherId,
+        message: { type: 'message', text: `${player.name} gave ${item.name} to ${targetPlayer.name}.` },
+      });
+    }
+  }
 
   return { session, responses };
 }

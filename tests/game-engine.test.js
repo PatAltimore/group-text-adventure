@@ -415,6 +415,23 @@ describe('Give Item', () => {
     expect(afterGive.players['p1'].inventory).not.toContain('key');
     expect(afterGive.players['p2'].inventory).toContain('key');
     expect(responses.length).toBeGreaterThanOrEqual(2);
+    // Giver gets confirmation
+    const giverMsg = responses.find(r => r.playerId === 'p1');
+    expect(giverMsg.message.text).toMatch(/give.*old key.*Bob/i);
+    // Receiver gets notification
+    const receiverMsg = responses.find(r => r.playerId === 'p2');
+    expect(receiverMsg).toBeDefined();
+    expect(receiverMsg.message.text).toMatch(/Alice.*gave.*old key/i);
+  });
+
+  test('notifies bystanders when a give happens', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = addPlayer(session, 'p3', 'Carol');
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    const { responses } = processCommand(session, 'p1', 'give old key to Bob');
+    const bystanderMsg = responses.find(r => r.playerId === 'p3');
+    expect(bystanderMsg).toBeDefined();
+    expect(bystanderMsg.message.text).toMatch(/Alice.*gave.*old key.*Bob/i);
   });
 
   test('cannot give item to a player in a different room', () => {

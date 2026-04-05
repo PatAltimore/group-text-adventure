@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Editor — Group Text Adventure</title>
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <!-- ===== Top Bar ===== -->
+  <header class="toolbar">
+    <div class="toolbar-left">
+      <div class="toolbar-field">
+        <label for="world-name">World Name</label>
+        <input type="text" id="world-name" placeholder="My Adventure">
+      </div>
+      <div class="toolbar-field toolbar-field-wide">
+        <label for="world-desc">Description</label>
+        <input type="text" id="world-desc" placeholder="A short description of the world…">
+      </div>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn btn-secondary" id="btn-new" title="New World">✦ New</button>
+      <button class="btn btn-secondary" id="btn-load" title="Load JSON from disk">📂 Load</button>
+      <select id="load-preset" class="btn btn-secondary" title="Load a built-in world">
+        <option value="">▾ Presets</option>
+        <option value="../world/default-world.json">The Forgotten Castle</option>
+        <option value="../world/escape-room.json">Escape Room</option>
+        <option value="../world/space-adventure.json">Space Adventure</option>
+      </select>
+      <button class="btn btn-primary" id="btn-save" title="Save (download JSON)">💾 Save</button>
+      <button class="btn btn-secondary" id="btn-save-as" title="Save As…">Save As…</button>
+      <input type="file" id="file-input" accept=".json" class="hidden">
+    </div>
+  </header>
+
+  <!-- ===== Main Panels ===== -->
+  <main class="editor-main">
+    <!-- Left: SVG Map -->
+    <section class="panel panel-map" id="panel-map">
+      <div class="panel-header">
+        <h2>Map</h2>
+        <div class="panel-header-actions">
+          <button class="btn btn-small" id="btn-add-room" title="Add a new room">+ Room</button>
+          <button class="btn btn-small btn-secondary" id="btn-reset-layout" title="Re-run auto layout">⟳ Layout</button>
+          <button class="btn btn-small btn-secondary" id="btn-zoom-in" title="Zoom in">+</button>
+          <button class="btn btn-small btn-secondary" id="btn-zoom-out" title="Zoom out">−</button>
+          <button class="btn btn-small btn-secondary" id="btn-zoom-fit" title="Fit to view">⊡</button>
+        </div>
+      </div>
+      <div class="map-container" id="map-container">
+        <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </section>
+
+    <!-- Right: Edit Panel -->
+    <section class="panel panel-edit" id="panel-edit">
+      <div class="panel-header"><h2 id="edit-panel-title">Room Editor</h2></div>
+      <div class="edit-body" id="edit-body">
+        <div class="edit-placeholder" id="edit-placeholder">
+          <p>Select a room on the map to edit it.</p>
+        </div>
+        <div class="edit-form hidden" id="edit-form">
+          <!-- Room ID -->
+          <div class="field">
+            <label for="room-id">Room ID</label>
+            <input type="text" id="room-id" placeholder="room-id" spellcheck="false">
+          </div>
+          <!-- Room Name -->
+          <div class="field">
+            <label for="room-name">Name</label>
+            <input type="text" id="room-name" placeholder="Room Name">
+          </div>
+          <!-- Description -->
+          <div class="field">
+            <label for="room-description">Description</label>
+            <textarea id="room-description" rows="4" placeholder="Describe what the player sees…"></textarea>
+          </div>
+          <!-- Start Room -->
+          <div class="field field-row">
+            <label class="check-label">
+              <input type="checkbox" id="room-is-start"> Start Room
+            </label>
+          </div>
+          <!-- Exits -->
+          <fieldset class="field-group">
+            <legend>Exits</legend>
+            <div class="exit-grid">
+              <div class="field exit-field">
+                <label for="exit-north">North</label>
+                <select id="exit-north"><option value="">— none —</option></select>
+              </div>
+              <div class="field exit-field">
+                <label for="exit-south">South</label>
+                <select id="exit-south"><option value="">— none —</option></select>
+              </div>
+              <div class="field exit-field">
+                <label for="exit-east">East</label>
+                <select id="exit-east"><option value="">— none —</option></select>
+              </div>
+              <div class="field exit-field">
+                <label for="exit-west">West</label>
+                <select id="exit-west"><option value="">— none —</option></select>
+              </div>
+            </div>
+          </fieldset>
+          <!-- Items in room -->
+          <fieldset class="field-group">
+            <legend>Items in Room</legend>
+            <div id="room-items-list" class="checkbox-list"></div>
+          </fieldset>
+          <!-- Hazards -->
+          <fieldset class="field-group">
+            <legend>Hazards</legend>
+            <div id="room-hazards-list" class="tag-list"></div>
+            <div class="tag-add-row">
+              <input type="text" id="hazard-input" placeholder="New hazard text…">
+              <button class="btn btn-small" id="btn-add-hazard">+</button>
+            </div>
+          </fieldset>
+          <!-- Delete -->
+          <div class="field field-danger">
+            <button class="btn btn-danger" id="btn-delete-room">🗑 Delete Room</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Bottom: Items & Puzzles Tabs ===== -->
+  <section class="bottom-panel" id="bottom-panel">
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-items">Items</button>
+      <button class="tab-btn" data-tab="tab-puzzles">Puzzles</button>
+    </div>
+
+    <!-- Items Tab -->
+    <div class="tab-content active" id="tab-items">
+      <div class="tab-split">
+        <div class="tab-list-pane">
+          <div class="tab-list-header">
+            <h3>All Items</h3>
+            <button class="btn btn-small" id="btn-add-item">+ Item</button>
+          </div>
+          <ul class="entity-list" id="items-list"></ul>
+        </div>
+        <div class="tab-edit-pane" id="item-edit-pane">
+          <div class="edit-placeholder" id="item-placeholder"><p>Select an item to edit.</p></div>
+          <div class="edit-form hidden" id="item-form">
+            <div class="field">
+              <label for="item-id">Item ID</label>
+              <input type="text" id="item-id" placeholder="item-id" spellcheck="false">
+            </div>
+            <div class="field">
+              <label for="item-name">Name</label>
+              <input type="text" id="item-name" placeholder="Item Name">
+            </div>
+            <div class="field">
+              <label for="item-description">Description</label>
+              <textarea id="item-description" rows="3" placeholder="Item description…"></textarea>
+            </div>
+            <div class="field">
+              <label for="item-pickup">Pickup Text</label>
+              <textarea id="item-pickup" rows="2" placeholder="Text when picked up…"></textarea>
+            </div>
+            <div class="field field-row">
+              <label class="check-label">
+                <input type="checkbox" id="item-portable" checked> Portable
+              </label>
+            </div>
+            <div class="field field-danger">
+              <button class="btn btn-danger" id="btn-delete-item">🗑 Delete Item</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Puzzles Tab -->
+    <div class="tab-content" id="tab-puzzles">
+      <div class="tab-split">
+        <div class="tab-list-pane">
+          <div class="tab-list-header">
+            <h3>All Puzzles</h3>
+            <button class="btn btn-small" id="btn-add-puzzle">+ Puzzle</button>
+          </div>
+          <ul class="entity-list" id="puzzles-list"></ul>
+        </div>
+        <div class="tab-edit-pane" id="puzzle-edit-pane">
+          <div class="edit-placeholder" id="puzzle-placeholder"><p>Select a puzzle to edit.</p></div>
+          <div class="edit-form hidden" id="puzzle-form">
+            <div class="field">
+              <label for="puzzle-id">Puzzle ID</label>
+              <input type="text" id="puzzle-id" placeholder="puzzle-id" spellcheck="false">
+            </div>
+            <div class="field">
+              <label for="puzzle-room">Room</label>
+              <select id="puzzle-room"><option value="">— select —</option></select>
+            </div>
+            <div class="field">
+              <label for="puzzle-description">Description</label>
+              <textarea id="puzzle-description" rows="3" placeholder="Puzzle description…"></textarea>
+            </div>
+            <div class="field">
+              <label for="puzzle-required-item">Required Item</label>
+              <select id="puzzle-required-item"><option value="">— select —</option></select>
+            </div>
+            <div class="field">
+              <label for="puzzle-solved-text">Solved Text</label>
+              <textarea id="puzzle-solved-text" rows="2" placeholder="Text when puzzle is solved…"></textarea>
+            </div>
+            <fieldset class="field-group">
+              <legend>Action</legend>
+              <div class="field">
+                <label for="puzzle-action-type">Type</label>
+                <select id="puzzle-action-type">
+                  <option value="openExit">openExit</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="puzzle-action-dir">Direction</label>
+                <select id="puzzle-action-dir">
+                  <option value="north">north</option>
+                  <option value="south">south</option>
+                  <option value="east">east</option>
+                  <option value="west">west</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="puzzle-action-target">Target Room</label>
+                <select id="puzzle-action-target"><option value="">— select —</option></select>
+              </div>
+            </fieldset>
+            <div class="field field-danger">
+              <button class="btn btn-danger" id="btn-delete-puzzle">🗑 Delete Puzzle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script src="editor.js"></script>
+</body>
+</html>
