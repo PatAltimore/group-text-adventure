@@ -174,7 +174,15 @@ app.generic('gameHubMessage', {
 
     let data;
     try {
-      data = typeof request.data === 'string' ? JSON.parse(request.data) : request.data;
+      context.log(`[MSG] request.data type=${typeof request.data}, constructor=${request.data?.constructor?.name}, isBuffer=${Buffer.isBuffer(request.data)}`);
+      if (typeof request.data === 'string') {
+        data = JSON.parse(request.data);
+      } else if (Buffer.isBuffer(request.data) || request.data instanceof ArrayBuffer) {
+        data = JSON.parse(request.data.toString());
+      } else {
+        data = request.data;
+      }
+      context.log(`[MSG] parsed data type=${data.type} keys=${Object.keys(data).join(',')}`);
     } catch {
       await sendToConnection(serviceClient, connectionId, {
         type: 'error',
@@ -371,12 +379,24 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   const isRejoin = data.rejoin === true;
   const clientPlayerId = data.playerId || null;
 
+  // Diagnostic logging for reconnection debugging
+  context.log(`[JOIN] playerName="${playerName}" gameId="${gameId}" rejoin=${data.rejoin} (type=${typeof data.rejoin}) clientPlayerId=${clientPlayerId} isRejoin=${isRejoin}`);
+  context.log(`[JOIN] raw data keys: ${Object.keys(data).join(', ')}`);
+  context.log(`[JOIN] ghosts: ${session.ghosts ? JSON.stringify(Object.keys(session.ghosts)) : 'none'}`);
+  if (session.ghosts) {
+    for (const [gname, ghost] of Object.entries(session.ghosts)) {
+      context.log(`[JOIN] ghost "${gname}" playerId=${ghost.playerId}`);
+    }
+  }
+  context.log(`[JOIN] active players: ${JSON.stringify(Object.entries(session.players).map(([id, p]) => ({ id: id.substring(0, 8), name: p.name, playerId: p.playerId })))}`);
+
   let ghostMatch = null;
   let activeMatch = null;
 
   if (isRejoin && clientPlayerId) {
     // Match ghost by unique playerId (not name)
     ghostMatch = findGhostByPlayerId(session, clientPlayerId);
+    context.log(`[JOIN] ghostMatch: ${ghostMatch ? ghostMatch.ghostName : 'null'}`);
 
     // Active player takeover by playerId (race condition: new join before old disconnect)
     if (!ghostMatch) {
@@ -386,7 +406,10 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       if (entry) {
         activeMatch = { oldPlayerId: entry[0], oldPlayer: entry[1] };
       }
+      context.log(`[JOIN] activeMatch: ${activeMatch ? activeMatch.oldPlayer.name : 'null'}`);
     }
+  } else {
+    context.log(`[JOIN] Skipping ghost search: isRejoin=${isRejoin} clientPlayerId=${clientPlayerId}`);
   }
 
   if (ghostMatch || activeMatch) {
@@ -470,6 +493,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   }
 
   // Normal join flow — resolve duplicate names
+  context.log(`[JOIN] No ghost/active match — new player. rejoin=${isRejoin} clientPlayerId=${clientPlayerId}`);
   const resolved = resolvePlayerName(session, playerName);
   const finalName = resolved.name;
 

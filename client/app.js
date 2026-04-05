@@ -315,6 +315,9 @@
     if (state.reconnectTimer) clearTimeout(state.reconnectTimer);
     state.reconnectTimer = setTimeout(async () => {
       try {
+        // Mark as rejoin so the server reclaims the ghost instead of creating
+        // a new player. Only set if we have a playerId to send.
+        if (state.playerId) state.pendingRejoin = true;
         await connectWebSocket(state.gameId);
       } catch {
         // Negotiate failed (no WebSocket created) — continue retry chain
@@ -325,6 +328,7 @@
 
   function manualReconnect() {
     state.reconnectAttempts = 0;
+    if (state.playerId) state.pendingRejoin = true;
     hideReconnectBanner();
     showReconnectBanner('Reconnecting…', false);
     connectWebSocket(state.gameId).catch(() => {
