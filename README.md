@@ -4,12 +4,17 @@
 
 Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to find the ultimate treasure. Using voice commands (or text), navigate dungeons, manage inventory, and communicate with teammates in real time via WebSocket.
 
+🎮 **[Play the Live Demo](https://patcastlestore.z5.web.core.windows.net)** — Try it now!
+
 ---
 
 ## Features
 
 - **1–20 Multiplayer** — Host and join games via URL or QR code
+- **Multiple Worlds** — Choose from 3 pre-built adventures or create your own
 - **Real-Time Sync** — All actions broadcast instantly via Web PubSub
+- **Ghost System** — Disconnected players become ghosts; others can loot their inventory
+- **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
 - **Explore & Interact** — Navigate rooms, examine items, collect treasures
 - **Collaborative Puzzles** — Solve challenges that require teamwork and item trading
 - **Inventory & Items** — Pick up, drop, use, and give items to other players
@@ -36,11 +41,12 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 
 ### Quick Start
 
-1. **Host a Game** — Enter your name and click "Host New Game"
-2. **Share the Link** — Invite friends via URL or QR code
-3. **Start When Ready** — Once everyone joins, click "Start Game"
-4. **Explore Together** — Use commands to move, interact, and solve puzzles
-5. **Collaborate** — Trade items, solve challenges, reach the treasure
+1. **Host a Game** — Enter your name and select a world
+2. **Create Game** — Click "Host New Game"
+3. **Share the Link** — Invite friends via URL or QR code
+4. **Start When Ready** — Once everyone joins, click "Start Game"
+5. **Explore Together** — Use commands to move, interact, and solve puzzles
+6. **Collaborate** — Trade items, solve challenges, reach the treasure
 
 ---
 
@@ -76,15 +82,33 @@ The game runs on Azure serverless infrastructure:
 4. Commands flow through Web PubSub → Azure Functions (game engine) → Table Storage
 5. Game state is broadcast back to all connected players in real time
 
+**Key API Endpoints:**
+
+- `/api/negotiate` — Web PubSub connection setup
+- `/api/gameHub` — Core game logic handler
+- `/api/worlds` — List available world definitions
+- `/api/health` — Service health check
+
 ---
 
-## The World: The Forgotten Castle
+## The Worlds
 
-The default world, **"The Forgotten Castle,"** is an immersive adventure with:
+Choose from three pre-built adventures, each with 10 rooms and unique puzzles:
 
-- **10 Rooms** — From the castle entrance to the hidden throne room and secret garden
-- **9 Items** — Torches, keys, shields, the legendary Dragon Crown, and more
-- **4 Puzzles** — Lock the dungeon, unlock the armory and throne room, discover the secret garden
+### 🏰 The Forgotten Castle
+- **Theme:** Medieval fantasy castle exploration
+- **Highlights:** 9 items, 4 puzzles, hidden throne room, secret garden
+- **File:** `default-world.json`
+
+### 🕰️ The Clockmaker's Mansion
+- **Theme:** Victorian steampunk escape room
+- **Highlights:** Time-based puzzles, intricate mechanisms, mysterious artifacts
+- **File:** `escape-room.json`
+
+### 🚀 The Derelict Station
+- **Theme:** Sci-fi space station survival
+- **Highlights:** Technical challenges, alien artifacts, zero-gravity navigation
+- **File:** `space-adventure.json`
 
 ### World Format
 
@@ -144,7 +168,7 @@ Worlds are defined as JSON files in `world/` with the following structure:
 npm test
 ```
 
-Tests use Jest with ESM support. Test files are in `tests/`.
+Tests use Jest with ESM support. Currently **274 tests passing** across 4 test suites. Test files are in `tests/`.
 
 ### Client
 
@@ -246,14 +270,24 @@ group-text-adventure/
 │   │   ├── game-engine.js      # Core game logic (pure functions)
 │   │   ├── command-parser.js   # Command parsing
 │   │   └── functions/          # Azure Function handlers
+│   │       ├── gameHub.js      # Main game logic handler
+│   │       ├── negotiate.js    # Web PubSub connection setup
+│   │       ├── health.js       # Health check endpoint
+│   │       └── worlds.js       # World list API
 │   └── package.json            # API dependencies
 ├── world/                      # Game world definitions
-│   └── default-world.json      # "The Forgotten Castle"
+│   ├── default-world.json      # "The Forgotten Castle"
+│   ├── escape-room.json        # "The Clockmaker's Mansion"
+│   └── space-adventure.json    # "The Derelict Station"
 ├── tests/                      # Test suite (Jest)
 ├── deploy/                     # Azure deployment scripts
 │   ├── deploy.ps1              # PowerShell deployment (Windows)
 │   ├── deploy.sh               # Bash deployment (Linux/macOS)
 │   └── README.md               # Detailed deployment guide
+├── infra/                      # Azure infrastructure as code
+├── .github/                    # GitHub workflows
+├── .squad/                     # AI team configuration
+├── azure.yaml                  # Azure Developer CLI config
 ├── package.json                # Root scripts
 ├── LICENSE                     # MIT License
 └── README.md                   # This file
