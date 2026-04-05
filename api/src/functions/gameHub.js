@@ -505,74 +505,81 @@ async function handleJoin(serviceClient, connectionId, data, context) {
 // ── Handler: Start Game ───────────────────────────────────────────────
 
 async function handleStartGame(serviceClient, connectionId, data, context) {
-  const found = await findPlayerByConnectionId(connectionId);
-  if (!found) {
+  try {
+    context.log(`[START] connectionId=${connectionId}`);
+
+    const found = await findPlayerByConnectionId(connectionId);
+    if (!found) {
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'error',
+        text: 'You need to join a game first.',
+      });
+      return { body: '', status: 200 };
+    }
+
+    const { gameId, playerId } = found;
+    context.log(`[START] gameId=${gameId} playerId=${playerId}`);
+
+    let session = await loadGameState(gameId);
+    if (!session) {
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'error',
+        text: 'Game session not found.',
+      });
+      return { body: '', status: 200 };
+    }
+
+    // Only the host can start the game
+    context.log(`[START] hostPlayerId=${session.hostPlayerId} match=${session.hostPlayerId === playerId}`);
+    if (session.hostPlayerId !== playerId) {
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'error',
+        text: 'Only the host can start the game.',
+      });
+      return { body: '', status: 200 };
+    }
+
+    if (session.started) {
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'error',
+        text: 'Game has already started.',
+      });
+      return { body: '', status: 200 };
+    }
+
+    // Mark the game as started and persist
+    session.started = true;
+    await saveGameState(gameId, session);
+
+    // Send personalized gameStart to each player via direct connection.
+    // Uses sendToConnection (like gameInfo) instead of group broadcast —
+    // more reliable and gives each player their own room view with correct
+    // "other players" list and ghosts.
+    const playerEntries = Object.entries(session.players);
+    context.log(`[START] sending gameStart to ${playerEntries.length} player(s)`);
+    for (const [pid, player] of playerEntries) {
+      if (player.connectionId) {
+        const view = getPlayerView(session, pid);
+        if (view) {
+          await sendToConnection(serviceClient, player.connectionId, {
+            type: 'gameStart',
+            room: view,
+          });
+        }
+      }
+    }
+
+    context.log(`[START] game started successfully`);
+    return { body: '', status: 200 };
+  } catch (err) {
+    context.error(`[START] Error starting game: ${err.message}`, err.stack);
+    // Notify the host so the error is visible (not silently swallowed)
     await sendToConnection(serviceClient, connectionId, {
       type: 'error',
-      text: 'You need to join a game first.',
-    });
-    return { body: '', status: 200 };
+      text: `Failed to start game: ${err.message}`,
+    }).catch(() => {});
+    return { body: '', status: 500 };
   }
-
-  const { gameId, playerId } = found;
-
-  let session = await loadGameState(gameId);
-  if (!session) {
-    await sendToConnection(serviceClient, connectionId, {
-      type: 'error',
-      text: 'Game session not found.',
-    });
-    return { body: '', status: 200 };
-  }
-
-  // Only the host can start the game
-  if (session.hostPlayerId !== playerId) {
-    await sendToConnection(serviceClient, connectionId, {
-      type: 'error',
-      text: 'Only the host can start the game.',
-    });
-    return { body: '', status: 200 };
-  }
-
-  if (session.started) {
-    await sendToConnection(serviceClient, connectionId, {
-      type: 'error',
-      text: 'Game has already started.',
-    });
-    return { body: '', status: 200 };
-  }
-
-  // Mark the game as started and persist
-  session.started = true;
-  await saveGameState(gameId, session);
-
-  // Build the initial room view for the starting room
-  const startRoomId = session.world.startRoom;
-  const room = session.world.rooms[startRoomId];
-  const roomState = session.roomStates[startRoomId];
-
-  const playerNames = Object.values(session.players).map((p) => p.name);
-  const itemNames = roomState.items.map((itemId) => {
-    const item = session.world.items[itemId];
-    return item ? item.name : itemId;
-  });
-
-  const roomView = {
-    name: room.name,
-    description: room.description,
-    exits: Object.keys(roomState.exits),
-    items: itemNames,
-    players: playerNames,
-    hazards: room.hazards || [],
-  };
-
-  // Broadcast gameStart to all players in the group
-  await sendToGame(serviceClient, gameId, {
-    type: 'gameStart',
-    room: roomView,
-  });
-
-  return { body: '', status: 200 };
 }
 
 // ── Handler: Command ──────────────────────────────────────────────────

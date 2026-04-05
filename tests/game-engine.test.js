@@ -1635,3 +1635,118 @@ describe('Ghost Persistence', () => {
     expect(getGhostsInRoom(session, 'room-b')).toContain("Bob's ghost");
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// Start Game Flow (getPlayerView for initial room)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Start Game — Initial Room View', () => {
+  test('getPlayerView returns valid room view for host in start room', () => {
+    const session = sessionWithPlayer('host1', 'Pat');
+    const view = getPlayerView(session, 'host1');
+    expect(view).not.toBeNull();
+    expect(view.name).toBe('Room A');
+    expect(view.description).toBe('Starting room.');
+    expect(view.exits).toEqual(expect.arrayContaining(['north', 'east']));
+    expect(view.items).toEqual(['Old Key']);
+    expect(view.players).toEqual([]);
+    expect(view.hazards).toEqual([]);
+    expect(view.ghosts).toEqual([]);
+  });
+
+  test('getPlayerView shows other players but not self', () => {
+    const session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    const view = getPlayerView(session, 'p1');
+    expect(view.players).toEqual(['Bob']);
+    expect(view.players).not.toContain('Alice');
+  });
+
+  test('getPlayerView for multiple players each see others', () => {
+    const session = sessionWithPlayers(
+      ['p1', 'Alice'], ['p2', 'Bob'], ['p3', 'Charlie']
+    );
+    const view1 = getPlayerView(session, 'p1');
+    const view2 = getPlayerView(session, 'p2');
+    const view3 = getPlayerView(session, 'p3');
+
+    expect(view1.players).toContain('Bob');
+    expect(view1.players).toContain('Charlie');
+    expect(view1.players).not.toContain('Alice');
+
+    expect(view2.players).toContain('Alice');
+    expect(view2.players).toContain('Charlie');
+    expect(view2.players).not.toContain('Bob');
+
+    expect(view3.players).toContain('Alice');
+    expect(view3.players).toContain('Bob');
+    expect(view3.players).not.toContain('Charlie');
+  });
+
+  test('getPlayerView includes ghosts in starting room', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+    const view = getPlayerView(session, 'p2');
+    expect(view.ghosts).toContain("Alice's ghost");
+  });
+
+  test('getPlayerView includes items from start room', () => {
+    const session = sessionWithPlayer('p1', 'Alice');
+    const view = getPlayerView(session, 'p1');
+    expect(view.items).toContain('Old Key');
+  });
+
+  test('getPlayerView returns null for non-existent player', () => {
+    const session = sessionWithPlayer('p1', 'Alice');
+    const view = getPlayerView(session, 'nonexistent');
+    expect(view).toBeNull();
+  });
+
+  test('session round-trip through JSON preserves all fields needed for startGame', () => {
+    let session = sessionWithPlayers(['host', 'Pat'], ['p2', 'Guest']);
+    session.hostPlayerId = 'host';
+    session.started = false;
+
+    // Simulate Table Storage round-trip
+    const restored = JSON.parse(JSON.stringify(session));
+
+    expect(restored.hostPlayerId).toBe('host');
+    expect(restored.started).toBe(false);
+    expect(restored.world.startRoom).toBe('room-a');
+    expect(restored.world.rooms['room-a']).toBeDefined();
+    expect(restored.roomStates['room-a']).toBeDefined();
+    expect(Object.keys(restored.players)).toHaveLength(2);
+  });
+
+  test('session without started field treats as not-started (undefined is falsy)', () => {
+    const session = sessionWithPlayer('host', 'Pat');
+    // createGameSession does NOT set session.started
+    expect(session.started).toBeUndefined();
+    expect(!session.started).toBe(true);
+  });
+
+  test('hostPlayerId survives JSON round-trip', () => {
+    const session = sessionWithPlayer('conn-123', 'Pat');
+    session.hostPlayerId = 'conn-123';
+    const restored = JSON.parse(JSON.stringify(session));
+    expect(restored.hostPlayerId).toBe('conn-123');
+    expect(restored.hostPlayerId === 'conn-123').toBe(true);
+  });
+
+  test('getPlayerView works after JSON round-trip', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    const restored = JSON.parse(JSON.stringify(session));
+    const view = getPlayerView(restored, 'p1');
+    expect(view).not.toBeNull();
+    expect(view.name).toBe('Room A');
+    expect(view.players).toContain('Bob');
+    expect(view.items).toContain('Old Key');
+  });
+
+  test('getPlayerView with ghosts after JSON round-trip', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+    const restored = JSON.parse(JSON.stringify(session));
+    const view = getPlayerView(restored, 'p2');
+    expect(view.ghosts).toContain("Alice's ghost");
+  });
+});
