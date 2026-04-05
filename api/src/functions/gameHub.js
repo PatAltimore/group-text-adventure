@@ -20,8 +20,6 @@ import {
   findGhostByName,
   findGhostByPlayerId,
   reconnectPlayer,
-  getExpiredGhosts,
-  finalizeGhost,
 } from '../game-engine.js';
 
 import {
@@ -37,9 +35,6 @@ import {
 
 const connectionString = process.env.WebPubSubConnectionString;
 const hubName = process.env.WebPubSubHubName || 'gameHub';
-
-// How long ghosts persist before fading and dropping items (30 minutes)
-const GHOST_TIMEOUT_MS = 30 * 60 * 1000;
 
 let tablesInitialized = false;
 
@@ -214,56 +209,6 @@ app.generic('gameHubMessage', {
   },
 });
 
-// ── Cleanup: Expired Ghosts ────────────────────────────────────────────
-
-/**
- * Check for ghosts whose timeout has expired.
- * Drops their items into their room, notifies nearby players, and removes them.
- * Called at the start of each event handler (Azure Functions has no timers).
- */
-async function cleanupExpiredGhosts(serviceClient, gameId, session) {
-  const expired = getExpiredGhosts(session, GHOST_TIMEOUT_MS);
-  if (expired.length === 0) return session;
-
-  for (const ghostName of expired) {
-    const { droppedItems, roomId, playerName } = finalizeGhost(
-      session,
-      ghostName
-    );
-
-    // Notify active players in the same room about the ghost fading
-    if (roomId) {
-      for (const [, activePlayer] of Object.entries(session.players)) {
-        if (activePlayer.room === roomId && activePlayer.connectionId) {
-          if (droppedItems.length > 0) {
-            const itemList = droppedItems.join(', ');
-            await sendToConnection(serviceClient, activePlayer.connectionId, {
-              type: 'message',
-              text: `${playerName}'s ghost fades away, scattering: ${itemList}.`,
-            });
-          } else {
-            await sendToConnection(serviceClient, activePlayer.connectionId, {
-              type: 'message',
-              text: `${playerName}'s ghost fades away.`,
-            });
-          }
-        }
-      }
-    }
-
-    // Broadcast that the player has truly left
-    if (playerName) {
-      await sendToGame(serviceClient, gameId, {
-        type: 'playerEvent',
-        event: 'left',
-        playerName,
-      });
-    }
-  }
-
-  return session;
-}
-
 // ── Disconnect Event ──────────────────────────────────────────────────
 
 app.generic('gameHubDisconnect', {
@@ -371,9 +316,6 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       hostConnectionId: connectionId,
     });
   }
-
-  // Cleanup expired ghosts before processing the join
-  session = await cleanupExpiredGhosts(serviceClient, gameId, session);
 
   // Reconnection: use playerId as PRIMARY matching key, rejoin flag as gate
   const isRejoin = data.rejoin === true;
@@ -583,9 +525,6 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
     return { body: '', status: 200 };
   }
 
-  // Cleanup expired ghosts
-  session = await cleanupExpiredGhosts(serviceClient, gameId, session);
-
   // Only the host can start the game
   if (session.hostPlayerId !== playerId) {
     await sendToConnection(serviceClient, connectionId, {
@@ -669,9 +608,6 @@ async function handleCommand(serviceClient, connectionId, data, context) {
     });
     return { body: '', status: 200 };
   }
-
-  // Cleanup expired ghosts
-  session = await cleanupExpiredGhosts(serviceClient, gameId, session);
 
   // Process the command
   const result = processCommand(session, playerId, commandText);

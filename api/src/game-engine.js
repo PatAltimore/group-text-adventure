@@ -233,48 +233,6 @@ export function reconnectPlayer(session, ghostName, newPlayerId) {
 }
 
 /**
- * Get names of all ghosts whose timeout has expired.
- * @param {object} session - Current game session.
- * @param {number} timeoutMs - Timeout in milliseconds.
- * @returns {string[]} Array of expired ghost name keys.
- */
-export function getExpiredGhosts(session, timeoutMs = 1800000) {
-  if (!session.ghosts) return [];
-  const now = Date.now();
-  return Object.entries(session.ghosts)
-    .filter(([, ghost]) => now - ghost.disconnectedAt >= timeoutMs)
-    .map(([name]) => name);
-}
-
-/**
- * Finalize a ghost: drop inventory into room, remove the ghost.
- * @param {object} session - Current game session.
- * @param {string} ghostName - The ghost's player name key.
- * @returns {{ session: object, droppedItems: string[], roomId: string|null, playerName: string|null }}
- */
-export function finalizeGhost(session, ghostName) {
-  if (!session.ghosts || !session.ghosts[ghostName]) {
-    return { session, droppedItems: [], roomId: null, playerName: null };
-  }
-
-  const ghost = session.ghosts[ghostName];
-  const droppedItems = [];
-  const roomState = session.roomStates[ghost.room];
-
-  for (const itemId of ghost.inventory) {
-    roomState.items.push(itemId);
-    const item = session.world.items[itemId];
-    droppedItems.push(item ? item.name : itemId);
-  }
-
-  const playerName = ghost.playerName;
-  const roomId = ghost.room;
-
-  delete session.ghosts[ghostName];
-  return { session, droppedItems, roomId, playerName };
-}
-
-/**
  * Get ghosts in a specific room.
  * @param {object} session - Current game session.
  * @param {string} roomId - Room to check.
@@ -608,18 +566,6 @@ function handleTakeFromGhost(session, playerId, cmd) {
     }
   }
 
-  // If ghost inventory is now empty, ghost fades away
-  if (ghost.inventory.length === 0) {
-    delete session.ghosts[found.ghostName];
-    const fadeMsg = { type: 'message', text: `${ghost.playerName}'s ghost fades away.` };
-    responses.push({ playerId, message: fadeMsg });
-    for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-      if (otherId !== playerId && otherPlayer.room === player.room) {
-        responses.push({ playerId: otherId, message: fadeMsg });
-      }
-    }
-  }
-
   return { session, responses };
 }
 
@@ -687,16 +633,6 @@ function handleLoot(session, playerId, cmd) {
           text: `${player.name} loots ${ghost.playerName}'s ghost, taking: ${itemList}.`,
         },
       });
-    }
-  }
-
-  // Ghost fades away (inventory is empty)
-  delete session.ghosts[found.ghostName];
-  const fadeMsg = { type: 'message', text: `${ghost.playerName}'s ghost fades away.` };
-  responses.push({ playerId, message: fadeMsg });
-  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-    if (otherId !== playerId && otherPlayer.room === player.room) {
-      responses.push({ playerId: otherId, message: fadeMsg });
     }
   }
 

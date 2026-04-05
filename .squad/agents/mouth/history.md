@@ -299,3 +299,20 @@
 - These logs appear in Azure Application Insights for live debugging.
 
 **All 274 tests pass.**
+
+### 2026-04-06 — Ghost Persistence: No Expiration, Loot Keeps Ghost
+
+**Three behavior changes to ghost system:**
+
+1. **Looting/taking from ghost no longer removes it.** `handleLoot` and `handleTakeFromGhost` transfer items but leave the ghost in the room with empty inventory. No more "fades away" messages on loot. Ghost remains visible as a placeholder for the disconnected player.
+
+2. **Reconnection uses ghost's room (verified).** `reconnectPlayer` already places the player in `ghost.room` — no code change needed. Even after looting empties inventory, reconnecting reclaims the ghost's position (empty inventory, ghost's room).
+
+3. **Ghost expiration removed entirely.** Deleted `getExpiredGhosts` and `finalizeGhost` from `game-engine.js`. Deleted `cleanupExpiredGhosts` function and all 3 call sites from `gameHub.js`. Removed `GHOST_TIMEOUT_MS` constant. Ghosts persist indefinitely until player reconnects.
+
+**Files changed:**
+- `api/src/game-engine.js` — removed `getExpiredGhosts`, `finalizeGhost` exports; removed ghost deletion from `handleLoot` and `handleTakeFromGhost`
+- `api/src/functions/gameHub.js` — removed `cleanupExpiredGhosts` function, 3 call sites, `GHOST_TIMEOUT_MS` constant, and imports
+- `tests/game-engine.test.js` — removed 13 expiration/finalize tests, updated 4 loot/take tests to expect ghost persistence, added 1 new visibility test
+
+**All 262 tests pass** (274 - 13 removed + 1 new).

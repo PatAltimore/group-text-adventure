@@ -57,3 +57,13 @@
   - Test framework: Jest with `@jest/globals`, ESM, `--experimental-vm-modules` (matches existing suite)
   - BFS pathfinding helper for navigating player to specific rooms during tests
   - All 172 existing tests still pass (204 total with skips)
+
+- **2026-04-02 — Ghost Persistence tests (17 new tests, all passing)**
+  - Added `describe('Ghost Persistence')` block to `/tests/game-engine.test.js`
+  - Covers 3 new behavior areas introduced by Mouth's engine changes:
+    1. **Looting keeps ghost** (7 tests): ghost persists after loot, inventory emptied, items transferred to looter, empty ghost visible in look, graceful double-loot, take-last-item keeps ghost
+    2. **Rejoin places in ghost room** (4 tests): reconnect uses ghost's room, ghost removed on reconnect, works after full loot (empty inv), works after partial loot
+    3. **Ghosts never expire** (6 tests): `getExpiredGhosts` and `finalizeGhost` no longer exported, old-timestamped ghosts persist, can still reconnect/loot old ghosts, multiple old ghosts coexist
+  - Also fixed broken imports (`getExpiredGhosts`, `finalizeGhost` removed from import) and updated stale test referencing removed functions
+  - Concurrent editing note: Mouth was simultaneously modifying `game-engine.test.js` to update existing ghost tests. Coordinated by only appending a new describe block.
+  - Total: 279 tests pass across 4 suites
