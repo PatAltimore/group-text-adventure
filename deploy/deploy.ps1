@@ -435,14 +435,27 @@ try {
 
     New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
 
-    # Copy API files (exclude node_modules, local.settings.json, package-lock.json is included)
-    $excludeItems = @("node_modules", "local.settings.json")
+    # Copy API files (exclude node_modules, local.settings.json, and world/ which
+    # is copied separately from the project root)
+    $excludeItems = @("node_modules", "local.settings.json", "world")
     Get-ChildItem $apiDir -Exclude $excludeItems | ForEach-Object {
         Copy-Item $_.FullName -Destination $stageDir -Recurse -Force
     }
 
-    # Copy world files into staging so deployed functions can find them
-    Copy-Item $worldDir -Destination (Join-Path $stageDir "world") -Recurse -Force
+    # Copy world files into staging so deployed functions can find them.
+    # Remove any pre-existing world dir (from the API copy) to avoid nesting.
+    $stageWorld = Join-Path $stageDir "world"
+    if (Test-Path $stageWorld) { Remove-Item $stageWorld -Recurse -Force }
+    Copy-Item $worldDir -Destination $stageWorld -Recurse -Force
+
+    # Fix import paths: in the repo, api/src/ is two levels below the world/
+    # directory (../../world/), but in the deployment zip src/ is only one level
+    # below (../world/). Patch the staged copy so the import resolves correctly.
+    $gameEnginePath = Join-Path $stageDir "src\game-engine.js"
+    $geContent = [System.IO.File]::ReadAllText($gameEnginePath)
+    $geContent = $geContent.Replace("'../../world/validate-world.js'", "'../world/validate-world.js'")
+    [System.IO.File]::WriteAllText($gameEnginePath, $geContent)
+    Write-Info "Patched game-engine.js import paths for deployment structure."
 
     # Install production dependencies
     Write-Info "Installing production dependencies..."
