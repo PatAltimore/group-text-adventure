@@ -365,20 +365,29 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   // Cleanup expired ghosts before processing the join
   session = await cleanupExpiredGhosts(serviceClient, gameId, session);
 
-  // Check for reconnection — does a ghost exist with this name?
-  const ghostMatch = findGhostByName(session, playerName);
+  // Only attempt reconnection if the client signals this is a rejoin
+  // (i.e., auto-rejoin from localStorage). Without this flag a new player
+  // who picks the same name would incorrectly reclaim the ghost.
+  const isRejoin = data.rejoin === true;
 
-  // Also check for an active player with the same name but a different
-  // connectionId. This handles the race where the player refreshes and the
-  // new join arrives before the server processes the old disconnect.
+  let ghostMatch = null;
   let activeMatch = null;
-  if (!ghostMatch) {
-    const entry = Object.entries(session.players).find(
-      ([id, p]) =>
-        p.name.toLowerCase() === playerName.toLowerCase() && id !== playerId
-    );
-    if (entry) {
-      activeMatch = { oldPlayerId: entry[0], oldPlayer: entry[1] };
+
+  if (isRejoin) {
+    // Check for reconnection — does a ghost exist with this name?
+    ghostMatch = findGhostByName(session, playerName);
+
+    // Also check for an active player with the same name but a different
+    // connectionId. This handles the race where the player refreshes and the
+    // new join arrives before the server processes the old disconnect.
+    if (!ghostMatch) {
+      const entry = Object.entries(session.players).find(
+        ([id, p]) =>
+          p.name.toLowerCase() === playerName.toLowerCase() && id !== playerId
+      );
+      if (entry) {
+        activeMatch = { oldPlayerId: entry[0], oldPlayer: entry[1] };
+      }
     }
   }
 

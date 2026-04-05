@@ -5,7 +5,7 @@ import { parseCommand } from './command-parser.js';
 
 // Funny adjectives for resolving duplicate player names
 const SILLY_ADJECTIVES = [
-  'Sparkly', 'Grumpy', 'Wobbly', 'Sneaky', 'Fluffy',
+  'Evil','Sparkly', 'Grumpy', 'Wobbly', 'Sneaky', 'Fluffy',
   'Cranky', 'Dizzy', 'Goofy', 'Jumpy', 'Sassy',
   'Spooky', 'Wacky', 'Bouncy', 'Clumsy', 'Giggly',
   'Sleepy', 'Snazzy', 'Zippy', 'Funky', 'Quirky',
@@ -22,6 +22,12 @@ export function resolvePlayerName(session, playerName) {
   const existingNames = new Set(
     Object.values(session.players).map((p) => p.name.toLowerCase())
   );
+  // Also treat ghost names as taken so new players don't collide
+  if (session.ghosts) {
+    for (const ghost of Object.values(session.ghosts)) {
+      existingNames.add(ghost.playerName.toLowerCase());
+    }
+  }
 
   if (!existingNames.has(playerName.toLowerCase())) {
     return { name: playerName, wasChanged: false, originalName: playerName };

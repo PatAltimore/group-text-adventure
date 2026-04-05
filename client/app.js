@@ -270,6 +270,9 @@
         if (state.isHost && state.worldId) {
           joinMsg.worldId = state.worldId;
         }
+        if (state.pendingRejoin) {
+          joinMsg.rejoin = true;
+        }
         sendMessage(joinMsg);
         saveSession();
       });

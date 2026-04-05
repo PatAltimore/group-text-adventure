@@ -12,6 +12,7 @@ import {
   getExpiredGhosts,
   finalizeGhost,
   getGhostsInRoom,
+  resolvePlayerName,
 } from '../api/src/game-engine.js';
 import { createRequire } from 'module';
 
@@ -1288,5 +1289,83 @@ describe('Reconnection Edge Cases', () => {
       expect(item).toHaveProperty('name');
       expect(typeof item.name).toBe('string');
     });
+  });
+});
+
+describe('Duplicate Name vs Reconnection', () => {
+  function sessionWithPlayers(...specs) {
+    const world = loadWorld(testWorldData);
+    let session = createGameSession(world);
+    session.started = true;
+    for (const [id, name] of specs) {
+      session = addPlayer(session, id, name);
+    }
+    return session;
+  }
+
+  test('resolvePlayerName treats ghost name as taken', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session = disconnectPlayer(session, 'p1');
+    expect(session.ghosts['Alice']).toBeDefined();
+
+    // A new player picking "Alice" should get an adjective, not the bare name
+    const resolved = resolvePlayerName(session, 'Alice');
+    expect(resolved.wasChanged).toBe(true);
+    expect(resolved.name).not.toBe('Alice');
+    expect(resolved.originalName).toBe('Alice');
+  });
+
+  test('resolvePlayerName treats ghost name as taken (case-insensitive)', () => {
+    let session = sessionWithPlayers(['p1', 'Alice']);
+    session = disconnectPlayer(session, 'p1');
+
+    const resolved = resolvePlayerName(session, 'alice');
+    expect(resolved.wasChanged).toBe(true);
+    expect(resolved.originalName).toBe('alice');
+  });
+
+  test('resolvePlayerName still renames when active player has same name', () => {
+    const session = sessionWithPlayers(['p1', 'Alice']);
+    const resolved = resolvePlayerName(session, 'Alice');
+    expect(resolved.wasChanged).toBe(true);
+    expect(resolved.name).not.toBe('Alice');
+  });
+
+  test('resolvePlayerName allows name when no ghost or active player matches', () => {
+    let session = sessionWithPlayers(['p1', 'Alice']);
+    const resolved = resolvePlayerName(session, 'Bob');
+    expect(resolved.wasChanged).toBe(false);
+    expect(resolved.name).toBe('Bob');
+  });
+
+  test('reconnectPlayer still works for legitimate rejoin with ghost', () => {
+    let session = sessionWithPlayers(['p1', 'Alice']);
+    ({ session } = processCommand(session, 'p1', 'take old key'));
+    session = disconnectPlayer(session, 'p1');
+    expect(session.ghosts['Alice']).toBeDefined();
+
+    // Legitimate rejoin — reconnectPlayer reclaims the ghost
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    expect(session.ghosts['Alice']).toBeUndefined();
+    expect(session.players['p1-new']).toBeDefined();
+    expect(session.players['p1-new'].name).toBe('Alice');
+    expect(session.players['p1-new'].inventory).toContain('key');
+  });
+
+  test('new player with ghost-matching name gets adjective, ghost untouched', () => {
+    let session = sessionWithPlayers(['p1', 'Alice']);
+    session = disconnectPlayer(session, 'p1');
+
+    // New player picks "Alice" — should NOT reclaim the ghost
+    const resolved = resolvePlayerName(session, 'Alice');
+    expect(resolved.wasChanged).toBe(true);
+
+    // Add the new player with the resolved name
+    session = addPlayer(session, 'p2', resolved.name);
+    // Ghost should still exist
+    expect(session.ghosts['Alice']).toBeDefined();
+    // New player has the adjective name
+    expect(session.players['p2'].name).toBe(resolved.name);
+    expect(session.players['p2'].name).not.toBe('Alice');
   });
 });

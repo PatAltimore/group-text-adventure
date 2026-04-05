@@ -192,6 +192,16 @@
 
 ### 2026-04-05 — Fix: Player List Missing Previously-Joined Players
 
+### 2026-04-05 — Fix: Ghost Reclamation Bug (Reconnect vs Duplicate Name)
+
+- **Bug:** When a new player joined with the same name as an existing ghost, the server treated it as a reconnection instead of a duplicate name. The ghost was reclaimed by a stranger instead of giving them an adjective-prefixed name.
+- **Root cause:** `handleJoin` in `gameHub.js` matched ghost names unconditionally — no way to distinguish "returning player" from "new player who picked the same name."
+- **Fix (3 files):**
+  1. **`client/app.js`:** Added `rejoin: true` flag to the join message when `state.pendingRejoin` is set (auto-rejoin from localStorage). This is a protocol-level change, not a UI change.
+  2. **`gameHub.js`:** Ghost reclamation and active-player takeover are now gated behind `data.rejoin === true`. Without the flag, the join falls through to normal duplicate-name resolution.
+  3. **`game-engine.js`:** `resolvePlayerName` now includes ghost names in the "taken" set, so new players picking a ghost's name get an adjective prefix.
+- **Tests:** 6 new tests in `Duplicate Name vs Reconnection` describe block. All 263 tests pass.
+
 - **Bug:** When a player joined the lobby, their player list only showed players who joined *after* them. Players who joined before were missing because those `playerEvent` broadcasts were sent before the new player's WebSocket connected.
 - **Fix:** Added a `players` array (all current player names) to the `gameInfo` message in `handleJoin`. Now every new joiner gets a complete snapshot of who's already in the game. Also added `players` to the disconnect `gameInfo` broadcast for consistency.
 - **Message contract:** `gameInfo.players` = `string[]` of player names. `gameInfo.playerCount` kept for backward compat.
