@@ -147,3 +147,19 @@
     - Missing/undefined multiplier falls back to 1 via `|| 1` operator
   - Coordinated with Mouth: tests written in parallel with implementation; all tests passed immediately on first run
   - Total: 418 tests (all passing)
+
+- **2026-04-07 — Displaced Items Display tests (6 new tests, all passing)**
+  - Added `describe('displaced items')` block to `/tests/game-engine.test.js` (lines 3158-3339)
+  - Tests verify new feature where `getPlayerView` marks items as `displaced: true` when not in their original room
+  - Feature implementation: `getPlayerView` checks if item ID is in `world.rooms[roomId].items` array; native items get `displaced: false` + `roomText`, displaced items get `displaced: true` + no `roomText`
+  - 6 tests cover:
+    1. **Native items not displaced**: Items in original room have `displaced: false` and include `roomText`
+    2. **Dropped items marked displaced**: Items manually pushed to non-native room have `displaced: true` and no `roomText`
+    3. **Native and displaced coexist**: Room with both native and displaced items returns correct flags for each
+    4. **Death scenario**: Item picked up from room A, player dies in room B, respawn drops item to B floor — item is `displaced: true` in room B
+    5. **Item returned home**: Item picked up and dropped back in original room has `displaced: false` and `roomText` restored
+    6. **Unknown items graceful**: Non-existent item IDs (not in `world.items`) return with name=itemId, `displaced: true`, no `roomText`
+  - Created helper world with 2 rooms (room-a with torch, room-b with sword) and helper session functions following existing test patterns
+  - All displaced item tests use `getPlayerView(session, playerId)` and validate `.items` array properties
+  - Coordinated with Mouth who implemented the feature in parallel; tests written based on agreed API shape
+  - Total: 424 tests (all passing)

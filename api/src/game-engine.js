@@ -374,12 +374,15 @@ export function getPlayerView(session, playerId) {
     .filter(([id]) => id !== playerId && session.players[id].room === player.room)
     .map(([, p]) => p.name);
 
+  const worldRoomItems = room.items || [];
   const items = roomState.items.map((itemId) => {
     const item = session.world.items[itemId];
-    if (!item) return { name: itemId, roomText: `A ${itemId} lies here.` };
+    const isNative = worldRoomItems.includes(itemId);
+    if (!item) return { name: itemId, displaced: !isNative };
     return {
       name: item.name,
-      roomText: item.roomText || `A ${item.name.toLowerCase()} lies here.`,
+      roomText: isNative ? (item.roomText || `A ${item.name.toLowerCase()} lies here.`) : undefined,
+      displaced: !isNative,
     };
   });
 

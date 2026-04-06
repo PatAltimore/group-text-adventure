@@ -330,3 +330,18 @@
   - Change event: Sends { type: 'setHazardMultiplier', multiplier } when host changes selection (line 917)
   - Start game: Included hazardMultiplier parameter in startGame message (line 943)
 - **Pattern:** Mirrored existing death timeout implementation for consistency — same visibility logic, same event pattern, same message structure
+
+### 2025-07-17 — Displaced Items Rendering
+
+- **Change:** Modified enderRoomMessage in client/app.js to handle displaced: true/false flag on items, showing dropped/foreign items separately from native room items
+- **Item splitting:** Items now filtered into 
+ativeItems (displaced absent/false) and displacedItems (displaced: true)
+- **Native items:** roomText woven into room description paragraph as before; listed in "Items:" section with green names
+- **Displaced items:** 
+  - NOT woven into room description (won't have roomText anyway)
+  - Displayed in separate italic line after room description: "Some dropped items are here: Flashlight, Old book."
+  - Item names still use .room-item-name class (green) so players know they're gettable
+  - NOT included in the "Items:" section
+- **CSS addition:** Added .room-dropped-items style in client/style.css — italic, dimmed color (#b0b0b0), subtle top margin (4px) to distinguish from main room description
+- **Approach:** Same DOM-building pattern as existing code (createElement, createTextNode, appendChild)
+- **Backend integration:** Backend (Mouth) adds displaced flag; frontend distinguishes presentation

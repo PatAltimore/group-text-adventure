@@ -432,3 +432,18 @@ Two features implemented:
 - High = 2.0 (doubles world file probability)
 
 **All 346 tests** still passing (no breaking changes to existing behavior).
+
+### 2026-04-07 — Displaced Item Detection in getPlayerView
+
+**Feature:** When items drop in a different room (e.g., player dies and inventory drops in current room), the getPlayerView function now marks those items as **displaced** so the client knows not to use the narrative roomText.
+
+**Implementation (api/src/game-engine.js, ~line 377-387):**
+- Added worldRoomItems = room.items || [] to get the room's native item list from world definition
+- Modified items mapping to check isNative = worldRoomItems.includes(itemId)
+- Items native to the room: displaced: false, include roomText
+- Items NOT native (dropped/moved): displaced: true, roomText is undefined
+- The displacement check applies to all items, including those without world definitions
+
+**Why this matters:** Items have roomText descriptions written for their original location ("The rusty key sits beneath a loose floorboard"). If that key ends up in a different room via death/drop/give, the narrative doesn't fit. The displaced flag lets the client decide how to render the item — use roomText for native items, fallback to generic text for displaced items.
+
+**All 418 tests pass** with no breaking changes.

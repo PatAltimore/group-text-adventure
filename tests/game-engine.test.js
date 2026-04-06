@@ -3152,3 +3152,186 @@ describe('hazard multiplier', () => {
     expect(result.responses).toEqual([]);
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// 26. Displaced Items (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('displaced items', () => {
+  // Helper: create a world with items in specific rooms
+  function displacedWorld() {
+    return loadWorld({
+      name: 'Displaced Items Test World',
+      startRoom: 'room-a',
+      rooms: {
+        'room-a': {
+          name: 'Room A',
+          description: 'First room with a torch.',
+          exits: { north: 'room-b' },
+          items: ['torch'],
+          hazards: [],
+        },
+        'room-b': {
+          name: 'Room B',
+          description: 'Second room with a sword.',
+          exits: { south: 'room-a' },
+          items: ['sword'],
+          hazards: [],
+        },
+      },
+      items: {
+        torch: {
+          name: 'Torch',
+          description: 'A flickering torch.',
+          roomText: 'A torch flickers on the wall.',
+          pickupText: 'You take the torch.',
+          portable: true,
+        },
+        sword: {
+          name: 'Sword',
+          description: 'A sharp blade.',
+          roomText: 'A sword lies here.',
+          pickupText: 'You grab the sword.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  function displacedSession() {
+    const world = displacedWorld();
+    return createGameSession(world);
+  }
+
+  function displacedSessionWithPlayer(id = 'p1', name = 'Alice') {
+    const session = displacedSession();
+    return addPlayer(session, id, name);
+  }
+
+  test('items in their original room are not displaced', () => {
+    const session = displacedSessionWithPlayer('p1', 'Alice');
+    const view = getPlayerView(session, 'p1');
+
+    expect(view.items).toHaveLength(1);
+    const torchItem = view.items[0];
+    expect(torchItem.name).toBe('Torch');
+    expect(torchItem.displaced).toBe(false);
+    expect(torchItem.roomText).toBe('A torch flickers on the wall.');
+  });
+
+  test('items dropped in a different room are marked displaced', () => {
+    let session = displacedSessionWithPlayer('p1', 'Alice');
+    
+    // Manually push sword into room-a (where it doesn't belong)
+    session.roomStates['room-a'].items.push('sword');
+
+    const view = getPlayerView(session, 'p1');
+    
+    // Should have torch (native) and sword (displaced)
+    expect(view.items).toHaveLength(2);
+    
+    const torchItem = view.items.find(i => i.name === 'Torch');
+    expect(torchItem.displaced).toBe(false);
+    expect(torchItem.roomText).toBeDefined();
+    
+    const swordItem = view.items.find(i => i.name === 'Sword');
+    expect(swordItem.displaced).toBe(true);
+    expect(swordItem.roomText).toBeUndefined();
+  });
+
+  test('native and displaced items coexist in same room', () => {
+    let session = displacedSessionWithPlayer('p1', 'Alice');
+    
+    // Add sword (non-native) to room-a which already has torch (native)
+    session.roomStates['room-a'].items.push('sword');
+
+    const view = getPlayerView(session, 'p1');
+    
+    expect(view.items).toHaveLength(2);
+    
+    // Torch is native to room-a
+    const torchItem = view.items.find(i => i.name === 'Torch');
+    expect(torchItem).toBeDefined();
+    expect(torchItem.displaced).toBe(false);
+    expect(torchItem.roomText).toBe('A torch flickers on the wall.');
+    
+    // Sword is not native to room-a
+    const swordItem = view.items.find(i => i.name === 'Sword');
+    expect(swordItem).toBeDefined();
+    expect(swordItem.displaced).toBe(true);
+    expect(swordItem.roomText).toBeUndefined();
+  });
+
+  test('item dropped after death is displaced in death room', () => {
+    let session = displacedSessionWithPlayer('p1', 'Alice');
+    
+    // Pick up torch from room-a
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    expect(session.players['p1'].inventory).toContain('torch');
+    
+    // Move to room-b
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    expect(session.players['p1'].room).toBe('room-b');
+    
+    // Kill player (torch drops to room-b)
+    session = killPlayer(session, 'p1');
+    expect(session.ghosts['Alice']).toBeDefined();
+    expect(session.ghosts['Alice'].inventory).toContain('torch');
+    
+    // Respawn player (drops ghost items to room floor)
+    session = respawnPlayer(session, 'Alice', 'p1-respawn');
+    expect(session.players['p1-respawn']).toBeDefined();
+    expect(session.roomStates['room-b'].items).toContain('torch');
+    
+    // Check view in room-b — torch is displaced (belongs to room-a)
+    const view = getPlayerView(session, 'p1-respawn');
+    
+    const torchItem = view.items.find(i => i.name === 'Torch');
+    expect(torchItem).toBeDefined();
+    expect(torchItem.displaced).toBe(true);
+    expect(torchItem.roomText).toBeUndefined();
+    
+    // Sword should be native to room-b
+    const swordItem = view.items.find(i => i.name === 'Sword');
+    expect(swordItem).toBeDefined();
+    expect(swordItem.displaced).toBe(false);
+    expect(swordItem.roomText).toBe('A sword lies here.');
+  });
+
+  test('item in its original room after being dropped there is not displaced', () => {
+    let session = displacedSessionWithPlayer('p1', 'Alice');
+    
+    // Pick up torch from room-a
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    expect(session.players['p1'].inventory).toContain('torch');
+    
+    // Drop it back in room-a
+    ({ session } = processCommand(session, 'p1', 'drop torch'));
+    expect(session.roomStates['room-a'].items).toContain('torch');
+    
+    // Check view — torch should not be displaced (it's back home)
+    const view = getPlayerView(session, 'p1');
+    
+    const torchItem = view.items.find(i => i.name === 'Torch');
+    expect(torchItem).toBeDefined();
+    expect(torchItem.displaced).toBe(false);
+    expect(torchItem.roomText).toBe('A torch flickers on the wall.');
+  });
+
+  test('unknown items (not in world.items) are handled gracefully', () => {
+    let session = displacedSessionWithPlayer('p1', 'Alice');
+    
+    // Push a fake item ID that doesn't exist in world.items
+    session.roomStates['room-a'].items.push('mystery-item');
+    
+    const view = getPlayerView(session, 'p1');
+    
+    // Find the mystery item
+    const mysteryItem = view.items.find(i => i.name === 'mystery-item');
+    expect(mysteryItem).toBeDefined();
+    expect(mysteryItem.name).toBe('mystery-item');
+    expect(mysteryItem.displaced).toBe(true); // Not in room's native items list
+    expect(mysteryItem.roomText).toBeUndefined();
+  });
+});

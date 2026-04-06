@@ -516,10 +516,14 @@
     name.textContent = room.name || 'Unknown Room';
     container.appendChild(name);
 
-    // Build room description with item roomText woven in
+    // Split items into native and displaced
+    const nativeItems = (room.items || []).filter(item => !item.displaced);
+    const displacedItems = (room.items || []).filter(item => item.displaced);
+
+    // Build room description with native item roomText woven in
     let fullDescription = room.description || '';
-    if (room.items && room.items.length) {
-      room.items.forEach((item) => {
+    if (nativeItems.length) {
+      nativeItems.forEach((item) => {
         if (typeof item === 'object' && item.roomText) {
           fullDescription += ' ' + item.roomText;
         }
@@ -532,7 +536,26 @@
       container.appendChild(desc);
     }
 
-    if (room.items && room.items.length) {
+    // Show displaced items separately
+    if (displacedItems.length) {
+      const droppedDiv = document.createElement('div');
+      droppedDiv.className = 'room-dropped-items';
+      droppedDiv.appendChild(document.createTextNode('Some dropped items are here: '));
+      displacedItems.forEach((item, i) => {
+        const itemName = typeof item === 'string' ? item : (item.name || 'Unknown');
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'room-item-name';
+        nameSpan.textContent = itemName;
+        droppedDiv.appendChild(nameSpan);
+        if (i < displacedItems.length - 1) {
+          droppedDiv.appendChild(document.createTextNode(', '));
+        }
+      });
+      droppedDiv.appendChild(document.createTextNode('.'));
+      container.appendChild(droppedDiv);
+    }
+
+    if (nativeItems.length) {
       const section = document.createElement('div');
       section.className = 'room-section';
       const lbl = document.createElement('span');
@@ -541,13 +564,13 @@
       section.appendChild(lbl);
       const itemsContainer = document.createElement('span');
       itemsContainer.className = 'room-section-value room-items';
-      room.items.forEach((item, i) => {
+      nativeItems.forEach((item, i) => {
         const itemName = typeof item === 'string' ? item : (item.name || item.id || 'Unknown');
         const nameSpan = document.createElement('span');
         nameSpan.className = 'room-item-name';
         nameSpan.textContent = itemName;
         itemsContainer.appendChild(nameSpan);
-        if (i < room.items.length - 1) {
+        if (i < nativeItems.length - 1) {
           itemsContainer.appendChild(document.createTextNode(', '));
         }
       });
