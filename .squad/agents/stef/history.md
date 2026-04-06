@@ -186,3 +186,27 @@
   - Coordinated with Mouth who implemented the feature in parallel; all tests passed immediately on first run
   - Test patterns: Use test world with rooms (room-a, room-b), create sessions with `sessionWithPlayers`, place players in different rooms, check responses for prefix/no-prefix, verify message delivery
   - Total: 431 tests (all passing across 5 suites)
+
+- **2026-04-07 — Ghost Item Drop Behavior tests (29 tests updated, 6 new tests, all passing)**
+  - **Context:** Mouth changed ghost behavior so `killPlayer` and `disconnectPlayer` immediately drop all inventory items into `roomStates[room].items`. Ghosts now have empty `inventory: []` from creation. `respawnPlayer` no longer needs to drop items (ghost inventory already empty).
+  - **Updated tests:** Fixed 29 existing tests that expected ghosts to have items in inventory:
+    - `disconnectPlayer` tests: Updated to expect empty ghost inventory and items in room
+    - `reconnectPlayer` tests: Updated to expect empty inventory on reconnection, items remain in room
+    - `killPlayer` tests: Updated to expect empty ghost inventory, items in room
+    - Ghost looting tests: Updated to expect loot command returns "nothing to loot" message since ghosts have no inventory
+    - Ghost persistence tests: Updated to reflect that ghosts always have empty inventory
+    - Marked 7 tests as obsolete (using `test.skip`) where behavior fundamentally changed
+  - **Added new tests** in `describe('ghost item drop')` block at end of file (6 tests):
+    1. **`killPlayer drops all inventory items into the room`** — Player has 2 items. Kill them. Verify ghost.inventory is `[]`, roomStates[room].items contains both items.
+    2. **`killPlayer with empty inventory creates ghost with no items to drop`** — Player has no items. Kill them. Verify ghost.inventory is `[]`, roomStates items unchanged.
+    3. **`items dropped on death are in the room for other players to get`** — Player A has items, dies. Player B in same room can see items in getPlayerView and pick them up.
+    4. **`respawnPlayer gives empty inventory to revived player`** — Kill player, respawn them. Verify respawned player has empty inventory `[]`, items still in room.
+    5. **`items dropped on death are marked as displaced`** — Player picks up item from room-c, moves to room-b, dies. Item drops to room-b. getPlayerView shows `displaced: true` (not native to room-b).
+    6. **`loot on ghost with no inventory gives appropriate message`** — Kill player, another player tries to loot the ghost. Gets message "nothing to loot", no crash.
+  - **Test count:** 437 tests total (430 pass, 7 skipped)
+  - **Key discoveries:**
+    - `disconnectPlayer` and `killPlayer` both drop items immediately: `for (const itemId of player.inventory) { roomState.items.push(itemId); }`
+    - Ghosts created with `inventory: []` (empty array)
+    - `respawnPlayer` gives empty inventory to revived player: `inventory: []`
+    - Loot command handles empty ghost inventory: `if (ghost.inventory.length === 0) { return "nothing to loot"; }`
+  - Total: 437 tests (430 pass, 7 skipped, all 5 suites passing)

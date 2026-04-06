@@ -488,3 +488,30 @@ Two features implemented:
   - Coordinated with Data (frontend) for UI dropdown and Stef (tester) for test coverage
   - Total: 431 tests (all passing across 5 suites)
 
+### 2026-04-06 — Immediate Inventory Drop on Ghost Creation
+
+**Change:** Modified ghost creation behavior so inventory items drop to room floor immediately when a player becomes a ghost (death OR disconnect).
+
+**Implementation:**
+- Updated `killPlayer()` in game-engine.js (~line 271): Drops all player inventory to room floor before creating ghost with empty inventory
+- Updated `disconnectPlayer()` in game-engine.js (~line 190): Same pattern — drops inventory to room, creates empty ghost
+- Updated `respawnPlayer()` in game-engine.js (~line 298): Removed item-dropping logic (items already dropped on ghost creation)
+- Updated `revivePlayer()` in game-engine.js (~line 331): Changed to restore player with empty inventory (not ghost.inventory)
+- Updated JSDoc comments to reflect new behavior
+
+**Behavior Changes:**
+- Ghost inventory is ALWAYS empty after creation (both death and disconnect)
+- Items appear on room floor immediately when ghost is created
+- Players use `get <item>` to pick up items from the floor (not `loot`)
+- `loot` command still works but will always report "ghost has nothing to loot" (existing handler already handles empty inventory gracefully at line ~810)
+
+**Test Impact:**
+- 29 tests now fail because they expect OLD behavior (ghosts holding inventory)
+- Tests need updating to reflect new behavior:
+  - Ghost creation tests should expect empty ghost.inventory
+  - Loot tests should expect items in roomState.items instead of ghost.inventory
+  - Reconnection tests should check room floor for items, not ghost.inventory
+- Existing code correctly handles edge cases (loot command gracefully handles empty ghosts)
+
+**Why:** Per user request — items should drop immediately when ghost created, not held until respawn/loot. Aligns with natural death mechanics (corpse drops loot immediately) and prevents inventory loss bugs on disconnect.
+

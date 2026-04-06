@@ -181,8 +181,8 @@ export function removePlayer(session, playerId) {
 // ── Ghost System (Disconnect Persistence) ─────────────────────────────
 
 /**
- * Mark a player as disconnected — creates a ghost entity in the room.
- * The ghost holds the player's inventory and is visible to other players.
+ * Mark a player as disconnected — creates a ghost entity in the room and drops
+ * their inventory immediately. The ghost is visible to other players.
  * @param {object} session - Current game session.
  * @param {string} playerId - Player to mark as disconnected.
  * @returns {object} Updated session.
@@ -192,11 +192,20 @@ export function disconnectPlayer(session, playerId) {
   if (!player) return session;
 
   if (!session.ghosts) session.ghosts = {};
+  
+  // Drop all inventory items into the room immediately
+  const roomState = session.roomStates[player.room];
+  if (roomState && player.inventory.length > 0) {
+    for (const itemId of player.inventory) {
+      roomState.items.push(itemId);
+    }
+  }
+  
   session.ghosts[player.name] = {
     playerName: player.name,
     playerId: player.playerId || null,
     room: player.room,
-    inventory: [...player.inventory],
+    inventory: [],
     disconnectedAt: Date.now(),
   };
 
@@ -237,7 +246,8 @@ export function findGhostByPlayerId(session, playerId) {
 }
 
 /**
- * Reconnect a player via their ghost — restores room + remaining inventory.
+ * Reconnect a player via their ghost — restores room with empty inventory.
+ * Items were already dropped when the ghost was created.
  * Preserves the original playerId so the identity survives across reconnections.
  * @param {object} session - Current game session.
  * @param {string} ghostName - The ghost's player name key.
@@ -254,7 +264,7 @@ export function reconnectPlayer(session, ghostName, newPlayerId) {
     name: ghost.playerName,
     playerId: ghost.playerId || null,
     room: ghost.room,
-    inventory: [...ghost.inventory],
+    inventory: [],
   };
 
   delete session.ghosts[ghostName];
@@ -262,8 +272,8 @@ export function reconnectPlayer(session, ghostName, newPlayerId) {
 }
 
 /**
- * Kill a player — creates a death ghost in the room holding their inventory.
- * Other players can loot the ghost. The player can revive after a timeout.
+ * Kill a player — creates a death ghost in the room and drops their inventory
+ * immediately. The player can revive after a timeout.
  * @param {object} session - Current game session.
  * @param {string} playerId - Player to kill.
  * @returns {object} Updated session.
@@ -273,11 +283,20 @@ export function killPlayer(session, playerId) {
   if (!player) return session;
 
   if (!session.ghosts) session.ghosts = {};
+  
+  // Drop all inventory items into the room immediately
+  const roomState = session.roomStates[player.room];
+  if (roomState && player.inventory.length > 0) {
+    for (const itemId of player.inventory) {
+      roomState.items.push(itemId);
+    }
+  }
+  
   session.ghosts[player.name] = {
     playerName: player.name,
     playerId: player.playerId || null,
     room: player.room,
-    inventory: [...player.inventory],
+    inventory: [],
     disconnectedAt: Date.now(),
     diedAt: Date.now(),
     isDeath: true,
@@ -288,8 +307,8 @@ export function killPlayer(session, playerId) {
 }
 
 /**
- * Respawn a dead player — removes their death ghost, drops remaining ghost
- * items into the room, and recreates the player with empty inventory.
+ * Respawn a dead player — removes their death ghost and recreates the player
+ * with empty inventory. Items were already dropped when the ghost was created.
  * @param {object} session - Current game session.
  * @param {string} ghostName - The ghost's player name key.
  * @param {string} newPlayerId - The new connection-based player ID.
@@ -301,13 +320,7 @@ export function respawnPlayer(session, ghostName, newPlayerId) {
   const ghost = session.ghosts[ghostName];
   if (!ghost.isDeath) return session;
 
-  // Drop remaining ghost items into the room
-  const roomState = session.roomStates[ghost.room];
-  if (roomState) {
-    for (const itemId of ghost.inventory) {
-      roomState.items.push(itemId);
-    }
-  }
+  // Items were already dropped when the ghost was created — no need to drop again
 
   session.players[newPlayerId] = {
     name: ghost.playerName,
@@ -322,7 +335,7 @@ export function respawnPlayer(session, ghostName, newPlayerId) {
 
 /**
  * Revive a player from death — restores the player from their ghost
- * with remaining inventory. The ghost is removed on revive.
+ * with empty inventory. Items were already dropped when the ghost was created.
  * @param {object} session - Current game session.
  * @param {string} ghostName - The ghost's player name key.
  * @param {string} newPlayerId - The new connection-based player ID.
@@ -338,7 +351,7 @@ export function revivePlayer(session, ghostName, newPlayerId) {
     name: ghost.playerName,
     playerId: ghost.playerId || null,
     room: ghost.room,
-    inventory: [...ghost.inventory],
+    inventory: [],
   };
 
   delete session.ghosts[ghostName];
