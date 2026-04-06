@@ -933,3 +933,30 @@ Added 17 acceptance tests in new `describe('Ghost Persistence')` block in `tests
 ### Convention
 
 Ghost persistence tests live in the `Ghost Persistence` describe block (section 17). Future ghost behavior changes should add tests there, not in older `Ghost Looting` or `Reconnection Edge Cases` blocks.
+
+---
+
+## 36. Hazards Check on Every Gameplay Command
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-06  
+**Status:** Implemented
+
+### Decision
+
+Extracted hazard death logic from `handleGo` into a standalone `checkHazards(session, playerId)` function, and wired it into `processCommand` so hazards fire after every gameplay command — not just room entry.
+
+### What
+
+- **Gameplay commands that trigger hazard checks:** go, look, take, loot, drop, use, give, say, yell
+- **Meta commands that skip hazard checks:** help, inventory, unknown/invalid commands
+- `checkHazards` is exported from `game-engine.js` for direct test access
+- Ghost/dead players are skipped automatically (checks `session.ghosts[name].isDeath`)
+- For `go`: player has already moved, so the new room's hazards are checked. For all other commands: current room hazards are checked. Both correct.
+
+### Impact
+
+- Modified: `api/src/game-engine.js` (new `checkHazards` export, refactored `processCommand`, removed hazard block from `handleGo`)
+- Modified: `tests/game-engine.test.js` (updated test to reflect new behavior, added `checkHazards` to imports)
+- **411 tests pass**
+- Deployed to Azure; all endpoints verified operational
