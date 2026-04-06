@@ -352,3 +352,17 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Frontend (this task):** Split renderRoomMessage to handle displaced items separately. Native items woven into description; displaced items shown as italic "Some dropped items are here: X, Y."
 - **Stef (QA):** Wrote 6 new displaced item tests covering native/displaced/mixed states, death scenario, item return, graceful unknown items. All 424 tests pass.
 - **Scribe:** Orchestration logs created (3), session log created (1), decision merged (1), team histories updated (3 agents).
+
+### 2026-04-07 — Say Scope Setting + Help Text for All Lobby Settings
+
+- **Say Scope dropdown added:** New lobby host control (`#say-scope-select`) with "Room Only" and "Global" options. Placed after Hazard Danger, before Start Adventure button.
+- **Help text for ALL settings:** Added `.setting-help` paragraphs under each label explaining what the setting does:
+  - Respawn Timer: "How long a player stays dead before respawning in the same room."
+  - Hazard Danger: "Adjusts hazard lethality. Low = safer, High = deadlier. Medium uses the world default."
+  - Say Scope: "Room Only: only players in the same room hear you. Global: all players hear what you say."
+- **CSS styling:** `.setting-help` uses color `#999`, 0.8em size, italic, subtle margins (2px top, 6px bottom) for clear visual hierarchy.
+- **Integration:** `startHost()` wires up `setSayScope` change event. `startGame` message includes `sayScope` parameter alongside `deathTimeout` and `hazardMultiplier`.
+- **DOM references:** Added `sayScopeGroup` and `sayScopeSelect` to `els` object following existing pattern.
+- **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
+- **Status:** Frontend complete. Backend (Mouth) will consume `sayScope` parameter in `startGame` handler.
+

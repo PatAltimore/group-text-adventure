@@ -170,3 +170,19 @@
 - **Data (Frontend):** Split renderRoomMessage to handle displaced items separately. Native items woven into description; displaced items shown as italic "Some dropped items are here: X, Y."
 - **Stef (this task):** Wrote 6 new displaced item tests covering native/displaced/mixed states, death scenario, item return, graceful unknown items. All 424 tests pass.
 - **Scribe:** Orchestration logs created (3), session log created (1), decision merged (1), team histories updated (3 agents).
+
+- **2026-04-07 — Say Scope Configuration tests (7 new tests, all passing)**
+  - Added `describe('say scope')` block to `/tests/game-engine.test.js` (lines 3340-3463)
+  - Tests verify host-configurable say command scope: 'room' (default, current behavior) or 'global' (all players hear)
+  - Feature implementation: `createGameSession` returns `sayScope: 'room'` in session object. `handleSay` checks scope: 'room' sends only to same-room players, 'global' sends to all players with `[from Room Name]` prefix for different-room players.
+  - 7 tests cover:
+    1. **createGameSession includes sayScope default** — verifies `session.sayScope === 'room'`
+    2. **room scope: say only reaches players in same room** — Two players in different rooms, sayScope='room', only same-room player gets message
+    3. **room scope: say reaches all players in same room** — Two players in same room, sayScope='room', both get message without prefix
+    4. **global scope: say reaches players in different rooms** — Two players in different rooms, sayScope='global', both get message, different-room player gets `[from Room Name]` prefix
+    5. **global scope: same-room players don't get room prefix** — Two players in same room, sayScope='global', no prefix for same-room player
+    6. **global scope: message includes room name in prefix** — Verifies `[from Room A]` format in prefix
+    7. **missing sayScope defaults to room behavior** — Delete sayScope field, confirms fallback to room-only behavior
+  - Coordinated with Mouth who implemented the feature in parallel; all tests passed immediately on first run
+  - Test patterns: Use test world with rooms (room-a, room-b), create sessions with `sessionWithPlayers`, place players in different rooms, check responses for prefix/no-prefix, verify message delivery
+  - Total: 431 tests (all passing across 5 suites)

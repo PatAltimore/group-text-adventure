@@ -105,6 +105,10 @@
     // Lobby hazard multiplier (host-only)
     hazardMultiplierGroup: $('#hazard-multiplier-group'),
     hazardMultiplierSelect: $('#hazard-multiplier-select'),
+
+    // Lobby say scope (host-only)
+    sayScopeGroup: $('#say-scope-group'),
+    sayScopeSelect: $('#say-scope-select'),
   };
 
   // --- Screen Management ---
@@ -942,6 +946,15 @@
       });
     }
 
+    // Show say scope control for host
+    if (els.sayScopeGroup) {
+      els.sayScopeGroup.classList.remove('hidden');
+      els.sayScopeSelect.addEventListener('change', () => {
+        const scope = els.sayScopeSelect.value;
+        sendMessage({ type: 'setSayScope', scope });
+      });
+    }
+
     els.lobbyUrl.value = joinUrl;
     renderQrCode(joinUrl);
     state.players = [state.playerName];
@@ -964,7 +977,8 @@
     els.btnStartGame.addEventListener('click', () => {
       const deathTimeout = els.deathTimeoutSelect ? parseInt(els.deathTimeoutSelect.value, 10) : 30;
       const hazardMultiplier = els.hazardMultiplierSelect ? parseFloat(els.hazardMultiplierSelect.value) : 1;
-      sendMessage({ type: 'startGame', deathTimeout, hazardMultiplier });
+      const sayScope = els.sayScopeSelect ? els.sayScopeSelect.value : 'room';
+      sendMessage({ type: 'startGame', deathTimeout, hazardMultiplier, sayScope });
       els.btnStartGame.disabled = true;
       els.btnStartGame.textContent = 'Starting…';
     });

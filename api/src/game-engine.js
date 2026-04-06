@@ -132,6 +132,7 @@ export function createGameSession(world) {
     players: {},
     deathTimeout: 30,
     hazardMultiplier: 1.0,
+    sayScope: 'room',
     createdAt: new Date().toISOString(),
   };
 }
@@ -1088,12 +1089,16 @@ function handleSay(session, playerId, cmd) {
     return { session, responses };
   }
 
-  // Send to everyone in the same room
+  const isGlobal = session.sayScope === 'global';
   for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-    if (otherId !== playerId && otherPlayer.room === player.room) {
+    if (otherId === playerId) continue;
+    if (isGlobal || otherPlayer.room === player.room) {
+      const prefix = isGlobal && otherPlayer.room !== player.room
+        ? `[from ${session.world.rooms[player.room]?.name || player.room}] `
+        : '';
       responses.push({
         playerId: otherId,
-        message: { type: 'message', text: `${player.name} says: "${cmd.noun}"` },
+        message: { type: 'message', text: `${prefix}${player.name} says: "${cmd.noun}"` },
       });
     }
   }

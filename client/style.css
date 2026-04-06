@@ -1013,6 +1013,14 @@ html, body {
   white-space: nowrap;
 }
 
+.setting-help {
+  color: #999;
+  font-size: 0.8em;
+  margin: 2px 0 6px 0;
+  font-style: italic;
+  line-height: 1.3;
+}
+
 #death-timeout-select {
   padding: 8px 32px 8px 12px;
   font-size: 14px;

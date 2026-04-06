@@ -210,6 +210,10 @@ app.generic('gameHubMessage', {
       return await handleSetHazardMultiplier(serviceClient, connectionId, data, context);
     }
 
+    if (messageType === 'setSayScope') {
+      return await handleSetSayScope(serviceClient, connectionId, data, context);
+    }
+
     if (messageType === 'revive') {
       return await handleRevive(serviceClient, connectionId, data, context);
     }
@@ -577,6 +581,11 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
       session.hazardMultiplier = valid.includes(mult) ? mult : 1;
     }
 
+    // Apply say scope if provided by host
+    if (data.sayScope) {
+      session.sayScope = ['room', 'global'].includes(data.sayScope) ? data.sayScope : 'room';
+    }
+
     await saveGameState(gameId, session);
 
     // Send personalized gameStart to each player via direct connection.
@@ -594,6 +603,7 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
             room: view,
             deathTimeout: session.deathTimeout || 30,
             hazardMultiplier: session.hazardMultiplier || 1,
+            sayScope: session.sayScope || 'room',
           });
         }
       }
@@ -794,6 +804,64 @@ async function handleSetHazardMultiplier(serviceClient, connectionId, data, cont
   await sendToConnection(serviceClient, connectionId, {
     type: 'message',
     text: `Hazard danger set to ${levelText}.`,
+  });
+
+  return { body: '', status: 200 };
+}
+
+// ── Handler: Set Say Scope ────────────────────────────────────────────
+
+async function handleSetSayScope(serviceClient, connectionId, data, context) {
+  const found = await findPlayerByConnectionId(connectionId);
+  if (!found) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'You need to join a game first.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const { gameId, playerId } = found;
+  let session = await loadGameState(gameId);
+  if (!session) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Game session not found.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.hostPlayerId !== playerId) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Only the host can set the say scope.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.started) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Cannot change say scope after the game has started.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const scope = data.scope;
+  if (scope !== 'room' && scope !== 'global') {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Invalid say scope. Use "room" or "global".',
+    });
+    return { body: '', status: 200 };
+  }
+
+  session.sayScope = scope;
+  await saveGameState(gameId, session);
+
+  await sendToConnection(serviceClient, connectionId, {
+    type: 'message',
+    text: `Say scope set to ${scope === 'global' ? 'Global (all players)' : 'Room only'}.`,
   });
 
   return { body: '', status: 200 };

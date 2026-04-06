@@ -113,6 +113,7 @@
 
       <div id="death-timeout-group" class="death-timeout-group hidden">
         <label for="death-timeout-select" class="death-timeout-label">⏱ Respawn Timer</label>
+        <p class="setting-help">How long a player stays dead before respawning in the same room.</p>
         <select id="death-timeout-select" aria-label="Death respawn timeout">
           <option value="15">15 seconds</option>
           <option value="20">20 seconds</option>
@@ -124,10 +125,20 @@
 
       <div id="hazard-multiplier-group" class="death-timeout-group hidden">
         <label for="hazard-multiplier-select" class="death-timeout-label">☠️ Hazard Danger</label>
+        <p class="setting-help">Adjusts hazard lethality. Low = safer, High = deadlier. Medium uses the world default.</p>
         <select id="hazard-multiplier-select" aria-label="Hazard danger level">
           <option value="0.5">Low</option>
           <option value="1" selected>Medium</option>
           <option value="2">High</option>
+        </select>
+      </div>
+
+      <div id="say-scope-group" class="death-timeout-group hidden">
+        <label for="say-scope-select" class="death-timeout-label">💬 Say Scope</label>
+        <p class="setting-help">Room Only: only players in the same room hear you. Global: all players hear what you say.</p>
+        <select id="say-scope-select" aria-label="Say command scope">
+          <option value="room" selected>Room Only</option>
+          <option value="global">Global</option>
         </select>
       </div>
 

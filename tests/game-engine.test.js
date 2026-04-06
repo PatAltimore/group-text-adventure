@@ -3335,3 +3335,126 @@ describe('displaced items', () => {
     expect(mysteryItem.roomText).toBeUndefined();
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// Say Scope
+// ════════════════════════════════════════════════════════════════════════
+
+describe('say scope', () => {
+  test('createGameSession includes sayScope default', () => {
+    const session = freshSession();
+    expect(session.sayScope).toBe('room');
+  });
+
+  test('room scope: say only reaches players in same room', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    // Move Bob to a different room
+    session.players['p2'].room = 'room-b';
+    session.sayScope = 'room';
+
+    const { responses } = processCommand(session, 'p1', 'say hello');
+
+    // Alice gets confirmation
+    const aliceMsg = responses.find(r => r.playerId === 'p1');
+    expect(aliceMsg).toBeDefined();
+    expect(aliceMsg.message.text).toContain('You say:');
+
+    // Bob gets nothing
+    const bobMsg = responses.find(r => r.playerId === 'p2');
+    expect(bobMsg).toBeUndefined();
+  });
+
+  test('room scope: say reaches all players in same room', () => {
+    const session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session.sayScope = 'room';
+
+    const { responses } = processCommand(session, 'p1', 'say hello everyone');
+
+    // Alice gets confirmation
+    const aliceMsg = responses.find(r => r.playerId === 'p1');
+    expect(aliceMsg).toBeDefined();
+    expect(aliceMsg.message.text).toContain('You say:');
+
+    // Bob gets message without prefix
+    const bobMsg = responses.find(r => r.playerId === 'p2');
+    expect(bobMsg).toBeDefined();
+    expect(bobMsg.message.text).toContain('Alice says:');
+    expect(bobMsg.message.text).toContain('hello everyone');
+    expect(bobMsg.message.text).not.toContain('[from');
+  });
+
+  test('global scope: say reaches players in different rooms', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    // Move Bob to a different room
+    session.players['p2'].room = 'room-b';
+    session.sayScope = 'global';
+
+    const { responses } = processCommand(session, 'p1', 'say hello from afar');
+
+    // Alice gets confirmation
+    const aliceMsg = responses.find(r => r.playerId === 'p1');
+    expect(aliceMsg).toBeDefined();
+    expect(aliceMsg.message.text).toContain('You say:');
+
+    // Bob gets message WITH room prefix
+    const bobMsg = responses.find(r => r.playerId === 'p2');
+    expect(bobMsg).toBeDefined();
+    expect(bobMsg.message.text).toContain('[from');
+    expect(bobMsg.message.text).toContain('Alice says:');
+    expect(bobMsg.message.text).toContain('hello from afar');
+  });
+
+  test('global scope: same-room players don\'t get room prefix', () => {
+    const session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    session.sayScope = 'global';
+
+    const { responses } = processCommand(session, 'p1', 'say hey buddy');
+
+    // Alice gets confirmation
+    const aliceMsg = responses.find(r => r.playerId === 'p1');
+    expect(aliceMsg).toBeDefined();
+    expect(aliceMsg.message.text).toContain('You say:');
+
+    // Bob gets message WITHOUT prefix
+    const bobMsg = responses.find(r => r.playerId === 'p2');
+    expect(bobMsg).toBeDefined();
+    expect(bobMsg.message.text).toContain('Alice says:');
+    expect(bobMsg.message.text).toContain('hey buddy');
+    expect(bobMsg.message.text).not.toContain('[from');
+  });
+
+  test('global scope: message includes room name in prefix', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    // Alice stays in room-a (Room A), Bob moves to room-b
+    session.players['p2'].room = 'room-b';
+    session.sayScope = 'global';
+
+    const { responses } = processCommand(session, 'p1', 'say greetings');
+
+    // Bob gets message with room name
+    const bobMsg = responses.find(r => r.playerId === 'p2');
+    expect(bobMsg).toBeDefined();
+    expect(bobMsg.message.text).toContain('[from Room A]');
+    expect(bobMsg.message.text).toContain('Alice says:');
+    expect(bobMsg.message.text).toContain('greetings');
+  });
+
+  test('missing sayScope defaults to room behavior', () => {
+    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    // Move Bob to a different room
+    session.players['p2'].room = 'room-b';
+    // Delete sayScope to test default behavior
+    delete session.sayScope;
+
+    const { responses } = processCommand(session, 'p1', 'say test message');
+
+    // Alice gets confirmation
+    const aliceMsg = responses.find(r => r.playerId === 'p1');
+    expect(aliceMsg).toBeDefined();
+    expect(aliceMsg.message.text).toContain('You say:');
+
+    // Bob gets nothing (room-only behavior)
+    const bobMsg = responses.find(r => r.playerId === 'p2');
+    expect(bobMsg).toBeUndefined();
+  });
+});

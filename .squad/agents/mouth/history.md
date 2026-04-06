@@ -447,3 +447,31 @@ Two features implemented:
 **Why this matters:** Items have roomText descriptions written for their original location ("The rusty key sits beneath a loose floorboard"). If that key ends up in a different room via death/drop/give, the narrative doesn't fit. The displaced flag lets the client decide how to render the item — use roomText for native items, fallback to generic text for displaced items.
 
 **All 418 tests pass** with no breaking changes.
+
+## Learnings
+
+### 2025-02-03 — Say Command Scope Configurable
+**Feature:** Hosts can now configure the "say" command scope from the lobby before game start. Default is "Room" (current behavior: say only reaches players in the same room), or "Global" (say reaches all players).
+
+**Backend changes:**
+
+1. **api/src/game-engine.js:**
+   - createGameSession: Added sayScope: 'room' to session initialization (line ~135)
+   - handleSay: Modified to check session.sayScope:
+     * When scope is 'room' (default): Sends message only to players in same room (original behavior)
+     * When scope is 'global': Sends message to ALL players
+     * Global messages to players in OTHER rooms include prefix: [from Room Name] Player says: "..."
+     * Players in SAME room see message without prefix (even in global mode)
+     * Fallback to room ID if room name not found
+
+2. **api/src/functions/gameHub.js:**
+   - Added handleSetSayScope handler (follows handleSetHazardMultiplier pattern):
+     * Validates connection, game session, host-only permission
+     * Only allows changes before game start
+     * Accepts data.scope ('room' or 'global'), rejects invalid values
+     * Confirmation message: "Say scope set to Global (all players)" or "Say scope set to Room only"
+   - Added routing for setSayScope message type (line ~212)
+   - Modified handleStartGame to accept optional data.sayScope and apply it at start (line ~580)
+   - Added sayScope to gameStart message payload sent to clients (line ~600)
+
+**All 430 tests passing** (7 new say scope tests added, 1 pre-existing world-selection test still failing unrelated to this change).
