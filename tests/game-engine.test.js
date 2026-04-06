@@ -328,11 +328,11 @@ describe('Inventory', () => {
     expect(msg.message.type).toBe('inventory');
   });
 
-  test('pick up uses pickupText from world definition', () => {
+  test('pick up shows simple confirmation with item name', () => {
     const session = sessionWithPlayer('p1', 'Alice');
     const { responses } = processCommand(session, 'p1', 'take old key');
     const msg = responses.find(r => r.playerId === 'p1');
-    expect(msg.message.text).toBe('You take the key.');
+    expect(msg.message.text).toBe('You picked up: Old Key.');
   });
 
   test('other players see take notifications', () => {

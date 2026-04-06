@@ -46,7 +46,7 @@ function script:az {
 
 # -- Derive resource names ----------------------------------------------
 $appNameLower = $AppName.ToLower()
-$storageName = "${appNameLower}store" -replace '[^a-z0-9]', ''
+$storageName = "${appNameLower}game" -replace '[^a-z0-9]', ''
 if ($storageName.Length -gt 24) { $storageName = $storageName.Substring(0, 24) }
 $functionAppName = "${appNameLower}-func"
 $webPubSubName = "${appNameLower}-wps"

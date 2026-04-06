@@ -708,7 +708,7 @@ function handleTake(session, playerId, cmd) {
   roomState.items.splice(idx, 1);
   player.inventory.push(itemId);
 
-  const text = item.pickupText || `You pick up the ${item.name}.`;
+  const text = `You picked up: ${item.name}.`;
   responses.push({ playerId, message: { type: 'message', text } });
 
   // Notify others
