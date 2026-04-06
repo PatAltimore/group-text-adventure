@@ -302,3 +302,11 @@
 - **Without roomText (fallback):** Shows "You see **{name}** here." with name wrapped in colored span
 - **Approach:** Used DOM methods (createElement, createTextNode, appendChild) — no innerHTML — consistent with the codebase's existing DOM-building patterns
 - **Death display:** No client change needed — `msg.deathText` already read correctly at line 447; backend fix is separate
+
+### 2025-07-17 — Item Display Rework in Room Descriptions
+- **Change:** Refactored `renderRoomMessage` in `client/app.js` to weave item `roomText` into the room description paragraph and simplify the Items section
+- **Room description:** Now concatenates `room.description` + each item's `roomText` into one flowing narrative paragraph (e.g., "A cavernous hall... A rusty torch leans against the archway. A silver coin glints in a crack.")
+- **Items section:** Simplified from per-item rows with descriptions/brackets to a comma-separated list of green item names only (e.g., "Items: torch, silver-coin")
+- **Items container:** Changed from `<div>` to `<span>` for inline comma-separated layout
+- **Backward compat:** String-only items (no `roomText`) still display correctly — just listed by name in the Items section
+- **All 411 tests pass** unchanged

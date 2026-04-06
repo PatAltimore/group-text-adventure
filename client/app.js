@@ -512,10 +512,19 @@
     name.textContent = room.name || 'Unknown Room';
     container.appendChild(name);
 
-    if (room.description) {
+    // Build room description with item roomText woven in
+    let fullDescription = room.description || '';
+    if (room.items && room.items.length) {
+      room.items.forEach((item) => {
+        if (typeof item === 'object' && item.roomText) {
+          fullDescription += ' ' + item.roomText;
+        }
+      });
+    }
+    if (fullDescription) {
       const desc = document.createElement('div');
       desc.className = 'room-desc';
-      desc.textContent = room.description;
+      desc.textContent = fullDescription.trim();
       container.appendChild(desc);
     }
 
@@ -526,25 +535,17 @@
       lbl.className = 'room-section-label';
       lbl.textContent = 'Items';
       section.appendChild(lbl);
-      const itemsContainer = document.createElement('div');
+      const itemsContainer = document.createElement('span');
       itemsContainer.className = 'room-section-value room-items';
-      room.items.forEach((item) => {
-        const row = document.createElement('div');
-        row.className = 'room-item-desc';
+      room.items.forEach((item, i) => {
         const itemName = typeof item === 'string' ? item : (item.name || item.id || 'Unknown');
         const nameSpan = document.createElement('span');
         nameSpan.className = 'room-item-name';
-        if (typeof item === 'object' && item.roomText) {
-          row.appendChild(document.createTextNode(item.roomText + ' '));
-          nameSpan.textContent = `[${itemName}]`;
-          row.appendChild(nameSpan);
-        } else {
-          row.appendChild(document.createTextNode('You see '));
-          nameSpan.textContent = itemName;
-          row.appendChild(nameSpan);
-          row.appendChild(document.createTextNode(' here.'));
+        nameSpan.textContent = itemName;
+        itemsContainer.appendChild(nameSpan);
+        if (i < room.items.length - 1) {
+          itemsContainer.appendChild(document.createTextNode(', '));
         }
-        itemsContainer.appendChild(row);
       });
       section.appendChild(itemsContainer);
       container.appendChild(section);
