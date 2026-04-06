@@ -82,6 +82,14 @@
 - **Clipboard helper reuse:** `copyToClipboard()` is now used by share button, overlay copy button, and lobby copy URL button — all three had the same vulnerability.
 - **All 150 tests pass** unchanged.
 
+### 2026-04-06 — Hazard Multiplier Feature (Frontend)
+
+- **Added Hazard Danger dropdown to lobby host screen:** Low/Medium/High options
+- **UI placement:** Lobby host setup panel alongside other pre-game settings
+- **Integration:** Communicates with backend `setHazardMultiplier` handler
+- **Files:** `client/index.html`, `client/app.js`
+- **Status:** All frontend components complete, synced with backend multiplier support
+
 ### 2026-04-04 — Cross-Team: Mouth's Azure Developer CLI (azd) Template
 
 **From Mouth (Backend Dev):**

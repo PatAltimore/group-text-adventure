@@ -89,6 +89,15 @@
 - **Game URL:** https://patcastlestore.z5.web.core.windows.net
 - **Region:** `westus2` -- must pass `-Location westus2`.
 
+### 2026-04-06 — Hazard Multiplier Feature (Backend)
+
+- **Added `hazardMultiplier` to session state:** Initialized in `startGame`, defaults to 1.0
+- **`checkHazards()` integration:** Multiplier applied to hazard trigger probability on every command
+- **New handler:** `setHazardMultiplier` message handler for client to update setting (validates 0.5–2.0 range)
+- **Files:** `api/src/game-engine.js`, `api/src/functions/gameHub.js`
+- **Integration:** Works with frontend dropdown (Low/Medium/High) and Stef's test suite
+- **Status:** All backend components complete, tested
+
 ### 2026-04-04 — Azure Developer CLI (azd) Template
 
 - **Created azd template** alongside existing `deploy/deploy.ps1`. Existing script untouched.
