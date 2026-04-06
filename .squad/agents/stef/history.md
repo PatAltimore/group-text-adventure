@@ -93,3 +93,13 @@
   - 12 of Mouth's own tests fail due to API mismatch: `revivePlayer` doesn't exist (actual: `respawnPlayer`), `diedAt` not set on ghost, `deathTimeout` not in death message, `roomText` not in getPlayerView output, old tests still expect string items instead of objects
   - Key API discoveries: `killPlayer(session, playerId)` takes 2 args (not 3), returns session (not `{session, responses}`). `respawnPlayer(session, ghostName, newPlayerId)` drops ghost items to room floor and gives empty inventory. Ghost has `isDeath: true` flag. `getPlayerView` items now `[{id, name, description}]`. `loadWorld` normalizes string hazards to `{description, probability: 0, deathText: ''}`. Hazard check in handleGo uses `Math.random() < hazard.probability`.
   - Total: 396 tests across 5 suites (384 pass, 12 fail from Mouth's stale tests)
+
+- **2026-04-07 — Death message field name fix tests (deathText not text)**
+  - Updated `/tests/game-engine.test.js` — 4 test assertions changed/added:
+    1. `hazard triggers death on room entry` (line ~2075): Changed `deathMsg.message.text` → `deathMsg.message.deathText`, added `not.toHaveProperty('text')` guard
+    2. `sends death message to the player (via handleGo hazard trigger)` (Stef block): Added assertions for `deathText === 'You choke on toxic gas and die!'` and `not.toHaveProperty('text')`
+    3. `probability 1 always kills` (Stef block): Added `deathText === 'You choke on toxic gas and die!'` and `not.toHaveProperty('text')`
+    4. `multiple hazards checked independently` (Stef block): Added `deathText === 'You fall into the spikes!'` and `not.toHaveProperty('text')`
+  - All 4 changes verify: (a) death response uses `deathText` field name, (b) value matches hazard's configured deathText, (c) old `text` field is NOT present
+  - Confirmed: Item description tests already cover `getPlayerView` returning items as objects with `name` property — no changes needed
+  - Total: 397 tests passing across 5 suites, 0 failures

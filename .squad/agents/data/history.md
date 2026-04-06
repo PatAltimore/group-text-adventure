@@ -295,3 +295,10 @@
 - **State additions:** `isDead`, `deathTimer` in client state
 - **New DOM elements:** `death-overlay`, `death-timeout-group` (lobby)
 - **All 346 tests pass** unchanged.
+
+### 2026-04-04 — Item Name Coloring in Room Descriptions
+- **Change:** `renderRoomMessage` in `client/app.js` now highlights item names using the existing `.room-item-name` CSS class (green, bold)
+- **With roomText:** Shows description text followed by `[itemName]` in green (e.g., "A rusty torch lies against the wall. [torch]")
+- **Without roomText (fallback):** Shows "You see **{name}** here." with name wrapped in colored span
+- **Approach:** Used DOM methods (createElement, createTextNode, appendChild) — no innerHTML — consistent with the codebase's existing DOM-building patterns
+- **Death display:** No client change needed — `msg.deathText` already read correctly at line 447; backend fix is separate

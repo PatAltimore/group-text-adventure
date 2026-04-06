@@ -523,7 +523,7 @@ function handleGo(session, playerId, cmd) {
         playerId,
         message: {
           type: 'death',
-          text: h.deathText,
+          deathText: h.deathText,
           deathTimeout: session.deathTimeout || 30,
         },
       });

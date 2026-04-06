@@ -531,12 +531,18 @@
       room.items.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'room-item-desc';
+        const itemName = typeof item === 'string' ? item : (item.name || item.id || 'Unknown');
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'room-item-name';
         if (typeof item === 'object' && item.roomText) {
-          row.textContent = item.roomText;
+          row.appendChild(document.createTextNode(item.roomText + ' '));
+          nameSpan.textContent = `[${itemName}]`;
+          row.appendChild(nameSpan);
         } else {
-          // Backward compat: plain string or object without roomText
-          const name = typeof item === 'string' ? item : (item.name || item.id || 'Unknown');
-          row.textContent = `You see ${name} here.`;
+          row.appendChild(document.createTextNode('You see '));
+          nameSpan.textContent = itemName;
+          row.appendChild(nameSpan);
+          row.appendChild(document.createTextNode(' here.'));
         }
         itemsContainer.appendChild(row);
       });

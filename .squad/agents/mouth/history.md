@@ -377,3 +377,21 @@ Two features implemented:
 - **Tests:** 11 new tests in "Start Game — Initial Room View" block: getPlayerView correctness for startGame, JSON round-trip integrity, hostPlayerId persistence, ghost visibility, multi-player views.
 - **All 346 tests pass** (335 existing + 11 new).
 - **Key lesson:** Never rely solely on Web PubSub group broadcast for critical state transitions. `sendToConnection` (direct to known connectionId) is more reliable. Group broadcast is fire-and-forget with no delivery guarantee to the caller. Always pair critical broadcasts with error handling and client-visible error paths.
+
+### 2026-04-06 — Deployment to Azure (Latest Code)
+
+- **Deployed latest code** via `deploy/deploy.ps1 -appName patcastle -Location westus2`.
+- **Deploy attempt 1 failed** (transient), retry succeeded automatically.
+- **Stop/start cycle** performed by deploy script after zip deploy.
+- **Verification results (all pass):**
+  - `/api/health` → 200, status `ok`, runtime v20.20.1, 4 functions loaded (negotiate, gameHub, health, worlds), webPubSub + tableStorage configured.
+  - `/api/worlds` → 200, returns 3 worlds (default-world, escape-room, space-adventure).
+  - `/api/negotiate?gameId=test` → 200, returns valid `wss://` URL with JWT.
+- **Client files uploaded** to `$web` container (7 files including config.json).
+- **Static site verified** live at `https://patcastlestore.z5.web.core.windows.net`.
+- **All 346 tests** remain passing (no code changes, deploy only).
+### 2026-04-05 — Death Message Field Name Fix
+
+**Bug:** In `api/src/game-engine.js` (line ~526), the hazard death response sent `text: h.deathText` but the client (`app.js`) reads `msg.deathText`. This meant the death description never reached the player — they always saw the fallback "You have died." message.
+
+**Fix:** Changed `text: h.deathText` to `deathText: h.deathText` in the death message payload. One-line change, no other fields affected. The `playerEvent` messages sent to other players already used the correct field name.

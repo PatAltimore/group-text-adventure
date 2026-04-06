@@ -2072,7 +2072,9 @@ describe('Hazard Death System', () => {
       (r) => r.playerId === 'p1' && r.message.type === 'death'
     );
     expect(deathMsg).toBeDefined();
-    expect(deathMsg.message.text).toBe('You succumb to the poisonous gas!');
+    expect(deathMsg.message.deathText).toBe('You succumb to the poisonous gas!');
+    // Ensure the field is named 'deathText', not 'text'
+    expect(deathMsg.message).not.toHaveProperty('text');
 
     // Ghost should be created
     expect(afterMove.ghosts?.['Alice']).toBeDefined();
@@ -2367,6 +2369,9 @@ describe('Hazard Death System (Stef)', () => {
         r => r.playerId === 'p1' && (r.message.type === 'death' || r.message.deathText)
       );
       expect(deathMsg).toBeDefined();
+      // Death response must use 'deathText' field (not 'text') so client can read it
+      expect(deathMsg.message.deathText).toBe('You choke on toxic gas and die!');
+      expect(deathMsg.message).not.toHaveProperty('text');
     });
 
     it('notifies other players in the room on death', () => {
@@ -2471,6 +2476,9 @@ describe('Hazard Death System (Stef)', () => {
         r => r.playerId === 'p1' && (r.message.type === 'death' || r.message.deathText)
       );
       expect(death).toBeDefined();
+      // Verify deathText field name and value match the hazard config
+      expect(death.message.deathText).toBe('You choke on toxic gas and die!');
+      expect(death.message).not.toHaveProperty('text');
     });
 
     test('hazard check only happens on room entry (not look, inventory, help)', () => {
@@ -2550,6 +2558,9 @@ describe('Hazard Death System (Stef)', () => {
         r => r.playerId === 'p1' && (r.message.type === 'death' || r.message.deathText)
       );
       expect(death).toBeDefined();
+      // The killing hazard is the spikes (prob 1), verify its deathText
+      expect(death.message.deathText).toBe('You fall into the spikes!');
+      expect(death.message).not.toHaveProperty('text');
     });
   });
 
