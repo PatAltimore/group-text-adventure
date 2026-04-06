@@ -1,6 +1,38 @@
 # Team Decisions
 
-## 1. Backend Architecture — Stateless Functions + Pure Game Engine
+## 1. Item Name Coloring — Frontend Display Enhancement
+
+**Author:** Data (Frontend Dev)  
+**Date:** 2026-04-04  
+**Status:** Implemented
+
+**Decision:** Items in room descriptions now display with pickup names in green `[name]` tags using the `.room-item-name` CSS class.
+- Items WITH `roomText`: Description appended with green `[name]` tag (e.g., `A rusty torch lies against the wall. [torch]`)
+- Items WITHOUT `roomText`: Fallback to `You see {name} here.` with green span
+- DOM-based construction (createElement/appendChild), matching existing patterns, avoiding XSS risk
+
+**Impact:** Frontend only; no backend or protocol changes. All world authors' `roomText` automatically gets colored name tag.
+
+---
+
+## 2. Death Message Field Name: `deathText` (not `text`)
+
+**Author:** Stef (Tester)  
+**Date:** 2026-04-07  
+**Status:** Implemented
+
+**Decision:** Hazard death response sends `{ type: 'death', deathText: h.deathText }` (field name corrected from `text`).
+
+Tests enforce:
+1. Field named `deathText` (not `text`)
+2. Value matches configured hazard string
+3. Guard prevents regression to old field name
+
+**Impact:** Client can reliably expect `message.deathText`. All 397 tests pass.
+
+---
+
+## 3. Backend Architecture — Stateless Functions + Pure Game Engine
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-03-31  
@@ -22,7 +54,7 @@
 
 ---
 
-## 2. Vanilla JS Client with CDN QR Library
+## 3. Vanilla JS Client with CDN QR Library
 
 **Author:** Data (Frontend Dev)  
 **Date:** 2026-03-31  
@@ -43,7 +75,7 @@
 
 ---
 
-## 3. Test Suite Structure & ESM Configuration
+## 4. Test Suite Structure & ESM Configuration
 
 **Author:** Stef (Tester)  
 **Date:** 2026-03-31  
@@ -64,7 +96,7 @@
 
 ---
 
-## 4. Fix: Negotiate 404, Deploy Idempotency, Missing gameId
+## 5. Fix: Negotiate 404, Deploy Idempotency, Missing gameId
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-01  
@@ -93,7 +125,7 @@ After deployment, users couldn't connect properly. Three issues found:
 
 ---
 
-## 5. Dedicated Join Screen for URL-Based Game Discovery
+## 6. Dedicated Join Screen for URL-Based Game Discovery
 
 **Author:** Data (Frontend Dev)  
 **Date:** 2026-04-01  
@@ -119,7 +151,7 @@ Join URLs showed same confusing screen as landing page with mixed host/join CTAs
 
 ---
 
-## 6. Resource Group Must Be First Provisioning Step
+## 7. Resource Group Must Be First Provisioning Step
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-01  
@@ -144,7 +176,7 @@ Any `az` command with `--resource-group` requires the RG to exist. Resource grou
 
 ---
 
-## 7. Deploy Script: Safe Native Command Error Handling Pattern
+## 8. Deploy Script: Safe Native Command Error Handling Pattern
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-01  
@@ -181,7 +213,7 @@ try {
 
 ---
 
-## 8. Fix: Static Website Upload — Use Connection String for Data Plane Auth
+## 9. Fix: Static Website Upload — Use Connection String for Data Plane Auth
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-01  
@@ -213,7 +245,7 @@ Data plane vs management plane are separate auth paths. Wrap data plane commands
 
 ---
 
-## 9. Fix: Belt-and-Suspenders for EnableWorkerIndexing
+## 10. Fix: Belt-and-Suspenders for EnableWorkerIndexing
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-01  
@@ -248,7 +280,7 @@ For deployment-critical app settings, apply them redundantly at every opportunit
 
 ---
 
-## 10. Deploy Architecture Review — Negotiate 404
+## 11. Deploy Architecture Review — Negotiate 404
 
 **Author:** Mikey (Lead)  
 **Date:** 2026-04-01  
@@ -287,7 +319,7 @@ Deployment configuration only. No application code changes needed.
 
 ---
 
-## 11. Deploy Script: Static Website Hosting — Three Defensive Layers
+## 12. Deploy Script: Static Website Hosting — Three Defensive Layers
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-01  
@@ -321,7 +353,7 @@ Hardened the static website hosting setup in `deploy.ps1` with three layers of d
 
 ---
 
-## 12. Health Endpoint for Post-Deploy Verification
+## 13. Health Endpoint for Post-Deploy Verification
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-02  
@@ -355,7 +387,7 @@ Added `/api/health` endpoint and post-deploy verification to deploy script with 
 
 ---
 
-## 13. Deploy Script: Resilience & WEBSITE_RUN_FROM_PACKAGE Handling
+## 14. Deploy Script: Resilience & WEBSITE_RUN_FROM_PACKAGE Handling
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-04  
@@ -404,7 +436,7 @@ Two fixes required in `deploy/deploy.ps1`:
 
 ---
 
-## 14. Client Clipboard & Look Deduplication
+## 15. Client Clipboard & Look Deduplication
 
 **Author:** Data (Frontend Dev)  
 **Date:** 2026-04-04  
@@ -434,7 +466,7 @@ The exact server-side cause of the duplicate look was not pinpointed. Investigat
 
 ---
 
-## 15. Azure Developer CLI (azd) Template
+## 16. Azure Developer CLI (azd) Template
 
 **Author:** Mouth (Backend Dev)  
 **Date:** 2026-04-04  
@@ -464,7 +496,7 @@ Created a full azd template (`azure.yaml` + `infra/` Bicep files) that provision
 
 ---
 
-## 18. Copilot Directive — Ghost Player Design
+## 17. Copilot Directive — Ghost Player Design
 
 **Author:** Pat Altimore (via Copilot)  
 **Date:** 2026-04-04  
