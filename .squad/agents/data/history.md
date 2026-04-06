@@ -366,3 +366,12 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
 - **Status:** Frontend complete. Backend (Mouth) will consume `sayScope` parameter in `startGame` handler.
 
+
+- **2026-04-06 — Say Scope UI Controls (7 tests verified, all passing)**
+  - Added Say Scope dropdown to lobby settings with options: Room (default), Global
+  - Integrated scope selection into startGame message payload
+  - Frontend receives sayScope from backend via gameStart message
+  - Added help text for Say Scope and existing lobby settings
+  - Coordinated with Mouth (backend) for message routing and Stef (tester) for verification
+  - Total: 431 tests (all passing across 5 suites)
+

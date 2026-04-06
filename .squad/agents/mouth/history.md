@@ -475,3 +475,16 @@ Two features implemented:
    - Added sayScope to gameStart message payload sent to clients (line ~600)
 
 **All 430 tests passing** (7 new say scope tests added, 1 pre-existing world-selection test still failing unrelated to this change).
+
+- **2026-04-06 — Say Scope Configuration (7 new tests, all passing)**
+  - Added sayScope: 'room' to session initialization in createGameSession
+  - Modified handleSay to check session.sayScope and route messages accordingly
+  - Global messages to players in different rooms include room prefix: [from Room Name] Player says: "..."
+  - Players in the same room never see the prefix, even in global mode
+  - Added handleSetSayScope handler (host-only, pre-game only) in gameHub.js
+  - Added routing for setSayScope message type
+  - Modified handleStartGame to accept and apply sayScope from start message
+  - Added sayScope to gameStart message payload
+  - Coordinated with Data (frontend) for UI dropdown and Stef (tester) for test coverage
+  - Total: 431 tests (all passing across 5 suites)
+

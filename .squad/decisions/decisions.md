@@ -1030,3 +1030,59 @@ Existing clients will ignore the `displaced` field and continue using `roomText`
 ### Rationale
 
 This change allows the client to provide contextually-appropriate descriptions for items that have moved from their original location via death/drop/give/take mechanics, improving narrative immersion.
+
+---
+
+## 4. Say Command Scope Configuration
+
+# Say Command Scope Implementation
+
+**Date:** 2025-02-03  
+**Author:** Mouth (Backend Dev)  
+**Status:** Implemented
+
+## Decision
+
+Implemented configurable "say" command scope for the game. The host can now choose between:
+- **Room** (default): Say messages only reach players in the same room
+- **Global**: Say messages reach all players regardless of room
+
+## Implementation Details
+
+### Backend (game-engine.js)
+- Added `sayScope: 'room'` to session initialization in `createGameSession`
+- Modified `handleSay` to check `session.sayScope` and route messages accordingly
+- Global messages to players in different rooms include room prefix: `[from Room Name] Player says: "..."`
+- Players in the same room never see the prefix, even in global mode
+
+### API (gameHub.js)
+- Added `handleSetSayScope` handler (host-only, pre-game only)
+- Added routing for `setSayScope` message type
+- Modified `handleStartGame` to accept and apply `sayScope` from start message
+- Added `sayScope` to `gameStart` message payload
+
+## Rationale
+
+This feature allows hosts to choose the communication style that fits their game session:
+- **Room scope** encourages local teamwork and requires players to be in proximity to coordinate
+- **Global scope** enables broader coordination across the entire game world
+
+The room prefix in global mode helps players understand context (where a message came from) while maintaining immersion.
+
+## Testing
+
+All say scope functionality is covered by 7 new tests in `tests/game-engine.test.js`:
+- Default session includes sayScope
+- Room scope behavior (original behavior preserved)
+- Global scope message routing
+- Room prefix formatting
+- Fallback for missing sayScope
+
+## Frontend Impact
+
+Frontend team (Chunk) will need to:
+1. Add UI control in lobby for host to select say scope
+2. Send `setSayScope` message when changed
+3. Include `sayScope` in `startGame` message
+4. Display current sayScope setting in lobby
+
