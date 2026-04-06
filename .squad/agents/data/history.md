@@ -345,3 +345,10 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **CSS addition:** Added .room-dropped-items style in client/style.css — italic, dimmed color (#b0b0b0), subtle top margin (4px) to distinguish from main room description
 - **Approach:** Same DOM-building pattern as existing code (createElement, createTextNode, appendChild)
 - **Backend integration:** Backend (Mouth) adds displaced flag; frontend distinguishes presentation
+
+### 2026-04-07 — Team Coordination: Displaced Items Feature Complete
+
+- **Mouth (Backend):** Added `displaced` flag to getPlayerView. Items in original room: `displaced: false` + `roomText`. Items moved/dropped: `displaced: true`, no `roomText`.
+- **Frontend (this task):** Split renderRoomMessage to handle displaced items separately. Native items woven into description; displaced items shown as italic "Some dropped items are here: X, Y."
+- **Stef (QA):** Wrote 6 new displaced item tests covering native/displaced/mixed states, death scenario, item return, graceful unknown items. All 424 tests pass.
+- **Scribe:** Orchestration logs created (3), session log created (1), decision merged (1), team histories updated (3 agents).

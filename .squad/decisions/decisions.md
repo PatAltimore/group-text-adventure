@@ -960,3 +960,73 @@ Extracted hazard death logic from `handleGo` into a standalone `checkHazards(ses
 - Modified: `tests/game-engine.test.js` (updated test to reflect new behavior, added `checkHazards` to imports)
 - **411 tests pass**
 - Deployed to Azure; all endpoints verified operational
+
+---
+
+## 37. Displaced Item Detection in getPlayerView
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-07  
+**Status:** Implemented
+
+### Context
+
+Items have `roomText` descriptions written for their original room in the world JSON (e.g., "The rusty key sits beneath a loose floorboard"). When players die, their inventory items drop in the current room. If those items end up in a different room than their original location, the narrative roomText doesn't fit.
+
+### Decision
+
+Modified `getPlayerView` in `api/src/game-engine.js` to mark items as **displaced** when they are not in their original room.
+
+### Implementation
+
+- Each room's items array from `getPlayerView` now includes a `displaced` boolean field
+- `displaced: false` means the item is in its original room (per world definition) → include `roomText`
+- `displaced: true` means the item was moved/dropped here → `roomText` is `undefined`
+- The check compares `session.roomStates[roomId].items` against `session.world.rooms[roomId].items`
+
+### Protocol Change
+
+**New item structure in room views:**
+```javascript
+{
+  name: "rusty key",
+  roomText: "The rusty key sits beneath a loose floorboard.", // only if displaced: false
+  displaced: false
+}
+```
+
+**Displaced item:**
+```javascript
+{
+  name: "rusty key",
+  displaced: true
+  // no roomText field
+}
+```
+
+### Client Implementation
+
+**Frontend (Data):**
+- Split `renderRoomMessage` into native vs displaced item rendering paths
+- Displaced items displayed as italic grouped message: "Some dropped items are here: X, Y."
+- Added CSS class `.room-item-displaced` with italic styling
+
+### Testing
+
+- Backend: All 418 existing tests pass
+- Frontend: Client rendering tests pass
+- QA: 6 new displaced item tests written by Stef (424 total tests pass)
+
+### Backward Compatibility
+
+Existing clients will ignore the `displaced` field and continue using `roomText` for all items (current behavior). Updated clients provide better narrative consistency.
+
+### Impact
+
+- Modified: `api/src/game-engine.js`, `client/app.js`, `client/style.css`
+- Modified: `tests/game-engine.test.js` (6 new tests)
+- **424 tests pass**
+
+### Rationale
+
+This change allows the client to provide contextually-appropriate descriptions for items that have moved from their original location via death/drop/give/take mechanics, improving narrative immersion.

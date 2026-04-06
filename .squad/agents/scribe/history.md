@@ -17,6 +17,7 @@ Agent Scribe initialized and ready for work.
 📌 Mouth: Fixed negotiate 404 via explicit entry point (2026-04-01T13:25)  
 📌 Data: Audited client-side negotiate, confirmed server-side issue (2026-04-01T13:25)  
 📌 Scribe: Logged orchestration + session, merged decisions to decisions.md (2026-04-01T13:25)
+📌 Mouth, Data, Stef: Displaced Items feature complete (2026-04-07T15:48:34Z)
 
 ## Learnings
 

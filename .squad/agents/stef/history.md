@@ -163,3 +163,10 @@
   - All displaced item tests use `getPlayerView(session, playerId)` and validate `.items` array properties
   - Coordinated with Mouth who implemented the feature in parallel; tests written based on agreed API shape
   - Total: 424 tests (all passing)
+
+### 2026-04-07 — Team Coordination: Displaced Items Feature Complete
+
+- **Mouth (Backend):** Added `displaced` flag to getPlayerView. Items in original room: `displaced: false` + `roomText`. Items moved/dropped: `displaced: true`, no `roomText`.
+- **Data (Frontend):** Split renderRoomMessage to handle displaced items separately. Native items woven into description; displaced items shown as italic "Some dropped items are here: X, Y."
+- **Stef (this task):** Wrote 6 new displaced item tests covering native/displaced/mixed states, death scenario, item return, graceful unknown items. All 424 tests pass.
+- **Scribe:** Orchestration logs created (3), session log created (1), decision merged (1), team histories updated (3 agents).
