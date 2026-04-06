@@ -103,3 +103,26 @@
   - All 4 changes verify: (a) death response uses `deathText` field name, (b) value matches hazard's configured deathText, (c) old `text` field is NOT present
   - Confirmed: Item description tests already cover `getPlayerView` returning items as objects with `name` property — no changes needed
   - Total: 397 tests passing across 5 suites, 0 failures
+
+- **2026-04-07 — Hazard check on every gameplay command tests (14 new tests, all passing)**
+  - Added `describe('Hazard check on every gameplay command (Stef)')` block to `/tests/game-engine.test.js`
+  - Mouth's refactoring landed: `checkHazards(session, playerId)` extracted from `handleGo`, called in `processCommand` after every gameplay command. `handleGo` no longer contains hazard logic.
+  - Mouth also updated the existing test "hazard check only happens on room entry" → renamed to "hazard check fires on gameplay commands (look, say), but NOT meta commands (inventory, help)"
+  - 8 new integration tests via `processCommand`:
+    1. Hazard triggers on `look` — player in deadly room dies
+    2. Hazard triggers on `take` — player picks up item then dies, ghost has item in inventory
+    3. Hazard triggers on `say` — player says something, hazard kills them
+    4. Hazard does NOT trigger on `help` — meta command, player survives
+    5. Hazard does NOT trigger on `inventory` — meta command, player survives
+    6. Hazard does NOT trigger on invalid command — unrecognized verb, player survives
+    7. Ghost player skips hazard check — already-dead player gets no death response
+    8. Hazard check after `go` uses new room — moving from safe→deadly kills player in deadly room
+  - 6 direct `checkHazards` unit tests:
+    1. Safe room returns empty responses
+    2. Probability-1 hazard kills player, creates ghost, returns death message with deathTimeout
+    3. Non-existent player returns empty responses
+    4. Ghost player returns empty responses (skip check)
+    5. High random value (0.99) survives probability-0.5 hazard
+    6. Other players in room get death notification + ghost event
+  - Key design: `processCommand` uses `return` for `help`, `inventory`, and `default` (unknown commands), skipping the post-handler hazard check. Gameplay verbs use `break` and fall through to the hazard check.
+  - Total: 411 tests (410 pass, 1 pre-existing ESM failure in world-selection.test.js)

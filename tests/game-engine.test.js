@@ -14,6 +14,7 @@ import {
   resolvePlayerName,
   killPlayer,
   respawnPlayer,
+  checkHazards,
 } from '../api/src/game-engine.js';
 import * as GameEngine from '../api/src/game-engine.js';
 import { createRequire } from 'module';
@@ -2481,20 +2482,39 @@ describe('Hazard Death System (Stef)', () => {
       expect(death.message).not.toHaveProperty('text');
     });
 
-    test('hazard check only happens on room entry (not look, inventory, help)', () => {
+    test('hazard check fires on gameplay commands (look, say), but NOT meta commands (inventory, help)', () => {
       let session = hazardSessionWithPlayerStef('p1', 'Alice');
       // Place player directly in deadly room (bypass go)
       session.players['p1'].room = 'deadly-room';
 
-      // These commands should NOT trigger death
+      // Mock Math.random to always trigger hazards
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+
+      // "look" IS a gameplay command — should trigger hazard check and kill
       let result = processCommand(session, 'p1', 'look');
+      expect(result.session.players['p1']).toBeUndefined();
+      const deathMsg = result.responses.find(
+        (r) => r.playerId === 'p1' && r.message.type === 'death'
+      );
+      expect(deathMsg).toBeDefined();
+
+      Math.random.mockRestore();
+
+      // Start fresh for meta commands
+      let session2 = hazardSessionWithPlayerStef('p1', 'Alice');
+      session2.players['p1'].room = 'deadly-room';
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+
+      // "inventory" is a meta command — should NOT trigger hazard
+      result = processCommand(session2, 'p1', 'inventory');
       expect(result.session.players['p1']).toBeDefined();
 
-      result = processCommand(result.session, 'p1', 'inventory');
-      expect(result.session.players['p1']).toBeDefined();
-
+      // "help" is a meta command — should NOT trigger hazard
       result = processCommand(result.session, 'p1', 'help');
       expect(result.session.players['p1']).toBeDefined();
+
+      Math.random.mockRestore();
     });
   });
 
@@ -2607,6 +2627,334 @@ describe('Hazard Death System (Stef)', () => {
           (r.message.event === 'death' || (r.message.text && r.message.text.match(/Alice|died/i)))
       );
       expect(bobNotif).toBeDefined();
+    });
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// 24. Hazard Check on Every Gameplay Command (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Hazard check on every gameplay command (Stef)', () => {
+  // World with deadly room (probability 1) and items in the deadly room
+  function hazardEveryCommandWorld() {
+    return loadWorld({
+      name: 'Every-Command Hazard World',
+      startRoom: 'safe-room',
+      rooms: {
+        'safe-room': {
+          name: 'Safe Room',
+          description: 'No hazards here.',
+          exits: { north: 'deadly-room' },
+          items: [],
+          hazards: [],
+        },
+        'deadly-room': {
+          name: 'Deadly Room',
+          description: 'Full of deadly gas.',
+          exits: { south: 'safe-room' },
+          items: ['gem'],
+          hazards: [
+            {
+              description: 'Toxic gas.',
+              probability: 1,
+              deathText: 'The toxic gas kills you!',
+            },
+          ],
+        },
+      },
+      items: {
+        gem: {
+          name: 'Ruby Gem',
+          description: 'A glittering red gem.',
+          pickupText: 'You grab the gem.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  // Place a player directly in the deadly room (skip the go-move hazard)
+  function sessionInDeadlyRoom(playerId = 'p1', playerName = 'Alice') {
+    const world = hazardEveryCommandWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, playerId, playerName);
+    session.players[playerId].room = 'deadly-room';
+    return session;
+  }
+
+  // ── 1. Hazard triggers on "look" ──────────────────────────────────
+
+  test('hazard triggers on "look" command', () => {
+    let session = sessionInDeadlyRoom();
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'look');
+    Math.random.mockRestore();
+
+    // Player should be dead
+    expect(after.players['p1']).toBeUndefined();
+
+    // Death response should be present
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeDefined();
+    expect(death.message.deathText).toBe('The toxic gas kills you!');
+
+    // Ghost should exist
+    expect(after.ghosts?.['Alice']).toBeDefined();
+    expect(after.ghosts['Alice'].isDeath).toBe(true);
+  });
+
+  // ── 2. Hazard triggers on "take" ──────────────────────────────────
+
+  test('hazard triggers on "take" command', () => {
+    let session = sessionInDeadlyRoom();
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'take Ruby Gem');
+    Math.random.mockRestore();
+
+    // Player should be dead — hazard fires after the take
+    expect(after.players['p1']).toBeUndefined();
+
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeDefined();
+
+    // Ghost should have the gem in inventory (picked up before death)
+    expect(after.ghosts?.['Alice']).toBeDefined();
+    expect(after.ghosts['Alice'].inventory).toContain('gem');
+  });
+
+  // ── 3. Hazard triggers on "say" ───────────────────────────────────
+
+  test('hazard triggers on "say" command', () => {
+    let session = sessionInDeadlyRoom();
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'say hello');
+    Math.random.mockRestore();
+
+    expect(after.players['p1']).toBeUndefined();
+
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeDefined();
+    expect(death.message.deathText).toBe('The toxic gas kills you!');
+  });
+
+  // ── 4. Hazard does NOT trigger on "help" ──────────────────────────
+
+  test('hazard does NOT trigger on "help" command', () => {
+    let session = sessionInDeadlyRoom();
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'help');
+    Math.random.mockRestore();
+
+    // Player must still be alive — help is a meta command
+    expect(after.players['p1']).toBeDefined();
+    expect(after.players['p1'].room).toBe('deadly-room');
+
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeUndefined();
+  });
+
+  // ── 5. Hazard does NOT trigger on "inventory" ─────────────────────
+
+  test('hazard does NOT trigger on "inventory" command', () => {
+    let session = sessionInDeadlyRoom();
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'inventory');
+    Math.random.mockRestore();
+
+    expect(after.players['p1']).toBeDefined();
+    expect(after.players['p1'].room).toBe('deadly-room');
+
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeUndefined();
+  });
+
+  // ── 6. Hazard does NOT trigger on invalid command ─────────────────
+
+  test('hazard does NOT trigger on invalid command', () => {
+    let session = sessionInDeadlyRoom();
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'dance around');
+    Math.random.mockRestore();
+
+    expect(after.players['p1']).toBeDefined();
+    expect(after.players['p1'].room).toBe('deadly-room');
+
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeUndefined();
+
+    // Should get an error message instead
+    const error = responses.find(r => r.playerId === 'p1' && r.message.type === 'error');
+    expect(error).toBeDefined();
+  });
+
+  // ── 7. Ghost player skips hazard check ────────────────────────────
+
+  test('ghost player skips hazard check — no additional death or error', () => {
+    let session = sessionInDeadlyRoom();
+
+    // Kill the player first to make them a ghost
+    session = killPlayer(session, 'p1');
+    expect(session.ghosts?.['Alice']).toBeDefined();
+    expect(session.players['p1']).toBeUndefined();
+
+    // Trying to run a command as a dead player should not cause errors
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'look');
+    Math.random.mockRestore();
+
+    // Player is still not in session.players (they're a ghost)
+    expect(after.players['p1']).toBeUndefined();
+
+    // No death response (they're already dead)
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeUndefined();
+
+    // Ghost should still exist unchanged
+    expect(after.ghosts['Alice']).toBeDefined();
+    expect(after.ghosts['Alice'].isDeath).toBe(true);
+  });
+
+  // ── 8. Hazard check targets NEW room after "go" ──────────────────
+
+  test('hazard check after "go" uses the new room, not the old one', () => {
+    const world = hazardEveryCommandWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    // Player starts in safe-room
+
+    jest.spyOn(Math, 'random').mockReturnValue(0.0);
+    const { session: after, responses } = processCommand(session, 'p1', 'go north');
+    Math.random.mockRestore();
+
+    // Player moved to deadly-room and should be killed by its hazard
+    expect(after.players['p1']).toBeUndefined();
+
+    const death = responses.find(r => r.playerId === 'p1' && r.message.type === 'death');
+    expect(death).toBeDefined();
+    expect(death.message.deathText).toBe('The toxic gas kills you!');
+
+    // Ghost should be in the deadly room
+    expect(after.ghosts?.['Alice']).toBeDefined();
+    expect(after.ghosts['Alice'].room).toBe('deadly-room');
+  });
+
+  // ── checkHazards direct tests ─────────────────────────────────────
+
+  describe('checkHazards (direct)', () => {
+    test('returns empty responses when player is in a safe room', () => {
+      const world = hazardEveryCommandWorld();
+      let session = createGameSession(world);
+      session = addPlayer(session, 'p1', 'Alice');
+
+      const result = checkHazards(session, 'p1');
+      expect(result.responses).toEqual([]);
+      expect(result.session.players['p1']).toBeDefined();
+    });
+
+    test('kills player in a room with probability-1 hazard', () => {
+      let session = sessionInDeadlyRoom();
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const result = checkHazards(session, 'p1');
+      Math.random.mockRestore();
+
+      expect(result.session.players['p1']).toBeUndefined();
+      expect(result.session.ghosts?.['Alice']).toBeDefined();
+
+      const death = result.responses.find(r => r.message.type === 'death');
+      expect(death).toBeDefined();
+      expect(death.message.deathText).toBe('The toxic gas kills you!');
+      expect(death.message.deathTimeout).toBe(30);
+    });
+
+    test('returns empty responses for non-existent player', () => {
+      let session = sessionInDeadlyRoom();
+      const result = checkHazards(session, 'nonexistent');
+      expect(result.responses).toEqual([]);
+    });
+
+    test('skips hazard check for ghost player', () => {
+      let session = sessionInDeadlyRoom();
+      session = killPlayer(session, 'p1');
+
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const result = checkHazards(session, 'p1');
+      Math.random.mockRestore();
+
+      // No additional death responses
+      expect(result.responses).toEqual([]);
+    });
+
+    test('high random value avoids death even with probability < 1', () => {
+      let session = sessionInDeadlyRoom();
+
+      // probability is 1, so Math.random returning 0.99 still < 1 → dies
+      // Use a world with lower probability to test survival
+      const world = loadWorld({
+        name: 'Low Prob World',
+        startRoom: 'room-a',
+        rooms: {
+          'room-a': {
+            name: 'Room A',
+            description: 'Slightly dangerous.',
+            exits: {},
+            items: [],
+            hazards: [
+              { description: 'Loose rocks.', probability: 0.5, deathText: 'Crushed!' },
+            ],
+          },
+        },
+        items: {},
+        puzzles: {},
+      });
+      let session2 = createGameSession(world);
+      session2 = addPlayer(session2, 'p1', 'Alice');
+
+      // random returns 0.99 → 0.99 >= 0.5 → survives
+      jest.spyOn(Math, 'random').mockReturnValue(0.99);
+      const result = checkHazards(session2, 'p1');
+      Math.random.mockRestore();
+
+      expect(result.session.players['p1']).toBeDefined();
+      expect(result.responses).toEqual([]);
+    });
+
+    test('notifies other players in room when someone dies', () => {
+      const world = hazardEveryCommandWorld();
+      let session = createGameSession(world);
+      session = addPlayer(session, 'p1', 'Alice');
+      session = addPlayer(session, 'p2', 'Bob');
+      session.players['p1'].room = 'deadly-room';
+      session.players['p2'].room = 'deadly-room';
+
+      // Only check hazards for Alice — mock so Alice dies
+      jest.spyOn(Math, 'random').mockReturnValue(0.0);
+      const result = checkHazards(session, 'p1');
+      Math.random.mockRestore();
+
+      // Alice should be dead
+      expect(result.session.players['p1']).toBeUndefined();
+
+      // Bob should get a death notification
+      const bobNotif = result.responses.find(
+        r => r.playerId === 'p2' && r.message.event === 'died'
+      );
+      expect(bobNotif).toBeDefined();
+      expect(bobNotif.message.text).toMatch(/Alice.*died/i);
+
+      // Bob should also get a ghost event
+      const ghostNotif = result.responses.find(
+        r => r.playerId === 'p2' && r.message.type === 'ghostEvent'
+      );
+      expect(ghostNotif).toBeDefined();
     });
   });
 });

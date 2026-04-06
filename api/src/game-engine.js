@@ -396,6 +396,69 @@ export function getPlayerView(session, playerId) {
 }
 
 /**
+ * Check room hazards for a player and potentially kill them.
+ * @param {object} session - Current game session.
+ * @param {string} playerId - Player to check hazards for.
+ * @returns {{ session: object, responses: Array<{ playerId: string, message: object }> }}
+ */
+export function checkHazards(session, playerId) {
+  const player = session.players[playerId];
+  const responses = [];
+  if (!player) return { session, responses };
+
+  // Skip if already dead
+  if (session.ghosts?.[player.name]?.isDeath) return { session, responses };
+
+  const room = session.world.rooms[player.room];
+  const hazards = room.hazards || [];
+
+  for (const hazard of hazards) {
+    const h = typeof hazard === 'string'
+      ? { description: hazard, probability: 0, deathText: '' }
+      : hazard;
+    if (h.probability > 0 && Math.random() < h.probability) {
+      const playerName = player.name;
+      const playerRoom = player.room;
+      session = killPlayer(session, playerId);
+
+      responses.push({
+        playerId,
+        message: {
+          type: 'death',
+          deathText: h.deathText,
+          deathTimeout: session.deathTimeout || 30,
+        },
+      });
+
+      for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+        if (otherPlayer.room === playerRoom) {
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'playerEvent',
+              event: 'died',
+              playerName,
+              text: `${playerName} has died! ${h.deathText}`,
+            },
+          });
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'ghostEvent',
+              text: `${playerName}'s ghost appears.`,
+            },
+          });
+        }
+      }
+
+      return { session, responses };
+    }
+  }
+
+  return { session, responses };
+}
+
+/**
  * Process a player command and return updated session + responses.
  * @param {object} session - Current game session.
  * @param {string} playerId - Player issuing the command.
@@ -413,29 +476,40 @@ export function processCommand(session, playerId, commandText) {
 
   const cmd = parseCommand(commandText);
 
+  let result;
+
   switch (cmd.verb) {
     case 'go':
-      return handleGo(session, playerId, cmd);
+      result = handleGo(session, playerId, cmd);
+      break;
     case 'look':
-      return handleLook(session, playerId, cmd);
+      result = handleLook(session, playerId, cmd);
+      break;
     case 'take':
-      return handleTake(session, playerId, cmd);
+      result = handleTake(session, playerId, cmd);
+      break;
     case 'loot':
-      return handleLoot(session, playerId, cmd);
+      result = handleLoot(session, playerId, cmd);
+      break;
     case 'drop':
-      return handleDrop(session, playerId, cmd);
-    case 'inventory':
-      return handleInventory(session, playerId);
+      result = handleDrop(session, playerId, cmd);
+      break;
     case 'use':
-      return handleUse(session, playerId, cmd);
+      result = handleUse(session, playerId, cmd);
+      break;
     case 'give':
-      return handleGive(session, playerId, cmd);
+      result = handleGive(session, playerId, cmd);
+      break;
     case 'say':
-      return handleSay(session, playerId, cmd);
+      result = handleSay(session, playerId, cmd);
+      break;
     case 'yell':
-      return handleYell(session, playerId, cmd);
+      result = handleYell(session, playerId, cmd);
+      break;
     case 'help':
       return handleHelp(session, playerId);
+    case 'inventory':
+      return handleInventory(session, playerId);
     default:
       return {
         session,
@@ -450,6 +524,16 @@ export function processCommand(session, playerId, commandText) {
         ],
       };
   }
+
+  // After any gameplay command, check hazards in the player's current room
+  const playerAfter = result.session.players[playerId];
+  if (playerAfter && !result.session.ghosts?.[playerAfter.name]?.isDeath) {
+    const hazardResult = checkHazards(result.session, playerId);
+    result.session = hazardResult.session;
+    result.responses = [...result.responses, ...hazardResult.responses];
+  }
+
+  return result;
 }
 
 // ── Command handlers ──────────────────────────────────────────────────
@@ -505,51 +589,6 @@ function handleGo(session, playerId, cmd) {
           text: `${player.name} arrived.`,
         },
       });
-    }
-  }
-
-  // Check hazards in the new room
-  const newRoom = session.world.rooms[targetRoom];
-  const hazards = newRoom.hazards || [];
-  for (const hazard of hazards) {
-    const h = typeof hazard === 'string'
-      ? { description: hazard, probability: 0, deathText: '' }
-      : hazard;
-    if (h.probability > 0 && Math.random() < h.probability) {
-      const playerName = player.name;
-      session = killPlayer(session, playerId);
-
-      responses.push({
-        playerId,
-        message: {
-          type: 'death',
-          deathText: h.deathText,
-          deathTimeout: session.deathTimeout || 30,
-        },
-      });
-
-      for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-        if (otherPlayer.room === targetRoom) {
-          responses.push({
-            playerId: otherId,
-            message: {
-              type: 'playerEvent',
-              event: 'died',
-              playerName,
-              text: `${playerName} has died! ${h.deathText}`,
-            },
-          });
-          responses.push({
-            playerId: otherId,
-            message: {
-              type: 'ghostEvent',
-              text: `${playerName}'s ghost appears.`,
-            },
-          });
-        }
-      }
-
-      return { session, responses };
     }
   }
 

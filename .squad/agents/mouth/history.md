@@ -395,3 +395,6 @@ Two features implemented:
 **Bug:** In `api/src/game-engine.js` (line ~526), the hazard death response sent `text: h.deathText` but the client (`app.js`) reads `msg.deathText`. This meant the death description never reached the player — they always saw the fallback "You have died." message.
 
 **Fix:** Changed `text: h.deathText` to `deathText: h.deathText` in the death message payload. One-line change, no other fields affected. The `playerEvent` messages sent to other players already used the correct field name.
+### 2026-04-05 — Hazards Check on Every Gameplay Command
+
+**Architectural change:** Extracted hazard death check from `handleGo` into a standalone `checkHazards(session, playerId)` function. Previously, hazards only threatened players when entering a room (`go` command). Now hazards are checked after every gameplay command (go, look, take, loot, drop, use, give, say, yell) via `processCommand`. Meta commands (help, inventory) and invalid commands skip the check. The function is exported for direct test access.
