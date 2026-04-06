@@ -2958,3 +2958,197 @@ describe('Hazard check on every gameplay command (Stef)', () => {
     });
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// 25. Hazard Multiplier (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('hazard multiplier', () => {
+  // Helper: Create world with moderate hazard probability
+  function multiplierWorld() {
+    return loadWorld({
+      name: 'Multiplier Test World',
+      startRoom: 'safe-room',
+      rooms: {
+        'safe-room': {
+          name: 'Safe Room',
+          description: 'A safe starting room.',
+          exits: { north: 'hazard-room' },
+          items: [],
+          hazards: [],
+        },
+        'hazard-room': {
+          name: 'Hazard Room',
+          description: 'Moderately dangerous.',
+          exits: { south: 'safe-room' },
+          items: [],
+          hazards: [
+            {
+              description: 'Falling debris.',
+              probability: 0.3,
+              deathText: 'You are crushed by falling debris!',
+            },
+          ],
+        },
+        'high-prob-room': {
+          name: 'High Probability Room',
+          description: 'Very dangerous.',
+          exits: { south: 'safe-room' },
+          items: [],
+          hazards: [
+            {
+              description: 'Massive hazard.',
+              probability: 0.8,
+              deathText: 'Massive hazard kills you!',
+            },
+          ],
+        },
+      },
+      items: {},
+      puzzles: {},
+    });
+  }
+
+  test('createGameSession includes hazardMultiplier default', () => {
+    const world = multiplierWorld();
+    const session = createGameSession(world);
+    expect(session.hazardMultiplier).toBe(1);
+  });
+
+  test('medium multiplier (1.0) uses world file probability as-is', () => {
+    const world = multiplierWorld();
+    let session = createGameSession(world);
+    session.hazardMultiplier = 1;
+    session = addPlayer(session, 'p1', 'Alice');
+    session.players['p1'].room = 'hazard-room';
+
+    // Hazard probability is 0.3, multiplier 1.0 → effective 0.3
+    // Mock Math.random to return 0.2 (below 0.3) → should die
+    jest.spyOn(Math, 'random').mockReturnValue(0.2);
+    const result = checkHazards(session, 'p1');
+    Math.random.mockRestore();
+
+    expect(result.session.players['p1']).toBeUndefined();
+    const death = result.responses.find(r => r.message.type === 'death');
+    expect(death).toBeDefined();
+  });
+
+  test('low multiplier (0.5) halves the effective probability', () => {
+    const world = multiplierWorld();
+    let session = createGameSession(world);
+    session.hazardMultiplier = 0.5;
+    session = addPlayer(session, 'p1', 'Alice');
+    session.players['p1'].room = 'hazard-room';
+
+    // Hazard probability is 0.3, multiplier 0.5 → effective 0.15
+    // Mock Math.random to return 0.2 (above 0.15) → should NOT die
+    jest.spyOn(Math, 'random').mockReturnValue(0.2);
+    let result = checkHazards(session, 'p1');
+    Math.random.mockRestore();
+
+    expect(result.session.players['p1']).toBeDefined();
+    expect(result.responses).toEqual([]);
+
+    // Now test 0.1 (below 0.15) → should die
+    jest.spyOn(Math, 'random').mockReturnValue(0.1);
+    result = checkHazards(result.session, 'p1');
+    Math.random.mockRestore();
+
+    expect(result.session.players['p1']).toBeUndefined();
+    const death = result.responses.find(r => r.message.type === 'death');
+    expect(death).toBeDefined();
+  });
+
+  test('high multiplier (2.0) doubles the effective probability', () => {
+    const world = multiplierWorld();
+    let session = createGameSession(world);
+    session.hazardMultiplier = 2;
+    session = addPlayer(session, 'p1', 'Alice');
+    session.players['p1'].room = 'hazard-room';
+
+    // Hazard probability is 0.3, multiplier 2.0 → effective 0.6
+    // Mock Math.random to return 0.5 (below 0.6) → should die
+    jest.spyOn(Math, 'random').mockReturnValue(0.5);
+    const result = checkHazards(session, 'p1');
+    Math.random.mockRestore();
+
+    expect(result.session.players['p1']).toBeUndefined();
+    const death = result.responses.find(r => r.message.type === 'death');
+    expect(death).toBeDefined();
+  });
+
+  test('multiplier is clamped so adjusted probability never exceeds 1', () => {
+    const world = multiplierWorld();
+    let session = createGameSession(world);
+    session.hazardMultiplier = 2;
+    session = addPlayer(session, 'p1', 'Alice');
+    session.players['p1'].room = 'high-prob-room';
+
+    // Hazard probability is 0.8, multiplier 2.0 → raw = 1.6, clamped to 1.0
+    // Mock Math.random to return 0.99 → should die (0.99 < 1.0)
+    jest.spyOn(Math, 'random').mockReturnValue(0.99);
+    const result = checkHazards(session, 'p1');
+    Math.random.mockRestore();
+
+    expect(result.session.players['p1']).toBeUndefined();
+    const death = result.responses.find(r => r.message.type === 'death');
+    expect(death).toBeDefined();
+  });
+
+  test('missing multiplier defaults to 1', () => {
+    const world = multiplierWorld();
+    let session = createGameSession(world);
+    delete session.hazardMultiplier;
+    session = addPlayer(session, 'p1', 'Alice');
+    session.players['p1'].room = 'hazard-room';
+
+    // Hazard probability is 0.3, missing multiplier defaults to 1 → effective 0.3
+    // Mock Math.random to return 0.2 (below 0.3) → should die
+    jest.spyOn(Math, 'random').mockReturnValue(0.2);
+    const result = checkHazards(session, 'p1');
+    Math.random.mockRestore();
+
+    expect(result.session.players['p1']).toBeUndefined();
+    const death = result.responses.find(r => r.message.type === 'death');
+    expect(death).toBeDefined();
+  });
+
+  test('multiplier of 0.5 can prevent death that would occur at 1.0', () => {
+    // Create a world with probability 0.4
+    const world = loadWorld({
+      name: 'Comparative Test World',
+      startRoom: 'room-a',
+      rooms: {
+        'room-a': {
+          name: 'Room A',
+          description: 'Moderately dangerous.',
+          exits: {},
+          items: [],
+          hazards: [
+            {
+              description: 'Danger zone.',
+              probability: 0.4,
+              deathText: 'You succumb to the danger!',
+            },
+          ],
+        },
+      },
+      items: {},
+      puzzles: {},
+    });
+
+    let session = createGameSession(world);
+    session.hazardMultiplier = 0.5;
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Hazard probability 0.4, multiplier 0.5 → effective 0.2
+    // Mock Math.random to return 0.3
+    // At 1.0x this would kill (0.3 < 0.4), but at 0.5x it doesn't (0.3 > 0.2)
+    jest.spyOn(Math, 'random').mockReturnValue(0.3);
+    const result = checkHazards(session, 'p1');
+    Math.random.mockRestore();
+
+    expect(result.session.players['p1']).toBeDefined();
+    expect(result.responses).toEqual([]);
+  });
+});

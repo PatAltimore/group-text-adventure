@@ -398,3 +398,28 @@ Two features implemented:
 ### 2026-04-05 — Hazards Check on Every Gameplay Command
 
 **Architectural change:** Extracted hazard death check from `handleGo` into a standalone `checkHazards(session, playerId)` function. Previously, hazards only threatened players when entering a room (`go` command). Now hazards are checked after every gameplay command (go, look, take, loot, drop, use, give, say, yell) via `processCommand`. Meta commands (help, inventory) and invalid commands skip the check. The function is exported for direct test access.
+### 2026-04-07 — Hazard Death Probability Multiplier
+
+**Feature:** Hosts can now set hazard danger level (Low/Medium/High) from lobby before game start. Medium (1.0x) is default.
+
+**Backend changes:**
+1. **pi/src/game-engine.js:**
+   - createGameSession: Added hazardMultiplier: 1.0 to session initialization
+   - checkHazards: Modified probability calculation to use Math.min(1, h.probability * (session.hazardMultiplier || 1)) — multiplies world file probability by session multiplier, capped at 1.0 to prevent probabilities >100%
+
+2. **pi/src/functions/gameHub.js:**
+   - Added handleSetHazardMultiplier handler (mirroring handleSetDeathTimeout pattern):
+     * Validates connection, game session, host-only permission
+     * Only allows changes before game start
+     * Accepts data.multiplier (0.5, 1, or 2), rejects invalid values
+     * Maps to user-facing text: 0.5→Low, 1→Medium, 2→High
+   - Added routing for setHazardMultiplier message type
+   - Modified handleStartGame to accept optional data.hazardMultiplier and apply it at start
+   - Added hazardMultiplier to gameStart message payload sent to clients (alongside deathTimeout)
+
+**Multiplier values:**
+- Low = 0.5 (halves world file probability)
+- Medium = 1.0 (uses world file probability as-is)
+- High = 2.0 (doubles world file probability)
+
+**All 346 tests** still passing (no breaking changes to existing behavior).

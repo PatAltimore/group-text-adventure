@@ -310,3 +310,15 @@
 - **Items container:** Changed from `<div>` to `<span>` for inline comma-separated layout
 - **Backward compat:** String-only items (no `roomText`) still display correctly — just listed by name in the Items section
 - **All 411 tests pass** unchanged
+
+### 2025-07-17 — Hazard Danger Multiplier UI
+
+- **Change:** Added "☠️ Hazard Danger" dropdown to host lobby screen, positioned right after the Respawn Timer setting
+- **Values:** Low (0.5x), Medium (1.0x, default), High (2.0x) — multiplies world file hazard probabilities
+- **HTML changes:** Added hazard-multiplier-group div in client/index.html (lines 125-132), reusing existing death-timeout-group and death-timeout-label CSS classes for consistent styling
+- **app.js changes:**
+  - DOM refs: Added hazardMultiplierGroup and hazardMultiplierSelect elements (lines 106-107)
+  - Show/hide: Hazard multiplier shown alongside death timeout when host opens lobby (lines 913-920)
+  - Change event: Sends { type: 'setHazardMultiplier', multiplier } when host changes selection (line 917)
+  - Start game: Included hazardMultiplier parameter in startGame message (line 943)
+- **Pattern:** Mirrored existing death timeout implementation for consistency — same visibility logic, same event pattern, same message structure

@@ -126,3 +126,24 @@
     6. Other players in room get death notification + ghost event
   - Key design: `processCommand` uses `return` for `help`, `inventory`, and `default` (unknown commands), skipping the post-handler hazard check. Gameplay verbs use `break` and fall through to the hazard check.
   - Total: 411 tests (410 pass, 1 pre-existing ESM failure in world-selection.test.js)
+
+- **2026-04-07 — Hazard Death Probability Multiplier tests (7 new tests, all passing)**
+  - Added `describe('hazard multiplier')` block to `/tests/game-engine.test.js` (lines ~2963-3152)
+  - Tests cover host-configurable hazard probability scaling: Low (0.5x), Medium (1.0x default), High (2.0x)
+  - Test approach: Use `jest.spyOn(Math, 'random').mockReturnValue()` to control hazard outcomes deterministically
+  - Created `multiplierWorld()` helper with hazard-room (probability 0.3) and high-prob-room (probability 0.8)
+  - 7 tests:
+    1. `createGameSession includes hazardMultiplier default` — verifies `session.hazardMultiplier === 1`
+    2. `medium multiplier (1.0) uses world file probability as-is` — 0.3 base × 1.0 = 0.3 effective, random 0.2 → dies
+    3. `low multiplier (0.5) halves the effective probability` — 0.3 × 0.5 = 0.15, random 0.2 → survives, random 0.1 → dies
+    4. `high multiplier (2.0) doubles the effective probability` — 0.3 × 2.0 = 0.6, random 0.5 → dies
+    5. `multiplier is clamped so adjusted probability never exceeds 1` — 0.8 × 2.0 = 1.6 clamped to 1.0, random 0.99 → dies
+    6. `missing multiplier defaults to 1` — delete multiplier field, 0.3 base, random 0.2 → dies (same as medium)
+    7. `multiplier of 0.5 can prevent death that would occur at 1.0` — 0.4 × 0.5 = 0.2, random 0.3 → survives (would die at 1.0x)
+  - Key discoveries:
+    - `createGameSession` returns `hazardMultiplier: 1` in session object
+    - `checkHazards` applies multiplier: `adjustedProbability = Math.min(1, h.probability * (session.hazardMultiplier || 1))`
+    - Clamping via `Math.min(1, ...)` prevents adjusted probability from exceeding 1.0
+    - Missing/undefined multiplier falls back to 1 via `|| 1` operator
+  - Coordinated with Mouth: tests written in parallel with implementation; all tests passed immediately on first run
+  - Total: 418 tests (all passing)

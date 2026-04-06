@@ -206,6 +206,10 @@ app.generic('gameHubMessage', {
       return await handleSetDeathTimeout(serviceClient, connectionId, data, context);
     }
 
+    if (messageType === 'setHazardMultiplier') {
+      return await handleSetHazardMultiplier(serviceClient, connectionId, data, context);
+    }
+
     if (messageType === 'revive') {
       return await handleRevive(serviceClient, connectionId, data, context);
     }
@@ -566,6 +570,13 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
       session.deathTimeout = timeout;
     }
 
+    // Apply hazard multiplier if provided by host
+    if (data.hazardMultiplier) {
+      const valid = [0.5, 1, 2];
+      const mult = parseFloat(data.hazardMultiplier);
+      session.hazardMultiplier = valid.includes(mult) ? mult : 1;
+    }
+
     await saveGameState(gameId, session);
 
     // Send personalized gameStart to each player via direct connection.
@@ -582,6 +593,7 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
             type: 'gameStart',
             room: view,
             deathTimeout: session.deathTimeout || 30,
+            hazardMultiplier: session.hazardMultiplier || 1,
           });
         }
       }
@@ -721,6 +733,67 @@ async function handleSetDeathTimeout(serviceClient, connectionId, data, context)
   await sendToConnection(serviceClient, connectionId, {
     type: 'message',
     text: `Death timeout set to ${timeout} seconds.`,
+  });
+
+  return { body: '', status: 200 };
+}
+
+// ── Handler: Set Hazard Multiplier ──────────────────────────────────────
+
+async function handleSetHazardMultiplier(serviceClient, connectionId, data, context) {
+  const found = await findPlayerByConnectionId(connectionId);
+  if (!found) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'You need to join a game first.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const { gameId, playerId } = found;
+  let session = await loadGameState(gameId);
+  if (!session) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Game session not found.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.hostPlayerId !== playerId) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Only the host can set the hazard danger level.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.started) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Cannot change hazard danger level after the game has started.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const valid = [0.5, 1, 2];
+  const multiplier = parseFloat(data.multiplier);
+  
+  if (!valid.includes(multiplier)) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Invalid hazard multiplier. Use 0.5 (Low), 1 (Medium), or 2 (High).',
+    });
+    return { body: '', status: 200 };
+  }
+
+  session.hazardMultiplier = multiplier;
+  await saveGameState(gameId, session);
+
+  const levelText = multiplier === 0.5 ? 'Low' : multiplier === 2 ? 'High' : 'Medium';
+  await sendToConnection(serviceClient, connectionId, {
+    type: 'message',
+    text: `Hazard danger set to ${levelText}.`,
   });
 
   return { body: '', status: 200 };

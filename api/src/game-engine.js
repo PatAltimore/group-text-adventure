@@ -131,6 +131,7 @@ export function createGameSession(world) {
     puzzleStates,
     players: {},
     deathTimeout: 30,
+    hazardMultiplier: 1.0,
     createdAt: new Date().toISOString(),
   };
 }
@@ -416,7 +417,8 @@ export function checkHazards(session, playerId) {
     const h = typeof hazard === 'string'
       ? { description: hazard, probability: 0, deathText: '' }
       : hazard;
-    if (h.probability > 0 && Math.random() < h.probability) {
+    const adjustedProbability = Math.min(1, h.probability * (session.hazardMultiplier || 1));
+    if (adjustedProbability > 0 && Math.random() < adjustedProbability) {
       const playerName = player.name;
       const playerRoom = player.room;
       session = killPlayer(session, playerId);

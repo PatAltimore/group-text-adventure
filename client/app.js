@@ -101,6 +101,10 @@
     // Lobby death timeout (host-only)
     deathTimeoutGroup: $('#death-timeout-group'),
     deathTimeoutSelect: $('#death-timeout-select'),
+
+    // Lobby hazard multiplier (host-only)
+    hazardMultiplierGroup: $('#hazard-multiplier-group'),
+    hazardMultiplierSelect: $('#hazard-multiplier-select'),
   };
 
   // --- Screen Management ---
@@ -906,6 +910,15 @@
       });
     }
 
+    // Show hazard multiplier control for host
+    if (els.hazardMultiplierGroup) {
+      els.hazardMultiplierGroup.classList.remove('hidden');
+      els.hazardMultiplierSelect.addEventListener('change', () => {
+        const multiplier = parseFloat(els.hazardMultiplierSelect.value);
+        sendMessage({ type: 'setHazardMultiplier', multiplier });
+      });
+    }
+
     els.lobbyUrl.value = joinUrl;
     renderQrCode(joinUrl);
     state.players = [state.playerName];
@@ -927,7 +940,8 @@
     // happens when the server broadcasts gameStart back to all clients
     els.btnStartGame.addEventListener('click', () => {
       const deathTimeout = els.deathTimeoutSelect ? parseInt(els.deathTimeoutSelect.value, 10) : 30;
-      sendMessage({ type: 'startGame', deathTimeout });
+      const hazardMultiplier = els.hazardMultiplierSelect ? parseFloat(els.hazardMultiplierSelect.value) : 1;
+      sendMessage({ type: 'startGame', deathTimeout, hazardMultiplier });
       els.btnStartGame.disabled = true;
       els.btnStartGame.textContent = 'Starting…';
     });
