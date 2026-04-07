@@ -4,6 +4,53 @@
 import { parseCommand } from './command-parser.js';
 import { validateWorld } from '../../world/validate-world.js';
 
+/**
+ * Get ASCII art for a goal completion
+ * @returns {string} ASCII art trophy
+ */
+export function getGoalAsciiArt() {
+  return `
+     ___________
+    '._==_==_=_.'
+    .-\\:      /-.
+   | (|:.     |) |
+    '-|:.     |-'
+      \\::.    /
+       '::. .'
+         ) (
+       _.' '._
+      \`\"\"\"\"\"\"\"\`
+   
+    🌟 GOAL COMPLETE! 🌟
+  `;
+}
+
+/**
+ * Get ASCII art for final victory
+ * @returns {string} ASCII art victory banner
+ */
+export function getVictoryAsciiArt() {
+  return `
+  ═══════════════════════════════════════════════════════
+  ╔═══════════════════════════════════════════════════╗
+  ║                                                   ║
+  ║   ██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗  ║
+  ║   ██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗ ║
+  ║   ██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ║
+  ║   ╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗ ║
+  ║    ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║ ║
+  ║     ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝ ║
+  ║                                                   ║
+  ╚═══════════════════════════════════════════════════╝
+  
+         🎉  ALL GOALS COMPLETED!  🎉
+         
+      You have conquered the challenge!
+      
+  ═══════════════════════════════════════════════════════
+  `;
+}
+
 // Strip non-alphanumeric characters (except spaces) for fuzzy item matching.
 // Handles apostrophes, hyphens, em-dashes, and other special characters.
 function normalizeForMatch(str) {
@@ -144,11 +191,16 @@ export function createGameSession(world) {
     puzzleStates[puzzleId] = { solved: false };
   }
 
+  // Count total goals
+  const totalGoals = Object.values(world.puzzles || {}).filter(p => p.isGoal === true).length;
+
   return {
     world,
     roomStates,
     puzzleStates,
     players: {},
+    goalsCompleted: 0,
+    totalGoals,
     deathTimeout: 30,
     hazardMultiplier: 1.0,
     sayScope: 'room',
@@ -447,6 +499,14 @@ export function getPlayerView(session, playerId) {
 
   if (hintText) {
     view.hintText = hintText;
+  }
+
+  // Add goal progress if there are goals in the session
+  if (session.totalGoals > 0) {
+    view.goalProgress = {
+      completed: session.goalsCompleted || 0,
+      total: session.totalGoals,
+    };
   }
 
   return view;
@@ -995,6 +1055,35 @@ function handleUse(session, playerId, cmd) {
           responses.push({
             playerId: otherId,
             message: { type: 'message', text: puzzle.solvedText },
+          });
+        }
+      }
+
+      // Check if this puzzle is a goal
+      if (puzzle.isGoal === true) {
+        session.goalsCompleted = (session.goalsCompleted || 0) + 1;
+
+        // Broadcast goal completion to ALL players
+        responses.push({
+          playerId: 'all',
+          message: {
+            type: 'goalComplete',
+            playerName: player.name,
+            goalName: puzzle.goalName || puzzle.solvedText,
+            goalNumber: session.goalsCompleted,
+            totalGoals: session.totalGoals,
+            asciiArt: getGoalAsciiArt(),
+          },
+        });
+
+        // Check if all goals are complete
+        if (session.goalsCompleted === session.totalGoals && session.totalGoals > 0) {
+          responses.push({
+            playerId: 'all',
+            message: {
+              type: 'victoryComplete',
+              asciiArt: getVictoryAsciiArt(),
+            },
           });
         }
       }

@@ -201,6 +201,8 @@
       "requiredItem": "red-book",
       "hintText": "The wallpaper pattern doesn't match here. A book about hidden passages might help.",
       "solvedText": "Following the instructions in the red book, you press the mismatched wallpaper section. It gives way with a click, and an entire panel swings inward, revealing a hidden workshop to the east! Dust motes swirl in the shaft of light that cuts into the secret room.",
+      "isGoal": true,
+      "goalName": "Find the Secret Workshop",
       "action": {
         "type": "openExit",
         "direction": "east",
@@ -213,6 +215,8 @@
       "requiredItem": "music-box",
       "hintText": "The keyhole is shaped like a musical note. A device that plays music might serve as a key.",
       "solvedText": "You hold the music box up to the musical keyhole. Its mechanism interlocks with the lock — the ballerina begins to spin, playing The Clockmaker's Lullaby. The door clicks open to the north, revealing a spiral staircase up to an observatory!",
+      "isGoal": true,
+      "goalName": "Open the Observatory",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -225,6 +229,8 @@
       "requiredItem": "gear-piece",
       "hintText": "The music box mechanism has an empty slot. A small gear piece might fit perfectly.",
       "solvedText": "You carefully insert the gear piece into the music box mechanism. It clicks into place perfectly. The music box whirs to life, and the tiny ballerina begins to dance as The Clockmaker's Lullaby fills the room. The repaired music box is now in your hands — it might serve as a key elsewhere.",
+      "isGoal": true,
+      "goalName": "Repair the Music Box",
       "action": {
         "type": "addItem",
         "room": "guest-bedroom",

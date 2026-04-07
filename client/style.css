@@ -1067,6 +1067,78 @@ html, body {
   margin-top: 4px;
 }
 
+/* ===== Goal Progress (Room View) ===== */
+.goal-progress {
+  color: #FFD700;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 2px;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+
+/* ===== Goal Complete Message ===== */
+.goal-complete {
+  background: var(--bg-surface);
+  border: 2px solid #d4a017;
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.goal-complete .goal-ascii-art {
+  color: #FFD700;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  white-space: pre;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.goal-complete .goal-text {
+  color: #FFD700;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.goal-complete .goal-progress-text {
+  color: var(--text-dim);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ===== Victory Complete Message ===== */
+.victory-complete {
+  background: var(--bg-surface);
+  border: 3px double #FFD700;
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 12px 0;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.victory-complete .victory-ascii-art {
+  color: #FFD700;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  white-space: pre;
+  overflow-x: auto;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.victory-complete .victory-text {
+  color: #FFD700;
+  font-size: 18px;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
 /* ===== Share Hint (game start) ===== */
 .msg-share-hint {
   color: var(--accent);

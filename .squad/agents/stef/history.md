@@ -201,6 +201,20 @@
     2. **`killPlayer with empty inventory creates ghost with no items to drop`** — Player has no items. Kill them. Verify ghost.inventory is `[]`, roomStates items unchanged.
     3. **`items dropped on death are in the room for other players to get`** — Player A has items, dies. Player B in same room can see items in getPlayerView and pick them up.
     4. **`respawnPlayer gives empty inventory to revived player`** — Kill player, respawn them. Verify respawned player has empty inventory `[]`, items still in room.
+
+- **2026-04-07 — Goal Puzzle System tests (14 new tests, all passing)**
+  - Added `describe('Goal System (Stef)')` block to `/tests/game-engine.test.js`
+  - Feature: Puzzles can be marked as goals with `isGoal: true` and `goalName: "..."`. Session tracks `goalsCompleted` and `totalGoals`. Solving a goal broadcasts `goalComplete` (playerId: 'all') with player name, goal name, goal number, total goals, and ASCII art. When all goals complete, `victoryComplete` is also broadcast with ASCII art. `getPlayerView` returns `goalProgress: { completed, total }` when goals exist.
+  - Tests cover:
+    1. **Session initialization**: `createGameSession` counts goal puzzles correctly (`totalGoals` = count of isGoal puzzles, `goalsCompleted` = 0), handles worlds with no goals (totalGoals: 0)
+    2. **Goal solving behavior**: Solving a goal puzzle broadcasts `goalComplete` to 'all' with correct fields (playerName, goalName, goalNumber, totalGoals), increments `goalsCompleted`, non-goal puzzles do NOT broadcast goalComplete
+    3. **Victory condition**: Solving the last goal broadcasts BOTH `goalComplete` and `victoryComplete`, solving a goal (but not the last) does NOT broadcast victoryComplete
+    4. **View integration**: `getPlayerView` includes `goalProgress` when goals exist, excludes it when no goals, progress updates after solving
+    5. **ASCII art**: Both `goalComplete` and `victoryComplete` messages include non-empty `asciiArt` field, `getGoalAsciiArt()` and `getVictoryAsciiArt()` functions return non-empty strings
+  - Helper worlds created: `worldWithGoals(goalCount)` (1 or 2 goal puzzles), `worldWithMixedPuzzles()` (1 goal + 1 non-goal)
+  - Updated imports to include `getGoalAsciiArt` and `getVictoryAsciiArt` from `game-engine.js`
+  - All 14 tests pass (feature already implemented by Mouth in parallel)
+  - Total: 460 tests (453 passing, 7 skipped)
     5. **`items dropped on death are marked as displaced`** — Player picks up item from room-c, moves to room-b, dies. Item drops to room-b. getPlayerView shows `displaced: true` (not native to room-b).
     6. **`loot on ghost with no inventory gives appropriate message`** — Kill player, another player tries to loot the ghost. Gets message "nothing to loot", no crash.
   - **Test count:** 437 tests total (430 pass, 7 skipped)

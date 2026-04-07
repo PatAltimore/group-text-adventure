@@ -188,6 +188,8 @@
       "requiredItem": "silver-coin",
       "hintText": "A coin-shaped slot glints on the gate's mechanism. Something shiny might fit.",
       "solvedText": "You press the silver coin into the slot on the iron gate. Ancient gears click and whir, and the gate slowly rises, revealing the passage north to the armory.",
+      "isGoal": true,
+      "goalName": "Open the Armory",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -200,6 +202,8 @@
       "requiredItem": "golden-key",
       "hintText": "The golden lock gleams — only a key of matching splendor could turn it.",
       "solvedText": "You insert the golden key into the golden lock on the chest. It turns smoothly. Inside you find a lever — you pull it, and a hidden passage opens to the north, leading to the throne room!",
+      "isGoal": true,
+      "goalName": "Reach the Throne Room",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -212,6 +216,8 @@
       "requiredItem": "old-book",
       "hintText": "The murals seem to tell a story. An old tome might reveal what's hidden here.",
       "solvedText": "You hold the old book up to the mural on the west wall. The map fragment inside matches perfectly — you press the hidden stone, and a section of wall grinds open, revealing a secret garden to the west!",
+      "isGoal": true,
+      "goalName": "Discover the Secret Garden",
       "action": {
         "type": "openExit",
         "direction": "west",

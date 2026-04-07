@@ -248,6 +248,8 @@
       "requiredItem": "keycard-blue",
       "hintText": "The biometric lock requires medical-level clearance. A doctor's keycard would work.",
       "solvedText": "You press Dr. Vasquez's blue keycard against the biometric reader. It flashes green, and the quarantine seal disengages with a sharp hiss. The heavy door to the north swings inward, releasing a wave of cold, sterile air.",
+      "isGoal": true,
+      "goalName": "Access Quarantine Chamber",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -260,6 +262,8 @@
       "requiredItem": "keycard-red",
       "hintText": "Level 5 clearance required. A high-security keycard might grant access.",
       "solvedText": "You slide the red keycard into the slot. The blast door's magnetic locks disengage one by one — CLUNK, CLUNK, CLUNK — and the massive door rolls aside. Heat and a deep thrumming wash over you as the reactor room is revealed to the north.",
+      "isGoal": true,
+      "goalName": "Access the Reactor",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -284,6 +288,8 @@
       "requiredItem": "power-cell",
       "hintText": "The energy barrier needs a power cell to deactivate. Check engineering areas for spare cells.",
       "solvedText": "You slot the power cell into the barrier console. It drinks the energy greedily — the barrier flickers, stutters, and collapses. The ladder to the north is clear. The command deck awaits.",
+      "isGoal": true,
+      "goalName": "Reach Command Deck",
       "action": {
         "type": "openExit",
         "direction": "north",

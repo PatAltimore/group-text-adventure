@@ -396,3 +396,29 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **No JS changes needed** — all element IDs preserved, `initJoin()` logic unchanged.
 - **All tests pass** (pre-existing intermittent failure in world-selection unrelated).
 
+### 2026-04-07 — Goal and Victory Message Rendering
+
+- **New message handlers:** Added `goalComplete` and `victoryComplete` message type handlers in `handleServerMessage` switch statement (client/app.js)
+- **Goal Complete Rendering:** When a player solves a goal puzzle, ALL players receive:
+  - Gold-bordered container (`.goal-complete`) with dark background
+  - ASCII art in monospace `<pre>` block with gold color (#FFD700)
+  - Achievement text: "🏆 {playerName} achieved: {goalName}!"
+  - Progress indicator: "Goals: {goalNumber}/{totalGoals}" in dimmed italic text
+  - Celebratory styling with 2px amber border (#d4a017)
+- **Victory Complete Rendering:** When ALL goals are solved, ALL players receive:
+  - More dramatic container (`.victory-complete`) with 3px double gold border
+  - Larger ASCII art in gold with heavier font weight
+  - Victory text: "🎉 Adventure Complete! All goals have been achieved! 🎉"
+  - Gold glow effect via box-shadow and text-shadow for extra celebration
+- **Goal Progress Display:** Room view now shows inline progress indicator:
+  - Located right after room name, before room description
+  - Format: "🏆 Goals: {completed}/{total}" in small gold text
+  - Only displayed when `room.goalProgress` exists and `total > 0`
+  - CSS class `.goal-progress` — 12px, gold (#FFD700), subtle opacity
+- **Rendering functions:** Added `renderGoalComplete(msg)` and `renderVictoryComplete(msg)` following existing DOM-building patterns (createElement, appendChild, no innerHTML)
+- **ASCII art handling:** Used `<pre>` tags with `white-space: pre` to preserve newlines and spacing
+- **Visual hierarchy:** Goals are celebratory but not overwhelming; victory is THE big moment with extra visual flourish
+- **Files modified:** `client/app.js`, `client/style.css`
+- **Pattern consistency:** Followed existing message rendering patterns, color palette (gold/amber for achievements), and DOM manipulation approach
+
+

@@ -15,6 +15,8 @@ import {
   killPlayer,
   respawnPlayer,
   checkHazards,
+  getGoalAsciiArt,
+  getVictoryAsciiArt,
 } from '../api/src/game-engine.js';
 import * as GameEngine from '../api/src/game-engine.js';
 import { createRequire } from 'module';
@@ -3779,5 +3781,323 @@ describe('Puzzle Hint System (Stef)', () => {
     const world = worldWithHints();
     const session = createGameSession(world);
     expect(session.hintsEnabled).toBe(true);
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// Goal System (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Goal System', () => {
+  // Helper: Create a world with goal puzzles
+  function worldWithGoals(goalCount = 1) {
+    const world = {
+      name: 'Goal Test World',
+      startRoom: 'start',
+      rooms: {
+        'start': {
+          name: 'Start Room',
+          description: 'A starting room.',
+          exits: goalCount >= 1 ? { north: 'goal-room-1' } : {},
+          items: goalCount >= 1 ? ['goal-key-1'] : [],
+          hazards: []
+        },
+        'goal-room-1': {
+          name: 'Goal Room 1',
+          description: 'A room with the first goal puzzle.',
+          exits: { south: 'start' },
+          items: goalCount >= 2 ? ['goal-key-2'] : [],
+          hazards: []
+        }
+      },
+      items: {
+        'goal-key-1': {
+          name: 'Goal Key 1',
+          description: 'The first goal key.',
+          roomText: 'A golden key glows on the floor.',
+          pickupText: 'You take the first goal key.',
+          portable: true
+        }
+      },
+      puzzles: {
+        'goal-puzzle-1': {
+          room: 'goal-room-1',
+          description: 'A locked door blocks your path.',
+          requiredItem: 'goal-key-1',
+          solvedText: 'You solved the first goal!',
+          isGoal: true,
+          goalName: 'Unlock the First Door',
+          action: {
+            type: 'openExit',
+            direction: 'east',
+            targetRoom: 'start'
+          }
+        }
+      }
+    };
+
+    if (goalCount >= 2) {
+      world.rooms['goal-room-2'] = {
+        name: 'Goal Room 2',
+        description: 'A room with the second goal puzzle.',
+        exits: { south: 'goal-room-1' },
+        items: [],
+        hazards: []
+      };
+      world.rooms['goal-room-1'].exits.north = 'goal-room-2';
+      world.items['goal-key-2'] = {
+        name: 'Goal Key 2',
+        description: 'The second goal key.',
+        roomText: 'A silver key lies here.',
+        pickupText: 'You take the second goal key.',
+        portable: true
+      };
+      world.puzzles['goal-puzzle-2'] = {
+        room: 'goal-room-2',
+        description: 'Another locked door stands before you.',
+        requiredItem: 'goal-key-2',
+        solvedText: 'You solved the second goal!',
+        isGoal: true,
+        goalName: 'Unlock the Second Door',
+        action: {
+          type: 'openExit',
+          direction: 'west',
+          targetRoom: 'goal-room-1'
+        }
+      };
+    }
+
+    return world;
+  }
+
+  // Helper: Create a world with both goal and non-goal puzzles
+  function worldWithMixedPuzzles() {
+    const world = worldWithGoals(1);
+    // Add a non-goal puzzle
+    world.rooms['side-room'] = {
+      name: 'Side Room',
+      description: 'A side room with a regular puzzle.',
+      exits: { west: 'start' },
+      items: ['regular-key'],
+      hazards: []
+    };
+    world.rooms['start'].exits.east = 'side-room';
+    world.items['regular-key'] = {
+      name: 'Regular Key',
+      description: 'A regular key.',
+      roomText: 'A key sits here.',
+      pickupText: 'You take the regular key.',
+      portable: true
+    };
+    world.puzzles['regular-puzzle'] = {
+      room: 'side-room',
+      description: 'A simple lock.',
+      requiredItem: 'regular-key',
+      solvedText: 'The lock clicks open.',
+      action: {
+        type: 'openExit',
+        direction: 'north',
+        targetRoom: 'start'
+      }
+    };
+    return world;
+  }
+
+  test('createGameSession counts goal puzzles', () => {
+    const world = loadWorld(worldWithMixedPuzzles());
+    const session = createGameSession(world);
+    
+    expect(session.totalGoals).toBe(1);
+    expect(session.goalsCompleted).toBe(0);
+  });
+
+  test('createGameSession with no goals sets totalGoals to 0', () => {
+    const world = loadWorld(getTestWorld());
+    const session = createGameSession(world);
+    
+    expect(session.totalGoals).toBe(0);
+    expect(session.goalsCompleted).toBe(0);
+  });
+
+  test('solving a goal puzzle broadcasts goalComplete to all', () => {
+    const world = loadWorld(worldWithGoals(1));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Get the key and move to the goal room
+    ({ session } = processCommand(session, 'p1', 'take goal key 1'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    
+    // Solve the goal puzzle
+    const { responses } = processCommand(session, 'p1', 'use goal key 1');
+    
+    // Find the goalComplete message
+    const goalMsg = responses.find(r => r.playerId === 'all' && r.message.type === 'goalComplete');
+    expect(goalMsg).toBeDefined();
+    expect(goalMsg.message.playerName).toBe('Alice');
+    expect(goalMsg.message.goalName).toBe('Unlock the First Door');
+    expect(goalMsg.message.goalNumber).toBe(1);
+    expect(goalMsg.message.totalGoals).toBe(1);
+  });
+
+  test('solving a goal puzzle increments goalsCompleted', () => {
+    const world = loadWorld(worldWithGoals(1));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Get the key and move to the goal room
+    ({ session } = processCommand(session, 'p1', 'take goal key 1'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    
+    // Solve the goal puzzle
+    ({ session } = processCommand(session, 'p1', 'use goal key 1'));
+    
+    expect(session.goalsCompleted).toBe(1);
+  });
+
+  test('solving a non-goal puzzle does NOT broadcast goalComplete', () => {
+    const world = loadWorld(worldWithMixedPuzzles());
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Solve the regular (non-goal) puzzle
+    ({ session } = processCommand(session, 'p1', 'go east'));
+    ({ session } = processCommand(session, 'p1', 'take regular key'));
+    const { responses } = processCommand(session, 'p1', 'use regular key');
+    
+    // Should NOT have a goalComplete message
+    const goalMsg = responses.find(r => r.message.type === 'goalComplete');
+    expect(goalMsg).toBeUndefined();
+  });
+
+  test('solving the last goal broadcasts victoryComplete', () => {
+    const world = loadWorld(worldWithGoals(1));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Get the key and move to the goal room
+    ({ session } = processCommand(session, 'p1', 'take goal key 1'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    
+    // Solve the only goal puzzle
+    const { responses } = processCommand(session, 'p1', 'use goal key 1');
+    
+    // Should have BOTH goalComplete and victoryComplete
+    const goalMsg = responses.find(r => r.message.type === 'goalComplete');
+    const victoryMsg = responses.find(r => r.playerId === 'all' && r.message.type === 'victoryComplete');
+    
+    expect(goalMsg).toBeDefined();
+    expect(victoryMsg).toBeDefined();
+  });
+
+  test('solving a goal but not the last does NOT broadcast victoryComplete', () => {
+    const world = loadWorld(worldWithGoals(2));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Solve only the first goal
+    ({ session } = processCommand(session, 'p1', 'take goal key 1'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    const { responses } = processCommand(session, 'p1', 'use goal key 1');
+    
+    // Should have goalComplete but NOT victoryComplete
+    const goalMsg = responses.find(r => r.message.type === 'goalComplete');
+    const victoryMsg = responses.find(r => r.message.type === 'victoryComplete');
+    
+    expect(goalMsg).toBeDefined();
+    expect(victoryMsg).toBeUndefined();
+  });
+
+  test('getPlayerView includes goalProgress when goals exist', () => {
+    const world = loadWorld(worldWithGoals(2));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    const view = getPlayerView(session, 'p1');
+    
+    expect(view.goalProgress).toBeDefined();
+    expect(view.goalProgress.completed).toBe(0);
+    expect(view.goalProgress.total).toBe(2);
+  });
+
+  test('getPlayerView excludes goalProgress when no goals', () => {
+    const world = loadWorld(getTestWorld());
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    const view = getPlayerView(session, 'p1');
+    
+    expect(view.goalProgress).toBeUndefined();
+  });
+
+  test('goalComplete message includes ASCII art', () => {
+    const world = loadWorld(worldWithGoals(1));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Get the key and move to the goal room
+    ({ session } = processCommand(session, 'p1', 'take goal key 1'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    
+    // Solve the goal puzzle
+    const { responses } = processCommand(session, 'p1', 'use goal key 1');
+    
+    const goalMsg = responses.find(r => r.message.type === 'goalComplete');
+    expect(goalMsg).toBeDefined();
+    expect(goalMsg.message.asciiArt).toBeDefined();
+    expect(typeof goalMsg.message.asciiArt).toBe('string');
+    expect(goalMsg.message.asciiArt.length).toBeGreaterThan(0);
+  });
+
+  test('victoryComplete message includes ASCII art', () => {
+    const world = loadWorld(worldWithGoals(1));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Get the key and move to the goal room
+    ({ session } = processCommand(session, 'p1', 'take goal key 1'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    
+    // Solve the only goal puzzle
+    const { responses } = processCommand(session, 'p1', 'use goal key 1');
+    
+    const victoryMsg = responses.find(r => r.message.type === 'victoryComplete');
+    expect(victoryMsg).toBeDefined();
+    expect(victoryMsg.message.asciiArt).toBeDefined();
+    expect(typeof victoryMsg.message.asciiArt).toBe('string');
+    expect(victoryMsg.message.asciiArt.length).toBeGreaterThan(0);
+  });
+
+  test('goal progress updates in room view after solving', () => {
+    const world = loadWorld(worldWithGoals(2));
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    
+    // Check initial progress
+    let view = getPlayerView(session, 'p1');
+    expect(view.goalProgress.completed).toBe(0);
+    expect(view.goalProgress.total).toBe(2);
+    
+    // Solve first goal
+    ({ session } = processCommand(session, 'p1', 'take goal key 1'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    ({ session } = processCommand(session, 'p1', 'use goal key 1'));
+    
+    // Check updated progress
+    view = getPlayerView(session, 'p1');
+    expect(view.goalProgress.completed).toBe(1);
+    expect(view.goalProgress.total).toBe(2);
+  });
+
+  test('getGoalAsciiArt returns non-empty string', () => {
+    const art = getGoalAsciiArt();
+    expect(typeof art).toBe('string');
+    expect(art.length).toBeGreaterThan(0);
+  });
+
+  test('getVictoryAsciiArt returns non-empty string', () => {
+    const art = getVictoryAsciiArt();
+    expect(typeof art).toBe('string');
+    expect(art.length).toBeGreaterThan(0);
   });
 });

@@ -543,3 +543,52 @@ Two features implemented:
 
 **Tests:** All 446 tests pass (439 passed, 7 skipped). Updated 1 test to expect 🧩 emoji prefix on puzzle rooms.
 
+
+### 2026-04-07 — Goal Puzzle System Implementation
+
+**Feature:** Added a goal puzzle system to track and celebrate major puzzle completions across the multiplayer game.
+
+**Backend Changes:**
+
+1. **api/src/game-engine.js:**
+   - Added getGoalAsciiArt() and getVictoryAsciiArt() helper functions:
+     * Trophy ASCII art for individual goal completions
+     * Large victory banner for completing all goals
+     * Both exported for testing
+   - Modified createGameSession():
+     * Counts total goal puzzles (where isGoal: true)
+     * Initializes session.goalsCompleted = 0 and session.totalGoals = {count}
+   - Modified handleUseItem() (puzzle solving logic):
+     * After solving a puzzle, checks if puzzle.isGoal === true
+     * If yes: increments session.goalsCompleted
+     * Broadcasts goalComplete message to ALL players (playerId: 'all') with:
+       - playerName (solver), goalName, goalNumber, totalGoals, asciiArt
+     * If all goals completed: broadcasts ictoryComplete message to ALL players with victory ASCII art
+   - Modified getPlayerView():
+     * Includes goalProgress: { completed: N, total: M } in view when 	otalGoals > 0
+
+2. **World JSON updates:**
+   - **world/default-world.json:** Marked 3 puzzles as goals:
+     * unlock-armory: "Open the Armory"
+     * unlock-throne: "Reach the Throne Room"
+     * reveal-garden: "Discover the Secret Garden"
+   - **world/escape-room.json:** Marked 3 puzzles as goals:
+     * open-secret-workshop: "Find the Secret Workshop"
+     * open-observatory: "Open the Observatory"
+     * fix-music-box: "Repair the Music Box"
+   - **world/space-adventure.json:** Marked 3 puzzles as goals:
+     * unlock-quarantine: "Access Quarantine Chamber"
+     * unlock-reactor: "Access the Reactor"
+     * unlock-command-deck: "Reach Command Deck"
+
+**Broadcasting:** Goal and victory messages use playerId: 'all' which is handled by sendToGame in gameHub.js (lines 691-702) to broadcast to all connected players.
+
+**Tests:** All 453 tests pass (7 skipped). Test suite includes 12 new goal system tests covering:
+- Goal counting in session initialization
+- Goal completion broadcasts
+- Victory condition broadcasts
+- Goal progress in room views
+- ASCII art generation
+
+**Architecture Pattern:** Goals are defined in world JSON as flags on puzzles (isGoal: true, goalName: "..."). Game engine tracks progress in session state. Broadcast messages allow frontend to display celebrations to all players simultaneously.
+

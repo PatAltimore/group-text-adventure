@@ -463,6 +463,12 @@
       case 'playerRespawn':
         appendToOutput(createMsg('msg-respawn-notification', `${msg.playerName} has respawned.`));
         break;
+      case 'goalComplete':
+        renderGoalComplete(msg);
+        break;
+      case 'victoryComplete':
+        renderVictoryComplete(msg);
+        break;
       default:
         // Unknown message type — show as system text if it has text
         if (msg.text) appendSystemMessage(msg.text);
@@ -521,6 +527,14 @@
     name.className = 'room-name';
     name.textContent = room.name || 'Unknown Room';
     container.appendChild(name);
+
+    // Goal progress display - right after room name
+    if (room.goalProgress && room.goalProgress.total > 0) {
+      const progress = document.createElement('div');
+      progress.className = 'goal-progress';
+      progress.textContent = `🏆 Goals: ${room.goalProgress.completed}/${room.goalProgress.total}`;
+      container.appendChild(progress);
+    }
 
     // Split items into native and displaced
     const nativeItems = (room.items || []).filter(item => !item.displaced);
@@ -692,6 +706,54 @@
     msg.className = 'msg msg-inventory';
     msg.appendChild(container);
     appendToOutput(msg);
+  }
+
+  function renderGoalComplete(msg) {
+    const container = document.createElement('div');
+    container.className = 'goal-complete';
+
+    // ASCII art display
+    if (msg.asciiArt) {
+      const art = document.createElement('pre');
+      art.className = 'goal-ascii-art';
+      art.textContent = msg.asciiArt;
+      container.appendChild(art);
+    }
+
+    // Achievement text
+    const goalText = document.createElement('div');
+    goalText.className = 'goal-text';
+    goalText.textContent = `🏆 ${msg.playerName} achieved: ${msg.goalName}!`;
+    container.appendChild(goalText);
+
+    // Progress indicator
+    const progressText = document.createElement('div');
+    progressText.className = 'goal-progress-text';
+    progressText.textContent = `Goals: ${msg.goalNumber}/${msg.totalGoals}`;
+    container.appendChild(progressText);
+
+    appendToOutput(container);
+  }
+
+  function renderVictoryComplete(msg) {
+    const container = document.createElement('div');
+    container.className = 'victory-complete';
+
+    // ASCII art display
+    if (msg.asciiArt) {
+      const art = document.createElement('pre');
+      art.className = 'victory-ascii-art';
+      art.textContent = msg.asciiArt;
+      container.appendChild(art);
+    }
+
+    // Victory text
+    const victoryText = document.createElement('div');
+    victoryText.className = 'victory-text';
+    victoryText.textContent = '🎉 Adventure Complete! All goals have been achieved! 🎉';
+    container.appendChild(victoryText);
+
+    appendToOutput(container);
   }
 
   function handlePlayerEvent(msg) {
