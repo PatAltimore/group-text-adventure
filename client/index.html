@@ -102,6 +102,8 @@
 
       <div class="lobby-share">
         <button id="btn-copy-url" class="btn btn-primary btn-large lobby-share-btn" aria-label="Share join URL">📤 Share Game Link</button>
+        <div id="lobby-qr" class="lobby-qr-container" aria-label="QR code for joining the game"></div>
+        <p id="lobby-qr-label" class="lobby-qr-label">Scan to join</p>
       </div>
 
       <div class="lobby-players">
@@ -162,7 +164,9 @@
     <header class="game-header">
       <div class="game-title" id="game-title">🏰 Group Text Adventure</div>
       <div class="game-header-right">
-        <button id="btn-share" class="btn btn-share" aria-label="Share game">Share</button>
+        <button id="btn-share" class="btn btn-share" aria-label="Share game link">🔗 Share</button>
+        <button id="btn-qr" class="btn btn-share" aria-label="Show QR code">📱 QR</button>
+        <button id="btn-host-new" class="btn btn-host-new" aria-label="Host new game">+ New</button>
         <div class="game-players" id="game-player-badge" aria-label="Player count">Players: <span id="game-player-count">0</span></div>
       </div>
     </header>

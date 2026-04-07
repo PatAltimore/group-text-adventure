@@ -78,6 +78,8 @@
     commandForm: $('#command-form'),
     commandInput: $('#command-input'),
     btnShare: $('#btn-share'),
+    btnQr: $('#btn-qr'),
+    btnHostNew: $('#btn-host-new'),
     
     // World selector
     worldSelectorGroup: $('#world-selector-group'),
@@ -90,6 +92,10 @@
     shareQrCanvas: $('#share-qr-canvas'),
     shareUrl: $('#share-url'),
     btnShareCopy: $('#btn-share-copy'),
+
+    // Lobby QR (always visible for host)
+    lobbyQr: $('#lobby-qr'),
+    lobbyQrLabel: $('#lobby-qr-label'),
 
     // Death overlay
     deathOverlay: $('#death-overlay'),
@@ -1052,6 +1058,10 @@
     // Share URL button — same flow as game Share button
     els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, '📤 Share Game Link'));
 
+    // Render QR code always visible in lobby for the host
+    renderQrCode(joinUrl, els.lobbyQr);
+    if (els.lobbyQrLabel) els.lobbyQrLabel.classList.remove('hidden');
+
     // Start game button — send startGame to server; actual transition
     // happens when the server broadcasts gameStart back to all clients
     els.btnStartGame.addEventListener('click', () => {
@@ -1134,8 +1144,22 @@
 
   // --- Share Overlay ---
   function initShareOverlay() {
-    // Share button click
-    els.btnShare.addEventListener('click', () => handleShare(els.btnShare, 'Share'));
+    // Share Link button — copies URL, uses native share on mobile
+    els.btnShare.addEventListener('click', () => handleShare(els.btnShare, '🔗 Share'));
+
+    // QR Code button — directly opens QR overlay (no native share)
+    els.btnQr.addEventListener('click', () => {
+      const joinUrl = buildJoinUrl(state.gameId);
+      els.shareUrl.value = joinUrl;
+      renderQrCode(joinUrl, els.shareQrCanvas);
+      els.shareOverlay.classList.remove('hidden');
+      els.shareOverlayClose.focus();
+    });
+
+    // Host New Game button — navigate back to landing screen
+    els.btnHostNew.addEventListener('click', () => {
+      window.location.href = window.location.pathname;
+    });
     
     // Close button
     els.shareOverlayClose.addEventListener('click', closeShareOverlay);

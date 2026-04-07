@@ -592,3 +592,13 @@ Two features implemented:
 
 **Architecture Pattern:** Goals are defined in world JSON as flags on puzzles (isGoal: true, goalName: "..."). Game engine tracks progress in session state. Broadcast messages allow frontend to display celebrations to all players simultaneously.
 
+### 2026-04-07 — Help Command Redesign + Map Command
+
+- **Help redesign:** Replaced flat command list with grouped sections (Movement, Items, Communication, Ghosts, Game) using box-drawing separators and consistent formatting. Keeps lines under 30 chars wide for mobile readability.
+- **Map command:** New `handleMap` function generates ASCII map of visited rooms via BFS (depth 2) from current room. Current room marked `[*]`, visited rooms numbered `[2]`, `[3]`…, unvisited rooms show as `[?] ???`. Tree-style layout with compass direction labels.
+- **visitedRooms tracking:** Added `visitedRooms` array to player state. Initialized in `addPlayer` with start room, updated in `handleGo` on movement. Preserved through ghost transitions (disconnect/kill → reconnect/respawn/revive).
+- **Command parser:** Added `MAP_VERBS` set (`map`, `m`) in `command-parser.js`.
+- **Exports:** `handleMap` exported for testing.
+- **Files:** `api/src/game-engine.js`, `api/src/command-parser.js`
+- **All 465 tests pass** (7 skipped).
+

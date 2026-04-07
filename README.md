@@ -4,7 +4,7 @@
 
 Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to find the ultimate treasure. Using voice commands (or text), navigate dungeons, manage inventory, and communicate with teammates in real time via WebSocket.
 
-🎮 **[Play the Live Demo](https://patcastlestore.z5.web.core.windows.net)** — Try it now!
+🎮 **[Play the Live Demo](https://textgtagame.z5.web.core.windows.net)** — Try it now!
 
 ---
 
@@ -18,12 +18,17 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 - **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can loot and use
 - **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
 - **Puzzle Rooms** — 🧩 Emoji prefix marks puzzle rooms; optional hints show required items
+- **Goal System** — Puzzles marked as goals broadcast a trophy to all players when solved. When all goals are completed, a victory celebration is broadcast to the entire group. Goal progress is displayed in the room view.
+- **Map Command** — Navigate with an ASCII map showing visited rooms up to 2 rooms away. Current room marked with [*], unvisited rooms shown as [?].
 - **Displaced Items** — Items not in their original room display distinctly as "dropped items"
 - **Explore & Interact** — Navigate rooms, examine items, collect treasures
 - **Collaborative Puzzles** — Solve challenges that require teamwork and item trading
 - **Inventory & Items** — Pick up, drop, use, and give items to other players
 - **Direct Communication** — Say messages to players in the same room (or globally, per lobby settings)
 - **Room Awareness** — See who's nearby and what's in each room
+- **Share Link & QR Code** — Share button copies the join URL instantly. QR Code button displays a scannable QR code for easy mobile joining. QR code always visible on host screen.
+- **Host New Game Button** — Easily start a fresh game from the game header without navigating away.
+- **Improved Help Command** — Help text now features clear sections and enhanced readability for easier command discovery.
 - **World Editor** — Built-in editor (editor.html) for creating and editing world JSON files
 
 ---
@@ -42,6 +47,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 | **Use** | `use <item>` | `use key` |
 | **Give** | `give <item> to <player>` | `give key to Alice` |
 | **Say** | `say <message>` | `say Help me with the puzzle!` |
+| **Map** | `map` | `map` |
 | **Help** | `help` | `help` |
 
 ### Quick Start

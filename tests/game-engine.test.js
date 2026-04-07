@@ -4101,3 +4101,222 @@ describe('Goal System', () => {
     expect(art.length).toBeGreaterThan(0);
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// Help Command (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Help Command (Stef)', () => {
+  test('help command returns formatted text', () => {
+    const session = sessionWithPlayer('p1', 'Alice');
+    const { responses } = processCommand(session, 'p1', 'help');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg).toBeDefined();
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toBeDefined();
+    // Should contain key command keywords
+    expect(msg.message.text).toMatch(/go/i);
+    expect(msg.message.text).toMatch(/look/i);
+    expect(msg.message.text).toMatch(/take/i);
+    expect(msg.message.text).toMatch(/drop/i);
+    expect(msg.message.text).toMatch(/inventory/i);
+    expect(msg.message.text).toMatch(/help/i);
+  });
+
+  test('help command is available as HELP and ?', () => {
+    const session1 = sessionWithPlayer('p1', 'Alice');
+    const { responses: r1 } = processCommand(session1, 'p1', 'help');
+    const helpMsg = r1.find(r => r.playerId === 'p1');
+    expect(helpMsg.message.type).toBe('message');
+
+    const session2 = sessionWithPlayer('p2', 'Bob');
+    const { responses: r2 } = processCommand(session2, 'p2', '?');
+    const qMsg = r2.find(r => r.playerId === 'p2');
+    expect(qMsg.message.type).toBe('message');
+
+    // Both should produce help text containing command info
+    expect(helpMsg.message.text).toMatch(/go/i);
+    expect(qMsg.message.text).toMatch(/go/i);
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// Map Command (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Map Command (Stef)', () => {
+  // Custom world for map testing:
+  //   map-a (start) --north--> map-b --north--> map-c
+  //                            map-b --east---> map-d
+  //   map-a         --east---> map-e
+  //
+  // Depths from map-a: 0=map-a, 1=map-b/map-e, 2=map-c/map-d
+  function mapTestWorld() {
+    return {
+      name: 'Map Test World',
+      startRoom: 'map-a',
+      rooms: {
+        'map-a': {
+          name: 'Central Hall',
+          description: 'The starting hall.',
+          exits: { north: 'map-b', east: 'map-e' },
+          items: [],
+          hazards: [],
+        },
+        'map-b': {
+          name: 'North Corridor',
+          description: 'A corridor heading north.',
+          exits: { south: 'map-a', north: 'map-c', east: 'map-d' },
+          items: [],
+          hazards: [],
+        },
+        'map-c': {
+          name: 'Tower Room',
+          description: 'A tall tower room.',
+          exits: { south: 'map-b' },
+          items: [],
+          hazards: [],
+        },
+        'map-d': {
+          name: 'East Wing',
+          description: 'The east wing of the building.',
+          exits: { west: 'map-b' },
+          items: [],
+          hazards: [],
+        },
+        'map-e': {
+          name: 'Garden',
+          description: 'A peaceful garden.',
+          exits: { west: 'map-a' },
+          items: [],
+          hazards: [],
+        },
+      },
+      items: {},
+      puzzles: {},
+    };
+  }
+
+  function mapSession(id = 'p1', name = 'Alice') {
+    const world = loadWorld(mapTestWorld());
+    let session = createGameSession(world);
+    session = addPlayer(session, id, name);
+    return session;
+  }
+
+  // ── visitedRooms tracking ──────────────────────────────────────────
+
+  test('player starts with visitedRooms containing start room', () => {
+    const session = mapSession();
+    const player = session.players['p1'];
+    expect(player.visitedRooms).toBeDefined();
+    expect(player.visitedRooms).toContain('map-a');
+  });
+
+  test('moving to a room adds it to visitedRooms', () => {
+    let session = mapSession();
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    const player = session.players['p1'];
+    expect(player.visitedRooms).toContain('map-a');
+    expect(player.visitedRooms).toContain('map-b');
+  });
+
+  test('visitedRooms doesn\'t duplicate on revisiting', () => {
+    let session = mapSession();
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    ({ session } = processCommand(session, 'p1', 'go south'));
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    const player = session.players['p1'];
+    // Should have unique entries only
+    const unique = [...new Set(player.visitedRooms)];
+    expect(player.visitedRooms).toHaveLength(unique.length);
+    expect(player.visitedRooms).toContain('map-a');
+    expect(player.visitedRooms).toContain('map-b');
+  });
+
+  // ── map command output ─────────────────────────────────────────────
+
+  test('map command returns message with ASCII map', () => {
+    let session = mapSession();
+    const { responses } = processCommand(session, 'p1', 'map');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg).toBeDefined();
+    expect(msg.message.type).toBe('message');
+    // Should contain the current room name
+    expect(msg.message.text).toContain('Central Hall');
+  });
+
+  test('map shows current room with [*] marker', () => {
+    let session = mapSession();
+    const { responses } = processCommand(session, 'p1', 'map');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.text).toContain('[*]');
+  });
+
+  test('map shows unvisited rooms as [?] ???', () => {
+    // Player is at map-a (start), has not visited map-b or map-e
+    let session = mapSession();
+    const { responses } = processCommand(session, 'p1', 'map');
+    const msg = responses.find(r => r.playerId === 'p1');
+    // Adjacent rooms not visited should show as unknown
+    expect(msg.message.text).toContain('[?]');
+    expect(msg.message.text).toContain('???');
+  });
+
+  test('map shows visited adjacent rooms with names', () => {
+    let session = mapSession();
+    // Visit north corridor
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    // Go back to start
+    ({ session } = processCommand(session, 'p1', 'go south'));
+    // Now map from start — map-b (North Corridor) is visited and adjacent
+    const { responses } = processCommand(session, 'p1', 'map');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.text).toContain('North Corridor');
+  });
+
+  test('map limits to depth 2', () => {
+    let session = mapSession();
+    // Visit all rooms: a -> b -> c -> b -> d -> b -> a -> e
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-b
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-c
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-b
+    ({ session } = processCommand(session, 'p1', 'go east'));   // map-d
+    ({ session } = processCommand(session, 'p1', 'go west'));   // map-b
+    ({ session } = processCommand(session, 'p1', 'go south')); // map-a
+    ({ session } = processCommand(session, 'p1', 'go east'));   // map-e
+
+    // Now at map-e (depth 0). map-a is depth 1. map-b is depth 2.
+    // map-c and map-d are depth 3 from map-e — should NOT appear.
+    const { responses } = processCommand(session, 'p1', 'map');
+    const msg = responses.find(r => r.playerId === 'p1');
+    const text = msg.message.text;
+    expect(text).toContain('Garden');        // depth 0 - current
+    expect(text).toContain('Central Hall');  // depth 1
+    expect(text).toContain('North Corridor'); // depth 2
+    expect(text).not.toContain('Tower Room');  // depth 3 - too far
+    expect(text).not.toContain('East Wing');   // depth 3 - too far
+  });
+
+  test('map shows compass directions', () => {
+    let session = mapSession();
+    const { responses } = processCommand(session, 'p1', 'map');
+    const msg = responses.find(r => r.playerId === 'p1');
+    const text = msg.message.text;
+    // Should contain at least one compass direction label
+    expect(text).toMatch(/\b[NSEW]\b/);
+  });
+
+  test('map command only sent to requesting player', () => {
+    const world = loadWorld(mapTestWorld());
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    session = addPlayer(session, 'p2', 'Bob');
+    const { responses } = processCommand(session, 'p1', 'map');
+    // All responses should be for p1 only
+    const otherPlayerMsgs = responses.filter(r => r.playerId === 'p2');
+    expect(otherPlayerMsgs).toHaveLength(0);
+    const p1Msgs = responses.filter(r => r.playerId === 'p1');
+    expect(p1Msgs.length).toBeGreaterThan(0);
+  });
+});

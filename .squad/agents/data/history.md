@@ -422,3 +422,14 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Pattern consistency:** Followed existing message rendering patterns, color palette (gold/amber for achievements), and DOM manipulation approach
 
 
+
+### 2026-04-06 — UI: Share/QR Buttons, Host New Game, Message Rendering
+
+- **Share button split:** Renamed game header "Share" → "🔗 Share" and added separate "📱 QR" button that directly opens the QR overlay (bypasses native share API). Both compact for mobile.
+- **QR Code button:** Opens QR overlay immediately without clipboard copy or native share attempt. Ideal for phones where you want to show a QR code.
+- **Host New Game button:** Added "+ New" button in game header (subtle outline style). Navigates to landing screen via `window.location.href = window.location.pathname`.
+- **Lobby QR code always visible:** Host lobby screen now renders QR code permanently visible below the Share Game Link button. "Scan to join" label underneath. Host can show their phone/screen for others to scan.
+- **Message pre-wrap:** Added `white-space: pre-wrap; word-break: break-word;` to `.msg-narrative` CSS class. This preserves `\n` formatting in message text (help command output, map ASCII art). Since body uses `font-family: var(--font-mono)`, ASCII art renders correctly in monospace.
+- **Responsive tweaks:** Reduced header button gap on mobile (6px). Added mobile-specific sizing for the new buttons.
+- **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
+- **Pre-existing test failures:** 6 map command tests in game-engine.test.js fail (backend feature not yet implemented). Not related to frontend changes.

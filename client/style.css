@@ -490,6 +490,19 @@ html, body {
   color: var(--accent);
 }
 
+.btn-host-new {
+  padding: 6px 10px;
+  font-size: 11px;
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-dim);
+}
+
+.btn-host-new:hover:not(:disabled) {
+  border-color: var(--text);
+  color: var(--text);
+}
+
 .game-output {
   flex: 1;
   overflow-y: auto;
@@ -542,6 +555,8 @@ html, body {
 
 .msg-narrative {
   color: var(--green);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .msg-error {
@@ -1155,6 +1170,23 @@ html, body {
   padding: 16px 32px;
 }
 
+.lobby-qr-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 4px;
+}
+
+.lobby-qr-container canvas {
+  border-radius: var(--radius-sm);
+}
+
+.lobby-qr-label {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   .join-title {
@@ -1203,11 +1235,16 @@ html, body {
   }
 
   .btn-share {
-    padding: 5px 10px;
+    padding: 5px 8px;
     font-size: 11px;
   }
 
+  .btn-host-new {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
   .game-header-right {
-    gap: 8px;
+    gap: 6px;
   }
 }

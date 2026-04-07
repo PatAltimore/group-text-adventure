@@ -20,6 +20,7 @@ const HELP_VERBS = new Set(['help', 'h', '?']);
 const SAY_VERBS = new Set(['say', 'whisper']);
 const YELL_VERBS = new Set(['yell', 'shout']);
 const LOOT_VERBS = new Set(['loot']);
+const MAP_VERBS = new Set(['map', 'm']);
 
 /**
  * Parse raw command text into a structured command object.
@@ -129,6 +130,11 @@ export function parseCommand(text) {
   if (SAY_VERBS.has(verb)) {
     const noun = words.slice(1).join(' ');
     return { verb: 'say', noun: noun || undefined, raw };
+  }
+
+  // Map
+  if (MAP_VERBS.has(verb)) {
+    return { verb: 'map', raw };
   }
 
   // Help

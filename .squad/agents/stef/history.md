@@ -78,6 +78,14 @@
   - Key discovery: world files use `north/south/east/west` for directions, NOT abbreviated `n/s/e/w`
   - Total: 333 tests pass across 5 suites (2 known-gap failures)
 
+- **2026-04-02 — Help Command + Map Command tests (12 new tests, all passing)**
+  - Added `describe('Help Command (Stef)')` (2 tests) and `describe('Map Command (Stef)')` (10 tests) to `/tests/game-engine.test.js`
+  - Help tests: verify formatted help text contains expected command keywords (go, look, take, drop, inventory, help); verify both `help` and `?` trigger help response
+  - Map tests cover: `visitedRooms` initialization on join, updating on move, no-duplicate on revisit; map command returns `type: 'message'` with room name; `[*]` marker for current room; `[?] ???` for unvisited rooms; visited room names shown; depth-2 limit enforced; compass direction labels present; map response only sent to requesting player
+  - Created inline `mapTestWorld()` with 5 rooms (Central Hall → North Corridor → Tower Room/East Wing, Central Hall → Garden) to test depth 0/1/2/3 scenarios without modifying shared `test-world.json`
+  - Both features were already implemented by Mouth when tests ran — all 12 tests pass
+  - Total: 465 tests pass across 5 suites (7 skipped)
+
 - **2026-04-07 — World Validation Test Gaps Fixed**
   - **Gaps:** `addItem` and `removeHazard` puzzle action types use `action.room` (not `action.targetRoom`) to reference rooms; Mouth's validator initially only checked `action.targetRoom`.
   - **Fix (Mouth):** Added validation for `action.room` when action type is `addItem` or `removeHazard`. Both referenced rooms are checked for existence.

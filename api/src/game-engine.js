@@ -225,6 +225,7 @@ export function addPlayer(session, playerId, playerName) {
     name: playerName,
     room: session.world.startRoom,
     inventory: [],
+    visitedRooms: [session.world.startRoom],
   };
 
   return session;
@@ -279,6 +280,7 @@ export function disconnectPlayer(session, playerId) {
     room: player.room,
     inventory: [],
     disconnectedAt: Date.now(),
+    visitedRooms: player.visitedRooms || [],
   };
 
   delete session.players[playerId];
@@ -337,6 +339,7 @@ export function reconnectPlayer(session, ghostName, newPlayerId) {
     playerId: ghost.playerId || null,
     room: ghost.room,
     inventory: [],
+    visitedRooms: ghost.visitedRooms || [ghost.room],
   };
 
   delete session.ghosts[ghostName];
@@ -372,6 +375,7 @@ export function killPlayer(session, playerId) {
     disconnectedAt: Date.now(),
     diedAt: Date.now(),
     isDeath: true,
+    visitedRooms: player.visitedRooms || [],
   };
 
   delete session.players[playerId];
@@ -399,6 +403,7 @@ export function respawnPlayer(session, ghostName, newPlayerId) {
     playerId: ghost.playerId,
     room: ghost.room,
     inventory: [],
+    visitedRooms: ghost.visitedRooms || [ghost.room],
   };
 
   delete session.ghosts[ghostName];
@@ -424,6 +429,7 @@ export function revivePlayer(session, ghostName, newPlayerId) {
     playerId: ghost.playerId || null,
     room: ghost.room,
     inventory: [],
+    visitedRooms: ghost.visitedRooms || [ghost.room],
   };
 
   delete session.ghosts[ghostName];
@@ -626,6 +632,8 @@ export function processCommand(session, playerId, commandText) {
       break;
     case 'help':
       return handleHelp(session, playerId);
+    case 'map':
+      return handleMap(session, playerId);
     case 'inventory':
       return handleInventory(session, playerId);
     default:
@@ -694,6 +702,12 @@ function handleGo(session, playerId, cmd) {
 
   // Move the player
   player.room = targetRoom;
+
+  // Track visited rooms for map
+  if (!player.visitedRooms) player.visitedRooms = [];
+  if (!player.visitedRooms.includes(targetRoom)) {
+    player.visitedRooms.push(targetRoom);
+  }
 
   // Notify others in the new room
   for (const [otherId, otherPlayer] of Object.entries(session.players)) {
@@ -1356,24 +1370,124 @@ function handleYell(session, playerId, cmd) {
 
 function handleHelp(session, playerId) {
   const helpText = [
-    '📜 Available commands:',
-    '  go <direction>  — Move (north, south, east, west) or use shortcuts (n, s, e, w)',
-    '  look            — Look around the room',
-    '  examine <item>  — Examine an item',
-    '  take <item>     — Pick up an item',
-    '  take <item> from <name>\'s ghost — Take a specific item from a ghost',
-    '  loot <name>\'s ghost — Take all items from a ghost',
-    '  drop <item>     — Drop an item',
-    '  inventory       — Check your inventory (shortcut: i)',
-    '  use <item>      — Use an item (or "use <item> on <target>")',
-    '  give <item> to <player> — Give an item to another player',
-    '  say <message>   — Say something to players in the same room',
-    '  yell <message>  — Yell something — adjacent rooms hear it too',
-    '  help            — Show this help message',
+    '── HELP ─────────────────',
+    '',
+    '▸ MOVEMENT',
+    '  GO <dir>    Move (n/s/e/w)',
+    '  LOOK        Look around',
+    '  EXAMINE <x> Inspect an item',
+    '  MAP         Show visited rooms',
+    '',
+    '▸ ITEMS',
+    '  TAKE <x>    Pick up an item',
+    '  DROP <x>    Drop an item',
+    '  USE <x>     Use an item',
+    '  USE <x> ON <y>  Use on target',
+    '  GIVE <x> TO <p> Give to player',
+    '  INVENTORY   Your items (i)',
+    '',
+    '▸ COMMUNICATION',
+    '  SAY <msg>   Talk (same room)',
+    '  YELL <msg>  Shout (nearby hear)',
+    '',
+    '▸ GHOSTS',
+    '  TAKE <x> FROM <name>\'s ghost',
+    '  LOOT <name>\'s ghost',
+    '',
+    '▸ GAME',
+    '  HELP        Show this message',
+    '',
+    'Type help anytime.',
+    '─────────────────────────',
   ].join('\n');
 
   return {
     session,
     responses: [{ playerId, message: { type: 'message', text: helpText } }],
   };
+}
+
+/**
+ * Generate an ASCII map of rooms the player has visited.
+ * BFS outward from current room, max depth 2.
+ * @param {object} session - Current game session.
+ * @param {string} playerId - The requesting player.
+ * @returns {{ session: object, responses: Array }}
+ */
+export function handleMap(session, playerId) {
+  const player = session.players[playerId];
+  if (!player) {
+    return {
+      session,
+      responses: [{ playerId, message: { type: 'error', text: 'Player not found.' } }],
+    };
+  }
+
+  const currentRoom = player.room;
+  const visited = new Set(player.visitedRooms || [currentRoom]);
+  const shownRooms = new Set([currentRoom]);
+
+  const currentName = session.world.rooms[currentRoom].name;
+  const lines = [];
+  lines.push('── MAP ──────────────────');
+  lines.push(`[*] ${trimName(currentName, 18)} (you)`);
+
+  // Depth-1: exits from current room
+  const exits1 = Object.entries(session.roomStates[currentRoom].exits);
+  let num = 2;
+
+  for (let i = 0; i < exits1.length; i++) {
+    const [dir, roomId] = exits1[i];
+    const isLast = i === exits1.length - 1;
+    const branch = isLast ? '└' : '├';
+    const cont = isLast ? ' ' : '│';
+    const isVisited = visited.has(roomId);
+
+    let label;
+    if (!isVisited) {
+      label = '[?] ???';
+    } else {
+      label = `[${num}] ${trimName(session.world.rooms[roomId].name, 16)}`;
+      num++;
+    }
+    shownRooms.add(roomId);
+
+    lines.push(` ${branch}─ ${dir[0].toUpperCase()} ─ ${label}`);
+
+    // Depth-2: exits from this depth-1 room
+    if (isVisited) {
+      const exits2 = Object.entries(session.roomStates[roomId].exits)
+        .filter(([, rid]) => !shownRooms.has(rid));
+
+      for (let j = 0; j < exits2.length; j++) {
+        const [dir2, roomId2] = exits2[j];
+        const isLast2 = j === exits2.length - 1;
+        const branch2 = isLast2 ? '└' : '├';
+        const isVisited2 = visited.has(roomId2);
+
+        let label2;
+        if (!isVisited2) {
+          label2 = '[?] ???';
+        } else {
+          label2 = `[${num}] ${trimName(session.world.rooms[roomId2].name, 14)}`;
+          num++;
+        }
+        shownRooms.add(roomId2);
+
+        lines.push(` ${cont}  ${branch2}─ ${dir2[0].toUpperCase()} ─ ${label2}`);
+      }
+    }
+  }
+
+  lines.push('─────────────────────────');
+
+  return {
+    session,
+    responses: [{ playerId, message: { type: 'message', text: lines.join('\n') } }],
+  };
+}
+
+function trimName(name, maxLen) {
+  if (name.length <= maxLen) return name;
+  return name.substring(0, maxLen - 1) + '…';
 }
