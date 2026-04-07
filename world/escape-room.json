@@ -163,6 +163,7 @@
       "room": "dining-room",
       "description": "The narrow door to the south is sealed. The painted musical note on it suggests sound is the key. The silver fork from the table hums when lifted — could it resonate with the door?",
       "requiredItem": "silver-fork",
+      "hintText": "A painted musical note adorns the door. Something that resonates might open it.",
       "solvedText": "You strike the silver fork against the door frame. It rings with a pure, crystalline tone that resonates through the wood. The painted musical note glows briefly, and the door swings open to the south, revealing the music room!",
       "action": {
         "type": "openExit",
@@ -174,6 +175,7 @@
       "room": "dining-room",
       "description": "The serving hatch to the north is jammed. Something heavy blocks it from the kitchen side. The sheet music mentions that certain melodies can move what hands cannot.",
       "requiredItem": "sheet-music",
+      "hintText": "The serving hatch won't budge. Perhaps the right melody could move what hands cannot.",
       "solvedText": "You hold the sheet music up to the serving hatch and hum The Clockmaker's Lullaby. The notes seem to drift through the gap. On the other side, you hear clockwork mechanisms whir to life — whatever was blocking the hatch slides aside, and it swings open to the north, revealing the kitchen!",
       "action": {
         "type": "openExit",
@@ -185,6 +187,7 @@
       "room": "foyer",
       "description": "A velvet rope blocks the grand staircase going north. It's clipped to a brass post with a small combination lock. The welcome note has a number on the back — 4-7-1-9.",
       "requiredItem": "welcome-note",
+      "hintText": "The combination lock needs a code. Check the back of any notes you've found.",
       "solvedText": "You enter 4-7-1-9 on the combination lock. It clicks open and the velvet rope falls away. The grand staircase to the north is clear — the upper floor awaits!",
       "action": {
         "type": "openExit",
@@ -196,6 +199,7 @@
       "room": "guest-bedroom",
       "description": "The wallpaper behind the bed has a different pattern — the red book mentioned hidden passages behind wallpaper. Perhaps pressing in the right spot will reveal what's hidden.",
       "requiredItem": "red-book",
+      "hintText": "The wallpaper pattern doesn't match here. A book about hidden passages might help.",
       "solvedText": "Following the instructions in the red book, you press the mismatched wallpaper section. It gives way with a click, and an entire panel swings inward, revealing a hidden workshop to the east! Dust motes swirl in the shaft of light that cuts into the secret room.",
       "action": {
         "type": "openExit",
@@ -207,6 +211,7 @@
       "room": "study",
       "description": "A locked door to the east has a keyhole shaped like a musical note. The music box from the guest bedroom plays The Clockmaker's Lullaby — and its gear housing matches this lock perfectly.",
       "requiredItem": "music-box",
+      "hintText": "The keyhole is shaped like a musical note. A device that plays music might serve as a key.",
       "solvedText": "You hold the music box up to the musical keyhole. Its mechanism interlocks with the lock — the ballerina begins to spin, playing The Clockmaker's Lullaby. The door clicks open to the north, revealing a spiral staircase up to an observatory!",
       "action": {
         "type": "openExit",
@@ -218,6 +223,7 @@
       "room": "guest-bedroom",
       "description": "The music box on the nightstand is missing a small gear. The gear piece from the Clockmaker's study might fit its mechanism.",
       "requiredItem": "gear-piece",
+      "hintText": "The music box mechanism has an empty slot. A small gear piece might fit perfectly.",
       "solvedText": "You carefully insert the gear piece into the music box mechanism. It clicks into place perfectly. The music box whirs to life, and the tiny ballerina begins to dance as The Clockmaker's Lullaby fills the room. The repaired music box is now in your hands — it might serve as a key elsewhere.",
       "action": {
         "type": "addItem",
@@ -229,6 +235,7 @@
       "room": "kitchen",
       "description": "The gas line hisses dangerously near the stove. The iron key might fit the gas shutoff valve hidden behind the counter.",
       "requiredItem": "iron-key",
+      "hintText": "The gas valve behind the counter needs a sturdy key to shut it off.",
       "solvedText": "You use the iron key to turn the gas shutoff valve behind the counter. The hissing stops immediately, and the oppressive tension in the room lifts. You can move freely now without fear of an explosion. You also notice a slip of paper that was hidden behind the valve.",
       "action": {
         "type": "removeHazard",

@@ -515,3 +515,31 @@ Two features implemented:
 
 **Why:** Per user request — items should drop immediately when ghost created, not held until respawn/loot. Aligns with natural death mechanics (corpse drops loot immediately) and prevents inventory loss bugs on disconnect.
 
+### 2026-04-07 — Sprint: Item Bug Fix, Puzzle Hints, Emoji Prefix, Welcome Message
+
+**Task 1 — Item special character bug fix:**
+- Added `normalizeForMatch()` and `matchesItemName()` helpers in game-engine.js
+- `matchesItemName` does 4-way matching: exact lowercase, normalized (strip punctuation), startsWith raw, startsWith normalized
+- Applied to all 6 item-matching locations: handleLook, handleTake, handleTakeFromGhost, handleDrop, handleUse, handleGive
+- Items like "Knight's Shield" now matchable by typing "knights shield" or "knight's"
+
+**Task 2 — Puzzle room emoji prefix:**
+- `getPlayerView` now checks `session.world.puzzles` for unsolved puzzles targeting the player's room
+- If found, prepends "🧩 " to room name in the view
+
+**Task 3 — Puzzle hint system:**
+- Added `hintText` field to all 17 puzzles across 3 world files (default-world, escape-room, space-adventure)
+- Added `hintsEnabled: true` to `createGameSession` defaults
+- Added `handleSetHintsEnabled` handler in gameHub.js (host-only, pre-game-only, boolean toggle)
+- Added routing entry for `setHintsEnabled` message type
+- `getPlayerView` includes `hintText` field when hints enabled and room has unsolved puzzle
+- `handleStartGame` broadcasts `hintsEnabled` in gameStart message
+
+**Task 4 — Welcome message:**
+- Added `shareHint: 'Invite others to join by selecting the Share button! 📤'` to gameStart broadcast
+
+**Task 5 — createGameSession defaults:**
+- `hintsEnabled: true` added alongside existing `hazardMultiplier`, `sayScope`, `deathTimeout`
+
+**Tests:** All 446 tests pass (439 passed, 7 skipped). Updated 1 test to expect 🧩 emoji prefix on puzzle rooms.
+

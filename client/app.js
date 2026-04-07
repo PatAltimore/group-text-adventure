@@ -65,9 +65,7 @@
     btnJoinGo: $('#btn-join-go'),
     
     // Lobby screen
-    lobbyUrl: $('#lobby-url'),
     btnCopyUrl: $('#btn-copy-url'),
-    qrCanvas: $('#qr-canvas'),
     lobbyPlayerCount: $('#lobby-player-count'),
     lobbyPlayerList: $('#lobby-player-list'),
     btnStartGame: $('#btn-start-game'),
@@ -109,6 +107,10 @@
     // Lobby say scope (host-only)
     sayScopeGroup: $('#say-scope-group'),
     sayScopeSelect: $('#say-scope-select'),
+
+    // Lobby hints toggle (host-only)
+    hintsGroup: $('#hints-group'),
+    hintsToggle: $('#hints-toggle'),
   };
 
   // --- Screen Management ---
@@ -193,9 +195,9 @@
 
   // --- QR Code ---
   function renderQrCode(url, targetContainer) {
-    // Default to lobby QR container if not specified
-    const container = targetContainer || els.qrCanvas;
-    
+    const container = targetContainer;
+    if (!container) return;
+
     container.innerHTML = '';
     if (typeof QRCode === 'undefined') {
       const fallback = document.createElement('p');
@@ -614,6 +616,14 @@
       );
     }
 
+    // Puzzle hint display
+    if (room.hintText) {
+      const hint = document.createElement('div');
+      hint.className = 'room-hint';
+      hint.textContent = `💡 Hint: ${room.hintText}`;
+      container.appendChild(hint);
+    }
+
     const msg = document.createElement('div');
     msg.className = 'msg msg-room';
     msg.appendChild(container);
@@ -754,14 +764,16 @@
     }
 
     if (msg.joinUrl) {
-      els.lobbyUrl.value = msg.joinUrl;
-      renderQrCode(msg.joinUrl);
+      // joinUrl available for share overlay (stored in state)
     }
   }
 
   function handleGameStart(msg) {
     dismissDeathOverlay();
     showScreen('game');
+    if (msg.shareHint) {
+      appendToOutput(createMsg('msg-share-hint', msg.shareHint));
+    }
     if (msg.room) {
       renderRoomMessage(msg.room);
     }
@@ -955,8 +967,14 @@
       });
     }
 
-    els.lobbyUrl.value = joinUrl;
-    renderQrCode(joinUrl);
+    // Show hints toggle for host
+    if (els.hintsGroup) {
+      els.hintsGroup.classList.remove('hidden');
+      els.hintsToggle.addEventListener('change', () => {
+        const enabled = els.hintsToggle.value === 'true';
+        sendMessage({ type: 'setHintsEnabled', enabled });
+      });
+    }
     state.players = [state.playerName];
     updateLobbyPlayerList();
 
@@ -970,7 +988,7 @@
     connectWebSocket(state.gameId);
 
     // Share URL button — same flow as game Share button
-    els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, 'Share'));
+    els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, '📤 Share Game Link'));
 
     // Start game button — send startGame to server; actual transition
     // happens when the server broadcasts gameStart back to all clients
@@ -978,7 +996,8 @@
       const deathTimeout = els.deathTimeoutSelect ? parseInt(els.deathTimeoutSelect.value, 10) : 30;
       const hazardMultiplier = els.hazardMultiplierSelect ? parseFloat(els.hazardMultiplierSelect.value) : 1;
       const sayScope = els.sayScopeSelect ? els.sayScopeSelect.value : 'room';
-      sendMessage({ type: 'startGame', deathTimeout, hazardMultiplier, sayScope });
+      const hintsEnabled = els.hintsToggle ? els.hintsToggle.value === 'true' : true;
+      sendMessage({ type: 'startGame', deathTimeout, hazardMultiplier, sayScope, hintsEnabled });
       els.btnStartGame.disabled = true;
       els.btnStartGame.textContent = 'Starting…';
     });
@@ -994,8 +1013,6 @@
     els.lobbyWaitingMsg.classList.remove('hidden');
 
     // Set up lobby share info
-    els.lobbyUrl.value = joinUrl;
-    renderQrCode(joinUrl);
     state.players = [state.playerName];
     updateLobbyPlayerList();
 
@@ -1005,7 +1022,7 @@
     showScreen('lobby');
 
     // Share URL button
-    els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, 'Share'));
+    els.btnCopyUrl.addEventListener('click', () => handleShare(els.btnCopyUrl, '📤 Share Game Link'));
 
     connectWebSocket(state.gameId);
   }

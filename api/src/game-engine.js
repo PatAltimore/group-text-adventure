@@ -4,6 +4,25 @@
 import { parseCommand } from './command-parser.js';
 import { validateWorld } from '../../world/validate-world.js';
 
+// Strip non-alphanumeric characters (except spaces) for fuzzy item matching.
+// Handles apostrophes, hyphens, em-dashes, and other special characters.
+function normalizeForMatch(str) {
+  return str.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+// Match user input against item name: exact, normalized, or startsWith (both raw and normalized).
+function matchesItemName(itemName, input) {
+  const nameLC = itemName.toLowerCase();
+  const inputLC = input.toLowerCase();
+  if (nameLC === inputLC) return true;
+  const nameNorm = normalizeForMatch(itemName);
+  const inputNorm = normalizeForMatch(input);
+  if (nameNorm === inputNorm) return true;
+  if (nameLC.startsWith(inputLC)) return true;
+  if (nameNorm.startsWith(inputNorm)) return true;
+  return false;
+}
+
 // Funny adjectives for resolving duplicate player names
 const SILLY_ADJECTIVES = [
   'Evil','Sparkly', 'Grumpy', 'Wobbly', 'Sneaky', 'Fluffy',
@@ -133,6 +152,7 @@ export function createGameSession(world) {
     deathTimeout: 30,
     hazardMultiplier: 1.0,
     sayScope: 'room',
+    hintsEnabled: true,
     createdAt: new Date().toISOString(),
   };
 }
@@ -400,8 +420,21 @@ export function getPlayerView(session, playerId) {
     };
   });
 
-  return {
-    name: room.name,
+  // Check if room has an unsolved puzzle
+  let roomName = room.name;
+  let hintText;
+  for (const [puzzleId, puzzle] of Object.entries(session.world.puzzles || {})) {
+    if (puzzle.room === player.room && !session.puzzleStates[puzzleId]?.solved) {
+      roomName = `🧩 ${room.name}`;
+      if (session.hintsEnabled && puzzle.hintText) {
+        hintText = puzzle.hintText;
+      }
+      break;
+    }
+  }
+
+  const view = {
+    name: roomName,
     description: room.description,
     exits: Object.keys(roomState.exits),
     items,
@@ -411,6 +444,12 @@ export function getPlayerView(session, playerId) {
     ),
     ghosts: getGhostsInRoom(session, player.room),
   };
+
+  if (hintText) {
+    view.hintText = hintText;
+  }
+
+  return view;
 }
 
 /**
@@ -630,10 +669,9 @@ function handleLook(session, playerId, cmd) {
   }
 
   // "examine <item>" — check inventory first, then room
-  const noun = cmd.noun.toLowerCase();
   const matchItem = (itemId) => {
     const item = session.world.items[itemId];
-    return item && item.name.toLowerCase() === noun;
+    return item && matchesItemName(item.name, cmd.noun);
   };
 
   const invItem = player.inventory.find(matchItem);
@@ -679,10 +717,9 @@ function handleTake(session, playerId, cmd) {
     return handleTakeFromGhost(session, playerId, cmd);
   }
 
-  const noun = cmd.noun.toLowerCase();
   const idx = roomState.items.findIndex((itemId) => {
     const item = session.world.items[itemId];
-    return item && item.name.toLowerCase() === noun;
+    return item && matchesItemName(item.name, cmd.noun);
   });
 
   if (idx === -1) {
@@ -749,10 +786,9 @@ function handleTakeFromGhost(session, playerId, cmd) {
   }
 
   const ghost = found.ghost;
-  const noun = cmd.noun.toLowerCase();
   const idx = ghost.inventory.findIndex((itemId) => {
     const item = session.world.items[itemId];
-    return item && item.name.toLowerCase() === noun;
+    return item && matchesItemName(item.name, cmd.noun);
   });
 
   if (idx === -1) {
@@ -869,10 +905,9 @@ function handleDrop(session, playerId, cmd) {
     return { session, responses };
   }
 
-  const noun = cmd.noun.toLowerCase();
   const idx = player.inventory.findIndex((itemId) => {
     const item = session.world.items[itemId];
-    return item && item.name.toLowerCase() === noun;
+    return item && matchesItemName(item.name, cmd.noun);
   });
 
   if (idx === -1) {
@@ -919,12 +954,10 @@ function handleUse(session, playerId, cmd) {
     return { session, responses };
   }
 
-  const noun = cmd.noun.toLowerCase();
-
   // Check player has the item
   const itemId = player.inventory.find((id) => {
     const item = session.world.items[id];
-    return item && item.name.toLowerCase() === noun;
+    return item && matchesItemName(item.name, cmd.noun);
   });
 
   if (!itemId) {
@@ -1029,13 +1062,12 @@ function handleGive(session, playerId, cmd) {
     return { session, responses };
   }
 
-  const noun = cmd.noun.toLowerCase();
   const targetName = cmd.target.toLowerCase();
 
   // Find the item in inventory
   const idx = player.inventory.findIndex((id) => {
     const item = session.world.items[id];
-    return item && item.name.toLowerCase() === noun;
+    return item && matchesItemName(item.name, cmd.noun);
   });
 
   if (idx === -1) {

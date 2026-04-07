@@ -216,7 +216,7 @@ describe('Movement', () => {
     const { responses } = processCommand(session, 'p1', 'go north');
     const lookMsg = responses.find(r => r.playerId === 'p1' && r.message.type === 'look');
     expect(lookMsg).toBeDefined();
-    expect(lookMsg.message.room.name).toBe('Room B');
+    expect(lookMsg.message.room.name).toBe('🧩 Room B');
   });
 
   test('other players in old room receive departure notification', () => {
@@ -3525,5 +3525,259 @@ describe('ghost item drop', () => {
     
     expect(msg).toBeDefined();
     expect(msg.message.text).toContain('nothing to loot');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// Special Character Item Pickup (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Special Character Item Pickup (Stef)', () => {
+  // Helper: build a world with items that have special characters in names
+  function worldWithSpecialItems() {
+    return loadWorld({
+      name: 'Special Items World',
+      startRoom: 'room1',
+      rooms: {
+        room1: {
+          name: 'Room 1',
+          description: 'A room with special items.',
+          exits: {},
+          items: ['knights-shield', 'laser-sword'],
+          hazards: [],
+        },
+      },
+      items: {
+        'knights-shield': {
+          name: "Knight's Shield",
+          description: 'A sturdy shield with an apostrophe in its name.',
+          roomText: "A knight's shield leans against the wall.",
+          pickupText: "You take the knight's shield.",
+          portable: true,
+        },
+        'laser-sword': {
+          name: 'Laser-Sword',
+          description: 'A futuristic weapon with a hyphen in its name.',
+          roomText: 'A laser-sword hums on the ground.',
+          pickupText: 'You grab the laser-sword.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  test('can pick up item with apostrophe in name', () => {
+    const world = worldWithSpecialItems();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    const { session: updated, responses } = processCommand(session, 'p1', "get knight's shield");
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    expect(msg).toBeDefined();
+    expect(msg.message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('knights-shield');
+  });
+
+  test('can pick up item with hyphen in name', () => {
+    const world = worldWithSpecialItems();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    const { session: updated, responses } = processCommand(session, 'p1', 'get laser-sword');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    expect(msg).toBeDefined();
+    expect(msg.message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('laser-sword');
+  });
+
+  test('can pick up item with partial name match including special chars', () => {
+    const world = worldWithSpecialItems();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Try partial match — "knight's" should match "Knight's Shield"
+    const { session: updated, responses } = processCommand(session, 'p1', "get knight's");
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    expect(msg).toBeDefined();
+    expect(msg.message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('knights-shield');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// Puzzle Room Emoji Prefix (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Puzzle Room Emoji Prefix (Stef)', () => {
+  // Helper: build a world with a puzzle room and a non-puzzle room
+  function worldWithPuzzleRoom() {
+    return loadWorld({
+      name: 'Puzzle World',
+      startRoom: 'lobby',
+      rooms: {
+        lobby: {
+          name: 'Lobby',
+          description: 'A plain lobby.',
+          exits: { north: 'puzzle-chamber' },
+          items: ['puzzle-key'],
+          hazards: [],
+        },
+        'puzzle-chamber': {
+          name: 'Puzzle Chamber',
+          description: 'A room with a puzzle.',
+          exits: { south: 'lobby' },
+          items: [],
+          hazards: [],
+        },
+      },
+      items: {
+        'puzzle-key': {
+          name: 'Puzzle Key',
+          description: 'A key for the puzzle.',
+          roomText: 'A key sits on the floor.',
+          pickupText: 'You take the key.',
+          portable: true,
+        },
+      },
+      puzzles: {
+        'chamber-puzzle': {
+          room: 'puzzle-chamber',
+          description: 'A lever must be activated.',
+          requiredItem: 'puzzle-key',
+          solvedText: 'The lever clicks into place!',
+          action: {
+            type: 'openExit',
+            direction: 'north',
+            targetRoom: 'lobby',
+          },
+        },
+      },
+    });
+  }
+
+  test('puzzle rooms have emoji prefix in room name', () => {
+    const world = worldWithPuzzleRoom();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Move to the puzzle room
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    expect(session.players['p1'].room).toBe('puzzle-chamber');
+
+    const view = getPlayerView(session, 'p1');
+    expect(view.name).toMatch(/^🧩 /);
+    expect(view.name).toBe('🧩 Puzzle Chamber');
+  });
+
+  test('non-puzzle rooms do not have emoji prefix', () => {
+    const world = worldWithPuzzleRoom();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Player starts in lobby — not a puzzle room
+    const view = getPlayerView(session, 'p1');
+    expect(view.name).not.toMatch(/^🧩/);
+    expect(view.name).toBe('Lobby');
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// Puzzle Hint System (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Puzzle Hint System (Stef)', () => {
+  // Helper: world with a puzzle that has hintText
+  function worldWithHints() {
+    return loadWorld({
+      name: 'Hint World',
+      startRoom: 'start',
+      rooms: {
+        start: {
+          name: 'Start Room',
+          description: 'A simple room.',
+          exits: { north: 'riddle-room' },
+          items: ['hint-key'],
+          hazards: [],
+        },
+        'riddle-room': {
+          name: 'Riddle Room',
+          description: 'A room with a riddle.',
+          exits: { south: 'start' },
+          items: [],
+          hazards: [],
+        },
+      },
+      items: {
+        'hint-key': {
+          name: 'Hint Key',
+          description: 'A key that solves the riddle.',
+          roomText: 'A key glows on the floor.',
+          pickupText: 'You take the hint key.',
+          portable: true,
+        },
+      },
+      puzzles: {
+        'riddle-puzzle': {
+          room: 'riddle-room',
+          description: 'A riddle blocks the way.',
+          requiredItem: 'hint-key',
+          hintText: 'Try looking in the starting room for something shiny.',
+          solvedText: 'The riddle is solved!',
+          action: {
+            type: 'openExit',
+            direction: 'north',
+            targetRoom: 'start',
+          },
+        },
+      },
+    });
+  }
+
+  test('hint text included in view when hints enabled', () => {
+    const world = worldWithHints();
+    let session = createGameSession(world);
+    session.hintsEnabled = true;
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Move to the puzzle room
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    expect(session.players['p1'].room).toBe('riddle-room');
+
+    const view = getPlayerView(session, 'p1');
+    expect(view.hintText).toBe('Try looking in the starting room for something shiny.');
+  });
+
+  test('hint text NOT included when hints disabled', () => {
+    const world = worldWithHints();
+    let session = createGameSession(world);
+    session.hintsEnabled = false;
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Move to the puzzle room
+    ({ session } = processCommand(session, 'p1', 'go north'));
+
+    const view = getPlayerView(session, 'p1');
+    expect(view.hintText).toBeUndefined();
+  });
+
+  test('hint text NOT included for non-puzzle rooms', () => {
+    const world = worldWithHints();
+    let session = createGameSession(world);
+    session.hintsEnabled = true;
+    session = addPlayer(session, 'p1', 'Alice');
+
+    // Player is in start room — not a puzzle room
+    const view = getPlayerView(session, 'p1');
+    expect(view.hintText).toBeUndefined();
+  });
+
+  test('hintsEnabled defaults to true in createGameSession', () => {
+    const world = worldWithHints();
+    const session = createGameSession(world);
+    expect(session.hintsEnabled).toBe(true);
   });
 });

@@ -174,6 +174,7 @@
       "room": "kitchen",
       "description": "A heavy wooden door to the north is bound shut with a rusted iron lock.",
       "requiredItem": "rusty-key",
+      "hintText": "The lock is rusted but intact. Perhaps a matching key lies somewhere nearby.",
       "solvedText": "You fit the rusty key into the lock and twist. With a grinding screech, the lock gives way and the door swings open, revealing a dark passage leading north to the dungeon.",
       "action": {
         "type": "openExit",
@@ -185,6 +186,7 @@
       "room": "tower-stairs",
       "description": "A heavy iron gate blocks the way up the tower stairs.",
       "requiredItem": "silver-coin",
+      "hintText": "A coin-shaped slot glints on the gate's mechanism. Something shiny might fit.",
       "solvedText": "You press the silver coin into the slot on the iron gate. Ancient gears click and whir, and the gate slowly rises, revealing the passage north to the armory.",
       "action": {
         "type": "openExit",
@@ -196,6 +198,7 @@
       "room": "armory",
       "description": "An ornate chest with a golden lock sits against the wall. Perhaps it holds the key to the passage north.",
       "requiredItem": "golden-key",
+      "hintText": "The golden lock gleams — only a key of matching splendor could turn it.",
       "solvedText": "You insert the golden key into the golden lock on the chest. It turns smoothly. Inside you find a lever — you pull it, and a hidden passage opens to the north, leading to the throne room!",
       "action": {
         "type": "openExit",
@@ -207,6 +210,7 @@
       "room": "fountain-room",
       "description": "The murals on the wall hint at a hidden space beyond. The old book mentions a secret garden accessible through the west wall.",
       "requiredItem": "old-book",
+      "hintText": "The murals seem to tell a story. An old tome might reveal what's hidden here.",
       "solvedText": "You hold the old book up to the mural on the west wall. The map fragment inside matches perfectly — you press the hidden stone, and a section of wall grinds open, revealing a secret garden to the west!",
       "action": {
         "type": "openExit",

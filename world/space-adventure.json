@@ -222,6 +222,7 @@
       "room": "main-corridor",
       "description": "The bulkhead to the north is sealed tight. A panel beside it reads 'ELECTRICAL FAULT — MANUAL BYPASS REQUIRED'. The welding tool from maintenance might fuse the broken circuit.",
       "requiredItem": "welding-tool",
+      "hintText": "The panel reads 'ELECTRICAL FAULT'. A tool that can fuse circuits might bypass it.",
       "solvedText": "You aim the welding tool at the ruptured panel beside the bulkhead. Sparks fly as you fuse the broken connection. With a grinding hiss, the bulkhead unseals and slides open, revealing the crew quarters to the north.",
       "action": {
         "type": "openExit",
@@ -233,6 +234,7 @@
       "room": "cargo-hold",
       "description": "The loose shipping container overhead groans dangerously. The cargo manifest terminal might accept the circuit board to re-engage the magnetic locks and stabilize it.",
       "requiredItem": "circuit-board",
+      "hintText": "The cargo terminal is offline. A circuit board might restore its magnetic lock controls.",
       "solvedText": "You slot the circuit board into the cargo manifest terminal. The screen flickers to life — 'MAG-LOCK OVERRIDE: ENGAGED.' The groaning container above locks down with a solid CLUNK. As it settles, something clatters to the deck from between the containers — an authorization chip that must have been knocked loose months ago.",
       "action": {
         "type": "addItem",
@@ -244,6 +246,7 @@
       "room": "medical-bay",
       "description": "The quarantine chamber door is sealed with a biometric lock glowing red. It requires a medical-level access card.",
       "requiredItem": "keycard-blue",
+      "hintText": "The biometric lock requires medical-level clearance. A doctor's keycard would work.",
       "solvedText": "You press Dr. Vasquez's blue keycard against the biometric reader. It flashes green, and the quarantine seal disengages with a sharp hiss. The heavy door to the north swings inward, releasing a wave of cold, sterile air.",
       "action": {
         "type": "openExit",
@@ -255,6 +258,7 @@
       "room": "laboratory",
       "description": "The blast door to the reactor room requires Level 5 clearance. A red keycard slot blinks expectantly beside the door.",
       "requiredItem": "keycard-red",
+      "hintText": "Level 5 clearance required. A high-security keycard might grant access.",
       "solvedText": "You slide the red keycard into the slot. The blast door's magnetic locks disengage one by one — CLUNK, CLUNK, CLUNK — and the massive door rolls aside. Heat and a deep thrumming wash over you as the reactor room is revealed to the north.",
       "action": {
         "type": "openExit",
@@ -266,6 +270,7 @@
       "room": "reactor-room",
       "description": "The Life Support Override console has power but requires an authorization chip to activate. The slot is shaped for a standard-issue biometric chip.",
       "requiredItem": "auth-chip",
+      "hintText": "The Life Support console needs an authorization chip. One might be loose somewhere on the station.",
       "solvedText": "You slot the authorization chip into the Life Support Override console. It chirps — 'AUTHORIZATION ACCEPTED. RESTORING VENTILATION.' Fans spin up across the station. In the laboratory below, the acrid chemical fumes vent into space, replaced by clean recycled air.",
       "action": {
         "type": "removeHazard",
@@ -277,6 +282,7 @@
       "room": "reactor-room",
       "description": "An energy barrier shimmers across the ladder to the command deck. A console nearby reads 'INSERT POWER CELL TO DEACTIVATE BARRIER'.",
       "requiredItem": "power-cell",
+      "hintText": "The energy barrier needs a power cell to deactivate. Check engineering areas for spare cells.",
       "solvedText": "You slot the power cell into the barrier console. It drinks the energy greedily — the barrier flickers, stutters, and collapses. The ladder to the north is clear. The command deck awaits.",
       "action": {
         "type": "openExit",

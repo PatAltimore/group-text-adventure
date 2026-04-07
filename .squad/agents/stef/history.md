@@ -210,3 +210,16 @@
     - `respawnPlayer` gives empty inventory to revived player: `inventory: []`
     - Loot command handles empty ghost inventory: `if (ghost.inventory.length === 0) { return "nothing to loot"; }`
   - Total: 437 tests (430 pass, 7 skipped, all 5 suites passing)
+
+- **2026-04-07 — Three new feature test suites (10 new tests: 6 pass, 4 expected failures)**
+  - Added 3 new `describe` blocks to `/tests/game-engine.test.js`:
+    1. **Special Character Item Pickup (Stef)** (3 tests): apostrophe item pickup (pass), hyphen item pickup (pass), partial name match with special chars (fail — awaiting Mouth's partial matching logic)
+    2. **Puzzle Room Emoji Prefix (Stef)** (2 tests): puzzle room has 🧩 prefix (fail — awaiting Mouth's getPlayerView change), non-puzzle room has no prefix (pass)
+    3. **Puzzle Hint System (Stef)** (5 tests): hintText in view when enabled (fail — awaiting Mouth), hintText omitted when disabled (pass), hintText omitted for non-puzzle rooms (pass), hintsEnabled defaults to true (fail — awaiting Mouth's createGameSession change)
+  - All 4 failures are expected: Mouth is implementing these features in parallel
+  - Test approach: Created inline `loadWorld()` fixtures with special-char items, puzzle rooms, and hintText puzzles. Follows existing patterns (e.g., `worldWithRoomText`, `multiplierWorld`).
+  - Key design decisions:
+    - Puzzle room detection: room is a puzzle room if any unsolved puzzle references `room === playerRoom`
+    - Hint system: `session.hintsEnabled` boolean flag, `puzzle.hintText` field, exposed via `getPlayerView().hintText`
+    - Special char matching: Mouth updating `handleTake` to support partial name matching including apostrophes/hyphens
+  - Total: 447 tests (236 pass in game-engine.test.js, 4 expected failures from new features)

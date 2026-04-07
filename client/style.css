@@ -1049,6 +1049,29 @@ html, body {
   color: var(--text);
 }
 
+/* ===== Room Puzzle Hints ===== */
+.room-hint {
+  color: #d4a017;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* ===== Share Hint (game start) ===== */
+.msg-share-hint {
+  color: var(--accent);
+  background: rgba(88, 166, 255, 0.08);
+  border-left: 3px solid var(--accent);
+  font-size: 14px;
+  padding: 10px 14px;
+}
+
+/* ===== Lobby Share Button ===== */
+.lobby-share-btn {
+  width: 100%;
+  font-size: 18px;
+  padding: 16px 32px;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   .join-title {

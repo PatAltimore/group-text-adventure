@@ -6,6 +6,7 @@
   <title>Group Text Adventure</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js" defer></script>
+  <!-- QR library still needed for Share overlay -->
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -98,12 +99,7 @@
       <p id="lobby-adventure-name" class="lobby-adventure-name"></p>
 
       <div class="lobby-share">
-        <p class="lobby-label">Share this link or scan the QR code:</p>
-        <div class="lobby-url-row">
-          <input id="lobby-url" type="text" readonly aria-label="Game join URL">
-          <button id="btn-copy-url" class="btn btn-small" aria-label="Share join URL">Share</button>
-        </div>
-        <div id="qr-canvas" class="qr-container" aria-label="QR code for joining the game"></div>
+        <button id="btn-copy-url" class="btn btn-primary btn-large lobby-share-btn" aria-label="Share join URL">📤 Share Game Link</button>
       </div>
 
       <div class="lobby-players">
@@ -139,6 +135,15 @@
         <select id="say-scope-select" aria-label="Say command scope">
           <option value="room" selected>Room Only</option>
           <option value="global">Global</option>
+        </select>
+      </div>
+
+      <div id="hints-group" class="death-timeout-group hidden">
+        <label for="hints-toggle" class="death-timeout-label">🔍 Puzzle Hints</label>
+        <p class="setting-help">When enabled, puzzle rooms show a hint about what item is needed to solve the puzzle.</p>
+        <select id="hints-toggle" aria-label="Puzzle hints toggle">
+          <option value="true" selected>Enabled</option>
+          <option value="false">Disabled</option>
         </select>
       </div>
 

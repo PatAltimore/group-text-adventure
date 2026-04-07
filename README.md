@@ -10,16 +10,21 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 
 ## Features
 
-- **1–20 Multiplayer** — Host and join games via URL or QR code
-- **Multiple Worlds** — Choose from 3 pre-built adventures or create your own
+- **1–20 Multiplayer** — Host and join games via URL or QR code; use Web Share API or clipboard to invite
+- **Multiple Worlds** — Choose from 3 pre-built adventures (Forgotten Castle, Clockmaker's Mansion, Derelict Station) or create your own
+- **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Danger (Low/Medium/High), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
 - **Real-Time Sync** — All actions broadcast instantly via Web PubSub
-- **Ghost System** — Disconnected players become ghosts; others can loot their inventory
+- **Hazard System** — Rooms can contain hazards with variable death probability; defeated players respawn after timer expires
+- **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can loot and use
 - **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
+- **Puzzle Rooms** — 🧩 Emoji prefix marks puzzle rooms; optional hints show required items
+- **Displaced Items** — Items not in their original room display distinctly as "dropped items"
 - **Explore & Interact** — Navigate rooms, examine items, collect treasures
 - **Collaborative Puzzles** — Solve challenges that require teamwork and item trading
 - **Inventory & Items** — Pick up, drop, use, and give items to other players
-- **Direct Communication** — Say messages to players in the same room
+- **Direct Communication** — Say messages to players in the same room (or globally, per lobby settings)
 - **Room Awareness** — See who's nearby and what's in each room
+- **World Editor** — Built-in editor (editor.html) for creating and editing world JSON files
 
 ---
 
@@ -42,11 +47,12 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 ### Quick Start
 
 1. **Host a Game** — Enter your name and select a world
-2. **Create Game** — Click "Host New Game"
-3. **Share the Link** — Invite friends via URL or QR code
-4. **Start When Ready** — Once everyone joins, click "Start Game"
-5. **Explore Together** — Use commands to move, interact, and solve puzzles
-6. **Collaborate** — Trade items, solve challenges, reach the treasure
+2. **Configure Lobby** — Adjust Respawn Timer, Hazard Danger, Say Scope, and Puzzle Hints (optional)
+3. **Create Game** — Click "Host New Game"
+4. **Share the Link** — Click the Share button to invite friends via Web Share API or clipboard
+5. **Start When Ready** — Once everyone joins, click "Start Game"
+6. **Explore Together** — Use commands to move, interact, solve puzzles, and avoid hazards
+7. **Collaborate** — Trade items, solve challenges, reach the treasure; dead players respawn after the timer
 
 ---
 
@@ -202,13 +208,13 @@ The API will start on `http://localhost:7071`. The client defaults to this URL w
 
 **Windows (PowerShell):**
 ```powershell
-.\deploy\deploy.ps1 -AppName mygame -Location eastus
+pwsh -NoProfile -File .\deploy\deploy.ps1 -AppName mygame -Location westus2
 ```
 
 **Linux/macOS (Bash):**
 ```bash
 chmod +x deploy/deploy.sh
-./deploy/deploy.sh --app-name mygame --location eastus
+./deploy/deploy.sh --app-name mygame --location westus2
 ```
 
 ### Parameters
@@ -216,16 +222,16 @@ chmod +x deploy/deploy.sh
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
 | `AppName` / `--app-name` | Yes | — | Base name for resources (3–12 alphanumeric, starts with letter) |
-| `Location` / `--location` | No | `eastus` | Azure region |
+| `Location` / `--location` | No | `westus2` | Azure region |
 | `ResourceGroup` / `--resource-group` | No | `rg-text-adventure` | Resource group name |
 
 ### What Gets Created
 
-| Resource | SKU | Cost |
-|----------|-----|------|
-| **Storage Account** (Table Storage + Static Website hosting) | Standard_LRS | ~$0.01/month |
-| **Azure Web PubSub** | Free_F1 | Free (20 connections, 20K msgs/day) |
-| **Azure Function App** | Consumption | Free (1M executions/month) |
+| Resource | Name | Purpose | Cost |
+|----------|------|---------|------|
+| **Storage Account** | `{AppName}game` | Table Storage + Static Website | ~$0.01/month |
+| **Azure Web PubSub** | `{AppName}-wps` | Real-time messaging (Free tier: 20 connections, 20K msgs/day) | Free |
+| **Azure Function App** | `{AppName}-func` | Game engine (Consumption: 1M executions/month free) | Free |
 
 **Estimated total: ~$0/month** for a prototype with light traffic.
 

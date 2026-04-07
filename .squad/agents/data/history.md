@@ -375,3 +375,12 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
   - Coordinated with Mouth (backend) for message routing and Stef (tester) for verification
   - Total: 431 tests (all passing across 5 suites)
 
+### 2026-04-06 — Lobby Cleanup + Hints + Share Hint
+
+- **Lobby cleanup:** Removed QR code canvas and share link text box from host lobby screen. Replaced with a single prominent Share button (`btn-primary btn-large`) that triggers the Web Share API / QR overlay fallback. QR library kept for share overlay only.
+- **Hints toggle:** Added `🔍 Puzzle Hints` setting to lobby (Enabled/Disabled dropdown), following existing settings pattern. Sends `setHintsEnabled` message on change, includes `hintsEnabled` in `startGame` message.
+- **Share hint on game start:** `handleGameStart()` now checks for `shareHint` in the gameStart message and renders it as a styled info-bar message (`.msg-share-hint` — blue accent left-border, subtle background).
+- **Puzzle hint display:** `renderRoomMessage()` now checks for `hintText` in room data and renders it as `💡 Hint: ...` with amber/gold italic styling (`.room-hint`).
+- **CSS additions:** `.room-hint` (amber italic), `.msg-share-hint` (accent info bar), `.lobby-share-btn` (full-width prominent share button).
+- **No test regressions** from frontend changes — 4 pre-existing failures are in backend engine tests (hints engine not yet implemented).
+

@@ -214,6 +214,10 @@ app.generic('gameHubMessage', {
       return await handleSetSayScope(serviceClient, connectionId, data, context);
     }
 
+    if (messageType === 'setHintsEnabled') {
+      return await handleSetHintsEnabled(serviceClient, connectionId, data, context);
+    }
+
     if (messageType === 'revive') {
       return await handleRevive(serviceClient, connectionId, data, context);
     }
@@ -604,6 +608,8 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
             deathTimeout: session.deathTimeout || 30,
             hazardMultiplier: session.hazardMultiplier || 1,
             sayScope: session.sayScope || 'room',
+            hintsEnabled: session.hintsEnabled !== false,
+            shareHint: 'Invite others to join by selecting the Share button! 📤',
           });
         }
       }
@@ -862,6 +868,56 @@ async function handleSetSayScope(serviceClient, connectionId, data, context) {
   await sendToConnection(serviceClient, connectionId, {
     type: 'message',
     text: `Say scope set to ${scope === 'global' ? 'Global (all players)' : 'Room only'}.`,
+  });
+
+  return { body: '', status: 200 };
+}
+
+// ── Handler: Set Hints Enabled ────────────────────────────────────────
+
+async function handleSetHintsEnabled(serviceClient, connectionId, data, context) {
+  const found = await findPlayerByConnectionId(connectionId);
+  if (!found) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'You need to join a game first.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const { gameId, playerId } = found;
+  let session = await loadGameState(gameId);
+  if (!session) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Game session not found.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.hostPlayerId !== playerId) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Only the host can toggle hints.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  if (session.started) {
+    await sendToConnection(serviceClient, connectionId, {
+      type: 'error',
+      text: 'Cannot change hints after the game has started.',
+    });
+    return { body: '', status: 200 };
+  }
+
+  const enabled = data.enabled === true || data.enabled === 'true';
+  session.hintsEnabled = enabled;
+  await saveGameState(gameId, session);
+
+  await sendToConnection(serviceClient, connectionId, {
+    type: 'message',
+    text: `Puzzle hints ${enabled ? 'enabled' : 'disabled'}.`,
   });
 
   return { body: '', status: 200 };
