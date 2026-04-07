@@ -1158,8 +1158,10 @@
 
     // Host New Game button — clear session and navigate to fresh landing screen
     els.btnHostNew.addEventListener('click', () => {
-      clearSession();
-      window.location.href = window.location.pathname;
+      if (confirm('Leave this game and host a new one?')) {
+        clearSession();
+        window.location.href = window.location.pathname;
+      }
     });
     
     // Close button
