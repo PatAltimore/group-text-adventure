@@ -1156,8 +1156,9 @@
       els.shareOverlayClose.focus();
     });
 
-    // Host New Game button — navigate back to landing screen
+    // Host New Game button — clear session and navigate to fresh landing screen
     els.btnHostNew.addEventListener('click', () => {
+      clearSession();
       window.location.href = window.location.pathname;
     });
     

@@ -111,48 +111,56 @@
         <ul id="lobby-player-list" aria-label="Connected players"></ul>
       </div>
 
+      <button id="btn-start-game" class="btn btn-primary btn-large">Start Adventure</button>
+      <p id="lobby-waiting-msg" class="lobby-waiting-msg hidden">Waiting for host to start…</p>
+
       <div id="death-timeout-group" class="death-timeout-group hidden">
-        <label for="death-timeout-select" class="death-timeout-label">⏱ Respawn Timer</label>
+        <div class="setting-row">
+          <label for="death-timeout-select" class="death-timeout-label">⏱ Respawn Timer</label>
+          <select id="death-timeout-select" aria-label="Death respawn timeout">
+            <option value="15">15 seconds</option>
+            <option value="20">20 seconds</option>
+            <option value="30" selected>30 seconds</option>
+            <option value="45">45 seconds</option>
+            <option value="60">60 seconds</option>
+          </select>
+        </div>
         <p class="setting-help">How long a player stays dead before respawning in the same room.</p>
-        <select id="death-timeout-select" aria-label="Death respawn timeout">
-          <option value="15">15 seconds</option>
-          <option value="20">20 seconds</option>
-          <option value="30" selected>30 seconds</option>
-          <option value="45">45 seconds</option>
-          <option value="60">60 seconds</option>
-        </select>
       </div>
 
       <div id="hazard-multiplier-group" class="death-timeout-group hidden">
-        <label for="hazard-multiplier-select" class="death-timeout-label">☠️ Hazard Danger</label>
+        <div class="setting-row">
+          <label for="hazard-multiplier-select" class="death-timeout-label">☠️ Hazard Danger</label>
+          <select id="hazard-multiplier-select" aria-label="Hazard danger level">
+            <option value="0.5">Low</option>
+            <option value="1" selected>Medium</option>
+            <option value="2">High</option>
+          </select>
+        </div>
         <p class="setting-help">Adjusts hazard lethality. Low = safer, High = deadlier. Medium uses the world default.</p>
-        <select id="hazard-multiplier-select" aria-label="Hazard danger level">
-          <option value="0.5">Low</option>
-          <option value="1" selected>Medium</option>
-          <option value="2">High</option>
-        </select>
       </div>
 
       <div id="say-scope-group" class="death-timeout-group hidden">
-        <label for="say-scope-select" class="death-timeout-label">💬 Say Scope</label>
+        <div class="setting-row">
+          <label for="say-scope-select" class="death-timeout-label">💬 Say Scope</label>
+          <select id="say-scope-select" aria-label="Say command scope">
+            <option value="room" selected>Room Only</option>
+            <option value="global">Global</option>
+          </select>
+        </div>
         <p class="setting-help">Room Only: only players in the same room hear you. Global: all players hear what you say.</p>
-        <select id="say-scope-select" aria-label="Say command scope">
-          <option value="room" selected>Room Only</option>
-          <option value="global">Global</option>
-        </select>
       </div>
 
       <div id="hints-group" class="death-timeout-group hidden">
-        <label for="hints-toggle" class="death-timeout-label">🔍 Puzzle Hints</label>
+        <div class="setting-row">
+          <label for="hints-toggle" class="death-timeout-label">🔍 Puzzle Hints</label>
+          <select id="hints-toggle" aria-label="Puzzle hints toggle">
+            <option value="true" selected>Enabled</option>
+            <option value="false">Disabled</option>
+          </select>
+        </div>
         <p class="setting-help">When enabled, puzzle rooms show a hint about what item is needed to solve the puzzle.</p>
-        <select id="hints-toggle" aria-label="Puzzle hints toggle">
-          <option value="true" selected>Enabled</option>
-          <option value="false">Disabled</option>
-        </select>
       </div>
-
-      <button id="btn-start-game" class="btn btn-primary btn-large">Start Adventure</button>
-      <p id="lobby-waiting-msg" class="lobby-waiting-msg hidden">Waiting for host to start…</p>
     </div>
   </section>
 

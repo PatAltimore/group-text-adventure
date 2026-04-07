@@ -4146,11 +4146,12 @@ describe('Help Command (Stef)', () => {
 
 describe('Map Command (Stef)', () => {
   // Custom world for map testing:
-  //   map-a (start) --north--> map-b --north--> map-c
+  //   map-a (start) --north--> map-b --north--> map-c --north--> map-f --north--> map-g
   //                            map-b --east---> map-d
   //   map-a         --east---> map-e
   //
-  // Depths from map-a: 0=map-a, 1=map-b/map-e, 2=map-c/map-d
+  // Depths from map-a: 0=map-a, 1=map-b/map-e, 2=map-c/map-d, 3=map-f, 4=map-g
+  // Depths from map-e: 0=map-e, 1=map-a, 2=map-b, 3=map-c/map-d, 4=map-f, 5=map-g
   function mapTestWorld() {
     return {
       name: 'Map Test World',
@@ -4173,7 +4174,21 @@ describe('Map Command (Stef)', () => {
         'map-c': {
           name: 'Tower Room',
           description: 'A tall tower room.',
-          exits: { south: 'map-b' },
+          exits: { south: 'map-b', north: 'map-f' },
+          items: [],
+          hazards: [],
+        },
+        'map-f': {
+          name: 'Attic',
+          description: 'A dusty attic above the tower.',
+          exits: { south: 'map-c', north: 'map-g' },
+          items: [],
+          hazards: [],
+        },
+        'map-g': {
+          name: 'Rooftop',
+          description: 'The very top of the building.',
+          exits: { south: 'map-f' },
           items: [],
           hazards: [],
         },
@@ -4275,27 +4290,61 @@ describe('Map Command (Stef)', () => {
     expect(msg.message.text).toContain('North Corridor');
   });
 
-  test('map limits to depth 2', () => {
+  test('map shows rooms up to depth 3', () => {
     let session = mapSession();
-    // Visit all rooms: a -> b -> c -> b -> d -> b -> a -> e
+    // Visit all rooms: a -> b -> c -> f -> g -> f -> c -> b -> d -> b -> a -> e
     ({ session } = processCommand(session, 'p1', 'go north'));  // map-b
     ({ session } = processCommand(session, 'p1', 'go north'));  // map-c
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-f
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-g
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-f
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-c
     ({ session } = processCommand(session, 'p1', 'go south'));  // map-b
     ({ session } = processCommand(session, 'p1', 'go east'));   // map-d
     ({ session } = processCommand(session, 'p1', 'go west'));   // map-b
-    ({ session } = processCommand(session, 'p1', 'go south')); // map-a
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-a
     ({ session } = processCommand(session, 'p1', 'go east'));   // map-e
 
     // Now at map-e (depth 0). map-a is depth 1. map-b is depth 2.
-    // map-c and map-d are depth 3 from map-e — should NOT appear.
+    // map-c and map-d are depth 3 from map-e — should now appear with depth limit 3.
+    // map-f is depth 4 from map-e — should NOT appear.
     const { responses } = processCommand(session, 'p1', 'map');
     const msg = responses.find(r => r.playerId === 'p1');
     const text = msg.message.text;
-    expect(text).toContain('Garden');        // depth 0 - current
-    expect(text).toContain('Central Hall');  // depth 1
-    expect(text).toContain('North Corridor'); // depth 2
-    expect(text).not.toContain('Tower Room');  // depth 3 - too far
-    expect(text).not.toContain('East Wing');   // depth 3 - too far
+    expect(text).toContain('Garden');          // depth 0 - current
+    expect(text).toContain('Central Hall');    // depth 1
+    expect(text).toContain('North Corridor');  // depth 2
+    expect(text).toContain('Tower Room');      // depth 3 - now included
+    expect(text).toContain('East Wing');       // depth 3 - now included
+    expect(text).not.toContain('Attic');       // depth 4 - too far
+    expect(text).not.toContain('Rooftop');     // depth 5 - too far
+  });
+
+  test('map does not show rooms beyond depth 3', () => {
+    let session = mapSession();
+    // Visit all rooms: a -> b -> c -> f -> g -> f -> c -> b -> d -> b -> a
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-b
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-c
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-f
+    ({ session } = processCommand(session, 'p1', 'go north'));  // map-g
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-f
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-c
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-b
+    ({ session } = processCommand(session, 'p1', 'go east'));   // map-d
+    ({ session } = processCommand(session, 'p1', 'go west'));   // map-b
+    ({ session } = processCommand(session, 'p1', 'go south'));  // map-a
+
+    // At map-a (depth 0). Depths: map-b/map-e=1, map-c/map-d=2, map-f=3, map-g=4
+    // map-g at depth 4 should NOT appear.
+    const { responses } = processCommand(session, 'p1', 'map');
+    const msg = responses.find(r => r.playerId === 'p1');
+    const text = msg.message.text;
+    expect(text).toContain('Central Hall');     // depth 0 - current
+    expect(text).toContain('North Corridor');   // depth 1
+    expect(text).toContain('Tower Room');       // depth 2
+    expect(text).toContain('East Wing');        // depth 2
+    expect(text).toContain('Attic');            // depth 3 - included
+    expect(text).not.toContain('Rooftop');      // depth 4 - too far
   });
 
   test('map shows compass directions', () => {

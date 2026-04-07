@@ -1475,6 +1475,31 @@ export function handleMap(session, playerId) {
         shownRooms.add(roomId2);
 
         lines.push(` ${cont}  ${branch2}─ ${dir2[0].toUpperCase()} ─ ${label2}`);
+
+        // Depth-3: exits from this depth-2 room
+        if (isVisited2) {
+          const cont2 = isLast2 ? ' ' : '│';
+          const exits3 = Object.entries(session.roomStates[roomId2].exits)
+            .filter(([, rid]) => !shownRooms.has(rid));
+
+          for (let k = 0; k < exits3.length; k++) {
+            const [dir3, roomId3] = exits3[k];
+            const isLast3 = k === exits3.length - 1;
+            const branch3 = isLast3 ? '└' : '├';
+            const isVisited3 = visited.has(roomId3);
+
+            let label3;
+            if (!isVisited3) {
+              label3 = '[?] ???';
+            } else {
+              label3 = `[${num}] ${trimName(session.world.rooms[roomId3].name, 12)}`;
+              num++;
+            }
+            shownRooms.add(roomId3);
+
+            lines.push(` ${cont}  ${cont2}  ${branch3}─ ${dir3[0].toUpperCase()} ─ ${label3}`);
+          }
+        }
       }
     }
   }

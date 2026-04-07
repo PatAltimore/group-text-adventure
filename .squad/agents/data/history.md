@@ -433,3 +433,12 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Responsive tweaks:** Reduced header button gap on mobile (6px). Added mobile-specific sizing for the new buttons.
 - **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
 - **Pre-existing test failures:** 6 map command tests in game-engine.test.js fail (backend feature not yet implemented). Not related to frontend changes.
+
+### 2026-04-06 — Lobby Layout Improvements + Host New Game Bugfix
+
+- **Start Adventure button moved:** Repositioned from after settings to after the player list and before settings. Flow is now: share → players → start button → settings. Makes more sense UX-wise — see who's here, start when ready, settings below for tweaking.
+- **Settings reformatted to two-column layout:** Each `.death-timeout-group` setting now uses a `.setting-row` flex container with label on the left and dropdown on the right, same line. Help text sits below spanning full width. More compact — reduces vertical space per setting significantly.
+- **CSS changes:** `.death-timeout-group` changed from horizontal flex to column flex. Added `.setting-row` with `justify-content: space-between`. Reduced `.setting-help` font size and margins.
+- **Host New Game bugfix:** The "+ New" button navigated to `window.location.pathname` which stripped query params, but localStorage auto-rejoin (`gta_gameId`, `gta_playerName`) immediately reconnected to the old game. Fix: added `clearSession()` call before navigation to wipe localStorage state.
+- **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
+- **All 473 tests pass** (466 passing, 7 skipped) unchanged.
