@@ -4268,13 +4268,12 @@ describe('Map Command (Stef)', () => {
     expect(msg.message.text).toContain('[*]');
   });
 
-  test('map shows unvisited rooms as [?] ???', () => {
+  test('map shows unvisited rooms as ???', () => {
     // Player is at map-a (start), has not visited map-b or map-e
     let session = mapSession();
     const { responses } = processCommand(session, 'p1', 'map');
     const msg = responses.find(r => r.playerId === 'p1');
     // Adjacent rooms not visited should show as unknown
-    expect(msg.message.text).toContain('[?]');
     expect(msg.message.text).toContain('???');
   });
 

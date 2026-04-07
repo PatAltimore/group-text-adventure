@@ -1430,11 +1430,10 @@ export function handleMap(session, playerId) {
   const currentName = session.world.rooms[currentRoom].name;
   const lines = [];
   lines.push('── MAP ──────────────────');
-  lines.push(`[*] ${trimName(currentName, 18)} (you)`);
+  lines.push(`[*] ${trimName(currentName, 20)} (you)`);
 
   // Depth-1: exits from current room
   const exits1 = Object.entries(session.roomStates[currentRoom].exits);
-  let num = 2;
 
   for (let i = 0; i < exits1.length; i++) {
     const [dir, roomId] = exits1[i];
@@ -1443,13 +1442,9 @@ export function handleMap(session, playerId) {
     const cont = isLast ? ' ' : '│';
     const isVisited = visited.has(roomId);
 
-    let label;
-    if (!isVisited) {
-      label = '[?] ???';
-    } else {
-      label = `[${num}] ${trimName(session.world.rooms[roomId].name, 16)}`;
-      num++;
-    }
+    const label = isVisited
+      ? trimName(session.world.rooms[roomId].name, 18)
+      : '???';
     shownRooms.add(roomId);
 
     lines.push(` ${branch}─ ${dir[0].toUpperCase()} ─ ${label}`);
@@ -1465,13 +1460,9 @@ export function handleMap(session, playerId) {
         const branch2 = isLast2 ? '└' : '├';
         const isVisited2 = visited.has(roomId2);
 
-        let label2;
-        if (!isVisited2) {
-          label2 = '[?] ???';
-        } else {
-          label2 = `[${num}] ${trimName(session.world.rooms[roomId2].name, 14)}`;
-          num++;
-        }
+        const label2 = isVisited2
+          ? trimName(session.world.rooms[roomId2].name, 16)
+          : '???';
         shownRooms.add(roomId2);
 
         lines.push(` ${cont}  ${branch2}─ ${dir2[0].toUpperCase()} ─ ${label2}`);
@@ -1488,13 +1479,9 @@ export function handleMap(session, playerId) {
             const branch3 = isLast3 ? '└' : '├';
             const isVisited3 = visited.has(roomId3);
 
-            let label3;
-            if (!isVisited3) {
-              label3 = '[?] ???';
-            } else {
-              label3 = `[${num}] ${trimName(session.world.rooms[roomId3].name, 12)}`;
-              num++;
-            }
+            const label3 = isVisited3
+              ? trimName(session.world.rooms[roomId3].name, 14)
+              : '???';
             shownRooms.add(roomId3);
 
             lines.push(` ${cont}  ${cont2}  ${branch3}─ ${dir3[0].toUpperCase()} ─ ${label3}`);
