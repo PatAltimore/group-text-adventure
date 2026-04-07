@@ -542,6 +542,14 @@
       container.appendChild(desc);
     }
 
+    // Puzzle hint display - right after room description
+    if (room.hintText) {
+      const hint = document.createElement('div');
+      hint.className = 'room-hint';
+      hint.textContent = `💡 Hint: ${room.hintText}`;
+      container.appendChild(hint);
+    }
+
     // Show displaced items separately
     if (displacedItems.length) {
       const droppedDiv = document.createElement('div');
@@ -614,14 +622,6 @@
       container.appendChild(
         createRoomSection('Exits', room.exits.join(', '), 'room-exits')
       );
-    }
-
-    // Puzzle hint display
-    if (room.hintText) {
-      const hint = document.createElement('div');
-      hint.className = 'room-hint';
-      hint.textContent = `💡 Hint: ${room.hintText}`;
-      container.appendChild(hint);
     }
 
     const msg = document.createElement('div');
