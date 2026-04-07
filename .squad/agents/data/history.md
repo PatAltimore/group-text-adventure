@@ -384,3 +384,15 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **CSS additions:** `.room-hint` (amber italic), `.msg-share-hint` (accent info bar), `.lobby-share-btn` (full-width prominent share button).
 - **No test regressions** from frontend changes — 4 pre-existing failures are in backend engine tests (hints engine not yet implemented).
 
+### 2026-04-06 — Join Screen UX Redesign
+
+- **Problem:** Players confused game code with player name field. Game code section was too prominent; name field lacked a visible label.
+- **Name field improvements:** Added visible `👤 Your Name` label above input (not just SR-only). Increased input size (18px font, 2px border, more padding). Changed placeholder to "What should other players call you?" for clarity.
+- **Game code de-emphasized:** Replaced the large bordered game-code box (28px bold display) with a compact inline `Game: ABC123` line (13px, dimmed text, accent-colored code). Game code already auto-fills from URL param in `initJoin()`.
+- **Visual hierarchy:** Name section is now first and most prominent. Game code is secondary/subtle between name and Join button. Flow reads naturally: name → code confirmation → join.
+- **Subtitle updated:** Changed from "Ready to explore?" to "Enter your name to join the adventure" — guides player action.
+- **Responsive:** Mobile breakpoint maintains 16px minimum input font to prevent iOS zoom.
+- **Files modified:** `client/index.html`, `client/style.css`
+- **No JS changes needed** — all element IDs preserved, `initJoin()` logic unchanged.
+- **All tests pass** (pre-existing intermittent failure in world-selection unrelated).
+

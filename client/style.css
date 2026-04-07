@@ -149,37 +149,27 @@ html, body {
   gap: 20px;
 }
 
-.join-game-code {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
+.join-name-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.join-label {
+.join-name-label {
   display: block;
-  color: var(--text-dim);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-}
-
-.join-code-display {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
 }
 
 .join-form input[type="text"] {
   width: 100%;
-  padding: 14px 16px;
-  font-size: 16px;
+  padding: 16px 18px;
+  font-size: 18px;
   font-family: var(--font-mono);
   background: var(--bg-surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius);
   color: var(--text);
   outline: none;
@@ -188,6 +178,27 @@ html, body {
 
 .join-form input[type="text"]:focus {
   border-color: var(--accent);
+}
+
+.join-code-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.join-code-prefix {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.join-code-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.08em;
 }
 
 .join-host-link {
@@ -1078,8 +1089,8 @@ html, body {
     font-size: 1.5rem;
   }
 
-  .join-code-display {
-    font-size: 24px;
+  .join-form input[type="text"] {
+    font-size: 16px;
   }
 
   .landing-title {

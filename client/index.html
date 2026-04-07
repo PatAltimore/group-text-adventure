@@ -14,23 +14,25 @@
   <section id="screen-join" class="screen" role="main" aria-label="Join game">
     <div class="join-container">
       <h1 class="join-title">🏰 Join Adventure</h1>
-      <p class="join-subtitle">Ready to explore?</p>
+      <p class="join-subtitle">Enter your name to join the adventure</p>
 
       <div class="join-form">
-        <div class="join-game-code">
-          <label class="join-label">Game Code</label>
-          <div id="join-display-code" class="join-code-display" aria-label="Game code">ABC123</div>
+        <div class="join-name-section">
+          <label for="join-player-name" class="join-name-label">👤 Your Name</label>
+          <input
+            id="join-player-name"
+            type="text"
+            placeholder="What should other players call you?"
+            maxlength="24"
+            autocomplete="off"
+            aria-label="Your player name"
+          >
         </div>
 
-        <label for="join-player-name" class="sr-only">Your Name</label>
-        <input
-          id="join-player-name"
-          type="text"
-          placeholder="Enter your name…"
-          maxlength="24"
-          autocomplete="off"
-          aria-label="Your player name"
-        >
+        <div class="join-code-inline" id="join-code-inline">
+          <span class="join-code-prefix">Game:</span>
+          <span id="join-display-code" class="join-code-value" aria-label="Game code">ABC123</span>
+        </div>
 
         <button id="btn-join-start" class="btn btn-primary btn-large" disabled aria-label="Join game">
           Join Game →
