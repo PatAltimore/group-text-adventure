@@ -1,5 +1,5 @@
 {
-  "name": "The Derelict Station",
+  "name": "Space Station",
   "description": "A deep-space research station gone dark three months ago. No distress signal, no survivors found. Your salvage crew has docked at the only open airlock — but the station's AI keeps cycling power to random sections. Something happened here. The logs might tell you what, if you can reach the command deck before life support fails.",
   "startRoom": "airlock",
   "rooms": {

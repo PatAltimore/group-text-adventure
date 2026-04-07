@@ -602,3 +602,14 @@ Two features implemented:
 - **Files:** `api/src/game-engine.js`, `api/src/command-parser.js`
 - **All 465 tests pass** (7 skipped).
 
+### 2026-04-06 — World File Updates: Rename + New Egyptian Pyramid World
+
+- **Renamed space-adventure.json:** `"The Derelict Station"` → `"Space Station"`. Only the top-level `name` field contained "derelict" — no room descriptions or puzzle text referenced the word.
+- **New world: `world/egyptian-pyramid.json`** — "The Lost Pyramid": Ancient Egyptian pyramid adventure.
+  - **10 rooms:** entrance, grand-corridor, hidden-passage, offering-hall, sphinx-chamber, trap-room, burial-chamber, treasure-room, pharaohs-tomb, star-chamber
+  - **9 items:** torch, ancient-scroll, scarab-amulet, golden-ankh, canopic-jar, pharaohs-mask, eye-of-horus, sun-disc, scepter-of-ra
+  - **5 puzzles:** open-burial-chamber (openExit, goal), open-pharaohs-tomb (openExit, goal), clear-trap-room (removeHazard), unlock-sphinx-door (openExit, goal), reveal-star-treasure (addItem)
+  - **6 hazards** across 6 rooms (collapsing stones, poison darts, toxic air, pressure plate traps, pharaoh's curse, collapsing ceiling)
+  - **3 goals:** Open the Burial Chamber, Enter the Pharaoh's Tomb, Solve the Sphinx's Riddle
+- **Validated:** JSON parses clean, all room/item/puzzle cross-references verified, bidirectional exits correct (puzzle-gated exits intentionally one-way until solved). All 472 tests pass.
+
