@@ -87,7 +87,8 @@
       "name": "Forest Clearing — Scorch Pattern",
       "description": "A perfect circle of scorched earth fifty feet across, the grass turned to ash in a geometric pattern. Trees at the perimeter are bent outward as if struck by a massive shockwave. Your Geiger counter clicks steadily — elevated radiation, consistent with UFO landing sites. Soil samples glow faintly in your sample bag. In the center of the circle, three circular depressions form a triangle — landing gear impressions. The sky seems darker here, as if the canopy overhead absorbs light. The forest is west. A metal hatch in the center of the circle leads down into something not made by human hands.",
       "exits": {
-        "west": "bigfoot-forest"
+        "west": "bigfoot-forest",
+        "south": "alien-spacecraft"
       },
       "items": [
         "radiation-badge",
@@ -105,7 +106,7 @@
       "name": "Extraterrestrial Vessel",
       "description": "Inside a craft not built by human hands. The walls are seamless bio-organic metal that pulses with faint bioluminescence — blue and violet light that shifts like living tissue. There are no rivets, no welds, no seams. Hieroglyphic symbols flow across the surfaces like water. A central pillar rises from the floor, covered in touch-interface glyphs. Your translator struggles to parse the symbols, outputting fragments: '...WARNING... BARRIER BREACH... DIMENSIONAL ANCHOR FAILING...' A passage north leads deeper into the ship. The landing site hatch is above you.",
       "exits": {
-        "up": "ufo-landing-site",
+        "south": "ufo-landing-site",
         "north": "roswell-crash"
       },
       "items": [
