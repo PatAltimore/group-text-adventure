@@ -9,20 +9,18 @@ import { validateWorld } from '../../world/validate-world.js';
  * @returns {string} ASCII art trophy
  */
 export function getGoalAsciiArt() {
-  return `
-     ___________
-    '._==_==_=_.'
-    .-\\:      /-.
-   | (|:.     |) |
-    '-|:.     |-'
-      \\::.    /
-       '::. .'
-         ) (
-       _.' '._
-      \`\"\"\"\"\"\"\"\`
-   
-    🌟 GOAL COMPLETE! 🌟
-  `;
+  return [
+    '     ___________',
+    "    '._==_==_=_.'",
+    '    .-\\:      /-.',
+    '   | (|:.     |) |',
+    "    '-|:.     |-'",
+    '      \\::.    /',
+    "       '::. .'",
+    '         ) (',
+    "       _.' '._",
+    '      |_______|',
+  ].join('\n');
 }
 
 /**
@@ -30,25 +28,16 @@ export function getGoalAsciiArt() {
  * @returns {string} ASCII art victory banner
  */
 export function getVictoryAsciiArt() {
-  return `
-  ═══════════════════════════════════════════════════════
-  ╔═══════════════════════════════════════════════════╗
-  ║                                                   ║
-  ║   ██╗   ██╗██╗ ██████╗████████╗ ██████╗ ██████╗  ║
-  ║   ██║   ██║██║██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗ ║
-  ║   ██║   ██║██║██║        ██║   ██║   ██║██████╔╝ ║
-  ║   ╚██╗ ██╔╝██║██║        ██║   ██║   ██║██╔══██╗ ║
-  ║    ╚████╔╝ ██║╚██████╗   ██║   ╚██████╔╝██║  ██║ ║
-  ║     ╚═══╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝ ║
-  ║                                                   ║
-  ╚═══════════════════════════════════════════════════╝
-  
-         🎉  ALL GOALS COMPLETED!  🎉
-         
-      You have conquered the challenge!
-      
-  ═══════════════════════════════════════════════════════
-  `;
+  return [
+    '  ========================================',
+    '  ||                                    ||',
+    '  ||     V I C T O R Y !               ||',
+    '  ||                                    ||',
+    '  ||   All goals have been achieved!    ||',
+    '  ||   You conquered the adventure!     ||',
+    '  ||                                    ||',
+    '  ========================================',
+  ].join('\n');
 }
 
 // Strip non-alphanumeric characters (except spaces) for fuzzy item matching.
