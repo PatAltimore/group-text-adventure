@@ -112,6 +112,10 @@ html, body {
   font-size: 12px;
 }
 
+#btn-start-game {
+  margin-bottom: 24px;
+}
+
 .btn-large {
   padding: 14px 32px;
   font-size: 16px;
