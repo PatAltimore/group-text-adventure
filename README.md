@@ -15,7 +15,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 - **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Danger (Low/Medium/High), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
 - **Real-Time Sync** — All actions broadcast instantly via Web PubSub
 - **Hazard System** — Rooms can contain hazards with variable death probability; defeated players respawn after timer expires
-- **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can loot and use
+- **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can pick them up with the "get" command
 - **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
 - **Puzzle Rooms** — 🧩 Emoji prefix marks puzzle rooms; optional hints show required items
 - **Goal System** — Puzzles marked as goals trigger ASCII art celebrations when solved and broadcast to all players. When all goals are completed, a victory screen celebrates the entire group's success. Goal progress is displayed in the room view.
@@ -41,7 +41,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 |---------|--------|---------|
 | **Go** | `go <direction>` or shortcut `<n/s/e/w>` | `go north` or `n` |
 | **Look** | `look` or `look <item>` | `look` or `look torch` |
-| **Take** | `take <item>` | `take torch` |
+| **Get** | `get <item>` or `get items` or `g` | `get torch` or `get items` or `g` |
 | **Drop** | `drop <item>` | `drop torch` |
 | **Inventory** | `inventory` or `i` | `i` |
 | **Use** | `use <item>` | `use key` |

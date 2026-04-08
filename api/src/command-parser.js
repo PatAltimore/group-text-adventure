@@ -19,7 +19,6 @@ const GIVE_VERBS = new Set(['give', 'hand', 'offer']);
 const HELP_VERBS = new Set(['help', 'h', '?']);
 const SAY_VERBS = new Set(['say', 'whisper']);
 const YELL_VERBS = new Set(['yell', 'shout']);
-const LOOT_VERBS = new Set(['loot']);
 const MAP_VERBS = new Set(['map', 'm']);
 
 /**
@@ -34,6 +33,11 @@ export function parseCommand(text) {
   const lower = raw.toLowerCase();
   const words = lower.split(/\s+/);
   const verb = words[0];
+
+  // "g" standalone → pick up all items in the room
+  if (verb === 'g' && words.length === 1) {
+    return { verb: 'takeall', raw };
+  }
 
   // Direct direction shorthand: "n", "north", etc.
   if (DIRECTION_ALIASES[verb] && words.length === 1) {
@@ -54,6 +58,10 @@ export function parseCommand(text) {
     if (verb === 'pick' && words[1] === 'up') {
       noun = words.slice(2).join(' ');
     }
+    // "get items" / "take items" / "get all" / "take all" → pick up everything
+    if (noun === 'items' || noun === 'all') {
+      return { verb: 'takeall', raw };
+    }
     // handle "take <item> from <target>" (e.g. "take key from Bob's ghost")
     const fromIndex = noun.indexOf(' from ');
     if (fromIndex !== -1) {
@@ -65,12 +73,6 @@ export function parseCommand(text) {
       };
     }
     return { verb: 'take', noun: noun || undefined, raw };
-  }
-
-  // Loot — "loot <target>"
-  if (LOOT_VERBS.has(verb)) {
-    const noun = words.slice(1).join(' ');
-    return { verb: 'loot', noun: noun || undefined, raw };
   }
 
   // Drop

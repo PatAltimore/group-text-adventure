@@ -644,8 +644,8 @@ export function processCommand(session, playerId, commandText) {
     case 'take':
       result = handleTake(session, playerId, cmd);
       break;
-    case 'loot':
-      result = handleLoot(session, playerId, cmd);
+    case 'takeall':
+      result = handleTakeAll(session, playerId);
       break;
     case 'drop':
       result = handleDrop(session, playerId, cmd);
@@ -944,68 +944,46 @@ function handleTakeFromGhost(session, playerId, cmd) {
 }
 
 /**
- * Loot all items from a ghost: "loot Bob's ghost"
+ * Pick up all portable items from the current room.
  */
-function handleLoot(session, playerId, cmd) {
+function handleTakeAll(session, playerId) {
   const player = session.players[playerId];
+  const roomState = session.roomStates[player.room];
   const responses = [];
 
-  if (!cmd.noun) {
-    responses.push({ playerId, message: { type: 'error', text: 'Loot what? Try "loot Bob\'s ghost".' } });
-    return { session, responses };
-  }
-
-  // Parse ghost name — strip "'s ghost" suffix if present
-  const nounLower = cmd.noun.toLowerCase();
-  const ghostSuffix = "'s ghost";
-  let ghostOwner = cmd.noun;
-  if (nounLower.endsWith(ghostSuffix)) {
-    ghostOwner = cmd.noun.slice(0, -ghostSuffix.length);
-  }
-
-  const found = findGhostByName(session, ghostOwner);
-  if (!found || found.ghost.room !== player.room) {
-    responses.push({
-      playerId,
-      message: { type: 'error', text: `You don't see ${ghostOwner}'s ghost here.` },
-    });
-    return { session, responses };
-  }
-
-  const ghost = found.ghost;
-
-  if (ghost.inventory.length === 0) {
-    responses.push({
-      playerId,
-      message: { type: 'message', text: `${ghost.playerName}'s ghost has nothing to loot.` },
-    });
-    return { session, responses };
-  }
-
-  // Transfer all items
-  const takenNames = [];
-  for (const itemId of ghost.inventory) {
-    player.inventory.push(itemId);
+  const portableItems = roomState.items.filter((itemId) => {
     const item = session.world.items[itemId];
-    takenNames.push(item ? item.name : itemId);
-  }
-  ghost.inventory = [];
-
-  const itemList = takenNames.join(', ');
-  responses.push({
-    playerId,
-    message: { type: 'message', text: `You loot ${ghost.playerName}'s ghost, taking: ${itemList}.` },
+    return item && item.portable;
   });
 
-  // Notify others in room
+  if (portableItems.length === 0) {
+    responses.push({
+      playerId,
+      message: { type: 'message', text: 'There are no items here to pick up.' },
+    });
+    return { session, responses };
+  }
+
+  const pickedUpNames = [];
+  for (const itemId of portableItems) {
+    const idx = roomState.items.indexOf(itemId);
+    roomState.items.splice(idx, 1);
+    player.inventory.push(itemId);
+    const item = session.world.items[itemId];
+    pickedUpNames.push(item ? item.name : itemId);
+  }
+
+  const itemList = pickedUpNames.join(', ');
+  responses.push({
+    playerId,
+    message: { type: 'message', text: `You picked up: ${itemList}.` },
+  });
+
   for (const [otherId, otherPlayer] of Object.entries(session.players)) {
     if (otherId !== playerId && otherPlayer.room === player.room) {
       responses.push({
         playerId: otherId,
-        message: {
-          type: 'message',
-          text: `${player.name} loots ${ghost.playerName}'s ghost, taking: ${itemList}.`,
-        },
+        message: { type: 'message', text: `${player.name} picked up everything on the ground.` },
       });
     }
   }
@@ -1444,6 +1422,7 @@ function handleHelp(session, playerId) {
     '',
     '▸ ITEMS',
     '  TAKE <x>    Pick up an item',
+    '  GET ITEMS   Pick up all items (g)',
     '  DROP <x>    Drop an item',
     '  USE <x>     Use an item',
     '  USE <x> ON <y>  Use on target',
@@ -1456,7 +1435,6 @@ function handleHelp(session, playerId) {
     '',
     '▸ GHOSTS',
     '  TAKE <x> FROM <name>\'s ghost',
-    '  LOOT <name>\'s ghost',
     '',
     '▸ GAME',
     '  HELP        Show this message',

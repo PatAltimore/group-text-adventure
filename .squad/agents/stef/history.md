@@ -78,6 +78,16 @@
   - Key discovery: world files use `north/south/east/west` for directions, NOT abbreviated `n/s/e/w`
   - Total: 333 tests pass across 5 suites (2 known-gap failures)
 
+- **2026-04-02 — Loot removal & get-items tests (new tests + updated old loot tests)**
+  - Added 3 new `describe` blocks to `/tests/game-engine.test.js`:
+    1. **Loot Command Removed** (3 tests): verifies "loot" returns error, doesn't transfer items
+    2. **Death and Disconnect Inventory Drop** (7 tests): death/disconnect drop items to floor, items pickable with "get", removePlayer drops items, no-inventory disconnect safe
+    3. **Get Items / Take Items / G Shortcut** (12 tests): "get items" picks up all, "g" shortcut, "take items" alias, empty room handling, partial match still works, integration with death/disconnect drop
+  - Mouth was working concurrently — rewrote Ghost Looting section as "Ghost Interactions" and added "Get Items / Take All" block (8 tests)
+  - Fixed case sensitivity bug in Mouth's test: `toContain('old key')` → `toContain('Old Key')` — response uses item display name
+  - Total: 531 tests (529 pass, 2 skipped) across 5 suites
+  - Key patterns: `killPlayer()` drops inventory to floor immediately; `disconnectPlayer()` drops inventory to floor; ghosts always have empty `inventory: []`
+
 - **2026-04-02 — Help Command + Map Command tests (12 new tests, all passing)**
   - Added `describe('Help Command (Stef)')` (2 tests) and `describe('Map Command (Stef)')` (10 tests) to `/tests/game-engine.test.js`
   - Help tests: verify formatted help text contains expected command keywords (go, look, take, drop, inventory, help); verify both `help` and `?` trigger help response

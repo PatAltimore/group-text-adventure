@@ -613,7 +613,16 @@ Two features implemented:
   - **3 goals:** Open the Burial Chamber, Enter the Pharaoh's Tomb, Solve the Sphinx's Riddle
 - **Validated:** JSON parses clean, all room/item/puzzle cross-references verified, bidirectional exits correct (puzzle-gated exits intentionally one-way until solved). All 472 tests pass.
 
-### 2026-07-14 — Fuzzy / Partial Item Name Matching
+### 2026-07-14 — Remove Loot Command, Add "Get Items" / "g" Shortcut
+
+- **Loot command removed:** Deleted `handleLoot` from `game-engine.js`, removed `loot` verb from `command-parser.js`, removed `case 'loot'` from the command switch. "loot" now returns "I don't understand" like any unknown command.
+- **Items already drop to room floor:** Both `disconnectPlayer` and `killPlayer` already drop all inventory items into the room's item list and set ghost inventory to `[]`. No code change needed — the "loot" command was already vestigial since ghosts always had empty inventories.
+- **New "get items" / "g" command:** Added `handleTakeAll` in `game-engine.js`. Picks up ALL portable items in the current room. Skips non-portable items. Reports "You picked up: item1, item2." or "There are no items here to pick up." Notifies other players in the room.
+- **Parser changes:** `command-parser.js` maps "get items", "take items", "get all", "take all" → verb `'takeall'`. Standalone "g" also maps to `'takeall'`. No conflict with "get <specific item>" — only triggers when noun is exactly "items" or "all".
+- **Help text updated:** Removed `LOOT <name>'s ghost` line. Added `GET ITEMS   Pick up all items (g)` under ITEMS section.
+- **Tests:** Removed/replaced ~25 obsolete loot tests. Added 8 new "Get Items / Take All" tests covering get items, take items, g shortcut, empty room, multi-item pickup, and player notifications. All 529 tests pass (2 pre-existing skips).
+- **Key files:** `api/src/command-parser.js`, `api/src/game-engine.js`, `tests/game-engine.test.js`, `README.md`.
+
 
 - **Feature:** All item commands (take/get, drop, use, give) now support partial/fuzzy name matching. Players can type "get journal" instead of "get Dr. Webb's research journal".
 - **Architecture:** Added `findMatchingItems(searchTerm, itemIds, worldItems)` helper that returns matching item IDs. Exact/startsWith matches (via existing `matchesItemName`) are prioritized; falls back to case-insensitive substring matching (via new `fuzzyMatchesItemName`).
