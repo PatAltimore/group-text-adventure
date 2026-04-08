@@ -11,14 +11,14 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 ## Features
 
 - **1–20 Multiplayer** — Host and join games via URL or QR code; use Web Share API or clipboard to invite
-- **Multiple Worlds** — Choose from 3 pre-built adventures (Forgotten Castle, Clockmaker's Mansion, Derelict Station) or create your own
+- **Multiple Worlds** — Choose from 6 pre-built adventures (Forgotten Castle, Clockmaker's Mansion, Space Station, The Lost Pyramid, Blackwood Manor, Paranormal Mysteries) or create your own
 - **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Danger (Low/Medium/High), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
 - **Real-Time Sync** — All actions broadcast instantly via Web PubSub
 - **Hazard System** — Rooms can contain hazards with variable death probability; defeated players respawn after timer expires
 - **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can loot and use
 - **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
 - **Puzzle Rooms** — 🧩 Emoji prefix marks puzzle rooms; optional hints show required items
-- **Goal System** — Puzzles marked as goals broadcast a trophy to all players when solved. When all goals are completed, a victory celebration is broadcast to the entire group. Goal progress is displayed in the room view.
+- **Goal System** — Puzzles marked as goals trigger ASCII art celebrations when solved and broadcast to all players. When all goals are completed, a victory screen celebrates the entire group's success. Goal progress is displayed in the room view.
 - **Map Command** — Navigate with an ASCII map showing visited rooms up to 2 rooms away. Current room marked with [*], unvisited rooms shown as [?].
 - **Displaced Items** — Items not in their original room display distinctly as "dropped items"
 - **Explore & Interact** — Navigate rooms, examine items, collect treasures
@@ -29,7 +29,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 - **Share Link & QR Code** — Share button copies the join URL instantly. QR Code button displays a scannable QR code for easy mobile joining. QR code always visible on host screen.
 - **Host New Game Button** — Easily start a fresh game from the game header without navigating away.
 - **Improved Help Command** — Help text now features clear sections and enhanced readability for easier command discovery.
-- **World Editor** — Built-in editor (editor.html) for creating and editing world JSON files
+- **World Editor** — Create and edit custom worlds visually with the built-in editor. Visit `<game-url>/editor.html` (e.g., https://textgtagame.z5.web.core.windows.net/editor.html) to design your own worlds interactively
 
 ---
 
@@ -105,7 +105,7 @@ The game runs on Azure serverless infrastructure:
 
 ## The Worlds
 
-Choose from three pre-built adventures, each with 10 rooms and unique puzzles:
+Choose from six pre-built adventures, each with unique themes, puzzles, and challenges:
 
 ### 🏰 The Forgotten Castle
 - **Theme:** Medieval fantasy castle exploration
@@ -117,10 +117,25 @@ Choose from three pre-built adventures, each with 10 rooms and unique puzzles:
 - **Highlights:** Time-based puzzles, intricate mechanisms, mysterious artifacts
 - **File:** `escape-room.json`
 
-### 🚀 The Derelict Station
+### 🚀 Space Station
 - **Theme:** Sci-fi space station survival
 - **Highlights:** Technical challenges, alien artifacts, zero-gravity navigation
 - **File:** `space-adventure.json`
+
+### 🔺 The Lost Pyramid
+- **Theme:** Ancient Egyptian expedition and treasure hunt
+- **Highlights:** Hieroglyphic puzzles, hidden chambers, ancient traps
+- **File:** `pyramid-world.json`
+
+### 👻 Blackwood Manor
+- **Theme:** Spooky haunted mansion mystery
+- **Highlights:** Supernatural encounters, hidden secrets, eerie atmosphere
+- **File:** `mystery-house.json`
+
+### 👽 Paranormal Mysteries
+- **Theme:** Cryptids, aliens, UFOs, and unexplained phenomena
+- **Highlights:** Bermuda Triangle, Stonehenge, extraterrestrial encounters, cryptid investigations
+- **File:** `paranormal-world.json`
 
 ### World Format
 
