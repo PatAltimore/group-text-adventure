@@ -24,7 +24,9 @@
         "east": "stone-dock",
         "north": "lighthouse-base"
       },
-      "items": [],
+      "items": [
+        "ancient-journal"
+      ],
       "hazards": []
     },
     "lighthouse-base": {
@@ -152,7 +154,7 @@
         "east": "gear-chamber"
       },
       "items": [
-        "ancient-journal"
+        "gear-schematic"
       ],
       "hazards": []
     },
@@ -221,7 +223,7 @@
       "description": "A metal-bound journal with copper pages, etched with D'ni script. Though you can't read it all, diagrams show the island's various mechanisms and how they interconnect.",
       "pickupText": "The journal is heavy and cold. Its pages clink softly as you flip through schematics and cryptic notes.",
       "portable": true,
-      "roomText": "An ancient journal lies open on a reading stand, its pages oxidized but intact."
+      "roomText": "An ancient journal lies half-buried in moss at the base of a pine tree, its metal binding glinting in the dim light."
     },
     "master-crystal": {
       "name": "Master Crystal",
@@ -229,6 +231,13 @@
       "pickupText": "The crystal floods your vision with light as you grasp it, warm and alive with potential energy.",
       "portable": true,
       "roomText": "A master crystal hovers in a magnetic field, awaiting retrieval."
+    },
+    "gear-schematic": {
+      "name": "Gear Schematic",
+      "description": "A large copper sheet etched with a cross-section diagram of the gear chamber. Every gear, axle, and catwalk is precisely rendered, with safe climbing routes marked in red ink.",
+      "pickupText": "You roll up the schematic carefully. The climbing routes marked in red should make navigating the upper catwalks safe.",
+      "portable": true,
+      "roomText": "A detailed gear schematic is pinned to a reading stand, its climbing routes marked in red."
     }
   },
   "puzzles": {
@@ -310,10 +319,10 @@
     },
     "access-archive": {
       "room": "gear-chamber",
-      "description": "With the gears stabilized, the western passage is accessible. The synchronized gears create a safe path.",
-      "requiredItem": "adjustment-rod",
-      "hintText": "Now that the timing is correct, you can walk between the gears during their synchronized pauses.",
-      "solvedText": "With the gears perfectly timed, you step through during the pauses in their rotation. The passage leads to the archive chamber.",
+      "description": "With the gears stabilized, the western passage is visible but the path through requires precise timing. The star chart's constellation patterns match markings on the gears.",
+      "requiredItem": "star-chart",
+      "hintText": "The constellations on the star chart correspond to gear positions. Align your movement to the stellar pattern.",
+      "solvedText": "Holding the star chart up to the gear mechanism, you see it — each constellation matches a gear position. Following the stellar pattern, you step through the synchronized pauses. The passage to the archive opens before you.",
       "action": {
         "type": "openExit",
         "direction": "west",
@@ -322,10 +331,10 @@
     },
     "access-control-platform": {
       "room": "gear-chamber",
-      "description": "A ladder leads up to the control platform. With the gears stabilized, it's safe to climb.",
-      "requiredItem": "adjustment-rod",
-      "hintText": "The stable gear timing means the vibrations won't shake the ladder loose anymore.",
-      "solvedText": "You climb the ladder to the control platform, high above the synchronized gears.",
+      "description": "A ladder leads up to the control platform, but the route through the catwalks is treacherous. A detailed schematic of the gear chamber would reveal the safe climbing path.",
+      "requiredItem": "gear-schematic",
+      "hintText": "The schematic shows safe climbing routes through the catwalks. Follow the paths marked in red.",
+      "solvedText": "Following the red-marked routes on the gear schematic, you navigate the catwalks with confidence. Each turn and handhold is exactly where the diagram shows. You reach the control platform safely.",
       "action": {
         "type": "openExit",
         "direction": "north",
