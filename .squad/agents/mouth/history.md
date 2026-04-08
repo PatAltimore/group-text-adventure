@@ -693,3 +693,33 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 **What did NOT change:** Room IDs, item IDs, puzzle IDs, exit connections, requiredItem, action types, startRoom, portable flags, game mechanics.
 
 **Validation:** All 6 worlds pass `validate-world.js` with zero errors. Pre-existing warnings unchanged.
+
+### 2026-04-07 — True Crime Detective World (`world/true-crime.json`)
+
+**Created:** A noir murder mystery world — "Shadows Over Blackwater." Detective Harlow investigates the murder of shipping magnate Victor Crane.
+
+- **11 rooms:** precinct-office (start), crane-mansion-foyer, crime-scene-study, wine-cellar, master-bedroom, forensics-lab, back-alley, rusty-anchor-bar, parking-garage, warehouse-office, interrogation-room
+- **10 items:** murder-weapon (non-portable), insurance-policy, threatening-letter, forensic-report, bloody-cufflink, embezzlement-ledger, bartender-statement, security-footage, burner-phone, case-file
+- **7 puzzles:** trace-fibers-to-bedroom, search-helenas-secrets, confront-webbs-thugs, trace-cufflink-to-garage, analyze-footage, establish-probable-cause, solve-the-murder (goal)
+- **4 suspects:** Helena Crane (wife, insurance fraud), Marcus Webb (partner, embezzlement), Sofia Reyes (ex-employee, revenge), Dominic Crane (brother, inheritance)
+- **4 hazards** across wine-cellar, back-alley, rusty-anchor-bar, warehouse-office
+
+**Format notes:** Puzzles are objects keyed by ID (not arrays). Action is `{ type, ... }` not a string. `removeHazard` matches by exact `hazard` description string. Added to editor dropdown in `client/editor.html`.
+
+**Validation:** Passes `validate-world.js` with zero errors. All 541 tests pass.
+
+### 2026-04-05 — Pirate Treasure Island World (`pirate-treasure.json`)
+
+**Created:** `world/pirate-treasure.json` — "Dead Man's Fortune," a classic pirate treasure hunt on Skull Island.
+
+**Structure:**
+- **11 rooms:** shipwreck-beach (start), tidal-cove, jungle-trail, ruined-fort, captain-quarters, lookout-tower, mangrove-swamp, skull-cave-entrance, underground-river, trap-corridor, treasure-vault
+- **8 items:** torn-map, oil-lantern, brass-compass, captains-journal, rusty-shovel, skeleton-key, cursed-doubloon, jade-idol
+- **6 puzzles:** reveal-hidden-cove (openExit), open-lookout-tower (openExit), navigate-quicksand (removeHazard), dig-up-vault-key (addItem), light-the-cave (openExit), unlock-treasure-vault (openExit, GOAL)
+- **5 hazards** across shipwreck-beach, jungle-trail, ruined-fort, mangrove-swamp, skull-cave-entrance, underground-river, trap-corridor
+
+**Puzzle chain:** Map → cove (lantern) → journal → tower (shovel) → compass clears quicksand → shovel digs up key → lantern lights cave → key opens vault (goal). Items are consumed on use, so each puzzle needs a unique requiredItem.
+
+**Added to editor dropdown** in `client/editor.html` as "Pirate Treasure Island."
+
+**Validation:** Passes `validate-world.js` with zero errors, zero warnings. All 541 tests pass.

@@ -1,0 +1,287 @@
+{
+  "name": "Shadows Over Blackwater",
+  "description": "The call came at 2 AM — the hour when nothing good happens. Victor Crane, shipping magnate and philanthropist, found dead in his private study at the Crane estate. One bullet, close range, no forced entry. The rain hasn't stopped since. You're Detective Harlow, twenty years on the force, and you've seen enough bodies to know when a case stinks. This one reeks. Crane had enemies — a bitter wife, a crooked partner, a scorned ex-employee, a disinherited brother. Everyone had motive. Everyone had opportunity. The department wants this closed fast, but you don't do fast. You do thorough. Grab your badge, your notebook, and whatever passes for courage these days. The truth is out there, buried under lies and money. Find it.",
+  "synopsis": "Investigate a noir murder mystery.",
+  "startRoom": "precinct-office",
+  "rooms": {
+    "precinct-office": {
+      "name": "Precinct Office",
+      "description": "Fluorescent lights hum overhead, painting everything the color of old coffee. Your desk is a battlefield of case files and cold cups. The bulletin board behind you is pinned with photos of Victor Crane — alive and not. A phone rings somewhere, unanswered. The squad room smells of burnt grounds and stale ambition. To the north, the Crane mansion awaits. East leads to the forensics lab. South, the back alleys where informants and trouble live in equal measure.",
+      "exits": {
+        "north": "crane-mansion-foyer",
+        "east": "forensics-lab",
+        "south": "back-alley"
+      },
+      "items": []
+    },
+    "crane-mansion-foyer": {
+      "name": "Crane Mansion Foyer",
+      "description": "Crystal chandeliers hang from a vaulted ceiling three stories up, but half the bulbs are dead. The marble floor is veined with black, like the house itself is rotting from within. A grand staircase sweeps upward into shadow. Oil portraits of the Crane family line the walls — Victor's painted smile looks different now that you've seen his corpse. Crime scene tape blocks the north passage to the study. A faint perfume lingers — jasmine and something sharper. Helena Crane's scent. The air tastes like money and secrets.",
+      "exits": {
+        "south": "precinct-office",
+        "north": "crime-scene-study"
+      },
+      "items": ["bloody-cufflink"],
+      "hazards": []
+    },
+    "crime-scene-study": {
+      "name": "Crime Scene — Victor's Study",
+      "description": "Blood has dried to black on Persian carpet worth more than your yearly salary. The chalk outline is clinical, obscene against the room's mahogany grandeur. Victor's desk is massive — old money, old wood, old sins. Drawers hang open, rifled through by either the killer or the forensics team. A wall safe gapes empty behind a crooked painting. The whiskey decanter on the side table is still half full. Someone poured two glasses that night. One remains untouched. East leads deeper into the house, toward the wine cellar. South returns to the foyer.",
+      "exits": {
+        "south": "crane-mansion-foyer",
+        "east": "wine-cellar"
+      },
+      "items": ["murder-weapon", "insurance-policy", "threatening-letter"],
+      "hazards": []
+    },
+    "wine-cellar": {
+      "name": "Wine Cellar",
+      "description": "Stone steps descend into cold air thick with the smell of oak and damp earth. Racks of wine stretch into darkness — thousands of bottles, some older than your career. A single bare bulb swings overhead, throwing shadows that move like living things. In the far corner, behind a rack of '82 Bordeaux, someone has been meeting in secret. Cigarette butts litter the floor — a brand Marcus Webb smokes. A small table holds an ashtray and the remains of conversations no one was meant to hear. West returns to the study.",
+      "exits": {
+        "west": "crime-scene-study"
+      },
+      "items": ["embezzlement-ledger"],
+      "hazards": [{
+        "description": "A rat darts across your foot in the darkness. You stumble backward into a wine rack, and bottles cascade down like glass rain.",
+        "probability": 0.06,
+        "deathText": "The heavy oak rack topples onto you. Hundreds of bottles shatter, and the rack pins you beneath its weight. The last thing you see is red wine pooling around you, indistinguishable from blood. They find you the next morning. Case closed — on you."
+      }]
+    },
+    "master-bedroom": {
+      "name": "Master Bedroom",
+      "description": "Helena Crane's domain. The bed is made with military precision — silk sheets, not a wrinkle. But the vanity tells a different story: prescription bottles crowd the mirror, and a half-empty bottle of vodka hides behind the perfumes. The closet door stands open, revealing clothes for two different lives — conservative black for the grieving widow, red silk for someone who wasn't grieving at all. A jewelry box on the nightstand has a false bottom. This room smells of jasmine perfume and carefully maintained lies. West returns to the foyer.",
+      "exits": {
+        "west": "crane-mansion-foyer"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "forensics-lab": {
+      "name": "Forensics Lab",
+      "description": "White tile walls, stainless steel tables, the antiseptic smell of truth stripped bare. Dr. Vasquez runs a tight ship — every surface gleams, every sample is labeled in her precise handwriting. UV lights cast the room in an alien blue glow. Microscopes line the counter like sentinels. A whiteboard tracks evidence: blood type, powder residue, fiber analysis. The facts don't lie, even when everyone else does. This is where hunches come to be confirmed or destroyed. West returns to the precinct.",
+      "exits": {
+        "west": "precinct-office"
+      },
+      "items": ["forensic-report"],
+      "hazards": []
+    },
+    "back-alley": {
+      "name": "Back Alley",
+      "description": "Rain pools in broken asphalt, reflecting neon signs that stutter and buzz. Dumpsters overflow with the city's refuse. A stray cat watches you from a fire escape with the suspicious eyes of someone who's seen too much. The alley connects the precinct district to the waterfront bars where Blackwater's underbelly drinks and deals. Graffiti on the brick wall reads 'SNITCHES GET STITCHES' in dripping red paint. East leads to the Rusty Anchor bar. North returns to the precinct. The south end of the alley disappears into the parking garage shadows.",
+      "exits": {
+        "north": "precinct-office",
+        "east": "rusty-anchor-bar"
+      },
+      "items": [],
+      "hazards": [{
+        "description": "Footsteps echo behind you — heavy, deliberate. Someone doesn't want you asking questions in this neighborhood.",
+        "probability": 0.08,
+        "deathText": "You turn too late. A blunt impact at the base of your skull, and the wet pavement rushes up to meet your face. Your badge clatters into a puddle. The rain keeps falling. Another unsolved case in Blackwater."
+      }]
+    },
+    "rusty-anchor-bar": {
+      "name": "The Rusty Anchor",
+      "description": "Smoke curls under low-watt bulbs. The jukebox plays something sad and scratchy. Dominic Crane sits in his usual booth in the back, nursing bourbon like it owes him money — which, according to him, Victor's estate does. The bartender, a weathered man named Sal, polishes glasses and watches everything with the quiet attention of someone who's learned that silence is currency. The walls are covered in maritime junk — anchors, ropes, faded photographs of ships long scrapped. This place is where alibis come to die. West returns to the alley.",
+      "exits": {
+        "west": "back-alley"
+      },
+      "items": ["bartender-statement"],
+      "hazards": [{
+        "description": "Dominic Crane spots you from his booth. His eyes narrow, and he reaches inside his coat. You can't tell if he's going for a flask or something worse.",
+        "probability": 0.07,
+        "deathText": "It wasn't a flask. The gunshot is deafening in the small bar. Dominic stands over you, shaking, muttering about how you were going to pin it on him like everyone else. Sal dials 911 too late. The case dies with its detective."
+      }]
+    },
+    "parking-garage": {
+      "name": "Waterfront Parking Garage",
+      "description": "Concrete and exhaust fumes. The garage is mostly empty at this hour — just oil stains and echoes. Security cameras blink red in the corners, the only witnesses that never blink. Level 2, space 47 — that's where the witness reported seeing a car on the night of the murder. Tire marks streak the concrete in a pattern that suggests someone left in a hurry. A security booth near the entrance has monitors still cycling through grainy footage. East leads to a warehouse district. North returns toward the alley.",
+      "exits": {
+        "north": "back-alley",
+        "east": "warehouse-office"
+      },
+      "items": ["security-footage"],
+      "hazards": []
+    },
+    "warehouse-office": {
+      "name": "Webb's Warehouse Office",
+      "description": "Marcus Webb keeps his real books here, away from the glass towers downtown. The office is a converted shipping container — industrial desk, filing cabinets with combination locks, a coffee maker that's seen better decades. Shipping manifests paper the walls, but the numbers don't add up — they never do with Webb. A photograph on the desk shows Marcus and Victor shaking hands at a charity gala, smiles sharp enough to cut. The partnership that made them both rich is the same one that might have gotten Victor killed. West returns to the parking garage.",
+      "exits": {
+        "west": "parking-garage"
+      },
+      "items": [],
+      "hazards": [{
+        "description": "Two of Webb's dockworkers block the doorway, arms crossed. They don't appreciate detectives poking around the boss's private office.",
+        "probability": 0.12,
+        "deathText": "Webb's men are thorough and professional. They work you over with the mechanical efficiency of longshoremen who've done this before. Your body turns up floating in the harbor three days later. The department calls it an accident. Nobody believes it. Nobody investigates."
+      }]
+    },
+    "interrogation-room": {
+      "name": "Interrogation Room",
+      "description": "Bare walls, one table, two chairs, a one-way mirror. The overhead light is deliberately harsh — every pore, every twitch, every lie shows up like a bruise under this light. A recording device sits on the table, red light steady. This is where cases end. Where the careful architecture of alibis crumbles under the weight of evidence. The chair across from you is empty. For now. East returns to the precinct.",
+      "exits": {
+        "east": "precinct-office"
+      },
+      "items": [],
+      "hazards": []
+    }
+  },
+  "items": {
+    "murder-weapon": {
+      "name": "Ivory Letter Opener",
+      "description": "A Victorian letter opener with an ivory handle, now tagged as evidence. But this isn't the murder weapon — Victor was shot. So why is this blade smeared with dried blood? Lab analysis reveals the blood belongs to someone else entirely. Someone cut themselves here, recently, in a struggle that happened before the gunshot. The killer was wounded. Somewhere out there, a suspect is hiding a fresh cut.",
+      "portable": false,
+      "roomText": "An ivory letter opener lies in an evidence bag on the desk, its blade stained dark with blood that doesn't belong to the victim."
+    },
+    "insurance-policy": {
+      "name": "Life Insurance Policy",
+      "description": "A Blackwater Mutual policy on Victor Crane's life — five million dollars, with Helena Crane as sole beneficiary. The policy was increased from one million just six weeks before the murder. A sticky note in Victor's handwriting is attached: 'Helena insisted. Why?' The timing is damning. Five million reasons to want your husband dead.",
+      "pickupText": "You carefully bag the insurance documents. Five million dollars. In this town, people have killed for far less.",
+      "portable": true,
+      "roomText": "A life insurance policy sits in Victor's desk drawer, the beneficiary amount circled in red ink — five million dollars."
+    },
+    "threatening-letter": {
+      "name": "Threatening Letter",
+      "description": "Typed on plain paper, no fingerprints. 'You ruined my life. You took everything from me. I know what you did at the harbor, and if you think I'll stay quiet, you're dead wrong.' Signed only with the initial 'S.' Cross-referencing personnel files confirms Sofia Reyes was fired three months ago after discovering irregularities in Crane's shipping records. She threatened to go public. Victor had her blacklisted from every firm in the city.",
+      "pickupText": "You fold the letter into an evidence bag. Someone named 'S' wanted Victor Crane to know they were coming for him.",
+      "portable": true,
+      "roomText": "A crumpled letter on the floor bears a single threatening message, signed with the initial 'S.'"
+    },
+    "forensic-report": {
+      "name": "Forensic Analysis Report",
+      "description": "Dr. Vasquez's preliminary findings: gunshot wound, .38 caliber, close range — the killer stood within three feet. Powder burns on Victor's shirt confirm it. Time of death: between 11 PM and 1 AM. But here's what changes everything — trace fibers on Victor's collar match fabric exclusive to a designer sold at only one boutique in Blackwater. Helena Crane's preferred boutique. The fibers place someone wearing that fabric in intimate proximity to Victor shortly before death.",
+      "pickupText": "You take the forensic report. Dr. Vasquez's work is meticulous — these fiber traces are the first physical link to a suspect.",
+      "portable": true,
+      "roomText": "A manila folder marked 'CRANE, V. — PRELIMINARY FORENSICS' sits on the analysis counter, flagged with red tabs."
+    },
+    "bloody-cufflink": {
+      "name": "Monogrammed Cufflink",
+      "description": "Sterling silver, engraved with the initials 'D.C.' — Dominic Crane. Found wedged between the foyer's marble tiles, near the entrance. A smear of blood — not Victor's — stains the hinge. Dominic claims he hasn't visited the mansion in years. This cufflink says otherwise. It places him at the scene on the night of the murder, and the blood suggests a struggle. Combined with the letter opener evidence, someone was cut and lost a cufflink fleeing the house.",
+      "pickupText": "You tweeze the cufflink into an evidence bag. 'D.C.' — Dominic Crane. He said he hadn't been here in years. He lied.",
+      "portable": true,
+      "roomText": "A glint of silver catches your eye between the marble tiles — a cufflink, monogrammed and spotted with blood."
+    },
+    "embezzlement-ledger": {
+      "name": "Hidden Ledger",
+      "description": "A leather-bound notebook filled with Marcus Webb's handwriting — two columns of numbers that tell the story of systematic theft. For three years, Webb has been siphoning funds from Crane Shipping through phantom invoices and shell companies. The total: $2.3 million. A note in the margin, in Victor's hand, reads: 'Confronting M. tomorrow — enough.' Tomorrow never came for Victor. If Webb knew Victor had found this ledger, that's $2.3 million reasons to kill.",
+      "pickupText": "You take the ledger. Two-point-three million dollars in embezzled funds. Marcus Webb had everything to lose if Victor confronted him.",
+      "portable": true,
+      "roomText": "A leather notebook is hidden behind a wine rack, its pages filled with columns of damning numbers."
+    },
+    "bartender-statement": {
+      "name": "Bartender's Written Statement",
+      "description": "Sal Marchetti, bartender at the Rusty Anchor, twenty-two years. Statement taken voluntarily. 'Dominic was here that night, yeah. Showed up around 10, already half in the bag. Left around 11:30, said he had business at his brother's place. Came back around 1 AM, shaking, ordered three shots, didn't touch any of them. Had a cut on his right hand he kept hiding. I've seen a lot of men walk in here after doing something they can't take back. That night, Dominic was one of them.' Signed, notarized.",
+      "pickupText": "Sal hands over the statement with a look that says he knows the weight of what he's giving you. This puts Dominic at the mansion during the window of death.",
+      "portable": true,
+      "roomText": "The bartender slides a folded paper across the bar toward you — his written statement about the night of the murder."
+    },
+    "security-footage": {
+      "name": "Security Camera Footage",
+      "description": "A USB drive from the parking garage security system. The footage shows three vehicles entering on the night of the murder: Helena Crane's white Mercedes at 10:15 PM (she claimed to be home all night), Marcus Webb's black SUV at 11:45 PM (he claimed to be at a business dinner), and an unregistered sedan at 12:30 AM. The sedan's plates are obscured, but the driver's silhouette matches Sofia Reyes's build. Three suspects. Three lies. None of them were where they said they were.",
+      "pickupText": "You pocket the USB drive. Three vehicles, three liars. Helena, Marcus, and likely Sofia — all at or near the mansion that night.",
+      "portable": true,
+      "roomText": "A USB drive labeled 'GARAGE CAM — NIGHT OF 03/15' sits in the security booth, still plugged into the monitor."
+    },
+    "burner-phone": {
+      "name": "Prepaid Burner Phone",
+      "description": "A cheap prepaid phone hidden in the false bottom of Helena's jewelry box. The text messages paint a picture of a woman planning her escape. Texts to an unsaved number: 'He suspects nothing.' 'The policy increase went through.' 'After it's done, we disappear.' 'D says he'll handle the brother angle.' The 'D' could be Dominic — were Helena and Dominic working together? The phone's call history shows a final outgoing call at 11:52 PM on the night of the murder, lasting four minutes. Four minutes to set a murder in motion.",
+      "pickupText": "The burner phone feels heavier than it should. Helena wasn't just a grieving widow — she was the architect.",
+      "portable": true,
+      "roomText": "A cheap prepaid phone is hidden in the false bottom of a jewelry box, its screen still showing undeleted messages."
+    },
+    "case-file": {
+      "name": "Complete Case File",
+      "description": "Everything assembled: forensic report linking Helena's fibers to Victor's body. The insurance policy increased six weeks prior. The embezzlement ledger giving Webb motive. Dominic's cufflink placing him at the scene with a wound matching the letter opener struggle. Helena's burner phone orchestrating it all. Sal's statement confirming Dominic's timeline. Security footage proving everyone lied about their whereabouts. The picture is clear now: Helena and Dominic conspired. She manipulated her brother-in-law's resentment, Webb's desperation, and Sofia's anger to create a fog of suspects. But Helena pulled the strings. Dominic pulled the trigger.",
+      "pickupText": "You close the case file. The truth is ugly but complete. Helena Crane and Dominic Crane — conspiracy to commit murder. Time to make the arrest.",
+      "portable": true,
+      "roomText": "The complete case file sits on the counter, every piece of evidence cross-referenced and annotated in Dr. Vasquez's precise hand."
+    }
+  },
+  "puzzles": {
+    "trace-fibers-to-bedroom": {
+      "room": "crane-mansion-foyer",
+      "description": "The forensic report mentions designer fibers found on Victor's collar — fibers from Helena's boutique. Her private rooms might hold the matching garment and more secrets.",
+      "requiredItem": "forensic-report",
+      "hintText": "Dr. Vasquez's report identifies designer fibers exclusive to Helena Crane's preferred boutique. If the matching garment exists, it would be in her private quarters — the master bedroom, east of the foyer.",
+      "solvedText": "You cross-reference the fiber analysis with the boutique's records on your phone. A match — the fibers come from a crimson silk robe sold exclusively to Helena Crane. You push past the crime scene tape and force the locked east door. The master bedroom opens before you, thick with jasmine perfume and hidden truths.",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "master-bedroom"
+      }
+    },
+    "search-helenas-secrets": {
+      "room": "master-bedroom",
+      "description": "Helena's jewelry box has a false bottom, visible now that you know what the insurance policy reveals about her financial scheming. Something is hidden inside.",
+      "requiredItem": "insurance-policy",
+      "hintText": "The insurance policy was increased six weeks before the murder — Helena was planning ahead. A woman this calculating would keep her communications hidden. Check her personal effects carefully.",
+      "solvedText": "The insurance policy's timeline nags at you. Six weeks of planning means six weeks of communication. You run your fingers along Helena's jewelry box and find the seam — a false bottom. Inside: a prepaid burner phone, its screen still glowing with damning messages. Helena wasn't mourning. She was orchestrating.",
+      "action": {
+        "type": "addItem",
+        "room": "master-bedroom",
+        "itemId": "burner-phone"
+      }
+    },
+    "confront-webbs-thugs": {
+      "room": "warehouse-office",
+      "description": "Webb's dockworkers are blocking your investigation. The embezzlement ledger proves their boss is dirty — showing it might convince them that protecting Webb isn't worth a conspiracy charge.",
+      "requiredItem": "embezzlement-ledger",
+      "hintText": "Webb's men are loyal, but loyalty has limits. If you could show them proof that their boss is going down for embezzlement regardless, they might reconsider whether obstruction of justice is a hill worth dying on.",
+      "solvedText": "You hold up the ledger so both men can see the numbers — $2.3 million in phantom invoices, every one traceable. 'Your boss is going down for embezzlement whether you help him or not. The question is whether you go down with him.' They exchange a look. The bigger one steps aside. 'We don't get paid enough for this.' Smart men. The office is yours to search.",
+      "action": {
+        "type": "removeHazard",
+        "room": "warehouse-office",
+        "hazard": "Two of Webb's dockworkers block the doorway, arms crossed. They don't appreciate detectives poking around the boss's private office."
+      }
+    },
+    "trace-cufflink-to-garage": {
+      "room": "back-alley",
+      "description": "The bloody cufflink with Dominic's initials places him at the crime scene. Canvassing the alley, you find a witness who saw a man matching Dominic's description getting out of a car in the parking garage that night.",
+      "requiredItem": "bloody-cufflink",
+      "hintText": "Dominic's cufflink proves he was at the mansion. But how did he get there? The back alley connects to the waterfront — someone in this neighborhood might have seen his car that night.",
+      "solvedText": "You show the cufflink to a homeless man sheltering in a doorway. His eyes widen. 'Yeah, I seen that. Guy with the silver jewelry, fancy coat. Parked in the garage south of here, came stumbling back around one in the morning, hand bleeding. Nearly ran me over pulling out.' The parking garage — south. Security cameras might have caught everything.",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "parking-garage"
+      }
+    },
+    "analyze-footage": {
+      "room": "forensics-lab",
+      "description": "The security footage from the parking garage needs forensic enhancement. Dr. Vasquez can clean up the images, cross-reference the timestamps, and compile a complete evidence timeline.",
+      "requiredItem": "security-footage",
+      "hintText": "Raw security footage is good, but enhanced and timestamped footage is courtroom-ready. Dr. Vasquez in the forensics lab can extract every detail — plate numbers, facial features, exact timings.",
+      "solvedText": "Dr. Vasquez works through the footage frame by frame, enhancing plates, isolating faces, building a timeline. When she's done, she hands you a folder. 'Three suspects, Detective. All present, all lying about their alibis. I've compiled everything — forensics, financials, witness testimony — into a complete case file. It's enough for an arrest.' She pauses. 'More than enough.'",
+      "action": {
+        "type": "addItem",
+        "room": "forensics-lab",
+        "itemId": "case-file"
+      }
+    },
+    "establish-probable-cause": {
+      "room": "precinct-office",
+      "description": "The bartender's statement establishes Dominic's timeline and contradicts his alibi. Combined with existing evidence, it's enough for the DA to authorize a formal interrogation.",
+      "requiredItem": "bartender-statement",
+      "hintText": "You have physical evidence and forensics, but you need witness testimony to establish a timeline that the DA will accept. Someone who saw Dominic that night — before and after — could break the case open.",
+      "solvedText": "You lay Sal's statement on the captain's desk. He reads it twice. 'Dominic Crane left the bar at 11:30, said he was going to his brother's house. Came back at 1 AM with a cut on his hand and the look of a man who'd done something terrible.' The captain picks up the phone. 'I'll call the DA. You've got your interrogation room.' He nods toward the west corridor. 'Make it count, Harlow.'",
+      "action": {
+        "type": "openExit",
+        "direction": "west",
+        "targetRoom": "interrogation-room"
+      }
+    },
+    "solve-the-murder": {
+      "room": "interrogation-room",
+      "description": "All the evidence points to a conspiracy between Helena and Dominic Crane. Present the complete case file to close the investigation and make the arrest.",
+      "requiredItem": "case-file",
+      "hintText": "You have forensic evidence, financial motive, witness testimony, security footage, and a burner phone full of incriminating messages. The complete case file contains everything. Present it in the interrogation room to close this case.",
+      "solvedText": "You spread the evidence across the table. Helena and Dominic sit across from you, their lawyer sweating. The burner phone texts. The insurance policy. The cufflink. The bartender's timeline. The security footage. Piece by piece, the conspiracy unravels. Helena breaks first — 'It was supposed to look like a robbery.' Dominic stares at the table, silent, broken. You click off the recorder. Case closed. Victor Crane didn't deserve what happened to him, but the dead rarely do. You step out into the rain. It's still falling. In Blackwater, it always is.",
+      "isGoal": true,
+      "goalName": "Solve the Murder of Victor Crane",
+      "action": {
+        "type": "removeHazard",
+        "room": "back-alley",
+        "hazard": "Footsteps echo behind you — heavy, deliberate. Someone doesn't want you asking questions in this neighborhood."
+      }
+    }
+  }
+}

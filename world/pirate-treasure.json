@@ -1,0 +1,261 @@
+{
+  "name": "Dead Man's Fortune",
+  "description": "The longboat grinds against black sand and you tumble ashore, gasping. Behind you, the stolen sloop lists and sinks beneath the waves — your only way off this island, gone. But you didn't come here to leave. You came for Captain Blackwood's treasure, the fortune that drove a hundred pirates mad and sent twice as many to their graves. The torn map clutched in your fist shows a skull-shaped mountain, an X scratched deep into the parchment. Somewhere on this island, beneath rock and bone and centuries of jungle, a king's ransom waits in the dark. The surf hisses at your heels. Parrots scream from the treeline. And somewhere in the green tangle ahead, something watches you arrive.",
+  "synopsis": "Find legendary pirate treasure on skull island.",
+  "startRoom": "shipwreck-beach",
+  "rooms": {
+    "shipwreck-beach": {
+      "name": "Shipwreck Beach",
+      "description": "Black volcanic sand stretches between jagged coral outcrops. The remains of a dozen ships rot in the shallows — splintered masts jutting from the water like the ribs of drowned giants. Your own sloop has already slipped beneath the surface, leaving nothing but bubbles and regret. To the east, a narrow trail disappears into a wall of green. The air smells of salt, tar, and something older — something that has been dead a very long time. Crabs scatter across bleached timbers. A tattered flag snaps in the wind, its skull-and-crossbones barely visible beneath decades of sun and storm.",
+      "exits": { "east": "jungle-trail" },
+      "items": ["torn-map"],
+      "hazards": [
+        {
+          "description": "The tide is rising fast — the black sand shifts beneath your feet as waves claw higher up the beach.",
+          "probability": 0.06,
+          "deathText": "A rogue wave crashes over the coral barrier with terrifying force. The undertow seizes your legs and drags you into the churning shallows. The last thing you see is the dark shape of a hull timber spinning toward your head. The island keeps its secrets."
+        }
+      ]
+    },
+    "tidal-cove": {
+      "name": "The Hidden Cove",
+      "description": "A crescent of white sand cupped between sheer volcanic cliffs, invisible from the main beach. The water here is impossibly clear — you can see coins glinting on the sandy bottom, scattered like stars. A longboat lies overturned above the tideline, its hull crusted with barnacles but still sound. Carved into the cliff face, barely visible beneath curtains of hanging moss, are crude symbols: skulls, crossed bones, and an arrow pointing deeper into the rock. A rusted iron lantern hangs from a spike driven into the stone, its glass cracked but intact.",
+      "exits": { "north": "shipwreck-beach" },
+      "items": ["oil-lantern"],
+      "hazards": []
+    },
+    "jungle-trail": {
+      "name": "Jungle Trail",
+      "description": "The canopy closes overhead like a green cathedral, blocking out the sky. Enormous ferns unfurl across the path. Vines thick as a sailor's arm hang from mahogany trees draped in Spanish moss. The air is thick, wet, and buzzing with insects. Somewhere above, a parrot shrieks a sound disturbingly like laughter. The trail is old — cut by machete generations ago, now half-reclaimed by the jungle. Boot prints fossilized in dried mud suggest you are not the first to walk this path. You will not be the last. The beach lies west. The trail continues east toward crumbling stone walls visible through the trees.",
+      "exits": { "west": "shipwreck-beach", "east": "ruined-fort" },
+      "items": ["brass-compass"],
+      "hazards": [
+        {
+          "description": "Rustling in the undergrowth — something long and scaled slides through the ferns just ahead of you.",
+          "probability": 0.08,
+          "deathText": "You never see the fer-de-lance until its fangs are in your ankle. The venom works fast — burning, then numbness, then nothing. You sit down against a mahogany trunk as the jungle dims around you. The parrots fall silent. The island claims another treasure hunter."
+        }
+      ]
+    },
+    "ruined-fort": {
+      "name": "Fort Blackwood",
+      "description": "The jungle parts to reveal crumbling stone walls draped in creeping vines — the remains of a pirate fortress, built to guard something worth killing for. Cannon emplacements face the sea through gaps in the battlements, their iron barrels orange with rust. The courtyard is littered with broken bottles, corroded cutlasses, and the scattered bones of men who died arguing over shares. A stone staircase climbs north to what remains of the captain's quarters. To the south, a muddy track descends into swampy lowlands. The jungle trail returns west. The eastern wall has partially collapsed, but the rubble looks deliberate — as if someone sealed a passage on purpose.",
+      "exits": { "west": "jungle-trail", "north": "captain-quarters", "south": "mangrove-swamp" },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The stone walls groan — centuries of jungle growth have weakened the mortar, and fragments of masonry rain down without warning.",
+          "probability": 0.07,
+          "deathText": "A section of the battlements gives way with a grinding roar. Tons of coral-stone crash into the courtyard, filling the air with dust and the sound of breaking bones — yours among them. Fort Blackwood buries another soul in its foundations."
+        }
+      ]
+    },
+    "captain-quarters": {
+      "name": "Captain's Quarters",
+      "description": "The upper chamber of the fort, open to the sky where the roof collapsed long ago. A mahogany desk — scarred with knife marks and burn rings — dominates the room. Charts are pinned to the walls with corroded daggers, their ink faded to ghosts. A hammock sways in the breeze, strung between pillars that no longer hold anything up. Through the broken windows, you can see the entire island: the beach to the west, the swamp to the south, and rising above the jungle canopy to the east, the unmistakable silhouette of Skull Mountain. A leather-bound journal lies open on the desk, its pages yellowed but legible. The courtyard is south.",
+      "exits": { "south": "ruined-fort" },
+      "items": ["captains-journal"],
+      "hazards": []
+    },
+    "lookout-tower": {
+      "name": "The Lookout Tower",
+      "description": "You emerge through the cleared rubble onto a narrow platform high above the fort. The view steals your breath — emerald jungle rolling to white surf, the volcanic peak of Skull Mountain black against the sky, and far below, the treacherous mangrove swamp where the island's secrets sink and vanish. A rusted telescope bolted to the railing still turns, though its lenses are fogged with salt. Scratched into the stone floor is a crude diagram: a shovel, an X, and the words 'DIG WHERE THE DEAD MAN POINTS.' Below the carving, someone has wedged a shovel into a crack in the masonry, handle up, waiting for the next fool brave enough to follow a dead pirate's instructions.",
+      "exits": { "west": "ruined-fort" },
+      "items": ["rusty-shovel"],
+      "hazards": []
+    },
+    "mangrove-swamp": {
+      "name": "Mangrove Swamp",
+      "description": "The ground turns to black mud and standing water. Mangrove roots twist out of the muck like clutching fingers, and the air reeks of decay and sulfur. Clouds of mosquitoes whine in your ears. Every step sinks ankle-deep, and some patches of ground look solid but shimmer with a deceptive wetness that promises a slow, sucking death. A bleached skeleton leans against a mangrove trunk, one bony arm extended south as if pointing the way — or warning you back. Its other hand clutches nothing, the fingers curled around empty air. The fort is north. A dark cave mouth gapes in the hillside to the south, framed by moss-covered stones carved to look like a screaming skull.",
+      "exits": { "north": "ruined-fort", "south": "skull-cave-entrance" },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The ground trembles — the mud here is deeper than it looks, and patches of quicksand lurk beneath the dark water.",
+          "probability": 0.12,
+          "deathText": "Your foot breaks through a thin crust of dried mud into something bottomless. Quicksand. You thrash, but every movement pulls you deeper. The black water rises past your waist, your chest, your chin. The last sound you hear is the wet, indifferent gurgle of the swamp swallowing you whole."
+        }
+      ]
+    },
+    "skull-cave-entrance": {
+      "name": "Skull Cave Entrance",
+      "description": "The cave mouth yawns open in the hillside, its stone lintel carved into the shape of a massive skull — eye sockets dark and hollow, jaw hanging open as if mid-scream. Wind moans through the opening, carrying the smell of damp stone and old death. The walls inside are slick with condensation, and beyond the first few feet, the darkness is absolute. You can hear water dripping somewhere deep within, echoing off unseen walls. Scratched into the stone beside the entrance, in a desperate hand: 'BRING LIGHT OR BRING NOTHING.' The swamp is north.",
+      "exits": { "north": "mangrove-swamp" },
+      "items": ["skeleton-key"],
+      "hazards": [
+        {
+          "description": "Loose stones shift overhead — the cave entrance is unstable, and vibrations could bring the ceiling down.",
+          "probability": 0.08,
+          "deathText": "A tremor ripples through the hillside. The skull-carved lintel cracks, and the ceiling comes down in a cascade of stone and dust. The cave entrance seals itself like a closing mouth, and the darkness inside becomes permanent. The island buries its secrets — and you with them."
+        }
+      ]
+    },
+    "underground-river": {
+      "name": "Underground River",
+      "description": "Your lantern carves a trembling sphere of gold from the blackness. An underground river rushes through a cavern of staggering scale — the ceiling lost in darkness above, the water black and fast below. A narrow ledge of slick stone follows the river's edge south, barely wide enough for single file. Stalactites drip mineral water that tastes of iron and time. On the cavern wall, someone has painted symbols in what looks horribly like dried blood: arrows pointing south, a crude treasure chest, and beneath it all, a single word — 'BEWARE.' The lantern light catches something gold in the shallows — coins, scattered across the river bottom like a trail of breadcrumbs leading deeper underground.",
+      "exits": { "north": "skull-cave-entrance", "south": "trap-corridor" },
+      "items": ["cursed-doubloon"],
+      "hazards": [
+        {
+          "description": "The river surges without warning — flash floods from the mountain above can fill this cavern in minutes.",
+          "probability": 0.10,
+          "deathText": "A roar echoes from the darkness upstream. The river swells, climbing the ledge in seconds. The current hits you like a fist of black ice, ripping your grip from the stone and dragging you into the churning depths. Your lantern dies. The river carries you into the mountain's heart, where no light has ever reached."
+        }
+      ]
+    },
+    "trap-corridor": {
+      "name": "The Gauntlet",
+      "description": "The cavern narrows into a corridor of fitted stone — not natural, but built. Built to kill. The walls are studded with tiny holes, each one a dart tube loaded with poison that hasn't lost its potency in three hundred years. Pressure plates checker the floor in a pattern that might be random or might be a code. The bones of previous treasure hunters crunch underfoot, their bleached remains arranged in attitudes of surprise and agony. At the far end of the corridor, a massive iron door is set into the living rock, its surface covered in verdigris and fitted with a single, ornate keyhole shaped like a grinning skull. Beyond that door — if the legends are true — lies Captain Blackwood's fortune.",
+      "exits": { "north": "underground-river" },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Pressure plates click beneath your feet — the dart tubes in the walls are loaded and the mechanisms still work after three centuries.",
+          "probability": 0.13,
+          "deathText": "Your heel finds a pressure plate. A soft click. Then a hiss from both walls simultaneously — a dozen darts, each one tipped with curare three centuries old and not one day less lethal. They find you before you can flinch. The poison is fast, at least. You join the other skeletons on the corridor floor, one more warning that no one will heed."
+        }
+      ]
+    },
+    "treasure-vault": {
+      "name": "The Treasure Vault",
+      "description": "Mountains of gold. That's what you see first — gold coins heaped in drifts like autumn leaves, gold bars stacked in neat rows, gold chalices and gold chains and a gold crown set with rubies the size of your thumbnail. Chests overflow with emeralds, sapphires, pearls, and uncut diamonds that catch your lantern light and throw it back in a thousand fractured rainbows. Against the far wall, Captain Blackwood himself sits in a carved throne, nothing but bones and a tricorn hat, his skeleton grinning at the fortune he could never spend and could never leave behind. In his lap rests a jade idol — an ancient thing, older than piracy, older than the island itself — its emerald eyes gleaming with a light that has nothing to do with your lantern. You found it. You actually found it. Now you just have to figure out how to get it home.",
+      "exits": { "north": "trap-corridor" },
+      "items": ["jade-idol"],
+      "hazards": []
+    }
+  },
+  "items": {
+    "torn-map": {
+      "name": "Torn Treasure Map",
+      "description": "A fragment of ancient parchment, stiff with salt and age. The ink has faded to rust-brown — possibly blood — but the coastline is unmistakable: this beach, drawn from above. A dotted line traces south from the wreck site to a cove hidden behind the coral outcrops, marked with a crude anchor symbol. Below it, in cramped handwriting: 'Start at the hidden cove. The lantern lights the way.'",
+      "pickupText": "The parchment crackles as you peel it from the timber. It's a map — or part of one. The coastline matches what you can see from here, and a dotted line leads south to a cove you hadn't noticed. Someone wanted this found.",
+      "roomText": "A scrap of yellowed parchment is nailed to a ship's timber, fluttering in the sea breeze.",
+      "portable": true
+    },
+    "oil-lantern": {
+      "name": "Storm Lantern",
+      "description": "A heavy iron lantern with thick glass panels, built to survive gales at sea. The reservoir is half-full of whale oil — enough to burn for hours. The wick is dry but intact, and a flint striker is built into the handle. Someone left this here on purpose, knowing that what lies ahead requires light.",
+      "pickupText": "The lantern is heavier than it looks — solid iron, built for rough seas. You shake it gently and hear oil slosh inside. The flint striker sparks on the first try. You have light.",
+      "roomText": "A rusted iron lantern hangs from a spike in the cliff face, its glass panels cracked but unbroken.",
+      "portable": true
+    },
+    "brass-compass": {
+      "name": "Brass Compass",
+      "description": "A ship's compass in a brass housing, its glass face clouded but readable. The needle swings freely, pointing north with stubborn certainty. Engraved on the back in tiny letters: 'PROPERTY OF CAPT. BLACKWOOD — Follow the needle when the ground lies.' A compass like this could guide you through terrain where landmarks vanish and the ground shifts beneath your feet.",
+      "pickupText": "The compass fits perfectly in your palm, the brass warm from sitting in a shaft of sunlight. The needle steadies, pointing north. Captain Blackwood's name is scratched into the back. Whatever path he walked, this guided him through.",
+      "roomText": "A brass compass lies half-buried in the dried mud of the trail, its glass face catching the filtered sunlight.",
+      "portable": true
+    },
+    "captains-journal": {
+      "name": "Captain's Journal",
+      "description": "Blackwood's personal log, leather-bound and water-stained. Most pages are illegible, but three entries survive: 'The tower sees all — I sealed the east passage with rubble, but any fool with my journal can find the lever behind the third cannon.' And later: 'The swamp dead man points to where I buried the vault key. Dig where he reaches.' The final entry, in a shaking hand: 'The idol watches me. I cannot leave. I will not leave. The gold is mine. It has always been mine.'",
+      "pickupText": "The journal's leather cover is soft with age. You flip through water-damaged pages until you find entries you can read. Blackwood's handwriting grows more erratic with each page — confident captain's script dissolving into the scrawl of a man losing his mind to gold fever.",
+      "roomText": "A leather-bound journal lies open on the scarred desk, its pages yellowed but still legible.",
+      "portable": true
+    },
+    "rusty-shovel": {
+      "name": "Rusty Shovel",
+      "description": "A short-handled spade, its blade pitted with rust but still sharp enough to cut earth. The handle is carved from dense tropical hardwood that has resisted rot for centuries. 'X marks the spot' is scratched into the blade — the most obvious clue imaginable, and yet here you are, holding a shovel on a treasure island. Some clichés are clichés because they're true.",
+      "pickupText": "You wrench the shovel free from the masonry crack. The blade is rusted but solid — it'll dig. You feel ridiculous and thrilled in equal measure. You're actually doing this.",
+      "roomText": "A rusty shovel is wedged handle-up in a crack in the stone floor, as if someone left it here deliberately.",
+      "portable": true
+    },
+    "skeleton-key": {
+      "name": "Skull-Shaped Key",
+      "description": "An ornate iron key, its bow cast in the shape of a grinning skull with ruby chips for eyes. The shaft is long and heavy, the teeth cut in a complex pattern that matches no ordinary lock. This key was made for one door only — the door at the end of the trapped corridor, the door that guards Captain Blackwood's fortune. The metal is cold to the touch, even in the tropical heat.",
+      "pickupText": "Your fingers close around cold iron. The skull grins up at you, ruby eyes winking in the light. This is it — the key to the vault. Three centuries it waited in the mud, guarding the last lock between the world and Blackwood's gold.",
+      "roomText": "Half-buried in the mud at the base of the carved entrance stones, something metallic glints — the bow of an ornate key, shaped like a skull.",
+      "portable": true
+    },
+    "cursed-doubloon": {
+      "name": "Cursed Doubloon",
+      "description": "A Spanish gold doubloon, impossibly bright, as if minted yesterday. One face bears the profile of a king long dead. The other bears a skull with emerald eyes — Blackwood's mark. The coin is warm. Not sun-warm. Fever-warm. The longer you hold it, the more you feel the pull — a whisper at the edge of hearing that says 'more, more, more.' This is what drove Blackwood mad. This is what keeps him sitting on his throne in the dark, grinning at gold he can never spend.",
+      "pickupText": "The doubloon seems to leap into your hand. It's warm — too warm — and the skull on its face grins the same grin as the cave entrance, the same grin as the key. You hear something that might be a whisper or might be the river. You pocket it quickly, but the warmth spreads.",
+      "roomText": "A single gold coin gleams in the shallows, impossibly bright against the black river stones.",
+      "portable": true
+    },
+    "jade-idol": {
+      "name": "Jade Idol",
+      "description": "An idol carved from a single block of imperial jade, depicting a figure that predates any civilization you know. Its emerald eyes — real emeralds, enormous — seem to follow you as you move. The surface is smooth and cold, covered in tiny inscriptions in a language no living person can read. This is what Blackwood really found. Not the gold. The gold was just the bait. This is the treasure — and the curse.",
+      "pickupText": "The moment your hands close around the idol, the cavern seems to exhale. The lantern flickers. The gold shifts with a sound like breathing. Captain Blackwood's skeleton settles in its throne, jaw clicking. Then silence. You have the idol. The idol has you. Time to leave — if the island lets you.",
+      "roomText": "In the skeleton's lap, a jade idol rests — ancient, alien, its emerald eyes burning with their own cold light.",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "reveal-hidden-cove": {
+      "room": "shipwreck-beach",
+      "description": "The torn map shows a dotted line leading south from the wreck site to a hidden cove behind the coral outcrops. From the beach, the cliffs look impassable — but the map marks a gap, a narrow channel between the rocks, invisible unless you know exactly where to look.",
+      "requiredItem": "torn-map",
+      "hintText": "The map fragment shows a path south to a hidden cove. Study the coastline — the entrance is concealed behind the coral outcrops.",
+      "solvedText": "You hold the map against the horizon, lining up the drawn coastline with the real one. There — between the two tallest coral spires, a gap you'd never see without knowing where to look. A narrow channel of calm water leads south to a crescent of white sand. The hidden cove, exactly where Blackwood marked it. You wade through the channel, map held high, and emerge onto pristine sand untouched by any foot in centuries.",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "tidal-cove"
+      }
+    },
+    "open-lookout-tower": {
+      "room": "ruined-fort",
+      "description": "The eastern wall of the fort has collapsed — or been deliberately sealed. Rubble fills what was once a passageway, but the captain's journal mentions a lever hidden behind the third cannon that opens a way through.",
+      "requiredItem": "captains-journal",
+      "hintText": "Blackwood's journal describes a hidden lever behind one of the cannons that clears the blocked eastern passage. Check the fort's cannon emplacements.",
+      "solvedText": "You count the cannons along the battlements — one, two, three. Behind the third, half-hidden by vines, a rusted iron lever juts from the wall. You heave it down with both hands. Gears grind somewhere deep in the stone. The rubble in the east wall shudders, then slides aside on ancient counterweights, revealing a narrow staircase spiraling upward to the lookout tower. Blackwood's engineering — brutal, effective, and still working after three hundred years.",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "lookout-tower"
+      }
+    },
+    "navigate-quicksand": {
+      "room": "mangrove-swamp",
+      "description": "The swamp is a maze of quicksand and false ground. Without a reliable way to navigate, every step could be your last. A compass that always points true north could help you pick a safe path through the treacherous mud.",
+      "requiredItem": "brass-compass",
+      "hintText": "The ground here lies — solid-looking patches conceal bottomless quicksand. A compass could help you navigate a safe path by following the firm ground along the magnetic ridgeline.",
+      "solvedText": "You open the compass and watch the needle steady. Following the magnetic north line, you pick your way along the ridgeline of solid ground hidden beneath the mud — the volcanic rock that runs like a spine through the swamp. The quicksand patches become obvious once you know where the firm ground is. Captain Blackwood walked this path a thousand times. Now you can too.",
+      "action": {
+        "type": "removeHazard",
+        "room": "mangrove-swamp",
+        "hazard": "The ground trembles — the mud here is deeper than it looks, and patches of quicksand lurk beneath the dark water."
+      }
+    },
+    "dig-up-vault-key": {
+      "room": "mangrove-swamp",
+      "description": "The bleached skeleton leans against the mangrove trunk, one arm pointing south with eerie purpose. The journal says 'dig where the dead man points' — but the dead man points at mud, not treasure. Look closer. The arm points down, at the ground directly beneath the extended hand. Something is buried here.",
+      "requiredItem": "rusty-shovel",
+      "hintText": "The skeleton is pointing at something. The captain's journal mentioned digging 'where the dead man points.' Look at the ground beneath the skeleton's outstretched hand.",
+      "solvedText": "You drive the shovel into the mud beneath the skeleton's pointing hand. It hits something solid two feet down — not rock. Metal. You dig furiously, black mud flying, until your fingers close around cold iron. A key. An ornate, skull-shaped key, wrapped in oilcloth that has somehow resisted three centuries of swamp water. The vault key. Blackwood buried it here, marked it with a dead man's finger, and trusted that only someone smart enough to read his journal would find it.",
+      "action": {
+        "type": "addItem",
+        "room": "mangrove-swamp",
+        "itemId": "skeleton-key"
+      }
+    },
+    "light-the-cave": {
+      "room": "skull-cave-entrance",
+      "description": "The cave swallows light whole. Beyond the entrance, the darkness is total — not the darkness of night, but the darkness of underground, of stone pressing in from all sides, of a place that has never known the sun. The scratched warning is clear: 'BRING LIGHT OR BRING NOTHING.' Without a lantern, you'd be blind in ten paces and dead in twenty.",
+      "requiredItem": "oil-lantern",
+      "hintText": "The darkness inside is absolute. You need a reliable light source — something that can burn for hours and survive the damp cave air.",
+      "solvedText": "You strike the lantern's flint. Once, twice — on the third strike, the wick catches, and golden light floods the cave entrance. The shadows retreat, revealing a passage descending into the hillside, its walls glistening with moisture. The carved skull above seems to shift expression in the flickering light — from warning to invitation. You raise the lantern high and step into the mountain's throat. The darkness gives way, grudgingly, one step at a time.",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "underground-river"
+      }
+    },
+    "unlock-treasure-vault": {
+      "room": "trap-corridor",
+      "description": "The iron door at the end of the corridor bears a single keyhole — skull-shaped, ornate, unmistakable. Behind this door lies Captain Blackwood's fortune: the gold, the gems, the jade idol that drove him mad. Three centuries of traps, riddles, and dead men guard this moment. One key. One lock. One chance.",
+      "requiredItem": "skeleton-key",
+      "hintText": "The vault door has a skull-shaped keyhole. You need the matching key — an ornate, skull-shaped key hidden somewhere on this island.",
+      "solvedText": "The skull key slides into the skull lock with a click that echoes through three hundred years of silence. You turn it. The mechanism resists — then surrenders, tumblers falling in sequence like a melody played on iron. The vault door swings inward with a groan of ancient hinges, and golden light spills into the corridor. Not lantern light. The light of ten thousand gold coins catching and multiplying every photon in the cavern. You shield your eyes. When you lower your hand, you see it: mountains of treasure, and at its heart, the grinning skeleton of Captain Blackwood on his golden throne. The fortune is real. The legend is true. And it's yours.",
+      "isGoal": true,
+      "goalName": "Unlock Blackwood's Treasure Vault",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "treasure-vault"
+      }
+    }
+  }
+}
