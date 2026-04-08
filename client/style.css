@@ -1168,10 +1168,10 @@ html, body {
   font-size: 13px;
   white-space: pre;
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
+  display: inline-block;
   overflow-x: auto;
   margin-bottom: 12px;
-  line-height: 1.2;
 }
 
 .goal-complete .goal-text {
@@ -1204,10 +1204,10 @@ html, body {
   font-size: 14px;
   white-space: pre;
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
+  display: inline-block;
   overflow-x: auto;
   margin-bottom: 16px;
-  line-height: 1.2;
   font-weight: 600;
 }
 
