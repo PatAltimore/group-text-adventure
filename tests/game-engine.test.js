@@ -800,22 +800,22 @@ describe('Player Reconnection (Ghost System)', () => {
     expect(msg.message.room.name).toBe('Room A');
   });
 
-  test('reconnected player gets remaining ghost inventory (after partial loot)', () => {
+  test('reconnected player gets empty inventory (items dropped on disconnect)', () => {
     let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
     ({ session } = processCommand(session, 'p1', 'take old key'));
     ({ session } = processCommand(session, 'p1', 'go east'));
     ({ session } = processCommand(session, 'p1', 'take torch'));
     session = disconnectPlayer(session, 'p1');
 
-    // Bob goes to room-c and takes one item from the ghost
+    // Bob goes to room-c and takes an item from the floor (dropped on disconnect)
     ({ session } = processCommand(session, 'p2', 'go east'));
-    ({ session } = processCommand(session, 'p2', 'take old key from Alice\'s ghost'));
+    ({ session } = processCommand(session, 'p2', 'take old key'));
 
     // Alice reconnects — inventory is empty (items were dropped on disconnect)
     session = reconnectPlayer(session, 'Alice', 'p1-new');
     expect(session.players['p1-new'].inventory).toEqual([]);
     expect(session.roomStates['room-c'].items).toContain('torch');
-    expect(session.roomStates['room-b'].items).not.toContain('key'); // Was taken by p2
+    expect(session.players['p2'].inventory).toContain('key');
     expect(session.players['p1-new'].room).toBe('room-c');
   });
 
@@ -876,27 +876,6 @@ describe('Ghost Interactions', () => {
     expect(afterTake.players['p2'].inventory).toContain('key');
     expect(afterTake.roomStates['room-c'].items).not.toContain('key');
     expect(afterTake.roomStates['room-c'].items).toContain('torch');
-  });
-
-  test('take item from empty ghost returns error', () => {
-    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
-    session = disconnectPlayer(session, 'p1');
-
-    const { responses } = processCommand(session, 'p2', "take sword from Alice's ghost");
-    const msg = responses.find(r => r.playerId === 'p2');
-    expect(msg.message.type).toBe('error');
-    expect(msg.message.text).toContain("doesn't have");
-  });
-
-  test('take from ghost in different room returns error', () => {
-    let session = sessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
-    ({ session } = processCommand(session, 'p1', 'take old key'));
-    ({ session } = processCommand(session, 'p1', 'go north'));
-    session = disconnectPlayer(session, 'p1');
-
-    const { responses } = processCommand(session, 'p2', "take old key from Alice's ghost");
-    const msg = responses.find(r => r.playerId === 'p2');
-    expect(msg.message.type).toBe('error');
   });
 
   test('multiple ghosts can exist in different rooms', () => {

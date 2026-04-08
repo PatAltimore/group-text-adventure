@@ -664,10 +664,6 @@
       container.appendChild(
         createRoomSection('Ghosts', ghostText, 'room-ghosts')
       );
-      const hint = document.createElement('div');
-      hint.className = 'room-ghost-hint';
-      hint.textContent = `(You can 'loot <name>' to take their items)`;
-      container.appendChild(hint);
     }
 
     if (room.hazards && room.hazards.length) {

@@ -62,16 +62,6 @@ export function parseCommand(text) {
     if (noun === 'items' || noun === 'all') {
       return { verb: 'takeall', raw };
     }
-    // handle "take <item> from <target>" (e.g. "take key from Bob's ghost")
-    const fromIndex = noun.indexOf(' from ');
-    if (fromIndex !== -1) {
-      return {
-        verb: 'take',
-        noun: noun.substring(0, fromIndex).trim(),
-        target: noun.substring(fromIndex + 6).trim(),
-        raw,
-      };
-    }
     return { verb: 'take', noun: noun || undefined, raw };
   }
 

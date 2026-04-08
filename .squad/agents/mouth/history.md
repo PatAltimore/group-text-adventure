@@ -723,3 +723,14 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 **Added to editor dropdown** in `client/editor.html` as "Pirate Treasure Island."
 
 **Validation:** Passes `validate-world.js` with zero errors, zero warnings. All 541 tests pass.
+
+### Remove "take from ghost" command
+
+- **Removed:** The `take <item> from <name>'s ghost` command variant. Since ghosts now auto-drop all inventory items to the room floor on disconnect, the ghost-looting syntax was dead code (ghost inventories are always empty).
+- **Files changed:**
+  1. `api/src/command-parser.js` — Removed "take <item> from <target>" parsing (the `from` clause handler). Regular `take <item>` still works for picking up items from the floor.
+  2. `api/src/game-engine.js` — Removed `handleTakeFromGhost` function and its call from `handleTake`. Removed "GHOSTS" section from help text (`TAKE <x> FROM <name>'s ghost`).
+  3. `client/app.js` — Removed ghost loot hint (`"You can 'loot <name>' to take their items"`). The `loot` command was already removed previously.
+  4. `tests/game-engine.test.js` — Removed 2 ghost-take tests (`take item from empty ghost`, `take from ghost in different room`). Updated reconnection test to pick up items from the floor instead of from ghost.
+- **Kept:** Regular `take <item>` for room pickup, `takeall`/`g` for bulk pickup, `findGhostByName` utility (used by reconnection logic).
+- **All 539 tests pass** (2 net removed).

@@ -816,11 +816,6 @@ function handleTake(session, playerId, cmd) {
     return { session, responses };
   }
 
-  // "take <item> from <name>'s ghost" — take a specific item from a ghost
-  if (cmd.target) {
-    return handleTakeFromGhost(session, playerId, cmd);
-  }
-
   const matches = findMatchingItems(cmd.noun, roomState.items, session.world.items);
 
   if (matches.length > 1) {
@@ -864,76 +859,6 @@ function handleTake(session, playerId, cmd) {
       responses.push({
         playerId: otherId,
         message: { type: 'message', text: `${player.name} picked up the ${item.name}.` },
-      });
-    }
-  }
-
-  return { session, responses };
-}
-
-/**
- * Take a specific item from a ghost: "take key from Bob's ghost"
- */
-function handleTakeFromGhost(session, playerId, cmd) {
-  const player = session.players[playerId];
-  const responses = [];
-
-  // Parse ghost name from target — strip "'s ghost" suffix
-  const targetLower = cmd.target.toLowerCase();
-  const ghostSuffix = "'s ghost";
-  let ghostOwner = cmd.target;
-  if (targetLower.endsWith(ghostSuffix)) {
-    ghostOwner = cmd.target.slice(0, -ghostSuffix.length);
-  }
-
-  const found = findGhostByName(session, ghostOwner);
-  if (!found || found.ghost.room !== player.room) {
-    responses.push({
-      playerId,
-      message: { type: 'error', text: `You don't see ${ghostOwner}'s ghost here.` },
-    });
-    return { session, responses };
-  }
-
-  const ghost = found.ghost;
-  const ghostMatches = findMatchingItems(cmd.noun, ghost.inventory, session.world.items);
-
-  if (ghostMatches.length > 1) {
-    responses.push({
-      playerId,
-      message: { type: 'error', text: disambiguationMessage(cmd.noun, ghostMatches, session.world.items) },
-    });
-    return { session, responses };
-  }
-
-  if (ghostMatches.length === 0) {
-    responses.push({
-      playerId,
-      message: { type: 'error', text: `${ghost.playerName}'s ghost doesn't have "${cmd.noun}".` },
-    });
-    return { session, responses };
-  }
-
-  const itemId = ghostMatches[0];
-  const idx = ghost.inventory.indexOf(itemId);
-  const item = session.world.items[itemId];
-  ghost.inventory.splice(idx, 1);
-  player.inventory.push(itemId);
-
-  responses.push({
-    playerId,
-    message: { type: 'message', text: `You take the ${item.name} from ${ghost.playerName}'s ghost.` },
-  });
-
-  // Notify others in room
-  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-    if (otherId !== playerId && otherPlayer.room === player.room) {
-      responses.push({
-        playerId: otherId,
-        message: {
-          type: 'message',
-          text: `${player.name} takes the ${item.name} from ${ghost.playerName}'s ghost.`,
-        },
       });
     }
   }
@@ -1430,9 +1355,6 @@ function handleHelp(session, playerId) {
     '▸ COMMUNICATION',
     '  SAY <msg>   Talk (same room)',
     '  YELL <msg>  Shout (nearby hear)',
-    '',
-    '▸ GHOSTS',
-    '  TAKE <x> FROM <name>\'s ghost',
     '',
     '▸ GAME',
     '  HELP        Show this message',
