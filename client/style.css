@@ -257,6 +257,14 @@ html, body {
   gap: 16px;
 }
 
+.host-name-label {
+  color: var(--text-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+}
+
 .landing-form input[type="text"] {
   width: 100%;
   padding: 12px 16px;
