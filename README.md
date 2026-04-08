@@ -73,16 +73,16 @@ The game runs on Azure serverless infrastructure:
 └────────┬─────────┘
          │ WebSocket
          ▼
-┌──────────────────────────┐      ┌─────────────────┐
-│   Azure Web PubSub        │─────▶│  Azure Functions │
-│   (Real-time messaging)   │      │  (Game logic)    │
-└──────────────────────────┘      └────────┬────────┘
-                                           │
-                                           ▼
+┌──────────────────────────┐       ┌─────────────────┐
+│   Azure Web PubSub       │─────> │  Azure Functions│
+│   (Real-time messaging)  │       │  (Game logic)   │
+└──────────────────────────┘       └────────┬────────┘
+                                            │
+                                            ▼
                                   ┌─────────────────┐
-                                  │  Azure Table     │
-                                  │  Storage         │
-                                  │  (Game state)    │
+                                  │  Azure Table    │
+                                  │  Storage        │
+                                  │  (Game state)   │
                                   └─────────────────┘
 ```
 
