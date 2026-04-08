@@ -10,16 +10,16 @@ import { validateWorld } from '../../world/validate-world.js';
  */
 export function getGoalAsciiArt() {
   return [
-    '     ___________',
-    "    '._==_==_=_.'",
-    '    .-\\:      /-.',
-    '   | (|:.     |) |',
-    "    '-|:.     |-'",
-    '      \\::.    /',
-    "       '::. .'",
-    '         ) (',
-    "       _.' '._",
-    '      |_______|',
+    '       ┌───────────┐',
+    '       │           │',
+    '   ┌───┤           ├───┐',
+    '   │   │     ★     │   │',
+    '   └───┤           ├───┘',
+    '       │           │',
+    '       └─────┬─────┘',
+    '             │',
+    '          ┌──┴──┐',
+    '          └─────┘',
   ].join('\n');
 }
 
@@ -29,14 +29,14 @@ export function getGoalAsciiArt() {
  */
 export function getVictoryAsciiArt() {
   return [
-    '  ========================================',
-    '  ||                                    ||',
-    '  ||     V I C T O R Y !               ||',
-    '  ||                                    ||',
-    '  ||   All goals have been achieved!    ||',
-    '  ||   You conquered the adventure!     ||',
-    '  ||                                    ||',
-    '  ========================================',
+    '  ╔══════════════════════════════════════╗',
+    '  ║                                      ║',
+    '  ║           V I C T O R Y !            ║',
+    '  ║                                      ║',
+    '  ║     All goals have been achieved!    ║',
+    '  ║     You conquered the adventure!     ║',
+    '  ║                                      ║',
+    '  ╚══════════════════════════════════════╝',
   ].join('\n');
 }
 
