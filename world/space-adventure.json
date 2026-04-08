@@ -1,6 +1,7 @@
 {
   "name": "The Derelict Station",
   "description": "Three months of silence from Research Station Kharon-7. No distress call. No bodies. Your salvage crew docked expecting scrap metal and hazard pay — then the airlock sealed behind you and the station's AI stirred awake, cycling power through empty corridors like a faltering pulse. The crew logs are locked on the command deck, twelve compartments deep. Whatever happened here, the station remembers. You just have to survive long enough to ask.",
+  "synopsis": "Survive a dying space station.",
   "startRoom": "airlock",
   "rooms": {
     "airlock": {

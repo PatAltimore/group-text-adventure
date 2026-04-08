@@ -74,6 +74,8 @@
             <div class="setting-row">
               <label for="death-timeout-select" class="setting-label">⏱ Respawn Timer</label>
               <select id="death-timeout-select" class="setting-select" aria-label="Death respawn timeout">
+                <option value="5">5 seconds</option>
+                <option value="10">10 seconds</option>
                 <option value="15">15 seconds</option>
                 <option value="20">20 seconds</option>
                 <option value="30" selected>30 seconds</option>
@@ -198,6 +200,17 @@
       <button type="submit" class="btn btn-send" aria-label="Send command">Send</button>
     </form>
   </section>
+
+  <!-- ===== Game Not Found Screen ===== -->
+  <div id="screen-game-not-found" class="screen">
+    <div class="landing-container">
+      <h1 class="landing-title">Game Not Found</h1>
+      <p class="landing-subtitle">This game no longer exists. It may have expired or the link is invalid.</p>
+      <div class="landing-form">
+        <button id="btn-host-from-notfound" class="btn btn-primary">Host a New Game</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ===== Share Overlay ===== -->
   <div id="share-overlay" class="share-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="share-overlay-title">

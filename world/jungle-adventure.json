@@ -1,6 +1,7 @@
 {
   "name": "The Temple of the Jaguar God",
   "description": "Deep in the uncharted jungles of Guatemala, your expedition has uncovered what countless explorers have died seeking — the lost city of Xib'alq'a, the legendary Temple of the Jaguar God. Ancient Mayan texts speak of a golden idol of immense power hidden within its deepest chamber, guarded by traps that have kept tomb raiders at bay for a thousand years. You stand at the jungle's edge, sweat-soaked and breathless, staring at crumbling stone towers rising above the canopy. The jungle hums with life — and with warning. There is no turning back.",
+  "synopsis": "Raid a lost Mayan temple for treasure.",
   "startRoom": "jungle-trail",
   "rooms": {
     "jungle-trail": {

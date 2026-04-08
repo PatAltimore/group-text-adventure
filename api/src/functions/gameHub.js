@@ -326,7 +326,17 @@ async function handleJoin(serviceClient, connectionId, data, context) {
   // Load or create game session
   let session = await loadGameState(gameId);
   if (!session) {
-    const worldId = data.worldId || 'default-world';
+    // Only the host (who provides a worldId) should auto-create games
+    if (!data.worldId) {
+      // Non-host trying to join a game that doesn't exist
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'gameNotFound',
+        text: 'This game no longer exists. It may have expired or been deleted.',
+        gameId: gameId,
+      });
+      return { body: '', status: 200 };
+    }
+    const worldId = data.worldId;
     const worldJson = await getWorld(worldId);
     const world = loadWorld(worldJson);
     session = createGameSession(world);
@@ -996,3 +1006,6 @@ async function handleRevive(serviceClient, connectionId, data, context) {
 
   return { body: '', status: 200 };
 }
+
+// ── Test exports ──────────────────────────────────────────────────────
+export { handleJoin };

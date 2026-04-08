@@ -494,6 +494,20 @@ Two features implemented:
 
 **Implementation:**
 - Updated `killPlayer()` in game-engine.js (~line 271): Drops all player inventory to room floor before creating ghost with empty inventory
+
+### 2025-07-09 — Jungle Adventure World File
+
+**New world:** Created `world/jungle-adventure.json` — "The Temple of the Jaguar God", a South American Mayan jungle adventure inspired by Indiana Jones.
+
+**Stats:** 12 rooms, 9 items, 6 puzzles. Hazard probabilities range 0.05–0.15. Validation: 0 errors, 0 warnings.
+
+**Design patterns:**
+- Hub-and-spoke layout from overgrown-courtyard (4 exits) with linear temple progression deeper in
+- Items distributed so player must explore side areas (watchtower, snake pit, collapsed gallery) to collect keys for main temple path
+- 4 openExit puzzles gate temple progression, 1 removeHazard clears snake pit, 1 addItem reveals final treasure
+- Decoy golden-idol in sacrificial chamber as red herring before real golden-jaguar in vault
+- All exits bidirectional; puzzle-gated exits pass validator's bidirectional check
+- Added editor preset dropdown option in `client/editor.html`
 - Updated `disconnectPlayer()` in game-engine.js (~line 190): Same pattern — drops inventory to room, creates empty ghost
 - Updated `respawnPlayer()` in game-engine.js (~line 298): Removed item-dropping logic (items already dropped on ghost creation)
 - Updated `revivePlayer()` in game-engine.js (~line 331): Changed to restore player with empty inventory (not ghost.inventory)
@@ -641,3 +655,41 @@ Two features implemented:
 - **Audit result:** All item-referencing commands now use `findMatchingItems`: take (line 826), take-from-ghost (line 901), drop (line 1004), use (line 1060), give (line 1206), and look/examine (refactored).
 - **Tests:** 12 new tests in "Fuzzy look/examine matching" block covering: single fuzzy match in room, disambiguation with multiple matches, inventory lookup, inventory-preferred-over-room, case insensitivity, no-match error, and exact match priority.
 - **All 539 tests pass** (2 skipped, pre-existing).
+### 2026-04-08 — Mars Adventure World File
+
+**New world:** Created world/mars-adventure.json — a Mars exploration adventure where the player discovers an ancient buried civilization.
+
+**Key patterns followed:**
+- Matched exact JSON structure from gyptian-pyramid.json reference (rooms, items, puzzles, hazards with probability/deathText objects)
+- All exits bidirectional; puzzle-gated exits (face-of-mars→face-entrance, pyramid-chamber→nexus-core) use openExit actions
+- emoveHazard puzzle action hazard field matches room hazard description exactly (string equality check in game engine)
+- Items revealed by puzzles (crystal-key, martian-codex) use ddItem action and are NOT in room items arrays initially
+- Validation script (world/validate-world.js) passes with 0 errors, 0 warnings
+- Added preset option in client/editor.html dropdown for the new world
+
+### 2026-04-08 — Cleanup Timer Function
+
+- **Feature:** Daily timer trigger (`cleanup.js`) that purges game sessions older than 30 days from GameSessions, Players, and GameState tables.
+- **Architecture:** Business logic lives in `table-storage.js` (`cleanupOldGames()` export). Function file is thin — just schedules and logs. Follows existing pattern of keeping data access in the DAL.
+- **Schedule:** CRON `0 0 3 * * *` (3 AM UTC daily). Consumption plan: effectively free (~30 executions/month against 1M free tier).
+- **Error handling:** Per-game try/catch — one failed deletion doesn't block the rest. Logs found vs. deleted counts.
+- **Registration:** Added `import './functions/cleanup.js'` in `src/index.js`, matching existing pattern.
+- **Tests:** All 539 existing tests pass. No new tests needed — timer trigger is integration-level (Table Storage dependency).
+
+### 2026-04-08 — World Prose Improvements (6 Worlds)
+
+Applied wisdom.md interactive fiction guidance to all 6 existing world files. Skipped jungle-adventure.json and mars-adventure.json (already created with new guidance).
+
+**Files improved:**
+1. `world/default-world.json` (The Forgotten Castle) — Added multi-sensory details (smell of old copper, slick moss underfoot, cold draft taste). Broke long descriptions into punchier sentences. Items given history (skeleton "lets go of a duty held too long"). Hazard deaths made visceral but not gratuitous.
+2. `world/escape-room.json` (The Clockmaker's Mansion) — Stronger verbs ("looms", "bleeds", "sags"). Added smell of cedar, vinegar, brass oil. Kitchen death rewritten with cinematic pacing. Puzzle hints made fairer.
+3. `world/space-adventure.json` (The Derelict Station) — Named station "Kharon-7". Added ozone, machine oil, sour antiseptic smells. Shorter sentences ("Forward or nothing."). Item names sharpened (Mag-Lock Flashlight, Plasma Welding Tool).
+4. `world/egyptian-pyramid.json` (The Lost Pyramid) — Added touch (walls scraping shoulders), sound (stone groaning), smell (sealed atmosphere). Environmental storytelling ("something breathes beneath the lid").
+5. `world/mystery-house.json` (Blackwood Manor) — Added non-visual senses (creaking floorboards, lavender perfume, formaldehyde). Removed game-y hints ("This would unlock…"), replaced with lore-based clues.
+6. `world/paranormal-mysteries.json` (Paranormal Mysteries) — Tightened verbose descriptions. Added tactile details ("warm and faintly yielding"). Mixed sentence rhythms (fragments + longer descriptive).
+
+**What changed (text only):** Room descriptions, item descriptions/roomText/pickupText, hazard descriptions/deathText, puzzle hintText/solvedText/descriptions, world intro descriptions, some display names.
+
+**What did NOT change:** Room IDs, item IDs, puzzle IDs, exit connections, requiredItem, action types, startRoom, portable flags, game mechanics.
+
+**Validation:** All 6 worlds pass `validate-world.js` with zero errors. Pre-existing warnings unchanged.

@@ -1,6 +1,7 @@
 {
   "name": "Mars: The Buried City",
   "description": "The year is 2157. You are Dr. Elara Voss, lead astrobiologist aboard the Ares VII mission — humanity's most ambitious expedition to find life on Mars. Your lander touched down in the Cydonia region three hours ago, drawn by anomalous geological readings that defied every known explanation. As you step through the airlock, the rust-red expanse stretches to the horizon beneath a thin pink sky. Somewhere beneath this ancient dust, something is waiting to be found. Mission Control's last transmission crackles in your helmet: 'Trust your instruments. Trust your instincts. Find what's out there.'",
+  "synopsis": "Discover an ancient civilization buried on Mars.",
   "startRoom": "landing-site",
   "rooms": {
     "landing-site": {

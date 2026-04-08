@@ -1,6 +1,7 @@
 {
   "name": "The Forgotten Castle",
   "description": "No one climbs the cliff anymore. The mist that clings to its face carries a smell like old copper and ash — the lingering breath of a dragon centuries dead. Its hoard still waits above, they say, sealed behind locks that outlasted their makers. The bold have tried. The bold have not returned. But tonight the fog has parted, just enough, and the portcullis hangs open like a jaw.",
+  "synopsis": "Explore a cursed castle atop misty cliffs.",
   "startRoom": "entrance",
   "rooms": {
     "entrance": {

@@ -49,6 +49,7 @@
     landing: $('#screen-landing'),
     lobby: $('#screen-lobby'),
     game: $('#screen-game'),
+    'game-not-found': $('#screen-game-not-found'),
   };
   const els = {
     // Join screen
@@ -137,9 +138,9 @@
   // Fallback world list when the /api/worlds endpoint is unreachable
   // (cold start, local dev without API, transient network error).
   const FALLBACK_WORLDS = [
-    { id: 'default-world', name: 'The Forgotten Castle', description: 'An ancient castle shrouded in mist, perched atop a cliff that the locals dare not climb.' },
-    { id: 'escape-room', name: 'The Clockmaker\'s Mansion', description: 'You awaken in the foyer of an old mansion. Find the seven keys hidden in the home, or remain here forever.' },
-    { id: 'space-adventure', name: 'The Derelict Station', description: 'A deep-space research station gone dark. Reach the command deck before life support fails.' },
+    { id: 'default-world', name: 'The Forgotten Castle', description: 'An ancient castle shrouded in mist, perched atop a cliff that the locals dare not climb.', synopsis: 'Explore a cursed castle atop misty cliffs.' },
+    { id: 'escape-room', name: 'The Clockmaker\'s Mansion', description: 'You awaken in the foyer of an old mansion. Find the seven keys hidden in the home, or remain here forever.', synopsis: 'Find seven keys to escape the mansion.' },
+    { id: 'space-adventure', name: 'The Derelict Station', description: 'A deep-space research station gone dark. Reach the command deck before life support fails.', synopsis: 'Survive a dying space station.' },
   ];
 
   function populateWorldSelector(worlds) {
@@ -159,7 +160,7 @@
 
         const desc = document.createElement('div');
         desc.className = 'world-card-desc';
-        desc.textContent = world.description || '';
+        desc.textContent = world.synopsis || (world.description ? world.description.substring(0, 80) + '…' : '');
 
         card.appendChild(name);
         card.appendChild(desc);
@@ -511,6 +512,9 @@
         break;
       case 'victoryComplete':
         renderVictoryComplete(msg);
+        break;
+      case 'gameNotFound':
+        handleGameNotFound(msg);
         break;
       default:
         // Unknown message type — show as system text if it has text
@@ -890,6 +894,15 @@
     appendGhostMessage(text);
   }
 
+  // --- Game Not Found ---
+  function handleGameNotFound(msg) {
+    if (state.ws) {
+      state.ws.close();
+      state.ws = null;
+    }
+    showScreen('game-not-found');
+  }
+
   // --- Death Screen ---
   function showDeathScreen(deathText, timeout) {
     state.isDead = true;
@@ -1025,6 +1038,15 @@
 
     // Focus on name input
     els.playerName.focus();
+
+    // Game-not-found: host a new game
+    document.getElementById('btn-host-from-notfound').addEventListener('click', () => {
+      window.history.replaceState({}, '', window.location.pathname);
+      state.gameId = null;
+      state.isHost = false;
+      state.pendingRejoin = false;
+      showScreen('landing');
+    });
   }
 
   function generateGameId() {

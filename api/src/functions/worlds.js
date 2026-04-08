@@ -38,6 +38,7 @@ async function listWorlds() {
             id: file.replace(/\.json$/, ''),
             name: data.name || file,
             description: data.description || '',
+            synopsis: data.synopsis || '',
           });
         } catch {
           // Skip malformed files

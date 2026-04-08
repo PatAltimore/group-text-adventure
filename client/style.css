@@ -127,6 +127,12 @@ html, body {
   justify-content: center;
 }
 
+/* ===== Game Not Found Screen ===== */
+#screen-game-not-found {
+  align-items: center;
+  justify-content: center;
+}
+
 .join-container {
   text-align: center;
   max-width: 400px;
@@ -221,7 +227,9 @@ html, body {
 /* ===== Landing Screen ===== */
 #screen-landing {
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding: 32px 0;
 }
 
 .landing-container {

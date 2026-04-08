@@ -442,3 +442,22 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Host New Game bugfix:** The "+ New" button navigated to `window.location.pathname` which stripped query params, but localStorage auto-rejoin (`gta_gameId`, `gta_playerName`) immediately reconnected to the old game. Fix: added `clearSession()` call before navigation to wipe localStorage state.
 - **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
 - **All 473 tests pass** (466 passing, 7 skipped) unchanged.
+
+### 2026-04-07 — Host Screen UI Overhaul: World Cards + Settings + Mobile
+
+- **World selector cards:** Replaced `<select>` dropdown with card-based radio selector. Each world shows name + truncated description (one-line with CSS text-overflow). Selected card has accent border + highlight background. Keyboard accessible (Enter/Space to select, role=radio, aria-checked).
+- **Settings moved to landing screen:** All 4 settings (Respawn Timer, Hazard Danger, Say Scope, Puzzle Hints) moved from lobby (#screen-lobby) to landing (#screen-landing), placed after world selector and before buttons. Settings are always visible — no more `.hidden` class toggling in `startHost()`. Host configures everything BEFORE clicking Host New Game.
+- **Settings section wrapper:** Added `.settings-section` with "⚙️ Game Settings" header. Settings use `.setting-group` class (replaces `.death-timeout-group`). Labels now use `.setting-label` (replaces `.death-timeout-label`). Selects use `.setting-select` (replaces `#death-timeout-select`).
+- **Mobile improvements:** `.setting-row` stacks vertically on mobile (flex-direction: column), selects go full-width with 44px min-height, font sizes increased. World card descriptions allow 2-line wrap on mobile. Landing container padding reduced for small screens.
+- **JS refactor:** `populateWorldSelector()` now creates div cards instead of option elements. Added `selectWorldCard()` and `getSelectedWorldName()` helpers. `state.worldId` is set by card click rather than reading `els.worldSelector.value`. `startHost()` simplified — no more settings show/hide logic.
+- **Join flow unaffected:** Joiners never see settings or world selector (those are on the landing screen, joiners use the join screen via URL param).
+- **Files modified:** `client/index.html`, `client/app.js`, `client/style.css`
+- **All 539 tests pass** (2 skipped) unchanged.
+
+### 2026-04-08 — Landing Screen Scroll Fix, Respawn Options, World Synopses
+
+- **Landing scroll fix:** Changed #screen-landing from justify-content: center to lex-start with overflow-y: auto and padding: 32px 0. Content taller than viewport now scrolls naturally instead of clipping at top.
+- **Respawn timer options:** Added 5s and 10s options to death-timeout-select in index.html (before existing 15s option). Default remains 30s.
+- **World synopses:** Added synopsis field (≤8 words) to all 8 world JSON files. Updated populateWorldSelector() in app.js to prefer world.synopsis over world.description for card text. Updated FALLBACK_WORLDS array with synopsis fields. Updated worlds.js API to return synopsis field.
+- **Files modified:** client/style.css, client/index.html, client/app.js, pi/src/functions/worlds.js, all 8 world/*.json files
+- **All 539 tests pass** (2 skipped) unchanged.
