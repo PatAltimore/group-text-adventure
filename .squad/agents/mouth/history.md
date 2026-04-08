@@ -734,3 +734,52 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
   4. `tests/game-engine.test.js` — Removed 2 ghost-take tests (`take item from empty ghost`, `take from ghost in different room`). Updated reconnection test to pick up items from the floor instead of from ghost.
 - **Kept:** Regular `take <item>` for room pickup, `takeall`/`g` for bulk pickup, `findGhostByName` utility (used by reconnection logic).
 - **All 539 tests pass** (2 net removed).
+
+### 2026-04-08 — Replace ASCII art with Unicode box-drawing characters
+
+**Problem:** The trophy and victory banner ASCII art in `getGoalAsciiArt()` and `getVictoryAsciiArt()` rendered as "bent" in the browser due to asymmetric decorative characters (`:`, `.`, `'`, `\`) that display inconsistently across fonts.
+
+**Solution:** Replaced both functions with clean, symmetric Unicode box-drawing characters (┌─┐│└┘├┤┬┴╔═╗║╚╝) which render pixel-perfect in all monospace fonts.
+
+**Changes:**
+1. `api/src/game-engine.js` — Replaced trophy art (lines 11-24) with box-drawing trophy featuring center star (★). Replaced victory banner (lines 30-41) with double-line box-drawing border.
+2. No escaping needed — Unicode characters work directly in single-quoted JS strings.
+
+**Testing:** All 541 tests pass (539 passed, 2 skipped). Deployed successfully to Azure.
+
+**Pattern observed:** Unicode box-drawing characters are superior to ASCII art for symmetric designs because they're specifically engineered to connect seamlessly and render identically across all monospace fonts. Always prefer ┌─┐│└┘ over ___/'\ for borders and containers.
+
+
+## Learnings
+
+### 2026-04-09 — Created Myst-inspired world: The Forgotten Mechanica
+
+**Task:** Create a new world JSON themed like the game Myst with mysterious machines, environmental puzzles, and atmospheric descriptions.
+
+**Implementation:**
+- Created `world/myst-island.json` with 13 interconnected rooms, 9 portable items, and 10 puzzles
+- Theme: Abandoned D'ni civilization with mechanical puzzles and environmental storytelling
+- Featured mysterious machines (lighthouse, gear chambers, resonance cores), atmospheric settings (tidal caves, underwater chambers, crystal chambers), and environmental hazards (steam explosions, flooding, radiation)
+- Puzzles unlock through observation and experimentation: align lighthouse rings with compass, drain flooded passages, activate resonance cores, synchronize massive gears, and ultimately awaken the Heart of Ages
+- Synopsis: "Unlock secrets of an abandoned mechanical civilization" (7 words)
+
+**World Structure Patterns:**
+- Room IDs use kebab-case: `stone-dock`, `gear-chamber`, `crystal-chamber`
+- Item IDs use kebab-case: `brass-compass`, `focusing-lens`, `resonance-fork`
+- Puzzle actions: `openExit` (reveals new path), `removeHazard` (eliminates danger), `addItem` (spawns reward)
+- Major milestones marked with `isGoal: true` and `goalName` for player achievement tracking
+- Hazards use probability (0.06-0.12) and thematic `deathText` for environmental danger
+
+**Design Principles Applied:**
+- Environmental storytelling through room descriptions and item details
+- Puzzles serve narrative discovery (unlocking D'ni legacy)
+- Items are meaningful puzzle keys, not clutter
+- Hazards create tension but death text is dramatic and thematic
+- Clear goal throughout: discover what happened to the D'ni civilization
+
+**Testing:** All 541 tests passed (539 passed, 2 skipped). World validates correctly.
+
+**Key File Paths:**
+- World files: `world/*.json`
+- World validation: `world/validate-world.js`
+- Test suite: `node --experimental-vm-modules node_modules/jest/bin/jest.js --silent`
