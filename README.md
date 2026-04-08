@@ -41,6 +41,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 |---------|--------|---------|
 | **Go** | `go <direction>` or shortcut `<n/s/e/w>` | `go north` or `n` |
 | **Look** | `look` or `look <item>` | `look` or `look torch` |
+| **Examine** | `examine <item>` | `examine torch` |
 | **Get** | `get <item>` or `get items` or `g` | `get torch` or `get items` or `g` |
 | **Drop** | `drop <item>` | `drop torch` |
 | **Inventory** | `inventory` or `i` | `i` |
@@ -49,6 +50,18 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 | **Say** | `say <message>` | `say Help me with the puzzle!` |
 | **Map** | `map` | `map` |
 | **Help** | `help` | `help` |
+
+### Partial Name Matching
+
+All item commands support **partial/fuzzy name matching**, so you don't need to type the full item name:
+- ✅ `look book` matches "red book" or "old book"
+- ✅ `get torch` matches "wooden torch" or "silver torch"
+- ✅ `examine statue` matches "golden statue"
+- ✅ `drop key` matches "brass key"
+- ✅ `use lock` matches "silver lock" or "iron lock"
+- ✅ `give ring to Alice` matches "golden ring"
+
+**Disambiguation:** If multiple items match (e.g., "old book" and "red book" both match "book"), the game will ask you to be more specific. Simply add another word to distinguish them.
 
 ### Quick Start
 
