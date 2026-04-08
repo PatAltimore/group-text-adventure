@@ -226,8 +226,8 @@ html, body {
 
 /* ===== Landing Screen ===== */
 #screen-landing {
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   overflow-y: auto;
   padding: 32px 0;
 }
