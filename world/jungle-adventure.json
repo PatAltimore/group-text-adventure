@@ -1,0 +1,324 @@
+{
+  "name": "The Temple of the Jaguar God",
+  "description": "Deep in the uncharted jungles of Guatemala, your expedition has uncovered what countless explorers have died seeking — the lost city of Xib'alq'a, the legendary Temple of the Jaguar God. Ancient Mayan texts speak of a golden idol of immense power hidden within its deepest chamber, guarded by traps that have kept tomb raiders at bay for a thousand years. You stand at the jungle's edge, sweat-soaked and breathless, staring at crumbling stone towers rising above the canopy. The jungle hums with life — and with warning. There is no turning back.",
+  "startRoom": "jungle-trail",
+  "rooms": {
+    "jungle-trail": {
+      "name": "Jungle Trail",
+      "description": "A narrow trail hacked through walls of green. Massive ceiba trees tower overhead, their roots writhing across the path like petrified serpents. Howler monkeys scream in the canopy. The air is thick as soup — humid, buzzing with insects, heavy with the smell of rotting vegetation and orchid blooms. Machete marks on the trees grow older as you press forward. Through gaps in the foliage to the north, you glimpse weathered stone — the ruins of Xib'alq'a. A rusted machete leans against a moss-covered boulder.",
+      "exits": {
+        "north": "overgrown-courtyard"
+      },
+      "items": ["machete"],
+      "hazards": [
+        {
+          "description": "Something large moves through the undergrowth, keeping pace with you — a flash of spotted gold between the leaves.",
+          "probability": 0.05,
+          "deathText": "The jaguar strikes from the shadows — a blur of muscle and obsidian claws. The jungle takes back what it is owed. Your screams are swallowed by the canopy."
+        }
+      ]
+    },
+    "overgrown-courtyard": {
+      "name": "The Overgrown Courtyard",
+      "description": "You emerge into a vast stone courtyard, cracked and buckled by centuries of root growth. Strangler figs have devoured entire walls, their roots flowing over carved reliefs like frozen waterfalls. A toppled stela depicts a jaguar-headed priest holding a golden idol aloft. The air is cooler here in the shadow of the ruins. To the north, a grand temple facade rises from the jungle, its entrance flanked by snarling stone jaguars. A serpent-carved shrine sits to the east, wreathed in mist. To the west, a rope bridge spans a yawning gorge. The jungle trail lies to the south.",
+      "exits": {
+        "south": "jungle-trail",
+        "north": "temple-entrance",
+        "east": "serpent-shrine",
+        "west": "rope-bridge"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Loose stones shift underfoot — the ancient courtyard is riddled with sinkholes hidden beneath the moss.",
+          "probability": 0.06,
+          "deathText": "The ground gives way beneath you. You plunge into a limestone sinkhole, crashing through layers of root and rubble into an underground river. The current drags you into darkness. The courtyard seals itself above, as if you were never here."
+        }
+      ]
+    },
+    "rope-bridge": {
+      "name": "The Rope Bridge",
+      "description": "A terrifying rope bridge stretches across a gorge so deep the river below is just a silver thread. Half the planks are missing or rotten. The ropes creak and sway in the updraft. On the far side, a crumbling watchtower clings to the cliff edge — but the bridge is too damaged to cross safely. Several critical support ropes have snapped, leaving a gap too wide to jump. The courtyard is back to the east.",
+      "exits": {
+        "east": "overgrown-courtyard"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The bridge groans and sways violently in the wind. Rotten planks crack beneath your weight.",
+          "probability": 0.10,
+          "deathText": "A plank gives way beneath your boot. You grab for the rope but it snaps in your hand. The gorge swallows you whole — a long, spiraling fall into the river of stone below."
+        }
+      ]
+    },
+    "watchtower": {
+      "name": "The Watchtower",
+      "description": "A crumbling Mayan watchtower perched on the gorge's edge, offering a breathtaking view of the jungle canopy stretching to the horizon like a green ocean. Vines have claimed most of the structure, but the upper platform is still intact. A stone shelf holds the remains of a lookout's post — obsidian signal mirrors, crumbled provisions, and a rolled animal-hide map showing the temple's interior passages and chambers. The rope bridge sways to the east.",
+      "exits": {
+        "east": "rope-bridge"
+      },
+      "items": ["ancient-map"],
+      "hazards": []
+    },
+    "serpent-shrine": {
+      "name": "The Serpent Shrine",
+      "description": "A circular shrine dedicated to Kukulkan, the feathered serpent god. Colossal stone serpents coil around the columns, their bodies covered in jade mosaic scales that still catch the light. An altar at the center is stained dark with ancient offerings. The air is thick with a lingering scent of copal incense — impossible after all these centuries, yet unmistakable. An obsidian sacrificial knife rests on the altar, its edge still wickedly sharp. To the north, stone steps descend into darkness — you hear a dry, slithering sound from below. The courtyard lies to the west.",
+      "exits": {
+        "west": "overgrown-courtyard",
+        "north": "snake-pit"
+      },
+      "items": ["obsidian-knife"],
+      "hazards": []
+    },
+    "snake-pit": {
+      "name": "The Snake Pit",
+      "description": "A sunken chamber writhing with serpents. Hundreds of them — fer-de-lances, bushmasters, coral snakes — coiled over ancient bones and shattered pottery. The floor is barely visible beneath their bodies. The hissing is deafening, a constant dry whisper that fills the chamber like white noise. In the far corner, half-buried in shed snakeskins, something glints green — a jade medallion carved with the face of the jaguar god. The steps back up to the shrine are to the south.",
+      "exits": {
+        "south": "serpent-shrine"
+      },
+      "items": ["jade-medallion"],
+      "hazards": [
+        {
+          "description": "Venomous snakes carpet the floor, hissing and striking at the air as you move through the chamber.",
+          "probability": 0.15,
+          "deathText": "A bushmaster strikes your ankle — then another, and another. The venom works fast. Your vision blurs, your heart hammers, and you collapse into the writhing mass. The serpents coil over you like a living shroud."
+        }
+      ]
+    },
+    "temple-entrance": {
+      "name": "Temple Entrance",
+      "description": "The grand facade of the Temple of the Jaguar God towers above you — a stepped pyramid of enormous limestone blocks, its surface carved with scenes of ritual and conquest. Twin jaguar statues guard the entrance, their eyes set with polished obsidian that seems to follow your movement. A massive stone door to the north is sealed shut, bearing a circular indentation carved with jaguar motifs — shaped to hold a medallion. To the east, a collapsed gallery is partially accessible through a gap in the rubble. The courtyard lies to the south.",
+      "exits": {
+        "south": "overgrown-courtyard",
+        "east": "collapsed-gallery"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The stone jaguar statues seem to shift when you're not looking directly at them — their obsidian eyes track your movements.",
+          "probability": 0.07,
+          "deathText": "You hear stone grinding behind you. The jaguar statue lunges — impossibly alive, impossibly fast. Stone jaws close around you with the force of a collapsing temple. The guardians of the Jaguar God do not forgive trespassers."
+        }
+      ]
+    },
+    "collapsed-gallery": {
+      "name": "The Collapsed Gallery",
+      "description": "A once-grand gallery of carved stone panels, now half-buried in rubble from a collapsed ceiling. Shafts of green-filtered light pierce through gaps above, illuminating clouds of dust and flitting butterflies. Fragments of murals show Mayan warriors, astronomers, and a recurring image — a priest descending into a pit of fire carrying a torch. Among the rubble, you spot a coil of agave-fiber rope, still strong despite its age, and a pitch-pine torch wrapped in resin-soaked cloth. The temple entrance is back to the west.",
+      "exits": {
+        "west": "temple-entrance"
+      },
+      "items": ["torch", "rope-coil"],
+      "hazards": [
+        {
+          "description": "Chunks of limestone shift and grind overhead — the gallery ceiling is deeply unstable.",
+          "probability": 0.08,
+          "deathText": "A section of ceiling gives way with a thunderous crack. Tons of limestone crash down, burying you beneath the rubble of a civilization that died a thousand years ago."
+        }
+      ]
+    },
+    "hall-of-glyphs": {
+      "name": "The Hall of Glyphs",
+      "description": "An immense hall whose walls are covered floor to ceiling in Mayan hieroglyphs — thousands of them, painted in red and blue pigments that still glow in the torchlight. The Long Count calendar spirals across the ceiling in an endless mathematical dance. Stone benches line the walls, where priests once sat to read the will of the gods. The carvings to the east depict a hidden chamber behind a wall of symbols, but the sequence to unlock it is indecipherable without a key. A passage leads north toward a chamber that reeks of old blood. The sealed temple door is back to the south.",
+      "exits": {
+        "south": "temple-entrance",
+        "north": "sacrificial-chamber"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Tiny holes line the floor tiles — blow-dart traps triggered by weight, ancient but potentially still lethal.",
+          "probability": 0.10,
+          "deathText": "A soft click beneath your boot. A poison dart buries itself in your neck — curare, still potent after a millennium. Your muscles lock, your lungs freeze. You die standing, another statue in the Hall of Glyphs."
+        }
+      ]
+    },
+    "mechanism-chamber": {
+      "name": "The Mechanism Chamber",
+      "description": "A marvel of ancient engineering. Massive stone gears interlock across the walls, connected by wooden axles and counterweights of carved granite. This is the mechanical heart of the temple — the system that controls its doors, traps, and hidden passages. Most of the mechanisms have seized with age, but one assembly still turns freely, its gears polished smooth by centuries of use. On a pedestal at the center, a jade skull gleams with an eerie inner light — its eye sockets set with mirrors of polished pyrite. The hall of glyphs is back to the west.",
+      "exits": {
+        "west": "hall-of-glyphs"
+      },
+      "items": ["jade-skull"],
+      "hazards": []
+    },
+    "sacrificial-chamber": {
+      "name": "The Sacrificial Chamber",
+      "description": "A blood-red chamber dominated by a massive stone altar stained black with the residue of a thousand ancient sacrifices. Channels carved into the stone once directed blood into collection basins shaped like snarling jaguar heads. The walls are painted with scenes of ritual sacrifice — priests in jaguar pelts, obsidian blades raised to the sky, hearts offered to the gods. A small golden idol sits on a shelf behind the altar — beautiful but somehow wrong, too light, a decoy. To the north, an enormous stone door is carved with a death's-head motif. A skull-shaped depression sits at its center. The hall of glyphs lies to the south.",
+      "exits": {
+        "south": "hall-of-glyphs"
+      },
+      "items": ["golden-idol"],
+      "hazards": [
+        {
+          "description": "A faint mist rises from the blood channels — some ancient chemical reaction still produces toxic fumes.",
+          "probability": 0.12,
+          "deathText": "The toxic mist thickens without warning, filling the chamber in seconds. You choke, your vision goes red, and you collapse across the sacrificial altar. A fitting end — the temple claims one more offering."
+        }
+      ]
+    },
+    "treasure-vault": {
+      "name": "The Treasure Vault",
+      "description": "You stand in the innermost sanctum of the Temple of the Jaguar God. The walls are plated with hammered gold that blazes in the torchlight. Jade, obsidian, and turquoise treasures are piled in stone alcoves — ceremonial masks, jeweled breastplates, feathered headdresses preserved for eternity. But your eyes are drawn to the far wall, where a massive stone jaguar crouches on a pedestal, its body carved from a single block of jade. Between its paws, a sealed compartment is visible — scratched into the stone beside it: 'ONLY THE BLADE OF THE GODS MAY FREE THE HEART OF THE JAGUAR.' The sacrificial chamber lies to the south.",
+      "exits": {
+        "south": "sacrificial-chamber"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The ceiling is rigged with a counterweight mechanism — disturbing the wrong treasure could bring it all crashing down.",
+          "probability": 0.07,
+          "deathText": "You brush against a tripwire hidden among the treasures. The ceiling mechanism triggers with a grinding roar, and massive stone blocks descend. The vault becomes your golden tomb — sealed forever with the treasures of the jaguar god."
+        }
+      ]
+    }
+  },
+  "items": {
+    "machete": {
+      "name": "Machete",
+      "description": "A rusted but serviceable machete with a wooden handle wrapped in cracked leather. The blade is nicked from years of jungle work but still holds an edge.",
+      "pickupText": "You pull the machete free from the moss. It's heavy in your hand — a comforting weight.",
+      "portable": true,
+      "roomText": "A rusted machete leans against a moss-covered boulder, half-hidden by ferns."
+    },
+    "obsidian-knife": {
+      "name": "Obsidian Knife",
+      "description": "A sacrificial blade of volcanic glass, its edge sharper than surgical steel. The handle is wrapped in jaguar hide and decorated with tiny jade beads. A blade of the gods — used in rituals of power.",
+      "pickupText": "You take the obsidian knife from the altar. The glass edge catches the light like black lightning.",
+      "portable": true,
+      "roomText": "An obsidian sacrificial knife rests on the altar, its black glass edge gleaming wickedly."
+    },
+    "jade-medallion": {
+      "name": "Jade Medallion",
+      "description": "A heavy disc of polished jade carved with the snarling face of the jaguar god. Its eyes are tiny rubies that seem to glow with inner fire. The medallion hums faintly when you hold it, as if it remembers the hands of priests.",
+      "pickupText": "You snatch the jade medallion from the nest of snakeskins. The rubies flash crimson in the dim light.",
+      "portable": true,
+      "roomText": "A jade medallion glints in the far corner, half-buried in shed snakeskins."
+    },
+    "torch": {
+      "name": "Pitch-Pine Torch",
+      "description": "A torch of pitch-pine wrapped in resin-soaked cloth. Ancient but perfectly preserved in the dry rubble. It lights easily and burns with a fierce, smoky flame that snakes despise.",
+      "pickupText": "You pull the torch from the rubble and strike it alight. The resin catches instantly, filling the air with sharp pine smoke.",
+      "portable": true,
+      "roomText": "A pitch-pine torch wrapped in resin-soaked cloth lies among the fallen stones."
+    },
+    "rope-coil": {
+      "name": "Agave Rope",
+      "description": "A sturdy coil of rope braided from agave fiber — the same material the ancient Maya used for everything from bridges to binding prisoners. Remarkably strong despite its age.",
+      "pickupText": "You sling the rope over your shoulder. It's rough against your neck but reassuringly strong.",
+      "portable": true,
+      "roomText": "A coil of agave-fiber rope lies among the rubble, still tightly wound."
+    },
+    "ancient-map": {
+      "name": "Ancient Map",
+      "description": "A map painted on cured animal hide, showing the interior layout of the Temple of the Jaguar God. Passages, chambers, and — critically — the sequence of glyphs needed to open a hidden chamber are all marked in faded red ink.",
+      "pickupText": "You carefully roll up the ancient map. The hide is cracked but the ink is still legible — invaluable.",
+      "portable": true,
+      "roomText": "A rolled animal-hide map sits on a stone shelf among the remains of the lookout's post."
+    },
+    "jade-skull": {
+      "name": "Jade Skull",
+      "description": "A skull carved from a single block of deep green jade, its eye sockets set with mirrors of polished pyrite that reflect your face back distorted and skull-like. It radiates cold despite the jungle heat.",
+      "pickupText": "You lift the jade skull from its pedestal. The pyrite eyes flash, and for a moment you see your own skeleton reflected in them.",
+      "portable": true,
+      "roomText": "A jade skull gleams on a central pedestal, its pyrite mirror-eyes catching every flicker of light."
+    },
+    "golden-idol": {
+      "name": "Golden Idol",
+      "description": "A small golden idol depicting a Mayan priest with outstretched hands. Beautiful craftsmanship, but something feels wrong — it's lighter than it should be, hollow. A decoy left for the greedy.",
+      "pickupText": "You take the golden idol from the shelf. It's lighter than expected — hollow. This isn't the real treasure.",
+      "portable": true,
+      "roomText": "A small golden idol sits on a shelf behind the altar, gleaming seductively."
+    },
+    "golden-jaguar": {
+      "name": "The Golden Jaguar",
+      "description": "A solid gold jaguar idol the size of your fist, its eyes set with flawless emeralds. The Heart of the Jaguar — the legendary treasure of Xib'alq'a. It pulses with warmth, as if the jaguar god himself lives within the gold.",
+      "pickupText": "You lift the Golden Jaguar from its ancient resting place. The emerald eyes blaze with green fire. You hold a legend in your hands.",
+      "portable": true,
+      "roomText": "The Golden Jaguar gleams in the opened compartment, its emerald eyes blazing with ancient power."
+    }
+  },
+  "puzzles": {
+    "repair-bridge": {
+      "room": "rope-bridge",
+      "description": "The rope bridge is too damaged to cross — several critical support ropes have snapped, leaving a dangerous gap. You need something to bridge the broken sections.",
+      "requiredItem": "rope-coil",
+      "hintText": "The bridge needs new rope to replace the snapped supports. A strong fiber rope might do the job.",
+      "solvedText": "You lash the agave rope to the broken supports, tying knots that hold fast under tension. The bridge groans but holds — it's crossable now. The way to the watchtower across the gorge is open.",
+      "isGoal": true,
+      "goalName": "Repair the Rope Bridge",
+      "action": {
+        "type": "openExit",
+        "direction": "west",
+        "targetRoom": "watchtower"
+      }
+    },
+    "clear-snakes": {
+      "room": "serpent-shrine",
+      "description": "The steps north descend into a pit swarming with venomous snakes. The mural on the wall shows a priest carrying a torch into a serpent pit — fire drives them back.",
+      "requiredItem": "torch",
+      "hintText": "Snakes fear fire. A lit torch might drive them away and make the pit safe to explore.",
+      "solvedText": "You thrust the blazing torch down the steps. The resin smoke billows into the pit and the snakes recoil, slithering into cracks and crevices with furious hissing. The pit falls silent. The way is safe — for now.",
+      "action": {
+        "type": "removeHazard",
+        "room": "snake-pit",
+        "hazard": "Venomous snakes carpet the floor, hissing and striking at the air as you move through the chamber."
+      }
+    },
+    "open-temple": {
+      "room": "temple-entrance",
+      "description": "A massive stone door to the north is sealed shut. A circular indentation at its center is carved with jaguar motifs — shaped to hold a medallion of some kind.",
+      "requiredItem": "jade-medallion",
+      "hintText": "The door has a medallion-shaped indentation carved with jaguar motifs. A matching medallion might serve as a key.",
+      "solvedText": "You press the jade medallion into the indentation. The ruby eyes flash, ancient counterweights shift within the walls, and the massive door grinds upward with a sound like thunder. Stale air rushes out from the Hall of Glyphs beyond. The temple is open.",
+      "isGoal": true,
+      "goalName": "Enter the Temple",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "hall-of-glyphs"
+      }
+    },
+    "decode-glyphs": {
+      "room": "hall-of-glyphs",
+      "description": "The east wall is covered in a complex sequence of glyphs concealing a hidden passage. Without knowing the correct sequence, the mechanism won't activate.",
+      "requiredItem": "ancient-map",
+      "hintText": "The glyph sequence is indecipherable without a guide. A map of the temple's interior might show the correct order.",
+      "solvedText": "You unroll the ancient map and match its glyph sequence to the wall. Pressing the symbols in order — jaguar, serpent, sun, skull, eagle — you hear a deep click. The wall splits apart, revealing the mechanism chamber beyond.",
+      "isGoal": true,
+      "goalName": "Decode the Glyphs",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "mechanism-chamber"
+      }
+    },
+    "open-vault": {
+      "room": "sacrificial-chamber",
+      "description": "An enormous stone door to the north is carved with a death's-head motif. A skull-shaped depression at its center waits to be filled — only a skull of sufficient power will trigger the mechanism.",
+      "requiredItem": "jade-skull",
+      "hintText": "The door has a skull-shaped depression. A skull with reflective eyes might channel the energy needed to open it.",
+      "solvedText": "You place the jade skull into the depression. The pyrite eyes catch the torchlight and project twin beams onto hidden sensors in the wall. Gears grind, counterweights shift, and the door of the dead slowly rises. Beyond lies the treasure vault — the heart of the temple.",
+      "isGoal": true,
+      "goalName": "Open the Treasure Vault",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "treasure-vault"
+      }
+    },
+    "claim-jaguar": {
+      "room": "treasure-vault",
+      "description": "A massive stone jaguar crouches on a pedestal, its paws guarding a sealed compartment. Scratched into the stone: 'ONLY THE BLADE OF THE GODS MAY FREE THE HEART OF THE JAGUAR.' The compartment is sealed with hardened resin.",
+      "requiredItem": "obsidian-knife",
+      "hintText": "The compartment is sealed with ancient resin. A blade sharp enough — perhaps one forged by the gods themselves — could cut through it.",
+      "solvedText": "You draw the obsidian knife across the ancient resin seal. The volcanic glass cuts through it like butter. The compartment springs open, and golden light floods the chamber. Inside, resting on a bed of jade beads, is the legendary Golden Jaguar — the Heart of the Jaguar God. You've found it.",
+      "isGoal": true,
+      "goalName": "Claim the Golden Jaguar",
+      "action": {
+        "type": "addItem",
+        "room": "treasure-vault",
+        "itemId": "golden-jaguar"
+      }
+    }
+  }
+}
