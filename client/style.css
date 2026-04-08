@@ -1167,6 +1167,8 @@ html, body {
   font-family: var(--font-mono);
   font-size: 13px;
   white-space: pre;
+  line-height: 1.2;
+  text-align: center;
   overflow-x: auto;
   margin-bottom: 12px;
   line-height: 1.2;
@@ -1201,6 +1203,8 @@ html, body {
   font-family: var(--font-mono);
   font-size: 14px;
   white-space: pre;
+  line-height: 1.2;
+  text-align: center;
   overflow-x: auto;
   margin-bottom: 16px;
   line-height: 1.2;
