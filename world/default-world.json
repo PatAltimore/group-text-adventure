@@ -1,56 +1,56 @@
 {
   "name": "The Forgotten Castle",
-  "description": "An ancient castle shrouded in mist, perched atop a cliff that the locals dare not climb. They say a dragon once kept its hoard here — but the dragon is long gone. What remains are locked doors, cunning traps, and treasures waiting for the bold.",
+  "description": "No one climbs the cliff anymore. The mist that clings to its face carries a smell like old copper and ash — the lingering breath of a dragon centuries dead. Its hoard still waits above, they say, sealed behind locks that outlasted their makers. The bold have tried. The bold have not returned. But tonight the fog has parted, just enough, and the portcullis hangs open like a jaw.",
   "startRoom": "entrance",
   "rooms": {
     "entrance": {
       "name": "Castle Entrance",
-      "description": "You stand before a massive stone archway, its iron portcullis rusted half-open. Moss creeps up the weathered walls, and a cold draft flows from within. The path behind you disappears into thick fog — there is no going back. To the north, a dim corridor stretches into darkness. To the east, you hear the faint sound of dripping water.",
+      "description": "A massive stone archway yawns before you, its iron portcullis rusted half-open and groaning faintly in the wind. Moss carpets the threshold, slick underfoot. Beyond it, the air turns cold and tastes of damp stone. Behind you the fog has already swallowed the path — there is no going back. To the north, a corridor exhales stale darkness. To the east, water drips in a slow, echoing rhythm.",
       "exits": { "north": "great-hall", "east": "fountain-room" },
       "items": ["torch"],
       "hazards": []
     },
     "great-hall": {
       "name": "The Great Hall",
-      "description": "A cavernous hall with vaulted ceilings lost in shadow. Tattered banners hang from the walls — their heraldry too faded to read. A long oak table dominates the center, its surface scarred by swordplay. Dust motes drift through shafts of pale light from narrow windows high above. Passages lead south back to the entrance, east to a library, and west to a kitchen.",
+      "description": "Your footsteps crack against flagstone and the sound rolls upward into vaulted shadows. Tattered banners droop from the walls, their heraldry bled to ghosts of color. A long oak table dominates the center, its surface gouged by old swordplay and stained dark in places you'd rather not examine. Dust motes drift through pale shafts of light from arrow-slit windows high above. The air smells of rotting silk and centuries of neglect. Passages lead south, east, and west.",
       "exits": { "south": "entrance", "east": "library", "west": "kitchen" },
       "items": [],
       "hazards": [
         {
-          "description": "Cobwebs thick as curtains drape the corners — something large spun them.",
+          "description": "Cobwebs thick as curtains choke the corners. They tremble faintly, though there is no breeze.",
           "probability": 0.1,
-          "deathText": "As you brush past the cobwebs, an enormous spider drops from the ceiling and sinks its fangs into your neck. The venom works fast."
+          "deathText": "You brush past the cobwebs and something massive drops onto your shoulders — legs thick as fingers wrapping your throat. Fangs punch through skin. The venom is ice-cold, and mercifully fast."
         }
       ]
     },
     "fountain-room": {
       "name": "The Fountain Room",
-      "description": "A circular chamber with a cracked marble fountain at its center. Water still trickles weakly from the mouth of a stone lion, pooling in the basin below. The walls are decorated with faded murals depicting a castle in its former glory. An archway leads west back to the entrance.",
+      "description": "A domed chamber, perfectly circular, its walls alive with faded murals of the castle in sunlit glory. At the center stands a cracked marble fountain. Water still threads from the mouth of a snarling stone lion, pooling in the basin with a hollow, dripping pulse. The mosaic floor glistens with moisture. An archway leads west to the entrance.",
       "exits": { "west": "entrance" },
       "items": ["silver-coin"],
       "hazards": [
         {
-          "description": "The floor tiles are slick with moisture — watch your step.",
+          "description": "The mosaic tiles are glazed with a thin film of water — every step threatens to betray you.",
           "probability": 0.05,
-          "deathText": "Your foot slips on the wet tiles and you crash through the crumbled fountain rim. Your head strikes the stone floor with a sickening crack."
+          "deathText": "Your heel skids on the slick tiles. You pitch sideways, arms flailing, and slam through the crumbled fountain rim. Stone meets skull with a sound like a hammer on wet clay."
         }
       ]
     },
     "library": {
       "name": "The Ancient Library",
-      "description": "Towering bookshelves line every wall, though most volumes have crumbled to dust. A reading desk sits beneath a high window, bathed in pale light. The smell of old parchment fills the air. A passage leads west back to the great hall, and a narrow stairway climbs upward to the north.",
+      "description": "Bookshelves tower floor to ceiling on every wall, though most volumes have surrendered to rot and silverfish. The smell is overwhelming — dust, old leather, the sweet decay of parchment. A reading desk sits beneath a high lancet window where pale light falls in a narrow column. A passage leads west to the great hall. To the north, a tight spiral stairway climbs into shadow.",
       "exits": { "west": "great-hall", "north": "tower-stairs" },
       "items": ["old-book"],
       "hazards": []
     },
     "kitchen": {
       "name": "The Castle Kitchen",
-      "description": "A wide stone hearth dominates one wall, its fire long cold. Copper pots hang from iron hooks overhead, green with verdigris. A heavy wooden door to the north is bound shut with a rusted iron lock. The great hall lies to the east.",
+      "description": "Soot blackens the wide stone hearth, its fire dead for longer than anyone alive can remember. Copper pots dangle from iron hooks overhead, mottled green with verdigris. The air is thick with the sour tang of old grease and something earthier — rodent musk. A heavy wooden door to the north is bound shut with a rusted iron lock. The great hall lies to the east.",
       "exits": { "east": "great-hall" },
       "items": ["rusty-key", "stale-bread"],
       "hazards": [
         {
-          "description": "Rats scurry in the shadows beneath the shelves.",
+          "description": "Claws scritch across stone in the darkness beneath the shelves. Small eyes catch the light, then vanish.",
           "probability": 0,
           "deathText": ""
         }
@@ -58,47 +58,47 @@
     },
     "tower-stairs": {
       "name": "The Tower Stairway",
-      "description": "A narrow spiral staircase winds upward, its stone steps worn smooth by centuries of footsteps. Arrow slits in the outer wall let in thin blades of cold air. The library is back to the south. The stairs continue upward to the north, but a heavy iron gate blocks the way.",
+      "description": "The staircase coils upward like a stone serpent, each step worn to a treacherous polish by centuries of boots. Wind keens through the arrow slits — thin, sharp blades of cold that cut through clothing. Far below, you can hear the distant crash of waves against the cliff. The library lies back to the south. Above, a heavy iron gate bars the way north.",
       "exits": { "south": "library" },
       "items": [],
       "hazards": [
         {
-          "description": "A cold wind howls through the arrow slits, chilling you to the bone.",
+          "description": "The wind screams through the arrow slits, shoving at you with invisible hands. The steps are barely a shoulder wide.",
           "probability": 0.08,
-          "deathText": "A fierce gust catches you mid-step on the narrow spiral staircase. You stumble, lose your footing, and tumble down the stone steps into darkness."
+          "deathText": "A gust hammers through the stairwell like a fist. Your boot finds nothing but air. The spiral swallows you — stone battering shoulder, hip, skull — and then the falling stops."
         }
       ]
     },
     "dungeon": {
       "name": "The Dungeon",
-      "description": "A grim chamber of dark stone and iron shackles. Water seeps through the walls, and the air is heavy and stale. The only way out is south through the kitchen.",
+      "description": "The ceiling presses down, barely higher than your head. Dark stone weeps moisture in long streaks, and the air sits heavy in your lungs — wet, stale, tinged with rust and something organic you don't want to name. Iron shackles hang from the walls, some still closed around shapes you refuse to look at closely. The only way out is south, back through the kitchen.",
       "exits": { "south": "kitchen" },
       "items": ["golden-key"],
       "hazards": [
         {
-          "description": "The ceiling is dangerously low — watch your head on the rough-hewn beams.",
+          "description": "Rough-hewn beams jut from the ceiling at cruel, irregular angles. One wrong step, one careless glance upward.",
           "probability": 0.05,
-          "deathText": "You stand up too quickly and crack your skull on a jagged beam. Stars explode behind your eyes, then nothing."
+          "deathText": "You straighten too fast. A jagged beam catches your temple with the sound of a splitting gourd. Light flares white behind your eyes, then collapses to a point, then nothing at all."
         }
       ]
     },
     "armory": {
       "name": "The Armory",
-      "description": "Racks of rusted weapons line the walls — swords, halberds, and crossbows, all long past their prime. A suit of armor stands in the corner like a silent sentinel. Against one wall sits an ornate chest with a golden lock. A passage leads south back to the tower stairway.",
+      "description": "Racks of rusted weapons crowd the walls — notched swords, bent halberds, crossbows with rotted strings. A suit of plate armor stands sentinel in the corner, one gauntlet raised as if frozen mid-salute. The air tastes of iron filings. Against the far wall sits an ornate chest bound with a golden lock, its wood still dark and oiled, untouched by the decay that claimed everything else. A passage leads south to the tower stairway.",
       "exits": { "south": "tower-stairs" },
       "items": ["shield"],
       "hazards": []
     },
     "throne-room": {
       "name": "The Throne Room",
-      "description": "At last — the throne room. A vast chamber with pillars of carved stone and a floor of polished black marble. At the far end, atop a dais, sits an ancient throne of dark wood and silver. Behind it, a tapestry depicts a dragon coiled around a mountain of gold. You have reached the heart of the Forgotten Castle.",
+      "description": "Silence falls like a held breath. Pillars of carved stone march toward a dais of polished black marble that drinks the light. Atop it sits the throne — dark wood and tarnished silver, ancient beyond reckoning. Behind it, a tapestry spans the entire wall: a dragon coiled around a mountain of gold, its ruby eye still gleaming after all these centuries. Your footsteps echo and echo and do not come back. You have reached the heart of Castle Drakenmoor.",
       "exits": { "south": "armory" },
       "items": ["dragon-crown"],
       "hazards": []
     },
     "secret-garden": {
       "name": "The Secret Garden",
-      "description": "Through a hidden door you discover an enclosed courtyard open to the sky. Wildflowers and ivy have reclaimed the space, growing over crumbled statues and stone benches. A crystal-clear spring bubbles up from the ground. It's peaceful here — a sharp contrast to the castle's gloom. The fountain room is back to the east.",
+      "description": "Sunlight floods through the open sky above and you blink, dazzled after the castle's perpetual gloom. An enclosed courtyard stretches before you, surrendered entirely to wildflowers and creeping ivy. Stone benches lie half-buried in clover. Crumbled statues peer through curtains of wisteria. A crystal spring wells up from the earth with a soft, musical burble, and the air smells impossibly of honeysuckle and rain. The fountain room is back to the east.",
       "exits": { "east": "fountain-room" },
       "items": ["healing-herb"],
       "hazards": []
@@ -107,65 +107,65 @@
   "items": {
     "torch": {
       "name": "Torch",
-      "description": "A sturdy wooden torch wrapped in oil-soaked rags. It gives off a warm, flickering light.",
-      "roomText": "A torch flickers in an iron sconce on the wall.",
-      "pickupText": "You lift the torch from its iron sconce. Its flame casts dancing shadows on the walls.",
+      "description": "A length of ash wood wrapped tight in oil-soaked rags. The flame gutters and sways but holds — warm against your knuckles, smelling of pine tar.",
+      "roomText": "A torch sputters in a rusted iron sconce, throwing restless shadows across the stone.",
+      "pickupText": "You wrench the torch free of its sconce. The flame dips, steadies, and the darkness retreats a reluctant step.",
       "portable": true
     },
     "silver-coin": {
       "name": "Silver Coin",
-      "description": "A tarnished silver coin stamped with the face of a long-dead king. It feels oddly warm to the touch.",
-      "roomText": "A silver coin glints at the bottom of the fountain basin.",
-      "pickupText": "You fish the silver coin out of the fountain basin. It glints in the light.",
+      "description": "A tarnished silver coin bearing the profile of a king whose name history has forgotten. It sits oddly warm in your palm, as if remembering the hand that last held it.",
+      "roomText": "Something glints beneath the murky water in the fountain basin — a coin, catching what little light there is.",
+      "pickupText": "You plunge your hand into the icy basin and close your fingers around the coin. It pulses warm against your skin, as though grateful to be found.",
       "portable": true
     },
     "old-book": {
-      "name": "Old Book",
-      "description": "A leather-bound tome titled 'The Secrets of Castle Drakenmoor.' A bookmark is placed at a page describing a hidden garden accessible through the fountain room's west wall.",
-      "roomText": "A single intact book rests on the reading desk, its leather cover embossed with a golden lock.",
-      "pickupText": "You carefully pick up the ancient book. A loose page flutters to the ground — it's a map fragment.",
+      "name": "Tome of Drakenmoor",
+      "description": "A leather-bound volume titled 'The Secrets of Castle Drakenmoor,' its spine cracked but holding. A faded silk bookmark rests at a page describing a hidden garden beyond the fountain room's west wall.",
+      "roomText": "One book alone has survived the decay — a leather-bound tome resting on the reading desk, its cover embossed with a golden lock.",
+      "pickupText": "You ease the book from the desk. Brittle pages whisper against each other. A loose leaf slips free and spirals to the floor — a hand-drawn map fragment, ink still legible.",
       "portable": true
     },
     "rusty-key": {
       "name": "Rusty Key",
-      "description": "A heavy iron key, orange with rust but still solid. It looks like it would fit a large, old lock.",
-      "roomText": "A rusty key hangs on a hook beside the hearth.",
-      "pickupText": "You grab the rusty key from the kitchen shelf. It's heavier than it looks.",
+      "description": "A heavy iron key, crusted orange with rust but still solid at the core. Its teeth are worn but deliberate — made for one lock and one lock only.",
+      "roomText": "A key hangs on a bent nail beside the hearth, so rusted it nearly blends into the soot-stained stone.",
+      "pickupText": "You lift the key from its nail. It's heavier than it looks, and flakes of rust cling to your fingers like dried blood.",
       "portable": true
     },
     "stale-bread": {
       "name": "Stale Bread",
-      "description": "A rock-hard loaf of bread. It's been here a very long time, but surprisingly hasn't molded — just petrified.",
-      "roomText": "A petrified loaf of bread sits on the counter.",
-      "pickupText": "You pick up the stale bread. It's basically a weapon at this point.",
+      "description": "A loaf of bread turned to stone by time. It hasn't molded — it has fossilized, hard as masonry and roughly as appetizing.",
+      "roomText": "A petrified loaf of bread sits on the counter, so ancient it could pass for a cobblestone.",
+      "pickupText": "You heft the stale bread. It thuds into your palm like a brick. Not food anymore — but possibly useful as a blunt instrument.",
       "portable": true
     },
     "golden-key": {
       "name": "Golden Key",
-      "description": "An ornate golden key with a dragon's head for a bow. It gleams even in the dim dungeon light.",
-      "roomText": "A skeleton slumps against the far wall, its bony fingers still clutching a golden key.",
-      "pickupText": "You pry the golden key from the skeleton's bony grasp. It releases with a soft click.",
+      "description": "An ornate key of burnished gold, its bow shaped into a snarling dragon's head with tiny garnet eyes. It gleams defiantly in the dungeon's gloom, untouched by the rot that claimed its last owner.",
+      "roomText": "Against the far wall, a skeleton slumps in rusted chains. Its bony fingers cradle a golden key — the only bright thing in this wretched place.",
+      "pickupText": "You pry the golden key from the skeleton's grip. The bones resist, then release with a dry click, as though finally letting go of a duty held too long.",
       "portable": true
     },
     "shield": {
       "name": "Knight's Shield",
-      "description": "A battered but sturdy shield bearing the crest of Castle Drakenmoor — a dragon rampant on a field of blue.",
-      "roomText": "A battered shield leans against the weapon rack.",
-      "pickupText": "You take the shield from the armor rack. It's dented but still strong.",
+      "description": "A kite shield of battered oak and dented steel, bearing the crest of Castle Drakenmoor — a dragon rampant on a field of midnight blue. Sword-cuts score its face like old arguments.",
+      "roomText": "A shield leans forgotten against the weapon rack, its Drakenmoor crest barely visible beneath the grime.",
+      "pickupText": "You hoist the shield by its leather grip. It's heavier than expected — good steel under the dents. Someone trusted their life to this.",
       "portable": true
     },
     "dragon-crown": {
       "name": "Dragon Crown",
-      "description": "A magnificent crown of silver and gold, set with rubies that seem to glow with inner fire. This is the legendary treasure of Castle Drakenmoor.",
-      "roomText": "On the seat of the throne rests a glittering crown that seems to pulse with ancient power.",
-      "pickupText": "You lift the Dragon Crown from the throne. It pulses with ancient power. You have claimed the treasure of the Forgotten Castle!",
+      "description": "A crown of woven silver and gold, set with rubies that smolder with an inner fire no jeweler could kindle. It hums faintly in your hands, as though the last heartbeat of Castle Drakenmoor still echoes inside it.",
+      "roomText": "There, on the seat of the throne — a crown. Its rubies burn like embers in the dim light, pulsing slowly, as if breathing.",
+      "pickupText": "Your fingers close around the Dragon Crown and warmth floods up your arms. The rubies flare. Somewhere deep in the castle, stone groans. You have claimed the treasure of Drakenmoor.",
       "portable": true
     },
     "healing-herb": {
       "name": "Healing Herb",
-      "description": "A sprig of luminous green herb that grows near the spring. Legend says it can cure any ailment.",
-      "roomText": "A luminous green herb grows beside the crystal-clear spring.",
-      "pickupText": "You carefully pluck the healing herb. Its leaves shimmer with a faint, otherworldly light.",
+      "description": "A sprig of herb that glows faintly green, as if lit from within. Its leaves are cool and faintly sticky with sap that smells of mint and something older — forest rain, maybe, or starlight.",
+      "roomText": "Beside the spring, a single herb grows luminous and green, its glow steady as a candle flame despite the breeze.",
+      "pickupText": "You pluck the healing herb with care. Its glow intensifies at your touch, and the air fills with a scent like rain on warm stone.",
       "portable": true
     }
   },
@@ -174,8 +174,8 @@
       "room": "kitchen",
       "description": "A heavy wooden door to the north is bound shut with a rusted iron lock.",
       "requiredItem": "rusty-key",
-      "hintText": "The lock is rusted but intact. Perhaps a matching key lies somewhere nearby.",
-      "solvedText": "You fit the rusty key into the lock and twist. With a grinding screech, the lock gives way and the door swings open, revealing a dark passage leading north to the dungeon.",
+      "hintText": "The lock is massive and orange with rust, but the keyhole is clear — someone oiled it, once. A key of the same era might still turn it.",
+      "solvedText": "You slide the rusty key into the lock. For a moment nothing happens — then you twist harder and metal shrieks against metal. The bolt surrenders. The door groans open, exhaling a breath of cold, foul air from the darkness beyond.",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -184,10 +184,10 @@
     },
     "unlock-armory": {
       "room": "tower-stairs",
-      "description": "A heavy iron gate blocks the way up the tower stairs.",
+      "description": "A heavy iron gate bars the way up the tower stairs. Its bars are cold to the touch and immovable.",
       "requiredItem": "silver-coin",
-      "hintText": "A coin-shaped slot glints on the gate's mechanism. Something shiny might fit.",
-      "solvedText": "You press the silver coin into the slot on the iron gate. Ancient gears click and whir, and the gate slowly rises, revealing the passage north to the armory.",
+      "hintText": "Near the gate's hinge, a coin-shaped slot is set into the stonework — worn smooth, as though many hands once fed it tribute.",
+      "solvedText": "You press the silver coin into the slot. It sinks flush with a satisfying click. Deep inside the wall, ancient gears shudder to life — grinding, clicking, protesting — and the iron gate shrieks upward on hidden chains, revealing the passage north.",
       "isGoal": true,
       "goalName": "Open the Armory",
       "action": {
@@ -198,10 +198,10 @@
     },
     "unlock-throne": {
       "room": "armory",
-      "description": "An ornate chest with a golden lock sits against the wall. Perhaps it holds the key to the passage north.",
+      "description": "An ornate chest crouches against the wall, its golden lock catching the light. Whatever it guards, the castle's builders meant it to last.",
       "requiredItem": "golden-key",
-      "hintText": "The golden lock gleams — only a key of matching splendor could turn it.",
-      "solvedText": "You insert the golden key into the golden lock on the chest. It turns smoothly. Inside you find a lever — you pull it, and a hidden passage opens to the north, leading to the throne room!",
+      "hintText": "The lock is gold — not gilded, solid gold, shaped like a dragon's maw. Only a key forged with equal craft could wake it.",
+      "solvedText": "The golden key slides home and turns as smoothly as if it were made yesterday. The chest lid rises on oiled hinges, revealing a single iron lever. You pull it. Stone rumbles. The north wall splits open, and torchlight spills into a vast chamber beyond — the throne room.",
       "isGoal": true,
       "goalName": "Reach the Throne Room",
       "action": {
@@ -212,10 +212,10 @@
     },
     "reveal-garden": {
       "room": "fountain-room",
-      "description": "The murals on the wall hint at a hidden space beyond. The old book mentions a secret garden accessible through the west wall.",
+      "description": "The murals on the west wall seem to depict more than memory — a garden, painted with obsessive detail, as though the artist wanted to preserve the way back.",
       "requiredItem": "old-book",
-      "hintText": "The murals seem to tell a story. An old tome might reveal what's hidden here.",
-      "solvedText": "You hold the old book up to the mural on the west wall. The map fragment inside matches perfectly — you press the hidden stone, and a section of wall grinds open, revealing a secret garden to the west!",
+      "hintText": "The painted garden on the west wall is too detailed to be mere decoration. Something written might explain what the artist was trying to say.",
+      "solvedText": "You hold the tome open to the map fragment and press it against the west wall. The lines align perfectly. Your fingers find the hidden stone — you push, and the wall shudders, grinds, and swings inward. Sunlight and the scent of wildflowers pour through the gap.",
       "isGoal": true,
       "goalName": "Discover the Secret Garden",
       "action": {

@@ -1,11 +1,11 @@
 {
   "name": "The Lost Pyramid",
-  "description": "Deep in the desert sands, a buried pyramid has been uncovered by a fierce sandstorm. Ancient hieroglyphics warn of a terrible curse upon any who enter — but also promise unimaginable treasure. You stand at the entrance, torch in hand. The wind dies behind you as you step inside. The sand shifts, sealing the way out. The only way is forward, into the dark.",
+  "description": "A sandstorm has scoured away three thousand years of silence. The pyramid stands exposed against the sky, its entrance gaping like a wound in the earth. Hieroglyphics flanking the threshold promise two things: treasure beyond imagining, and death for any who seek it. You take the torch. You step inside. Behind you, the sand shifts and seals the way out. The desert has swallowed your retreat. Forward, then. Into the dark.",
   "startRoom": "entrance",
   "rooms": {
     "entrance": {
       "name": "Pyramid Entrance",
-      "description": "Massive limestone blocks frame a narrow passage descending into shadow. Carved cobras flank the doorway, their stone eyes seeming to follow you. Sand spills down the steps like a slow golden waterfall. The air changes as you cross the threshold — dry, ancient, untouched for millennia. Faded hieroglyphics cover every surface, telling stories of a pharaoh who conquered death itself. A grand corridor stretches north into darkness. To the east, a narrow crack in the wall reveals a hidden passage.",
+      "description": "Limestone blocks the size of chariots frame a passage descending into blackness. Carved cobras flank the doorway, their hooded heads worn smooth by centuries of wind. Each step kicks up golden dust that hangs in your torchlight like suspended time. The air tastes of mineral and age — dry as bone, undisturbed for millennia. Hieroglyphics crowd every surface, their faded pigments whispering of a pharaoh who conquered death itself. A grand corridor yawns to the north. To the east, a narrow crack in the wall breathes cool air — a hidden passage.",
       "exits": {
         "north": "grand-corridor",
         "east": "hidden-passage"
@@ -15,15 +15,15 @@
       ],
       "hazards": [
         {
-          "description": "Fine sand trickles from cracks in the ceiling — the ancient stones are shifting.",
+          "description": "Fine sand trickles from cracks overhead. Somewhere deep in the stone, something groans and shifts.",
           "probability": 0.05,
-          "deathText": "A massive limestone block dislodges from the ceiling and crashes down. The pyramid reclaims another soul."
+          "deathText": "A massive limestone block wrenches free from the ceiling and hammers down. The sound is swallowed instantly by silence. The pyramid reclaims another soul."
         }
       ]
     },
     "grand-corridor": {
       "name": "The Grand Corridor",
-      "description": "A long corridor stretches before you, its walls alive with painted scenes of the afterlife — jackal-headed Anubis weighing hearts, golden boats sailing across a star-filled sky, armies of the dead marching in eternal service. The paint still holds its color after three thousand years. Oil channels cut into the floor once held flames to light the way. The ceiling rises high above, supported by pillars carved as bundled papyrus. To the south is the entrance. Passages lead west to an offering hall and east to a chamber decorated with a carved sphinx. A sealed stone door to the north bears a scarab-shaped indentation.",
+      "description": "Painted gods process along the walls in vivid silence — jackal-headed Anubis weighing a feather against a human heart, golden barques sailing a river of stars, armies of the dead marching toward eternity. The pigments still burn with color after three millennia. Oil channels cut into the floor once held ribbons of flame; now they cradle only dust. The ceiling vaults high overhead, supported by pillars carved as bundled papyrus stalks. The entrance lies south. Passages branch west toward an offering hall and east toward a chamber dominated by a carved sphinx. A sealed stone door to the north bears a scarab-shaped indentation.",
       "exits": {
         "south": "entrance",
         "west": "offering-hall",
@@ -32,15 +32,15 @@
       "items": [],
       "hazards": [
         {
-          "description": "Tiny holes line the walls at ankle height — dart traps, ancient but possibly still armed.",
+          "description": "Tiny holes line the walls at ankle height — dart traps, ancient but possibly still armed. The mechanisms gleam with oil that never dried.",
           "probability": 0.1,
-          "deathText": "A click beneath your foot. A volley of poison darts erupts from the wall. The ancient venom still works — your legs buckle and the painted gods watch impassively as you fall."
+          "deathText": "A click beneath your foot. A volley of darts erupts from the wall in a hiss of bronze. The ancient venom still works — your legs buckle, your torch drops, and the painted gods watch with flat, indifferent eyes as you fall."
         }
       ]
     },
     "hidden-passage": {
       "name": "Hidden Passage",
-      "description": "A claustrophobic tunnel barely wide enough for your shoulders. The walls are rough-hewn, unfinished — this passage was carved in secret, outside the master plan. Cobwebs thick as cotton drape across your face. Scratched into the stone in hasty hieratic script: 'FOR THE KEEPER ALONE.' The passage twists west back to the entrance. To the north, it opens into a wider chamber.",
+      "description": "The walls press in. Rough-hewn stone scrapes your shoulders as you shuffle through a tunnel never meant for the living. Cobwebs thick as gauze cling to your face and hair. The chisel marks are hasty, panicked — this passage was carved in secret, outside the master plan. Scratched into the wall in hieratic script, barely legible: 'FOR THE KEEPER ALONE.' The passage twists west to the entrance. To the north, it opens into a wider chamber.",
       "exits": {
         "west": "entrance",
         "north": "trap-room"
@@ -52,7 +52,7 @@
     },
     "offering-hall": {
       "name": "The Offering Hall",
-      "description": "A wide chamber lined with stone shelves bearing the desiccated remains of food offerings — bread turned to powder, fruit mummified into dark husks, jars of honey still perfectly preserved after millennia. An altar of black granite dominates the center, carved with prayers to Osiris. Canopic jars painted with the four sons of Horus stand in a neat row behind the altar. The grand corridor is east. A passage to the north leads deeper into the pyramid.",
+      "description": "The smell hits first — ancient grain turned to powder, dried resin, the faint sweetness of honey still perfectly preserved. Stone shelves line the walls, bearing mummified offerings: bread collapsed to dust, fruit shrunken into dark husks, alabaster jars sealed tight against eternity. A black granite altar dominates the center, its surface carved with prayers to Osiris and stained dark with ancient libations. Behind it, canopic jars painted with the four sons of Horus stand in solemn procession. The grand corridor lies east. A passage north leads deeper into the pyramid's heart.",
       "exits": {
         "east": "grand-corridor",
         "north": "treasure-room"
@@ -63,15 +63,15 @@
       ],
       "hazards": [
         {
-          "description": "The air here is thick and stale — millennia of sealed atmosphere pressing against your lungs.",
+          "description": "The air here is thick and stale, pressing against your lungs like wet cloth. Your torch flame shrinks to a blue whisper.",
           "probability": 0.08,
-          "deathText": "The ancient air is toxic with three thousand years of decay. Your torch gutters and dies. So do you, gasping in the absolute dark."
+          "deathText": "Three thousand years of sealed decay have poisoned this air. Your torch gutters. Your vision narrows. You sink to your knees on the cold stone, gasping at nothing, and the offerings watch your final breath with painted eyes."
         }
       ]
     },
     "sphinx-chamber": {
       "name": "The Sphinx Chamber",
-      "description": "A carved sphinx crouches against the far wall, twice your height, its human face worn smooth but still regal. Between its paws is a stone pedestal with a shallow bowl-shaped depression. The walls are covered in riddles written in demotic script. Moonlight — impossibly — filters down through a shaft in the ceiling, illuminating the sphinx's face with an ethereal glow. The grand corridor is west. To the north, a heavy door is carved with the Eye of Horus.",
+      "description": "A great sphinx crouches against the far wall, twice your height, its human face worn smooth by time into something both regal and unknowable. Between its outstretched paws, a stone pedestal holds a shallow bowl-shaped depression. Riddles in demotic script spiral across the walls — questions without answers, answers without questions. Moonlight slants down through a shaft in the ceiling, impossibly, painting the sphinx's face in cold silver. The grand corridor lies west. To the north, a heavy door carved with the Eye of Horus bars the way forward.",
       "exits": {
         "west": "grand-corridor"
       },
@@ -82,7 +82,7 @@
     },
     "trap-room": {
       "name": "The Trap Room",
-      "description": "The floor is a mosaic of pressure plates, each engraved with a different hieroglyph. Scorch marks and scattered bones tell you what happens when you step on the wrong one. The walls are lined with spring-loaded mechanisms — some spent, others still coiled and ready. A skeleton in explorer's garb lies crumpled in the corner, one hand outstretched toward a glinting object. The hidden passage is south. A doorway to the west is blocked by a collapsed stone slab.",
+      "description": "A mosaic of pressure plates tessellates the floor, each tile engraved with a different hieroglyph. Scorch marks blacken the walls. Scattered bones tell the rest of the story. Spring-loaded mechanisms line both sides — some spent, their bronze teeth bared, others still coiled tight and hungry. In the far corner, a skeleton in sun-bleached khakis lies crumpled, one hand outstretched toward something that glints gold. The hidden passage retreats south. A doorway to the west is sealed by a collapsed stone slab.",
       "exits": {
         "south": "hidden-passage"
       },
@@ -91,30 +91,30 @@
       ],
       "hazards": [
         {
-          "description": "Pressure plates cover the floor — each step could trigger an ancient mechanism.",
+          "description": "Pressure plates cover the floor in an unbroken mosaic. Each step could be your last — the mechanisms are still tensed to strike.",
           "probability": 0.15,
-          "deathText": "Your foot finds the wrong hieroglyph. A grinding of stone, a flash of bronze blades, and the trap room claims another victim. Your bones will join the others."
+          "deathText": "Your foot finds the wrong hieroglyph. Stone screams against stone. Bronze blades scissor from the walls in a blur. The trap room claims another visitor. Your bones will join the rest."
         }
       ]
     },
     "burial-chamber": {
       "name": "The Burial Chamber",
-      "description": "You stand in the outer burial chamber. Stone sarcophagi line the walls — servants and nobles entombed to serve the pharaoh in death. Their painted faces stare with vacant eyes. Gold leaf peels from the ceiling in delicate curls. The air vibrates with a low hum you feel more than hear, as if the pyramid itself is breathing. The grand corridor is south. To the east, an ornate doorway framed with lapis lazuli leads to the pharaoh's inner tomb — but it is sealed with a mechanism requiring some kind of offering.",
+      "description": "Stone sarcophagi ring the walls — servants, priests, nobles, all entombed to attend the pharaoh through eternity. Their painted faces stare with flat, patient eyes. Gold leaf curls from the ceiling in delicate spirals, drifting down like metallic snow. A low hum vibrates through the floor and into your bones. The pyramid is breathing in its sleep. The grand corridor lies south. To the east, an ornate doorway framed in lapis lazuli leads to the pharaoh's inner sanctum — but its mechanism demands an offering before it will open.",
       "exits": {
         "south": "grand-corridor"
       },
       "items": [],
       "hazards": [
         {
-          "description": "A faint green mist clings to the floor — the pharaoh's curse made manifest.",
+          "description": "A faint green mist clings to the floor, curling around the sarcophagi like searching fingers. The pharaoh's curse, given form.",
           "probability": 0.1,
-          "deathText": "The green mist rises, coiling around your ankles, your waist, your throat. The pharaoh's curse squeezes the life from you. Your scream echoes through chambers no living ears will hear."
+          "deathText": "The green mist rises — ankle, waist, throat. It constricts. The pharaoh's curse squeezes the air from your lungs in a long, thin wheeze. Your scream dies unborn in chambers no living ears will ever find."
         }
       ]
     },
     "treasure-room": {
       "name": "The Treasure Room",
-      "description": "Mountains of gold. Your torchlight catches it and the room erupts into blinding brilliance — golden statues of cats and falcons, jeweled collars, ivory game boards, chariots plated in electrum, and chests overflowing with lapis lazuli and carnelian. This is a fortune beyond comprehension, untouched for three thousand years. But the walls are carved with warnings: 'TAKE NOTHING. THE WEIGHT OF GREED WILL CRUSH YOU.' The offering hall is south. To the east, a passage leads to an observatory.",
+      "description": "Gold. Your torch catches it and the chamber detonates into blinding radiance. Golden cats, golden falcons, jeweled collars heaped on ivory game boards, chariots sheathed in electrum, chests hemorrhaging lapis lazuli and carnelian. A nation's ransom, untouched for three thousand years. The air itself tastes of metal. But the walls speak a warning, carved deep into the stone: 'TAKE NOTHING. THE WEIGHT OF GREED WILL CRUSH YOU.' The offering hall lies south. To the east, a passage leads toward something that smells of open sky.",
       "exits": {
         "south": "offering-hall",
         "east": "star-chamber"
@@ -122,15 +122,15 @@
       "items": [],
       "hazards": [
         {
-          "description": "The ceiling is supported by a single cracked pillar — the weight of the pyramid presses down.",
+          "description": "A single cracked pillar supports the ceiling. The weight of a million limestone blocks presses down. The crack is wider than it was a moment ago.",
           "probability": 0.12,
-          "deathText": "The cracked pillar finally gives way. The ceiling descends with the weight of a million limestone blocks. The treasure room becomes your golden tomb."
+          "deathText": "The pillar surrenders. The ceiling descends with the slow inevitability of a closing fist, and a million tons of limestone entomb you alongside the gold. The treasure room becomes your sarcophagus. The pharaoh always keeps what is his."
         }
       ]
     },
     "pharaohs-tomb": {
       "name": "The Pharaoh's Tomb",
-      "description": "The inner sanctum. A single massive sarcophagus of black basalt dominates the chamber, its lid carved in the perfect likeness of Pharaoh Khetankhamen — serene, eternal, terrible. The walls are solid gold, engraved with the complete Book of the Dead. Four guardian statues of Anubis stand at the corners, obsidian eyes gleaming. The sarcophagus lid is slightly ajar. An obsidian Eye of Horus amulet hangs from a peg on the wall. The burial chamber is west.",
+      "description": "The air turns cold. A single sarcophagus of black basalt dominates the chamber — massive, absolute. Its lid is carved in the perfect likeness of Pharaoh Khetankhamen: serene, eternal, terrible. The walls are solid gold, every inch engraved with the complete Book of the Dead — spells to carry a soul through the underworld and into the stars. Four Anubis statues stand sentinel at the corners, obsidian eyes catching your torchlight with an almost-living gleam. The sarcophagus lid sits slightly ajar. Something breathes in the dark beneath it. The burial chamber lies west.",
       "exits": {
         "west": "burial-chamber"
       },
@@ -141,7 +141,7 @@
     },
     "star-chamber": {
       "name": "The Star Chamber",
-      "description": "An astronomical observatory at the pyramid's apex. The ceiling is pierced by a narrow shaft aimed precisely at the North Star — the ancient builders aligned it perfectly. Star charts are carved into the obsidian floor, mapping constellations that guided souls to the afterlife. Lenses of polished crystal focus starlight into a beam that strikes a golden disc on the south wall. The disc can be rotated. A golden disc engraved with Ra's face is mounted on the south wall, catching the starlight. The treasure room is west. You sense this is a place of great power and great endings.",
+      "description": "The ceiling opens to the sky. A narrow shaft, cut with impossible precision, frames the North Star in its aperture — the ancient builders' final triumph of alignment. Star charts carved into the obsidian floor map constellations three thousand years dead, charting the soul's passage to the Field of Reeds. Lenses of polished crystal focus the starlight into a single beam that strikes a golden disc on the south wall. The disc can be rotated. The treasure room lies west. Something hums at the edge of hearing — the stars themselves, perhaps, singing the dead home.",
       "exits": {
         "west": "treasure-room"
       },
@@ -154,75 +154,75 @@
   "items": {
     "torch": {
       "name": "Torch",
-      "description": "A pitch-soaked reed torch that burns with a steady amber flame. Essential in the lightless depths of the pyramid.",
-      "pickupText": "You lift the torch from its bracket. Shadows leap and dance on the ancient walls.",
+      "description": "A pitch-soaked reed torch that burns with a steady amber flame. It spits and crackles softly, pushing back the darkness that has ruled these corridors for thirty centuries.",
+      "pickupText": "You lift the torch from its bracket. Shadows reel across the walls like startled things.",
       "portable": true,
-      "roomText": "A torch burns steadily in a bronze bracket beside the entrance."
+      "roomText": "A torch gutters in a bronze bracket beside the entrance, its flame stubborn against the dark."
     },
     "ancient-scroll": {
       "name": "Ancient Scroll",
-      "description": "A papyrus scroll sealed with wax bearing the cartouche of Pharaoh Khetankhamen. Unrolling it reveals a map of the pyramid's traps — and a riddle: 'The sphinx drinks moonlight; feed it the sun.'",
-      "pickupText": "You carefully extract the scroll from a niche in the wall. The papyrus crackles but holds.",
+      "description": "Brittle papyrus sealed with wax bearing the cartouche of Pharaoh Khetankhamen. Unrolled, it reveals a map of the pyramid's traps — and a riddle inked in careful hieratic: 'The sphinx drinks moonlight; feed it the sun.'",
+      "pickupText": "You ease the scroll from its hiding place. The papyrus crackles like old bones, but holds.",
       "portable": true,
-      "roomText": "A rolled papyrus scroll is wedged into a crack in the passage wall."
+      "roomText": "A rolled papyrus scroll juts from a crack in the passage wall, its wax seal crumbling."
     },
     "scarab-amulet": {
       "name": "Scarab Amulet",
-      "description": "A carved lapis lazuli scarab beetle set in a golden frame. Sacred to Khepri, god of the rising sun. It's warm to the touch, as if it remembers the desert heat.",
-      "pickupText": "You take the scarab amulet from the pedestal. It pulses with faint warmth against your palm.",
+      "description": "A carved lapis lazuli scarab set in hammered gold. Sacred to Khepri, god of the rising sun. It radiates faint warmth, as though it still remembers the desert heat it was carved beneath.",
+      "pickupText": "You lift the scarab from the pedestal. Warmth pulses against your palm — a tiny heartbeat of trapped sunlight.",
       "portable": true,
-      "roomText": "A brilliant blue scarab amulet rests on the pedestal between the sphinx's paws."
+      "roomText": "A brilliant blue scarab amulet rests on the pedestal between the sphinx's paws, catching the moonlight."
     },
     "golden-ankh": {
       "name": "Golden Ankh",
-      "description": "A golden ankh — the key of life. This ceremonial piece is heavier than it looks, solid gold with inlaid turquoise. The loop at the top fits perfectly in the hand.",
-      "pickupText": "You lift the golden ankh from the altar. It hums faintly, as if alive.",
+      "description": "The key of life, cast in solid gold with turquoise veins. Heavier than it looks — the weight of divine authority made tangible. The loop at the top fits perfectly in the hand, as if it were made for holding.",
+      "pickupText": "You lift the ankh from the altar. A low hum resonates through the gold and into your wrist. It feels alive.",
       "portable": true,
-      "roomText": "A golden ankh gleams on the altar beside the offering vessels."
+      "roomText": "A golden ankh gleams on the altar, its turquoise inlay vivid against the dark stone."
     },
     "canopic-jar": {
       "name": "Canopic Jar",
-      "description": "A limestone jar with a jackal-headed lid — the vessel of Duamutef, guardian of the stomach. It's sealed tight and something shifts inside when you tilt it.",
-      "pickupText": "You take the canopic jar. The contents shift with a wet, heavy sound. Best not to think about it.",
+      "description": "A limestone jar capped with the snarling jackal head of Duamutef, guardian of the stomach. Sealed tight. Something shifts inside when you tilt it — wet, heavy, patient.",
+      "pickupText": "You take the jar. Its contents settle with a thick, visceral sound. Best not to think about what's inside.",
       "portable": true,
-      "roomText": "One canopic jar stands apart from the others, its jackal-headed lid slightly askew."
+      "roomText": "One canopic jar stands apart from its brothers, its jackal-headed lid sitting slightly askew."
     },
     "pharaohs-mask": {
       "name": "Pharaoh's Death Mask",
-      "description": "A stunning golden death mask with lapis lazuli eyes and a striped nemes headdress. The face is serene and ageless — the idealized likeness of Pharaoh Khetankhamen himself.",
-      "pickupText": "You lift the death mask from the skeleton's outstretched hand. The golden face stares back at you with unsettling calm.",
+      "description": "A death mask of beaten gold with lapis lazuli eyes and a striped nemes headdress. The face is serene, ageless — the idealized likeness of Pharaoh Khetankhamen, frozen between life and eternity.",
+      "pickupText": "You pry the mask from the skeleton's outstretched fingers. The golden face regards you with unsettling calm, as if it has been waiting.",
       "portable": true,
-      "roomText": "A golden death mask glints near the outstretched hand of a fallen explorer."
+      "roomText": "A golden death mask glints near the outstretched hand of a fallen explorer, half-buried in dust."
     },
     "eye-of-horus": {
       "name": "Eye of Horus",
-      "description": "A carved obsidian amulet in the shape of the wedjat — the Eye of Horus. It is said to offer protection against evil and grant true sight in darkness.",
-      "pickupText": "You take the Eye of Horus. The obsidian is ice-cold, and for a moment, you see the corridor as it was three thousand years ago — lit, painted, alive.",
+      "description": "The wedjat — the Eye of Horus — carved from a single piece of obsidian so black it seems to drink the light. Said to ward against evil and grant true sight in the deepest dark.",
+      "pickupText": "You take the Eye. The obsidian is ice-cold, and for a heartbeat the corridor blazes with color — painted, lit, alive, as it was three thousand years ago. Then the vision fades.",
       "portable": true,
-      "roomText": "An obsidian Eye of Horus amulet hangs from a peg on the wall."
+      "roomText": "An obsidian Eye of Horus hangs from a bronze peg, swaying almost imperceptibly, as if someone just touched it."
     },
     "sun-disc": {
       "name": "Sun Disc",
-      "description": "A polished golden disc engraved with the face of Ra, the sun god. It catches and focuses light with supernatural intensity — a miniature sun forged by human hands.",
-      "pickupText": "You pry the sun disc from its mount. Even in torchlight, it blazes with reflected glory.",
+      "description": "A polished golden disc engraved with the face of Ra. Even in dim light it blazes — a miniature sun forged by human hands, focusing and magnifying every stray photon that strikes its surface.",
+      "pickupText": "You wrench the disc from its mount. Torchlight floods its surface and the chamber flares white for an instant. You hold captured sunlight in your hands.",
       "portable": true,
-      "roomText": "A golden disc engraved with Ra's face is mounted on the south wall, catching the starlight."
+      "roomText": "A golden disc engraved with Ra's face is mounted on the south wall, blazing where the starlight strikes it."
     },
     "scepter-of-ra": {
       "name": "Scepter of Ra",
-      "description": "A golden scepter crowned with a miniature sun disc, encrusted with rubies and turquoise. The symbol of divine authority over Upper and Lower Egypt. It thrums with ancient power.",
-      "pickupText": "You lift the Scepter of Ra from its hidden compartment. Golden light pulses through the chamber. You hold the power of the sun god in your hands.",
+      "description": "A golden scepter crowned with a miniature sun disc, encrusted with rubies and turquoise. The was-scepter — symbol of divine authority over Upper and Lower Egypt. It thrums in your grip, warm and restless, as if the power of Ra himself strains against the gold.",
+      "pickupText": "You lift the Scepter of Ra from its compartment. Golden light floods the chamber, and for a moment you cast no shadow. You hold the authority of a god.",
       "portable": true,
-      "roomText": "The Scepter of Ra gleams in a hidden compartment in the floor, radiating golden light."
+      "roomText": "The Scepter of Ra burns with golden light in a hidden compartment in the floor, impossible to ignore."
     }
   },
   "puzzles": {
     "open-burial-chamber": {
       "room": "grand-corridor",
-      "description": "A sealed stone door to the north bears a scarab-shaped indentation at its center. The door is massive — no amount of force will move it.",
+      "description": "A sealed stone door blocks the way north. At its center, a scarab-shaped indentation is carved with exacting precision. No amount of force will move this door — it was built to outlast empires.",
       "requiredItem": "scarab-amulet",
-      "hintText": "The door bears a scarab-shaped indent. Perhaps a matching amulet would fit.",
-      "solvedText": "You press the scarab amulet into the indentation. It clicks into place with a deep resonance. Ancient gears grind to life within the walls, and the massive stone door slides upward, revealing the burial chamber to the north. Dust cascades like a golden curtain.",
+      "hintText": "The indentation is shaped precisely like a scarab. Somewhere in this pyramid, there must be an amulet that fits.",
+      "solvedText": "You press the scarab amulet into the indentation. A perfect fit. Deep within the walls, ancient gears grind to life — stone screaming against stone — and the massive door rises, revealing the burial chamber beyond. Dust cascades through the widening gap like a curtain of gold.",
       "isGoal": true,
       "goalName": "Open the Burial Chamber",
       "action": {
@@ -233,10 +233,10 @@
     },
     "open-pharaohs-tomb": {
       "room": "burial-chamber",
-      "description": "An ornate doorway to the east is sealed with an elaborate mechanism. A slot in the center is shaped like an ankh — the Egyptian symbol of life.",
+      "description": "An ornate doorway to the east is sealed by an elaborate mechanism. At its center, a slot is carved in the unmistakable shape of an ankh — the Egyptian key of life.",
       "requiredItem": "golden-ankh",
-      "hintText": "The mechanism has an ankh-shaped slot. An ankh of sufficient value might serve as a key.",
-      "solvedText": "You slide the golden ankh into the slot. It fits perfectly. The mechanism whirs with ancient precision, counterweights shift within the walls, and the ornate door swings inward. Beyond it lies the pharaoh's inner tomb, bathed in an impossible golden light.",
+      "hintText": "The slot is shaped like an ankh. Only a key of life — and one worthy of a pharaoh — could open this door.",
+      "solvedText": "The golden ankh slides into the slot as if the mechanism were forged around it. Counterweights shift within the walls with a deep, resonant click. The ornate door swings inward, exhaling air that hasn't moved in three millennia. Beyond, the pharaoh's inner tomb glows with impossible golden light.",
       "isGoal": true,
       "goalName": "Enter the Pharaoh's Tomb",
       "action": {
@@ -247,22 +247,22 @@
     },
     "clear-trap-room": {
       "room": "hidden-passage",
-      "description": "The passage north opens into a room, but you can see pressure plates covering the floor. The ancient scroll might reveal a safe path.",
+      "description": "The passage north opens into a room where pressure plates tessellate the floor. Scorch marks and scattered bones beyond the threshold tell you everything. Blundering through means death.",
       "requiredItem": "ancient-scroll",
-      "hintText": "The scroll maps the pyramid's traps. Reading it before entering might save your life.",
-      "solvedText": "You unroll the ancient scroll and study the trap diagram. The safe path is marked — third tile, first tile, fourth tile, first tile, fifth tile. You memorize the sequence. The trap room is now navigable.",
+      "hintText": "The ancient scroll maps every trap in this pyramid. Reading it before entering that room could save your life.",
+      "solvedText": "You unroll the scroll and trace the trap diagram with your finger. The safe path emerges: third tile, first, fourth, first, fifth. You commit it to memory, breathing slow. The trap room is navigable now — if your nerve holds.",
       "action": {
         "type": "removeHazard",
         "room": "trap-room",
-        "hazard": "Pressure plates cover the floor — each step could trigger an ancient mechanism."
+        "hazard": "Pressure plates cover the floor in an unbroken mosaic. Each step could be your last — the mechanisms are still tensed to strike."
       }
     },
     "unlock-sphinx-door": {
       "room": "sphinx-chamber",
-      "description": "The heavy door to the north is carved with the Eye of Horus. A circular depression in the door is engraved with rays — it's shaped to hold a disc of some kind.",
+      "description": "A heavy door to the north is carved with the Eye of Horus. At its center, a circular depression is ringed with engraved sun rays — shaped to cradle a disc.",
       "requiredItem": "sun-disc",
-      "hintText": "The depression is engraved with sun rays. Perhaps a disc bearing the sun would fit.",
-      "solvedText": "You place the sun disc into the circular depression. It locks in with a satisfying click, and the Eye of Horus splits down the middle as the door swings open. Light floods through from the trap room beyond, now accessible to the north.",
+      "hintText": "The depression radiates carved sunbeams. A disc bearing the face of the sun god might complete the pattern.",
+      "solvedText": "You seat the sun disc into the depression. It locks home with a resonant click, and the Eye of Horus splits down the center as the stone door grinds open. Warm light floods through from the chamber beyond. The trap room lies to the north.",
       "isGoal": true,
       "goalName": "Solve the Sphinx's Riddle",
       "action": {
@@ -273,10 +273,10 @@
     },
     "reveal-star-treasure": {
       "room": "star-chamber",
-      "description": "The golden disc on the wall can be rotated to redirect the starlight beam. A slot beside it is shaped for an amulet — perhaps one with the power of true sight could align the stars.",
+      "description": "The golden disc on the wall can be rotated to redirect the beam of focused starlight. Beside it, a slot is carved in the shape of an eye — perhaps one with the power to see what the stars are truly showing.",
       "requiredItem": "eye-of-horus",
-      "hintText": "The Eye of Horus grants true sight. It might reveal what the stars are trying to show you.",
-      "solvedText": "You place the Eye of Horus into the slot. The obsidian amulet absorbs the starlight, then projects it outward in a web of constellations across the floor. Where the beams converge, a hidden compartment opens in the floor, revealing a golden scepter crowned with a sun disc — the Scepter of Ra, symbol of divine authority.",
+      "hintText": "The slot is shaped like an eye. The Eye of Horus grants true sight — it might reveal what the stars are hiding.",
+      "solvedText": "You press the Eye of Horus into the slot. The obsidian drinks the starlight, then erupts — projecting a web of constellations across the floor in lines of cold fire. Where the beams converge, a hidden compartment splits open in the obsidian, revealing the Scepter of Ra — golden, radiant, humming with the authority of a god.",
       "action": {
         "type": "addItem",
         "room": "star-chamber",

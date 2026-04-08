@@ -1,11 +1,11 @@
 {
   "name": "The Mystery House",
-  "description": "Rain lashes against broken windows as thunder splits the night sky. You stand before Blackwood Manor, a Victorian mansion long abandoned by the living — but not, the locals say, by the dead. The iron gates hang open like broken teeth. Dead vines choke the crumbling facade. Lightning illuminates windows that seem to watch you with malevolent intent. Your car died a mile back. The storm is worsening. The only shelter is within those rotting walls. As you step through the threshold, the front door slams shut behind you. The lock clicks. There is no going back.",
+  "description": "Rain lashes against broken windows as thunder cracks the sky. You stand before Blackwood Manor — a Victorian mansion abandoned by the living. Not by the dead, the locals whisper. The iron gates hang open like broken teeth. Dead vines choke the crumbling facade. Lightning reveals windows that seem to watch with malevolent intent. Your car died a mile back. The storm is worsening. Cold rain runs down your collar as you cross the threshold — the only shelter is within those rotting walls. The front door slams behind you. The lock clicks with terrible finality. There is no going back.",
   "startRoom": "entrance-hall",
   "rooms": {
     "entrance-hall": {
       "name": "Grand Entrance Hall",
-      "description": "A vast entry hall stretches before you, once magnificent, now draped in decay. A crystal chandelier hangs by a single chain, swaying slightly though there is no breeze. The marble floor is cracked and stained with what might be old blood — or just rust. Twin staircases curve upward into shadow. Portraits line the walls, their painted eyes following your movement. The air is thick with the smell of mold and something sweeter — like lilies at a funeral. A grand corridor leads north deeper into the house. To the east, a door stands slightly ajar, revealing a dim library. West leads to what was once a parlor.",
+      "description": "A vast entry hall stretches before you, once magnificent, now draped in decay. A crystal chandelier hangs by a single chain, swaying slightly though there is no breeze. The marble floor is cracked and stained with something dark — rust, you tell yourself. Your footsteps echo too long, as though the house is measuring you. Twin staircases curve upward into shadow. Portraits line the walls, their painted eyes tracking your movement. The air reeks of mold and something sweeter — funeral lilies, thick enough to taste. A grand corridor leads north. To the east, a door stands slightly ajar. West leads to what was once a parlor.",
       "exits": {
         "north": "dining-room",
         "east": "library",
@@ -16,15 +16,15 @@
       ],
       "hazards": [
         {
-          "description": "The chandelier above sways dangerously, its chain creaking with rust.",
+          "description": "The chandelier sways above you. Its chain groans — a low, metallic sound like a throat clearing before bad news.",
           "probability": 0.08,
-          "deathText": "With a sound like screaming metal, the chandelier chain snaps. Crystal and iron crash down. Your final thought is how beautiful the shattered light looks spreading across the marble."
+          "deathText": "The chain snaps with a scream of rusted metal. Crystal and iron crash down in a shower of shattered light. Your last thought is how beautiful the fragments look, spinning across the marble."
         }
       ]
     },
     "library": {
       "name": "The Library",
-      "description": "Walls of books reach toward a vaulted ceiling lost in shadow. Most volumes are rotted beyond reading, but some remain intact — forbidden grimoires, journals written in trembling hands, medical texts from when surgery was butchery. A massive oak desk dominates the center, its surface covered in scattered papers and dried ink. The windows are boarded shut, but moonlight seeps through cracks, painting silver stripes across the dusty floor. A leather armchair faces the cold fireplace, positioned as if someone just stood up. You can feel eyes watching from the shadows between shelves. The entrance hall is west. A narrow door to the north is marked with strange symbols.",
+      "description": "Walls of books reach toward a vaulted ceiling lost in shadow. Most volumes are rotted beyond reading, but some remain — forbidden grimoires, journals in trembling handwriting, medical texts from when surgery was butchery. The air smells of old leather and foxed paper, underlaid with something sharp and chemical. A massive oak desk dominates the center, buried in scattered papers and dried ink. The windows are boarded shut. Moonlight seeps through cracks, painting silver stripes across the dusty floor. A leather armchair faces the cold fireplace, positioned as if someone just stood up. The floorboards creak beneath you — only beneath you, you are certain. The entrance hall is west. A narrow door to the north is carved with strange symbols.",
       "exits": {
         "west": "entrance-hall",
         "north": "hidden-study"
@@ -35,15 +35,15 @@
       ],
       "hazards": [
         {
-          "description": "The books seem to whisper when you're not looking directly at them — voices layered in forgotten languages.",
+          "description": "The books whisper when you are not looking directly at them. Layered voices in forgotten languages, just below the threshold of understanding.",
           "probability": 0.1,
-          "deathText": "The whispers crescendo into screams. Books fly from shelves like ravens. Pages slice skin like paper knives. The library devours you, adding your screams to its eternal collection."
+          "deathText": "The whispers crescendo into screams. Books launch from shelves like startled ravens. Pages slice skin like razors. The library devours you, adding your voice to its eternal chorus."
         }
       ]
     },
     "parlor": {
       "name": "The Parlor",
-      "description": "A once-elegant sitting room now home to rot and shadow. Moth-eaten curtains hang in tatters. A grand piano stands in the corner, keys yellowed and cracked — yet sometimes, when the wind moans through broken panes, you swear you hear a chord. Victorian furniture is arranged as if expecting guests who never arrived. Or perhaps they did arrive, and never left. A music box sits on the mantle, its mechanism exposed and frozen. Photographs in silver frames show the Blackwood family — mother, father, three children — their faces scratched out by frantic fingers. The entrance hall is east. A door to the south is locked with a silver padlock.",
+      "description": "A once-elegant sitting room, now home to rot and shadow. Moth-eaten curtains hang in tatters. The air carries a ghost of lavender — someone’s perfume, lingering decades past its owner. A grand piano stands in the corner, keys yellowed and cracked. When the wind moans through broken panes, you swear you hear a chord. Victorian furniture is arranged as if expecting guests who never arrived. Or perhaps they arrived and never left. A music box sits on the mantle, mechanism exposed and frozen mid-note. Photographs in silver frames show the Blackwood family — mother, father, three children — their faces scratched out by frantic fingers. The entrance hall is east. A door to the south is locked with a silver padlock.",
       "exits": {
         "east": "entrance-hall"
       },
@@ -53,15 +53,15 @@
       ],
       "hazards": [
         {
-          "description": "The piano keys occasionally press down on their own, playing discordant notes that set your teeth on edge.",
+          "description": "The piano keys press down on their own, one by one, picking out a discordant melody that crawls under your skin.",
           "probability": 0.09,
-          "deathText": "The piano erupts into a frenzied symphony, keys slamming with impossible force. The sound bores into your skull like an auger. Your ears bleed. Your mind shatters. You collapse, and the music plays on."
+          "deathText": "The piano erupts into a frenzied symphony, keys hammering with impossible force. The sound bores into your skull like a hot wire. Your ears bleed. Your thoughts shatter. You collapse, and the music plays on over your body."
         }
       ]
     },
     "dining-room": {
       "name": "The Dining Room",
-      "description": "A long table dominates the room, set for thirteen guests. China plates are crusted with ancient food that never decayed — just fossilized where it sat. Crystal wine glasses still contain dark liquid. Candelabras hold candles burned down to nubs of wax. The wallpaper depicts a hunting scene, but the painted figures seem to move in the corner of your vision. A grandfather clock in the corner is stopped at midnight, its pendulum hanging still. The walls are stained with handprints — small ones, child-sized, leading up to the ceiling. The entrance hall is south. Double doors to the north lead to the kitchen. An archway east opens into a conservatory.",
+      "description": "A long table dominates the room, set for thirteen guests. China plates are crusted with ancient food — not decayed but fossilized, as if time stopped mid-meal. Crystal wine glasses still hold dark liquid. The smell is wrong: not rot but formaldehyde, sweet and clinical. Candelabras hold candles burned to nubs. The wallpaper depicts a hunting scene, but the painted figures shift in your peripheral vision. A grandfather clock stands frozen at midnight, its pendulum still — though you could swear you heard it tick. Just once. The walls bear handprints. Small ones. Child-sized. Trailing upward to the ceiling. The entrance hall is south. Double doors north lead to the kitchen. An archway east opens into a conservatory.",
       "exits": {
         "south": "entrance-hall",
         "north": "kitchen",
@@ -70,15 +70,15 @@
       "items": [],
       "hazards": [
         {
-          "description": "The temperature drops suddenly, your breath misting in the air. The candles flicker to life on their own.",
+          "description": "The temperature plunges. Your breath mists. The candles flicker to life on their own, and for an instant you see a thirteenth place setting that was not there before.",
           "probability": 0.11,
-          "deathText": "The ghost of the thirteenth guest manifests, a woman in Victorian dress with hollow eyes and a slit throat. She beckons you to sit. You cannot refuse. The wine is poison. You drink anyway."
+          "deathText": "The thirteenth guest manifests — a woman in Victorian dress, hollow-eyed, her throat a dark smile from ear to ear. She beckons you to sit. You cannot refuse. The wine smells of bitter almonds. You drink anyway."
         }
       ]
     },
     "kitchen": {
       "name": "The Kitchen",
-      "description": "A cavernous industrial kitchen from a bygone era. Copper pots hang from hooks, green with verdigris. A massive cast-iron stove hunches against the wall like a sleeping beast. The butcher's block is scarred with cuts that go too deep, stained too dark. Knives are embedded in the walls at odd angles — thrown in panic or rage. The pantry door hangs open, revealing empty shelves and scratch marks on the inside. A meat locker to the west is sealed with a heavy bolt. The dining room is south. A cellar door to the east is secured with a heavy padlock.",
+      "description": "A cavernous industrial kitchen from a bygone era. Copper pots hang from hooks, green with verdigris. A massive cast-iron stove hunches against the wall like a sleeping beast, still radiating a faint, impossible warmth. The butcher’s block is scarred with cuts that go too deep, stained too dark. Knives jut from the walls at odd angles — thrown in panic or rage. Water drips somewhere behind the walls, a slow metronome counting nothing. The pantry door hangs open, revealing empty shelves and scratch marks on the inside — fingernail gouges. A meat locker to the west is sealed with a heavy bolt. The dining room is south. A cellar door to the east is secured with a heavy padlock.",
       "exits": {
         "south": "dining-room",
         "west": "meat-locker"
@@ -89,15 +89,15 @@
       ],
       "hazards": [
         {
-          "description": "Something drips from the ceiling — too dark and thick to be water. It smells of copper and decay.",
+          "description": "Something drips from the ceiling. Too dark and viscous to be water. It smells of copper.",
           "probability": 0.12,
-          "deathText": "The dripping becomes a deluge. Rotted blood cascades from the ceiling, filling the room with nauseating speed. You slip, fall, drown in the sins of the house. Your body is never found."
+          "deathText": "The dripping becomes a deluge. Dark blood cascades from the ceiling, filling the room with nauseating speed. You slip, fall, drown in the accumulated sins of the house. Your body is never found."
         }
       ]
     },
     "conservatory": {
       "name": "The Conservatory",
-      "description": "A glass-walled room that should be filled with light but somehow remains dark. Dead plants fill raised beds — roses that grew into thorny masses before dying, ivy that strangled itself, a small tree twisted into an agonized shape. The glass is clouded with decades of grime, but occasionally lightning reveals the overgrown garden beyond. A fountain in the center is dry, its basin cracked. The statue that once crowned it — a weeping angel — is missing its head. Muddy footprints circle the fountain, too small for adult feet. The dining room is west. A greenhouse passage leads south.",
+      "description": "A glass-walled room that should be filled with light but somehow remains dark. Dead plants crowd the raised beds — roses grown into thorny masses, ivy that strangled itself, a small tree twisted into an agonized shape. Rain drums against the clouded panes. Occasionally lightning reveals the overgrown garden beyond — shapes moving between the hedgerows, gone when you blink. A fountain stands dry in the center, its basin cracked. The statue that once crowned it — a weeping angel — is missing its head. The air smells of wet soil and something sweetly rotten. Muddy footprints circle the fountain. Too small for adult feet. The dining room is west. A greenhouse passage leads south.",
       "exits": {
         "west": "dining-room",
         "south": "greenhouse"
@@ -109,7 +109,7 @@
     },
     "meat-locker": {
       "name": "The Meat Locker",
-      "description": "A walk-in freezer that hasn't been cold for decades. Rusted hooks hang from the ceiling like waiting gallows. The walls are stained with things that shouldn't be in a meat locker — handprints, messages scratched into the metal: 'IT WON'T LET US LEAVE' and 'THE CHILDREN ARE STILL HUNGRY.' Something large is wrapped in canvas in the corner, human-shaped. You don't want to look closer. The door can only be opened from the outside — getting trapped here would be death. The kitchen is east.",
+      "description": "A walk-in freezer that hasn’t been cold for decades, yet the air here is cooler than it should be — cooler and wrong. Rusted hooks hang from the ceiling like waiting gallows. The stench is immediate: old meat, ammonia, decay. The walls are stained with things that shouldn’t be in a meat locker — handprints, messages scratched into the metal: ‘IT WON’T LET US LEAVE’ and ‘THE CHILDREN ARE STILL HUNGRY.’ Something large lies wrapped in canvas in the corner. Human-shaped. You don’t look closer. The door can only be opened from the outside — getting trapped here would be the end. The kitchen is east.",
       "exits": {
         "east": "kitchen"
       },
@@ -118,15 +118,15 @@
       ],
       "hazards": [
         {
-          "description": "The door swings slightly on its hinges, threatening to close and trap you inside.",
+          "description": "The door drifts on its hinges, each swing narrower than the last. The bolt rattles softly, eager.",
           "probability": 0.15,
-          "deathText": "The door slams shut. The bolt slides home with a final click. You hammer on the steel until your hands are bloody. No one hears. No one ever hears. Your frozen corpse will wait decades for the next curious soul."
+          "deathText": "The door slams shut. The bolt slides home with a final, mechanical click. You hammer on steel until your hands are raw and bloody. No one hears you. No one ever hears. In the dark, the cold returns — a deep, unnatural cold. Your body will wait decades for the next curious soul."
         }
       ]
     },
     "hidden-study": {
       "name": "The Hidden Study",
-      "description": "A secret room behind the library, barely larger than a closet. The walls are covered in occult symbols drawn in what looks like ash — or maybe burned bone. A small altar bears a tarnished silver bowl and ritual implements. Books of black magic fill a shelf, their pages filled with madness. A journal lies open on a lectern, its final entry dated the night the Blackwood family disappeared: 'The ritual is complete. We are eternal now. We are never alone now. God forgive us for what we've done to the children.' A pentagram is burned into the wooden floor. The library is south. A concealed passage in the floor leads down.",
+      "description": "A secret room behind the library, barely larger than a closet. The air tastes of ash and ozone. Occult symbols cover every wall, drawn in something pale — powdered bone, perhaps. A small altar bears a tarnished silver bowl and ritual implements. Books of black magic fill a shelf, their pages stiff with madness. A journal lies open on a lectern, its final entry dated the night the Blackwoods disappeared: ‘The ritual is complete. We are eternal now. We are never alone now. God forgive us for what we’ve done to the children.’ A pentagram is seared into the wooden floor. The silence here is absolute — thick, watchful, pressing against your eardrums. The library is south.",
       "exits": {
         "south": "library"
       },
@@ -136,15 +136,15 @@
       ],
       "hazards": [
         {
-          "description": "The symbols on the walls pulse with a sickly light, and you hear children singing nursery rhymes backwards.",
+          "description": "The symbols on the walls pulse with a sickly light. Children’s voices drift from nowhere — nursery rhymes, sung backwards, in perfect unison.",
           "probability": 0.13,
-          "deathText": "The pentagram erupts with black flame. Shadows coalesce into forms — the Blackwood children, their faces twisted, their eyes empty. They were made eternal through agony. They want you to join them. The ritual takes only moments. The screaming takes forever."
+          "deathText": "The pentagram erupts with black flame. Shadows coalesce into small forms — the Blackwood children, faces twisted, eyes hollow. They were made eternal through agony. They want you to join them. The ritual takes only moments. The screaming lasts forever."
         }
       ]
     },
     "greenhouse": {
       "name": "The Greenhouse",
-      "description": "A humid glass structure attached to the house, somehow warmer than it should be. Plants grow here still — wrong plants, with leaves that move like fingers and flowers that smell of rotting meat. Venus flytraps have grown to monstrous size. Thorned vines creep across the floor like serpents. In the center is a willow tree that shouldn't be able to grow indoors, its drooping branches forming a curtain around something buried beneath its roots. The conservatory is north. You sense something important is here, something that binds the house's dark power.",
+      "description": "A humid glass structure attached to the house, warmer than any room should be in this dead place. The air is thick and tropical, reeking of rotting meat. Plants grow here still — wrong plants. Leaves that flex like grasping fingers. Flowers with tooth-rimmed mouths. Venus flytraps grown to monstrous size. Thorned vines creep across the flagstones like serpents, rasping softly as they move. In the center stands a willow tree that has no business growing indoors, its drooping branches forming a curtain around something buried among its roots. The conservatory is north.",
       "exits": {
         "north": "conservatory"
       },
@@ -155,13 +155,13 @@
         {
           "description": "The vines shift and writhe, slowly encircling your ankles like patient predators.",
           "probability": 0.14,
-          "deathText": "The carnivorous plants strike as one. Vines wrap around your limbs, pulling you down. Thorns pierce skin. The flytraps close over your face. The garden feeds. It's always hungry."
+          "deathText": "The carnivorous plants strike as one. Vines coil around your limbs, wrenching you down. Thorns puncture skin. The flytraps close over your face, wet and warm. The garden feeds. It is always hungry."
         }
       ]
     },
     "cellar": {
       "name": "The Wine Cellar",
-      "description": "Stone steps descend into a vast cellar carved from living rock. Wine racks stretch into darkness, bottles thick with dust and cobwebs. Most are empty now, broken in some long-ago rampage. The floor is sticky with ancient spills — or so you tell yourself. Chains hang from the walls for no purpose you can imagine. A wooden coffin rests against the far wall, lid slightly ajar. Something is carved into the stone ceiling: 'REST ETERNAL, BARTHOLOMEW BLACKWOOD, WHO DARED DEFY DEATH AND DAMNED HIS LINE.' An iron door to the west is sealed with arcane symbols — the final seal. The kitchen is up a flight of stairs to the west, but the cellar door is locked from this side.",
+      "description": "Stone steps descend into a vast cellar carved from living rock. The cold is immediate — a damp, bone-deep chill that seeps through your clothes and settles in your marrow. Wine racks stretch into darkness, bottles furred with dust and cobwebs. Most are shattered, broken in some long-ago rampage. The floor is sticky with ancient spills. Or so you tell yourself. Chains hang from the walls, their purpose best left unimagined. A wooden coffin rests against the far wall, lid slightly ajar. Words are carved into the stone ceiling: ‘REST ETERNAL, BARTHOLOMEW BLACKWOOD, WHO DARED DEFY DEATH AND DAMNED HIS LINE.’ An iron door to the west is sealed with arcane symbols — the final barrier. The kitchen is up a flight of stairs, but the cellar door is locked from this side.",
       "exits": {},
       "items": [
         "consecrated-stake"
@@ -170,7 +170,7 @@
         {
           "description": "A wet, raspy breathing echoes from the coffin. Something inside is dreaming, and dreams are stirring.",
           "probability": 0.16,
-          "deathText": "Bartholomew Blackwood rises from his coffin, patriarch of the damned, the warlock who traded his family's souls for immortality. His touch is ice. His eyes are flames. He drinks deep. Your body joins the others in the darkness, one more servant in his eternal court."
+          "deathText": "Bartholomew Blackwood rises from his coffin — patriarch of the damned, the warlock who traded his family’s souls for immortality. His touch is ice. His eyes are cinders. He drinks deep. Your body joins the others in the dark, one more servant in his eternal court."
         }
       ]
     }
@@ -192,14 +192,14 @@
     },
     "silver-key": {
       "name": "Silver Key",
-      "description": "A small silver key, ornately carved with roses. It's labeled in faded ink: 'Parlor.' This would unlock the door from the parlor to the greenhouse passage.",
+      "description": "A small silver key, ornately carved with roses that mirror the manor’s recurring motif. A tag of crumbling paper reads ‘Parlor’ in faded copperplate.",
       "pickupText": "You take the silver key from a desk drawer. It's ice-cold against your palm.",
       "portable": true,
       "roomText": "A small silver key gleams in the half-open drawer of the desk."
     },
     "music-box": {
       "name": "Music Box",
-      "description": "A delicate music box with a ballerina frozen mid-pirouette. The mechanism is rusted, but if wound, it might still play. The tune is a lullaby — the kind you sing to children to keep nightmares away. How ironic.",
+      "description": "A delicate music box with a ballerina frozen mid-pirouette. The mechanism is rusted, but the spring still holds tension. The tune engraved on the lid is a lullaby — the kind you sing to children to keep nightmares away.",
       "pickupText": "You take the music box. The ballerina's painted face seems sad, as if she knows something you don't.",
       "portable": true,
       "roomText": "A music box sits on the mantle, its mechanisms exposed and frozen."
@@ -220,7 +220,7 @@
     },
     "brass-key": {
       "name": "Brass Key",
-      "description": "A heavy brass key labeled 'Wine Cellar.' It would open the padlocked door in the kitchen that leads down to the cellars — the deepest, darkest part of the house.",
+      "description": "A heavy brass key, warm to the touch despite the chill of this house. A tag reads ‘Wine Cellar’ in the same faded copperplate as the other keys. Whatever waits below, someone ensured it stayed locked away.",
       "pickupText": "You take the brass key from its hook. Something about holding it fills you with dread.",
       "portable": true,
       "roomText": "A brass key hangs on a hook beside the pantry, labeled in faded script."
@@ -234,36 +234,36 @@
     },
     "iron-key": {
       "name": "Iron Key",
-      "description": "A large iron key, crude and ancient. It's labeled 'Vault Door.' This would open the final sealed door in the cellar — the chamber where Bartholomew Blackwood's greatest sin is hidden.",
+      "description": "A large iron key, crude and ancient — forged long before the other keys in this house. The tag reads ‘Vault Door’ in a different hand, shakier, as if written in haste or terror.",
       "pickupText": "You take the iron key from the corner. The metal is so cold it burns your fingers.",
       "portable": true,
       "roomText": "An iron key lies in the corner near the canvas-wrapped shape, as if dropped in haste."
     },
     "ritual-dagger": {
       "name": "Ritual Dagger",
-      "description": "A ceremonial dagger with a blade of blackened silver. The handle is carved bone — human bone, you realize with horror. This was used in the Blackwood family's dark rituals, the instrument of their damnation.",
+      "description": "A ceremonial dagger with a blade of blackened silver. The handle is carved bone — human bone, you realize with a lurch. It hums faintly when you grip it, resonating with something deep in the house’s foundations. The instrument of the Blackwoods’ damnation.",
       "pickupText": "You take the ritual dagger from the altar. Touching it makes your skin crawl, but you sense you'll need it.",
       "portable": true,
-      "roomText": "A ritual dagger rests on the altar, its blade drinking what little light exists in this room."
+      "roomText": "A ritual dagger rests on the altar, its blackened blade drinking what little light reaches this room."
     },
     "amulet-of-binding": {
       "name": "Amulet of Binding",
-      "description": "A silver amulet engraved with protective symbols — a failed attempt to control the dark forces the Blackwoods unleashed. Lady Margaret wore this the night she died. It didn't save her, but it might help you contain what waits in the cellar.",
+      "description": "A silver amulet engraved with protective symbols — Lady Margaret’s last defense against the forces her husband unleashed. She wore it the night she died. The chain is snapped, the silver tarnished, but the symbols still pulse with faint warmth against your skin.",
       "pickupText": "You take the amulet. It grows warm against your chest, as if recognizing a living soul.",
       "portable": true,
-      "roomText": "A silver amulet hangs from a hook, its chain broken as if torn off in panic."
+      "roomText": "A silver amulet hangs from a nail, its chain snapped as if torn away in panic."
     },
     "consecrated-stake": {
       "name": "Consecrated Stake",
-      "description": "A wooden stake carved with prayers in Latin, blessed by a priest who knew what evil slept beneath this house. This is the only weapon that can permanently end Bartholomew Blackwood's immortal curse.",
+      "description": "A wooden stake carved with prayers in Latin, blessed by a priest who knew what evil slept beneath this house. The wood is ash — the tree of purification. The prayers name Bartholomew Blackwood and beg God to grant his soul the death it was denied.",
       "pickupText": "You take the stake. It hums with holy power, warm and clean in this house of corruption.",
       "portable": true,
       "roomText": "A wooden stake leans against the wine racks, carved with Latin prayers that still hold faint luminescence."
     },
     "heart-of-the-house": {
       "name": "Heart of the House",
-      "description": "A pulsating crystal buried beneath the willow tree, glowing with sickly green light. This is the anchor of the house's curse — the phylactery where the Blackwood children's souls are trapped, powering the dark magic that keeps their father immortal. Destroying this would free them.",
-      "pickupText": "You dig up the Heart of the House. It pulses like a living thing, warm and nauseating in your hands. You can hear children crying inside it.",
+      "description": "A pulsating crystal buried beneath the willow tree, glowing with sickly green light. Inside, shadows move — small shapes pressing against the facets like children against a window. You can hear them weeping. This is the anchor of the house’s curse, the prison where three innocent souls power their father’s immortality.",
+      "pickupText": "You dig up the Heart of the House. It pulses like a living organ, warm and nauseating in your hands. The children’s weeping grows louder, desperate, pleading.",
       "portable": true,
       "roomText": "Something glows beneath the willow tree's roots — a crystal that pulses like a beating heart."
     }
@@ -271,10 +271,10 @@
   "puzzles": {
     "unlock-parlor-south": {
       "room": "parlor",
-      "description": "A door to the south is secured with a silver padlock, ornately decorated with roses. It needs a matching key.",
+      "description": "A door to the south is secured with a silver padlock, ornately decorated with roses. The lock awaits a matching key.",
       "requiredItem": "silver-key",
-      "hintText": "The silver padlock on the south door has roses engraved on it. Perhaps a key with similar decorations would fit.",
-      "solvedText": "You insert the silver key into the padlock. It turns smoothly, and the lock falls open with a musical click. The door swings wide, revealing stairs descending to a greenhouse passage. You sense warmth and growth below — strange for such a dead house.",
+      "hintText": "The silver padlock is engraved with delicate roses — the same motif you’ve seen on certain keepsakes throughout this house. Someone clearly valued this symbol.",
+      "solvedText": "The silver key turns smoothly in the padlock. The lock falls open with a musical click. The door swings wide, revealing stairs descending to a greenhouse passage. Warm air rises from below, carrying the scent of earth and growing things. Strange, for such a dead house.",
       "action": {
         "type": "openExit",
         "direction": "south",
@@ -283,10 +283,10 @@
     },
     "unlock-cellar": {
       "room": "kitchen",
-      "description": "A heavy wooden door to the east has a brass padlock. It's labeled 'Wine Cellar.' The lock looks old but solid.",
+      "description": "A heavy wooden door to the east bears a brass padlock. ‘Wine Cellar’ is stamped into the metal. The lock is old but solid.",
       "requiredItem": "brass-key",
-      "hintText": "The cellar door has a brass padlock. A key of the same metal, labeled appropriately, would open it.",
-      "solvedText": "You unlock the brass padlock with the matching key. It opens with a hollow click. The door swings inward, revealing stone steps descending into absolute darkness. Cold air rushes up, carrying the smell of earth and something worse. The cellar awaits.",
+      "hintText": "The brass padlock is heavy but well-maintained — someone kept this lock oiled long after the rest of the house fell to ruin. Whatever is down there, they wanted it sealed.",
+      "solvedText": "The brass key slides home with a hollow click. The door groans inward, revealing stone steps descending into absolute darkness. Cold air rushes up, carrying the smell of damp earth and something far worse. The cellar awaits.",
       "isGoal": true,
       "goalName": "Enter the Wine Cellar",
       "action": {
@@ -299,8 +299,8 @@
       "room": "library",
       "description": "The narrow door to the north is carved with occult symbols. A keyhole is hidden among the symbols, difficult to see in the dim light.",
       "requiredItem": "ancient-journal",
-      "hintText": "The journal mentions a hidden study behind the library where the rituals were performed. The symbols on the north door might be more than decoration.",
-      "solvedText": "Reading the journal reveals the secret: the symbols aren't a lock but an illusion. You trace the pattern described in Lady Margaret's final entry, and the door clicks open on its own, revealing the hidden study where the Blackwoods damned their souls. The air beyond smells of ash and old sin.",
+      "hintText": "Lady Margaret’s journal speaks of a hidden study where the rituals took place — behind a door ‘marked with the signs of our damnation.’ The symbols carved into the north door match her description exactly.",
+      "solvedText": "The journal reveals the secret: the symbols are not a lock but an illusion. You trace the pattern described in Lady Margaret’s final entry. The door clicks open on its own, exhaling air that smells of ash and old sin. The hidden study waits beyond.",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -311,8 +311,8 @@
       "room": "conservatory",
       "description": "The dry fountain in the conservatory center has a small pedestal at its base. Something could be placed here as an offering.",
       "requiredItem": "withered-rose",
-      "hintText": "The ghost of a Blackwood child loved the roses in this conservatory. An offering might grant safe passage through the greenhouse.",
-      "solvedText": "You place the withered rose on the fountain pedestal. For a moment, nothing happens. Then the rose blooms — black petals unfurling, alive once more. A child's laughter echoes softly, grateful rather than sinister. The greenhouse path is safe now. One soul, at least, remembers love.",
+      "hintText": "One of the Blackwood children tended these roses before the family’s fall. Even in death, that love lingers here — you can feel it near the empty fountain, a grief softer than the house’s other horrors.",
+      "solvedText": "You place the withered rose on the fountain pedestal. Silence. Then the rose blooms — black petals unfurling, alive once more. A child’s laughter echoes softly, grateful rather than sinister. The greenhouse path is safe now. One soul, at least, remembers love.",
       "action": {
         "type": "removeHazard",
         "room": "greenhouse",
@@ -323,8 +323,8 @@
       "room": "greenhouse",
       "description": "The Heart of the House pulses with malevolent energy, the phylactery binding the children's souls to this cursed place. It must be destroyed to break the curse.",
       "requiredItem": "ritual-dagger",
-      "hintText": "The ritual dagger that created the curse might be the only thing that can unmake it. Strike at the heart.",
-      "solvedText": "You drive the ritual dagger into the Heart of the House. The crystal screams — a sound like breaking glass and crying children. Cracks spread across its surface, light bleeding out. The house shudders. The curse is breaking. The children's souls, freed at last, manifest as gentle lights that float upward through the glass ceiling. They whisper 'thank you' as they fade. The house's grip weakens. You might actually escape this place.",
+      "hintText": "The journal described how the dagger was used to bind the children’s souls to the crystal. What was bound by blade might be unbound the same way.",
+      "solvedText": "You drive the ritual dagger into the Heart of the House. The crystal screams — a sound like breaking glass and crying children. Cracks spiderweb across its surface, light bleeding from every fracture. The house shudders. The children’s souls, freed at last, rise as gentle lights that drift upward through the glass ceiling. They whisper thank you as they fade. The house’s grip weakens. You might actually escape this place.",
       "isGoal": true,
       "goalName": "Destroy the Heart of the House",
       "action": {
@@ -337,8 +337,8 @@
       "room": "cellar",
       "description": "Bartholomew Blackwood's coffin rests against the far wall. The warlock who damned his family sleeps within, immortal and monstrous. Only a consecrated stake can end his unholy existence.",
       "requiredItem": "consecrated-stake",
-      "hintText": "The consecrated stake was prepared by someone who knew Bartholomew Blackwood's true nature. It's blessed specifically to pierce his immortal heart.",
-      "solvedText": "You throw open the coffin lid. Bartholomew Blackwood's eyes snap open — burning coals in a corpse's face. He rises with inhuman speed, but you're faster. The consecrated stake drives through his chest, pinning him to the coffin. He screams, a sound of rage and terror, as holy fire consumes him from within. The warlock burns, and with him, the final anchor of the curse. The house groans. The front door blows open. You're free. The nightmare is over.",
+      "hintText": "Someone left this stake here deliberately — a priest, perhaps, who could not finish the deed alone. The Latin prayers carved into the wood name Bartholomew Blackwood and describe his true nature: undying, unholy, and vulnerable to consecrated ash.",
+      "solvedText": "You throw open the coffin lid. Bartholomew Blackwood’s eyes snap open — burning coals in a corpse’s face. He rises with inhuman speed, but you are faster. The consecrated stake drives through his chest. He screams — rage and terror and centuries of stolen life — as holy fire consumes him from within. The warlock burns. The final anchor of the curse crumbles to ash. The house groans. Somewhere above, the front door blows open. You are free. The nightmare is over.",
       "isGoal": true,
       "goalName": "Destroy Bartholomew Blackwood",
       "action": {

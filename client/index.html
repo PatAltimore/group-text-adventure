@@ -61,12 +61,62 @@
         >
 
         <div id="world-selector-group" class="world-selector-group">
-          <label for="world-selector" class="world-selector-label">Choose Adventure</label>
-          <select id="world-selector" aria-label="Select adventure world">
-            <option value="default-world">The Forgotten Castle</option>
-            <option value="escape-room">The Clockmaker's Mansion</option>
-            <option value="space-adventure">The Derelict Station</option>
-          </select>
+          <label class="world-selector-label">Choose Adventure</label>
+          <div id="world-selector-list" class="world-selector-list" role="radiogroup" aria-label="Select adventure world">
+            <!-- Populated dynamically by app.js -->
+          </div>
+        </div>
+
+        <div class="settings-section" id="settings-section">
+          <h3 class="settings-section-title">⚙️ Game Settings</h3>
+
+          <div id="death-timeout-group" class="setting-group">
+            <div class="setting-row">
+              <label for="death-timeout-select" class="setting-label">⏱ Respawn Timer</label>
+              <select id="death-timeout-select" class="setting-select" aria-label="Death respawn timeout">
+                <option value="15">15 seconds</option>
+                <option value="20">20 seconds</option>
+                <option value="30" selected>30 seconds</option>
+                <option value="45">45 seconds</option>
+                <option value="60">60 seconds</option>
+              </select>
+            </div>
+            <p class="setting-help">How long a player stays dead before respawning in the same room.</p>
+          </div>
+
+          <div id="hazard-multiplier-group" class="setting-group">
+            <div class="setting-row">
+              <label for="hazard-multiplier-select" class="setting-label">☠️ Hazard Danger</label>
+              <select id="hazard-multiplier-select" class="setting-select" aria-label="Hazard danger level">
+                <option value="0.5">Low</option>
+                <option value="1" selected>Medium</option>
+                <option value="2">High</option>
+              </select>
+            </div>
+            <p class="setting-help">Adjusts hazard lethality. Low = safer, High = deadlier. Medium uses the world default.</p>
+          </div>
+
+          <div id="say-scope-group" class="setting-group">
+            <div class="setting-row">
+              <label for="say-scope-select" class="setting-label">💬 Say Scope</label>
+              <select id="say-scope-select" class="setting-select" aria-label="Say command scope">
+                <option value="room" selected>Room Only</option>
+                <option value="global">Global</option>
+              </select>
+            </div>
+            <p class="setting-help">Room Only: only players in the same room hear you. Global: all players hear what you say.</p>
+          </div>
+
+          <div id="hints-group" class="setting-group">
+            <div class="setting-row">
+              <label for="hints-toggle" class="setting-label">🔍 Puzzle Hints</label>
+              <select id="hints-toggle" class="setting-select" aria-label="Puzzle hints toggle">
+                <option value="true" selected>Enabled</option>
+                <option value="false">Disabled</option>
+              </select>
+            </div>
+            <p class="setting-help">When enabled, puzzle rooms show a hint about what item is needed to solve the puzzle.</p>
+          </div>
         </div>
 
         <div class="landing-buttons">
@@ -113,54 +163,6 @@
 
       <button id="btn-start-game" class="btn btn-primary btn-large">Start Adventure</button>
       <p id="lobby-waiting-msg" class="lobby-waiting-msg hidden">Waiting for host to start…</p>
-
-      <div id="death-timeout-group" class="death-timeout-group hidden">
-        <div class="setting-row">
-          <label for="death-timeout-select" class="death-timeout-label">⏱ Respawn Timer</label>
-          <select id="death-timeout-select" aria-label="Death respawn timeout">
-            <option value="15">15 seconds</option>
-            <option value="20">20 seconds</option>
-            <option value="30" selected>30 seconds</option>
-            <option value="45">45 seconds</option>
-            <option value="60">60 seconds</option>
-          </select>
-        </div>
-        <p class="setting-help">How long a player stays dead before respawning in the same room.</p>
-      </div>
-
-      <div id="hazard-multiplier-group" class="death-timeout-group hidden">
-        <div class="setting-row">
-          <label for="hazard-multiplier-select" class="death-timeout-label">☠️ Hazard Danger</label>
-          <select id="hazard-multiplier-select" aria-label="Hazard danger level">
-            <option value="0.5">Low</option>
-            <option value="1" selected>Medium</option>
-            <option value="2">High</option>
-          </select>
-        </div>
-        <p class="setting-help">Adjusts hazard lethality. Low = safer, High = deadlier. Medium uses the world default.</p>
-      </div>
-
-      <div id="say-scope-group" class="death-timeout-group hidden">
-        <div class="setting-row">
-          <label for="say-scope-select" class="death-timeout-label">💬 Say Scope</label>
-          <select id="say-scope-select" aria-label="Say command scope">
-            <option value="room" selected>Room Only</option>
-            <option value="global">Global</option>
-          </select>
-        </div>
-        <p class="setting-help">Room Only: only players in the same room hear you. Global: all players hear what you say.</p>
-      </div>
-
-      <div id="hints-group" class="death-timeout-group hidden">
-        <div class="setting-row">
-          <label for="hints-toggle" class="death-timeout-label">🔍 Puzzle Hints</label>
-          <select id="hints-toggle" aria-label="Puzzle hints toggle">
-            <option value="true" selected>Enabled</option>
-            <option value="false">Disabled</option>
-          </select>
-        </div>
-        <p class="setting-help">When enabled, puzzle rooms show a hint about what item is needed to solve the puzzle.</p>
-      </div>
     </div>
   </section>
 

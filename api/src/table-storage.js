@@ -218,3 +218,49 @@ export async function deleteGameState(gameId) {
     if (err.statusCode !== 404) throw err;
   }
 }
+
+// ── Cleanup ───────────────────────────────────────────────────────────
+
+/**
+ * Delete game sessions older than the specified number of days, along with
+ * their associated Players and GameState entries.
+ * @param {number} [maxAgeDays=30]
+ * @returns {{ found: number, deleted: number }}
+ */
+export async function cleanupOldGames(maxAgeDays = 30) {
+  const sessionsClient = getTableClient('GameSessions');
+  const cutoff = new Date(Date.now() - maxAgeDays * 24 * 60 * 60 * 1000);
+
+  // Collect old game IDs
+  const oldGameIds = [];
+  const iter = sessionsClient.listEntities({
+    queryOptions: { filter: `PartitionKey eq 'game'` },
+  });
+  for await (const entity of iter) {
+    const createdAt = entity.createdAt ? new Date(entity.createdAt) : null;
+    if (createdAt && createdAt < cutoff) {
+      oldGameIds.push(entity.rowKey);
+    }
+  }
+
+  let deleted = 0;
+  for (const gameId of oldGameIds) {
+    try {
+      // Delete all players for this game
+      const players = await listPlayers(gameId);
+      for (const player of players) {
+        await deletePlayer(gameId, player.rowKey);
+      }
+      // Delete game state
+      await deleteGameState(gameId);
+      // Delete the session itself
+      await deleteGameSession(gameId);
+      deleted++;
+    } catch (err) {
+      // Log but continue — don't let one bad game block the rest
+      console.error(`Cleanup: failed to delete game ${gameId}:`, err.message);
+    }
+  }
+
+  return { found: oldGameIds.length, deleted };
+}

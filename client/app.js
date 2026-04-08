@@ -83,7 +83,7 @@
     
     // World selector
     worldSelectorGroup: $('#world-selector-group'),
-    worldSelector: $('#world-selector'),
+    worldSelectorList: $('#world-selector-list'),
     lobbyAdventureName: $('#lobby-adventure-name'),
 
     // Share overlay
@@ -144,29 +144,68 @@
 
   function populateWorldSelector(worlds) {
     try {
-      els.worldSelector.innerHTML = '';
-      worlds.forEach((world) => {
-        const opt = document.createElement('option');
-        opt.value = world.id;
-        opt.textContent = world.name;
-        if (world.description) opt.title = world.description;
-        els.worldSelector.appendChild(opt);
+      els.worldSelectorList.innerHTML = '';
+      worlds.forEach((world, idx) => {
+        const card = document.createElement('div');
+        card.className = 'world-card' + (idx === 0 ? ' selected' : '');
+        card.setAttribute('role', 'radio');
+        card.setAttribute('aria-checked', idx === 0 ? 'true' : 'false');
+        card.setAttribute('tabindex', '0');
+        card.dataset.worldId = world.id;
+
+        const name = document.createElement('div');
+        name.className = 'world-card-name';
+        name.textContent = world.name;
+
+        const desc = document.createElement('div');
+        desc.className = 'world-card-desc';
+        desc.textContent = world.description || '';
+
+        card.appendChild(name);
+        card.appendChild(desc);
+
+        card.addEventListener('click', () => selectWorldCard(card));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectWorldCard(card);
+          }
+        });
+
+        els.worldSelectorList.appendChild(card);
       });
+      // Auto-select first world
+      if (worlds.length > 0) {
+        state.worldId = worlds[0].id;
+      }
     } catch (e) {
       console.error('[Worlds] Could not populate world selector:', e);
     }
   }
 
+  function selectWorldCard(card) {
+    const cards = els.worldSelectorList.querySelectorAll('.world-card');
+    cards.forEach((c) => {
+      c.classList.remove('selected');
+      c.setAttribute('aria-checked', 'false');
+    });
+    card.classList.add('selected');
+    card.setAttribute('aria-checked', 'true');
+    state.worldId = card.dataset.worldId;
+  }
+
+  function getSelectedWorldName() {
+    const selected = els.worldSelectorList.querySelector('.world-card.selected');
+    if (selected) {
+      const nameEl = selected.querySelector('.world-card-name');
+      return nameEl ? nameEl.textContent : '';
+    }
+    return '';
+  }
+
   async function loadWorlds() {
     // Show loading indicator while fetching
-    els.worldSelector.innerHTML = '';
-    const loadingOpt = document.createElement('option');
-    loadingOpt.value = '';
-    loadingOpt.textContent = 'Loading adventures...';
-    loadingOpt.disabled = true;
-    loadingOpt.selected = true;
-    els.worldSelector.appendChild(loadingOpt);
-    els.worldSelector.disabled = true;
+    els.worldSelectorList.innerHTML = '<div class="world-card-loading">Loading adventures…</div>';
 
     try {
       const controller = new AbortController();
@@ -182,8 +221,6 @@
     } catch (err) {
       console.log('[Worlds] Failed to load worlds:', err.message, '— using fallback list');
       populateWorldSelector(FALLBACK_WORLDS);
-    } finally {
-      els.worldSelector.disabled = false;
     }
   }
 
@@ -966,7 +1003,7 @@
       state.playerName = els.playerName.value.trim();
       state.isHost = true;
       state.gameId = generateGameId();
-      state.worldId = els.worldSelector.value;
+      // state.worldId is already set by card selection
       startHost();
     });
 
@@ -1008,47 +1045,11 @@
     els.btnStartGame.disabled = false;
     els.btnStartGame.textContent = 'Start Adventure';
 
-    // Show death timeout control for host
-    if (els.deathTimeoutGroup) {
-      els.deathTimeoutGroup.classList.remove('hidden');
-      els.deathTimeoutSelect.addEventListener('change', () => {
-        const timeout = parseInt(els.deathTimeoutSelect.value, 10);
-        sendMessage({ type: 'setDeathTimeout', timeout });
-      });
-    }
-
-    // Show hazard multiplier control for host
-    if (els.hazardMultiplierGroup) {
-      els.hazardMultiplierGroup.classList.remove('hidden');
-      els.hazardMultiplierSelect.addEventListener('change', () => {
-        const multiplier = parseFloat(els.hazardMultiplierSelect.value);
-        sendMessage({ type: 'setHazardMultiplier', multiplier });
-      });
-    }
-
-    // Show say scope control for host
-    if (els.sayScopeGroup) {
-      els.sayScopeGroup.classList.remove('hidden');
-      els.sayScopeSelect.addEventListener('change', () => {
-        const scope = els.sayScopeSelect.value;
-        sendMessage({ type: 'setSayScope', scope });
-      });
-    }
-
-    // Show hints toggle for host
-    if (els.hintsGroup) {
-      els.hintsGroup.classList.remove('hidden');
-      els.hintsToggle.addEventListener('change', () => {
-        const enabled = els.hintsToggle.value === 'true';
-        sendMessage({ type: 'setHintsEnabled', enabled });
-      });
-    }
     state.players = [state.playerName];
     updateLobbyPlayerList();
 
     // Show selected adventure name in lobby
-    const selectedOption = els.worldSelector.options[els.worldSelector.selectedIndex];
-    els.lobbyAdventureName.textContent = selectedOption ? `Adventure: ${selectedOption.textContent}` : '';
+    els.lobbyAdventureName.textContent = `Adventure: ${getSelectedWorldName()}`;
 
     showScreen('lobby');
 
