@@ -10,16 +10,16 @@ import { validateWorld } from '../../world/validate-world.js';
  */
 export function getGoalAsciiArt() {
   return [
-    '        ___________',
-    '       |           |',
-    '   .---|           |---.',
-    '   |   |     *     |   |',
-    "   '---|           |---'",
-    '       |           |',
-    '        \\_________/',
-    '            | |',
-    '           _| |_',
-    '          |_____|',
+    '     ___________',
+    "    '._==_==_=_.'",
+    '    .-\\:      /-.',
+    '   | (|:.     |) |',
+    "    '-|:.     |-'",
+    '      \\::.    /',
+    "       '::. .'",
+    '         ) (',
+    "       _.' '._",
+    '      |_______|',
   ].join('\n');
 }
 
@@ -31,10 +31,10 @@ export function getVictoryAsciiArt() {
   return [
     '  ========================================',
     '  ||                                    ||',
-    '  ||          V I C T O R Y !           ||',
+    '  ||     V I C T O R Y !               ||',
     '  ||                                    ||',
     '  ||   All goals have been achieved!    ||',
-    '  ||    You conquered the adventure!    ||',
+    '  ||   You conquered the adventure!     ||',
     '  ||                                    ||',
     '  ========================================',
   ].join('\n');
