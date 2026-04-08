@@ -4368,3 +4368,676 @@ describe('Map Command (Stef)', () => {
     expect(p1Msgs.length).toBeGreaterThan(0);
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// Fuzzy Item Matching (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Fuzzy item matching (Stef)', () => {
+  // Custom world with overlapping item names for fuzzy / disambiguation tests
+  function fuzzyWorld() {
+    return loadWorld({
+      name: 'Fuzzy Match World',
+      startRoom: 'fuzzy-room',
+      rooms: {
+        'fuzzy-room': {
+          name: 'Fuzzy Room',
+          description: 'A room with many items.',
+          exits: { north: 'fuzzy-room-2' },
+          items: ['research-journal', 'rusty-key', 'golden-key', 'knights-shield', 'old-torch'],
+          hazards: [],
+        },
+        'fuzzy-room-2': {
+          name: 'Second Room',
+          description: 'Another room.',
+          exits: { south: 'fuzzy-room' },
+          items: [],
+          hazards: [],
+        },
+      },
+      items: {
+        'research-journal': {
+          name: "Dr. Webb's research journal",
+          description: 'A journal filled with research notes.',
+          roomText: 'A research journal lies on the desk.',
+          pickupText: 'You pick up the journal.',
+          portable: true,
+        },
+        'rusty-key': {
+          name: 'Rusty Key',
+          description: 'An old rusty key.',
+          roomText: 'A rusty key lies on the ground.',
+          pickupText: 'You take the rusty key.',
+          portable: true,
+        },
+        'golden-key': {
+          name: 'Golden Key',
+          description: 'A shiny golden key.',
+          roomText: 'A golden key gleams in the corner.',
+          pickupText: 'You take the golden key.',
+          portable: true,
+        },
+        'knights-shield': {
+          name: "Knight's Shield",
+          description: 'A sturdy shield.',
+          roomText: "A knight's shield leans against the wall.",
+          pickupText: "You take the knight's shield.",
+          portable: true,
+        },
+        'old-torch': {
+          name: 'Old Torch',
+          description: 'An old burning torch.',
+          roomText: 'An old torch burns on the wall.',
+          pickupText: 'You grab the old torch.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  function fuzzySession() {
+    const world = fuzzyWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    return session;
+  }
+
+  function fuzzySessionTwoPlayers() {
+    const world = fuzzyWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    session = addPlayer(session, 'p2', 'Bob');
+    return session;
+  }
+
+  // Helper: pick up items so they are in inventory
+  function pickUpItems(session, playerId, ...itemNames) {
+    for (const name of itemNames) {
+      ({ session } = processCommand(session, playerId, `get ${name}`));
+    }
+    return session;
+  }
+
+  // ── GET / TAKE: Partial name matching ─────────────────────────────────
+
+  describe('Partial name matching (get/take)', () => {
+    test('"get journal" matches "Dr. Webb\'s research journal" via substring', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'get journal');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('research-journal');
+    });
+
+    test('"get rusty" matches "Rusty Key" via prefix', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'get rusty');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('rusty-key');
+    });
+
+    test('"get rusty key" matches "Rusty Key" via exact case-insensitive match', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'get rusty key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('rusty-key');
+    });
+
+    test('case insensitive: "GET JOURNAL" matches "Dr. Webb\'s research journal"', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'GET JOURNAL');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('research-journal');
+    });
+
+    test('"get dr" matches "Dr. Webb\'s research journal" via prefix', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'get dr');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('research-journal');
+    });
+
+    test('"take torch" matches "Old Torch" via substring', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'take torch');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('old-torch');
+    });
+
+    test('"grab shield" matches "Knight\'s Shield" via substring', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'grab shield');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('knights-shield');
+    });
+  });
+
+  // ── Disambiguation (multiple matches) ─────────────────────────────────
+
+  describe('Disambiguation (multiple matches)', () => {
+    test('"get key" with "Rusty Key" and "Golden Key" triggers disambiguation', () => {
+      let session = fuzzySession();
+      const { responses } = processCommand(session, 'p1', 'get key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/Did you mean/i);
+      expect(msg.message.text).toContain('Rusty Key');
+      expect(msg.message.text).toContain('Golden Key');
+      expect(msg.message.text).toMatch(/more specific/i);
+    });
+
+    test('player can resolve disambiguation by being more specific', () => {
+      let session = fuzzySession();
+      // First attempt triggers disambiguation
+      ({ session } = processCommand(session, 'p1', 'get key'));
+      // Second attempt with more specificity works
+      const { session: updated, responses } = processCommand(session, 'p1', 'get rusty key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('rusty-key');
+    });
+
+    test('player can resolve disambiguation with partial prefix: "get golden"', () => {
+      let session = fuzzySession();
+      ({ session } = processCommand(session, 'p1', 'get key'));
+      const { session: updated, responses } = processCommand(session, 'p1', 'get golden');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('golden-key');
+    });
+
+    test('"get key" after one key is taken no longer disambiguates', () => {
+      let session = fuzzySession();
+      ({ session } = processCommand(session, 'p1', 'get rusty key'));
+      // Now only golden-key remains — "get key" should match uniquely
+      const { session: updated, responses } = processCommand(session, 'p1', 'get key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('golden-key');
+    });
+  });
+
+  // ── Exact match priority ──────────────────────────────────────────────
+
+  describe('Exact match priority', () => {
+    function exactMatchWorld() {
+      return loadWorld({
+        name: 'Exact Match World',
+        startRoom: 'exact-room',
+        rooms: {
+          'exact-room': {
+            name: 'Exact Room',
+            description: 'A room to test exact matches.',
+            exits: {},
+            items: ['plain-key', 'rusty-key-em'],
+            hazards: [],
+          },
+        },
+        items: {
+          'plain-key': {
+            name: 'Key',
+            description: 'A plain key.',
+            roomText: 'A key lies here.',
+            pickupText: 'You take the key.',
+            portable: true,
+          },
+          'rusty-key-em': {
+            name: 'Rusty Key',
+            description: 'A rusty key.',
+            roomText: 'A rusty key lies here.',
+            pickupText: 'You take the rusty key.',
+            portable: true,
+          },
+        },
+        puzzles: {},
+      });
+    }
+
+    test('"get key" picks up exact-match "Key" not "Rusty Key"', () => {
+      const world = exactMatchWorld();
+      let session = createGameSession(world);
+      session = addPlayer(session, 'p1', 'Alice');
+
+      const { session: updated, responses } = processCommand(session, 'p1', 'get key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('plain-key');
+      expect(updated.players['p1'].inventory).not.toContain('rusty-key-em');
+    });
+
+    test('exact match wins even when non-exact match appears first in room', () => {
+      const world = exactMatchWorld();
+      let session = createGameSession(world);
+      session = addPlayer(session, 'p1', 'Alice');
+      // Reorder items so rusty-key-em is first
+      session.roomStates['exact-room'].items = ['rusty-key-em', 'plain-key'];
+
+      const { session: updated, responses } = processCommand(session, 'p1', 'get key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      // "Key" is an exact match via matchesItemName, "Rusty Key" is not
+      // findMatchingItems returns exact matches first, so "Key" wins
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('plain-key');
+    });
+  });
+
+  // ── DROP: Partial name matching ───────────────────────────────────────
+
+  describe('Partial name matching (drop)', () => {
+    test('"drop journal" drops the matching item from inventory', () => {
+      let session = fuzzySession();
+      session = pickUpItems(session, 'p1', "dr. webb's research journal");
+      expect(session.players['p1'].inventory).toContain('research-journal');
+
+      const { session: updated, responses } = processCommand(session, 'p1', 'drop journal');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).not.toContain('research-journal');
+    });
+
+    test('"drop key" with multiple keys in inventory triggers disambiguation', () => {
+      let session = fuzzySession();
+      session = pickUpItems(session, 'p1', 'rusty key', 'golden key');
+      expect(session.players['p1'].inventory).toContain('rusty-key');
+      expect(session.players['p1'].inventory).toContain('golden-key');
+
+      const { responses } = processCommand(session, 'p1', 'drop key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/Did you mean/i);
+      expect(msg.message.text).toContain('Rusty Key');
+      expect(msg.message.text).toContain('Golden Key');
+    });
+
+    test('"drop rusty" drops only "Rusty Key" when both keys in inventory', () => {
+      let session = fuzzySession();
+      session = pickUpItems(session, 'p1', 'rusty key', 'golden key');
+
+      const { session: updated, responses } = processCommand(session, 'p1', 'drop rusty');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).not.toContain('rusty-key');
+      expect(updated.players['p1'].inventory).toContain('golden-key');
+    });
+  });
+
+  // ── USE: Partial name matching ────────────────────────────────────────
+
+  describe('Partial name matching (use)', () => {
+    test('"use journal" finds item in inventory (no puzzle → cannot use)', () => {
+      let session = fuzzySession();
+      session = pickUpItems(session, 'p1', "dr. webb's research journal");
+
+      const { responses } = processCommand(session, 'p1', 'use journal');
+      const msg = responses.find(r => r.playerId === 'p1');
+      // Item is found (not "you don't have") but there's no puzzle, so "can't use here"
+      expect(msg.message.text).not.toMatch(/don't have/i);
+      expect(msg.message.text).toMatch(/can't use/i);
+    });
+
+    test('"use key" with multiple keys in inventory triggers disambiguation', () => {
+      let session = fuzzySession();
+      session = pickUpItems(session, 'p1', 'rusty key', 'golden key');
+
+      const { responses } = processCommand(session, 'p1', 'use key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/Did you mean/i);
+    });
+
+    test('"use rusty" resolves to "Rusty Key" when both keys held', () => {
+      let session = fuzzySession();
+      session = pickUpItems(session, 'p1', 'rusty key', 'golden key');
+
+      const { responses } = processCommand(session, 'p1', 'use rusty');
+      const msg = responses.find(r => r.playerId === 'p1');
+      // Should find the item (not disambiguation), though no puzzle matches
+      expect(msg.message.text).not.toMatch(/Did you mean/i);
+    });
+  });
+
+  // ── GIVE: Partial name matching ───────────────────────────────────────
+
+  describe('Partial name matching (give)', () => {
+    test('"give journal to Bob" with partial item name', () => {
+      let session = fuzzySessionTwoPlayers();
+      session = pickUpItems(session, 'p1', "dr. webb's research journal");
+
+      const { session: updated, responses } = processCommand(session, 'p1', 'give journal to Bob');
+      const aliceMsg = responses.find(r => r.playerId === 'p1');
+      expect(aliceMsg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).not.toContain('research-journal');
+      expect(updated.players['p2'].inventory).toContain('research-journal');
+    });
+
+    test('"give key to Bob" with multiple keys triggers disambiguation', () => {
+      let session = fuzzySessionTwoPlayers();
+      session = pickUpItems(session, 'p1', 'rusty key', 'golden key');
+
+      const { responses } = processCommand(session, 'p1', 'give key to Bob');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/Did you mean/i);
+    });
+
+    test('"give rusty to Bob" gives "Rusty Key" successfully', () => {
+      let session = fuzzySessionTwoPlayers();
+      session = pickUpItems(session, 'p1', 'rusty key', 'golden key');
+
+      const { session: updated, responses } = processCommand(session, 'p1', 'give rusty to Bob');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).not.toContain('rusty-key');
+      expect(updated.players['p2'].inventory).toContain('rusty-key');
+      // Alice still has golden key
+      expect(updated.players['p1'].inventory).toContain('golden-key');
+    });
+  });
+
+  // ── No matches ────────────────────────────────────────────────────────
+
+  describe('No matches', () => {
+    test('"get banana" when no banana exists returns error', () => {
+      let session = fuzzySession();
+      const { responses } = processCommand(session, 'p1', 'get banana');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/don't see/i);
+    });
+
+    test('"drop banana" when not in inventory returns error', () => {
+      let session = fuzzySession();
+      const { responses } = processCommand(session, 'p1', 'drop banana');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/don't have/i);
+    });
+
+    test('"use banana" when not in inventory returns error', () => {
+      let session = fuzzySession();
+      const { responses } = processCommand(session, 'p1', 'use banana');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/don't have/i);
+    });
+
+    test('"give banana to Bob" when not in inventory returns error', () => {
+      let session = fuzzySessionTwoPlayers();
+      const { responses } = processCommand(session, 'p1', 'give banana to Bob');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).toBe('error');
+      expect(msg.message.text).toMatch(/don't have/i);
+    });
+  });
+
+  // ── Special characters ────────────────────────────────────────────────
+
+  describe('Special characters in fuzzy matching', () => {
+    test('"get knights shield" matches "Knight\'s Shield" (apostrophe stripped)', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'get knights shield');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('knights-shield');
+    });
+
+    test('"get dr webbs" matches "Dr. Webb\'s research journal" (period+apostrophe stripped)', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'get dr webbs');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('research-journal');
+    });
+
+    test('"get webbs" matches "Dr. Webb\'s research journal" via normalized substring', () => {
+      let session = fuzzySession();
+      const { session: updated, responses } = processCommand(session, 'p1', 'get webbs');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(updated.players['p1'].inventory).toContain('research-journal');
+    });
+
+    test('"examine knights shield" finds "Knight\'s Shield" description', () => {
+      let session = fuzzySession();
+      session = pickUpItems(session, 'p1', "knight's shield");
+      const { responses } = processCommand(session, 'p1', 'examine knights shield');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.type).not.toBe('error');
+      expect(msg.message.text).toContain('sturdy shield');
+    });
+  });
+
+  // ── Disambiguation message format ─────────────────────────────────────
+
+  describe('Disambiguation message format', () => {
+    test('disambiguation message lists all matching items', () => {
+      let session = fuzzySession();
+      const { responses } = processCommand(session, 'p1', 'get key');
+      const msg = responses.find(r => r.playerId === 'p1');
+      expect(msg.message.text).toContain('Did you mean');
+      // Each item on its own line with " - " prefix
+      expect(msg.message.text).toContain(' - Rusty Key');
+      expect(msg.message.text).toContain(' - Golden Key');
+      expect(msg.message.text).toContain('Please be more specific');
+    });
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════
+// Fuzzy / Partial Item Name Matching
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Fuzzy Item Name Matching', () => {
+  // World with multiple items for disambiguation and partial matching
+  function fuzzyTestWorld() {
+    return loadWorld({
+      name: 'Fuzzy Test World',
+      startRoom: 'room1',
+      rooms: {
+        room1: {
+          name: 'Room 1',
+          description: 'A room with many items.',
+          exits: { north: 'room2' },
+          items: ['rusty-key', 'golden-key', 'journal', 'shield'],
+          hazards: [],
+        },
+        room2: {
+          name: 'Room 2',
+          description: 'Another room.',
+          exits: { south: 'room1' },
+          items: [],
+          hazards: [],
+        },
+      },
+      items: {
+        'rusty-key': {
+          name: 'Rusty Key',
+          description: 'A rusty old key.',
+          roomText: 'A rusty key lies on the ground.',
+          pickupText: 'You take the rusty key.',
+          portable: true,
+        },
+        'golden-key': {
+          name: 'Golden Key',
+          description: 'A shiny golden key.',
+          roomText: 'A golden key gleams on a shelf.',
+          pickupText: 'You take the golden key.',
+          portable: true,
+        },
+        journal: {
+          name: "Dr. Webb's Research Journal",
+          description: 'A leather-bound journal full of notes.',
+          roomText: 'A research journal sits on the desk.',
+          pickupText: 'You take the journal.',
+          portable: true,
+        },
+        shield: {
+          name: "Knight's Shield",
+          description: 'A sturdy shield.',
+          roomText: 'A shield leans against the wall.',
+          pickupText: 'You take the shield.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  function fuzzySession(playerId = 'p1', name = 'Alice') {
+    const world = fuzzyTestWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, playerId, name);
+    return session;
+  }
+
+  // ── GET / TAKE ──────────────────────────────────────────────────────
+
+  test('exact name still works for take', () => {
+    const session = fuzzySession();
+    const { session: updated, responses } = processCommand(session, 'p1', 'take rusty key');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('rusty-key');
+  });
+
+  test('partial substring match picks up item (take journal)', () => {
+    const session = fuzzySession();
+    const { session: updated, responses } = processCommand(session, 'p1', 'take journal');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('journal');
+  });
+
+  test('case-insensitive partial match works (get SHIELD)', () => {
+    const session = fuzzySession();
+    const { session: updated, responses } = processCommand(session, 'p1', 'get SHIELD');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('shield');
+  });
+
+  test('partial match with special characters (get webbs)', () => {
+    const session = fuzzySession();
+    const { session: updated, responses } = processCommand(session, 'p1', 'get webbs');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('journal');
+  });
+
+  test('disambiguation when multiple items match (get key)', () => {
+    const session = fuzzySession();
+    const { responses } = processCommand(session, 'p1', 'get key');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain('Did you mean');
+    expect(msg.message.text).toContain('Rusty Key');
+    expect(msg.message.text).toContain('Golden Key');
+    expect(msg.message.text).toContain('Please be more specific');
+  });
+
+  test('no match returns standard error', () => {
+    const session = fuzzySession();
+    const { responses } = processCommand(session, 'p1', 'get sword');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain("don't see");
+  });
+
+  test('exact match is prioritized over partial (take golden key)', () => {
+    const session = fuzzySession();
+    const { session: updated, responses } = processCommand(session, 'p1', 'take golden key');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('golden-key');
+    expect(updated.players['p1'].inventory).not.toContain('rusty-key');
+  });
+
+  // ── DROP ────────────────────────────────────────────────────────────
+
+  test('partial match works for drop', () => {
+    let session = fuzzySession();
+    ({ session } = processCommand(session, 'p1', 'take rusty key'));
+    ({ session } = processCommand(session, 'p1', 'take golden key'));
+    // Drop by partial "rusty" — unique match
+    const { session: afterDrop, responses } = processCommand(session, 'p1', 'drop rusty');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(afterDrop.players['p1'].inventory).not.toContain('rusty-key');
+  });
+
+  test('drop disambiguation when multiple items match', () => {
+    let session = fuzzySession();
+    ({ session } = processCommand(session, 'p1', 'take rusty key'));
+    ({ session } = processCommand(session, 'p1', 'take golden key'));
+    const { responses } = processCommand(session, 'p1', 'drop key');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain('Did you mean');
+  });
+
+  // ── USE ─────────────────────────────────────────────────────────────
+
+  test('partial match works for use', () => {
+    let session = fuzzySession();
+    ({ session } = processCommand(session, 'p1', 'take rusty key'));
+    // use "rusty" — should match "Rusty Key", even though no puzzle, returns "can't use here"
+    const { responses } = processCommand(session, 'p1', 'use rusty');
+    const msg = responses.find(r => r.playerId === 'p1');
+    // Should find the item (not "don't have" error) — instead "can't use here"
+    expect(msg.message.text).toContain("can't use");
+  });
+
+  test('use disambiguation when multiple items match', () => {
+    let session = fuzzySession();
+    ({ session } = processCommand(session, 'p1', 'take rusty key'));
+    ({ session } = processCommand(session, 'p1', 'take golden key'));
+    const { responses } = processCommand(session, 'p1', 'use key');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain('Did you mean');
+  });
+
+  // ── GIVE ────────────────────────────────────────────────────────────
+
+  test('partial match works for give', () => {
+    const world = fuzzyTestWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    session = addPlayer(session, 'p2', 'Bob');
+    ({ session } = processCommand(session, 'p1', 'take rusty key'));
+    const { session: afterGive, responses } = processCommand(session, 'p1', 'give rusty to Bob');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).not.toBe('error');
+    expect(afterGive.players['p2'].inventory).toContain('rusty-key');
+  });
+
+  test('give disambiguation when multiple items match', () => {
+    const world = fuzzyTestWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    session = addPlayer(session, 'p2', 'Bob');
+    ({ session } = processCommand(session, 'p1', 'take rusty key'));
+    ({ session } = processCommand(session, 'p1', 'take golden key'));
+    const { responses } = processCommand(session, 'p1', 'give key to Bob');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain('Did you mean');
+  });
+
+  // ── EDGE CASES ──────────────────────────────────────────────────────
+
+  test('single-word partial match on multi-word item name', () => {
+    const session = fuzzySession();
+    const { session: updated, responses } = processCommand(session, 'p1', 'take research');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('journal');
+  });
+
+  test('normalized match ignores apostrophes (knights)', () => {
+    const session = fuzzySession();
+    const { session: updated, responses } = processCommand(session, 'p1', 'get knights');
+    expect(responses.find(r => r.playerId === 'p1').message.type).not.toBe('error');
+    expect(updated.players['p1'].inventory).toContain('shield');
+  });
+});

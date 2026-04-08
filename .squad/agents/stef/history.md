@@ -245,3 +245,27 @@
     - Hint system: `session.hintsEnabled` boolean flag, `puzzle.hintText` field, exposed via `getPlayerView().hintText`
     - Special char matching: Mouth updating `handleTake` to support partial name matching including apostrophes/hyphens
   - Total: 447 tests (236 pass in game-engine.test.js, 4 expected failures from new features)
+
+- **2026-04-07 — Fuzzy Item Matching tests (31 new tests, all passing)**
+  - Added `describe('Fuzzy item matching (Stef)')` block to `/tests/game-engine.test.js`
+  - Tests cover Mouth's fuzzy/partial item name matching implementation across all item commands
+  - **Implementation details discovered:**
+    - `normalizeForMatch(str)` — strips non-alphanumeric (except spaces), lowercases, trims
+    - `matchesItemName(itemName, input)` — exact, normalized exact, startsWith, normalized startsWith
+    - `fuzzyMatchesItemName(itemName, input)` — substring/includes match (both raw and normalized)
+    - `findMatchingItems(searchTerm, itemIds, worldItems)` — returns all matches, exact/startsWith prioritized over fuzzy substring. Returns array of matching item IDs.
+    - `disambiguationMessage(searchTerm, itemIds, worldItems)` — format: "Did you mean:\n - Item1\n - Item2\nPlease be more specific."
+    - All handlers (handleTake, handleDrop, handleUse, handleGive, handleTakeFromGhost) use `findMatchingItems` + disambiguation
+  - 7 test sub-groups:
+    1. **Partial name matching (get/take)** (7 tests): substring match ("get journal"), prefix match ("get rusty"), exact case-insensitive, case insensitive via parser, prefix with period ("get dr"), synonym verbs (take/grab)
+    2. **Disambiguation (multiple matches)** (4 tests): triggers on ambiguous input, resolve with full name, resolve with unique prefix, no longer disambiguates after one item taken
+    3. **Exact match priority** (2 tests): exact "Key" wins over substring "Rusty Key", order-independent (works regardless of array position)
+    4. **Partial name matching (drop)** (3 tests): drop by substring, disambiguation with multiple, unique prefix resolves
+    5. **Partial name matching (use)** (3 tests): finds item (no puzzle → "can't use"), disambiguation, unique prefix resolves
+    6. **Partial name matching (give)** (3 tests): give by substring to other player, disambiguation, unique prefix resolves
+    7. **No matches** (4 tests): get/drop/use/give with nonexistent item → appropriate error
+    8. **Special characters** (4 tests): apostrophe stripping ("knights shield" → "Knight's Shield"), period+apostrophe ("dr webbs"), normalized substring ("webbs"), examine with special chars
+    9. **Disambiguation message format** (1 test): verifies message structure
+  - Created inline `fuzzyWorld()` with 5 items (Dr. Webb's research journal, Rusty Key, Golden Key, Knight's Shield, Old Torch) and `exactMatchWorld()` with 2 items (Key, Rusty Key) for exact-match priority tests
+  - Mouth also wrote 15 tests in `describe('Fuzzy Item Name Matching')` — both test blocks complement each other
+  - Total: 312 tests in game-engine.test.js (305 pass, 7 skipped)

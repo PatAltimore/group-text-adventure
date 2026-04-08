@@ -613,3 +613,13 @@ Two features implemented:
   - **3 goals:** Open the Burial Chamber, Enter the Pharaoh's Tomb, Solve the Sphinx's Riddle
 - **Validated:** JSON parses clean, all room/item/puzzle cross-references verified, bidirectional exits correct (puzzle-gated exits intentionally one-way until solved). All 472 tests pass.
 
+### 2026-07-14 — Fuzzy / Partial Item Name Matching
+
+- **Feature:** All item commands (take/get, drop, use, give) now support partial/fuzzy name matching. Players can type "get journal" instead of "get Dr. Webb's research journal".
+- **Architecture:** Added `findMatchingItems(searchTerm, itemIds, worldItems)` helper that returns matching item IDs. Exact/startsWith matches (via existing `matchesItemName`) are prioritized; falls back to case-insensitive substring matching (via new `fuzzyMatchesItemName`).
+- **Disambiguation:** When multiple items match a partial search, returns "Did you mean: \n - Item A\n - Item B\nPlease be more specific." — no item is picked up/used/etc.
+- **Zero matches:** Keeps existing "item not found" error behavior.
+- **Handlers updated:** `handleTake`, `handleTakeFromGhost`, `handleDrop`, `handleUse`, `handleGive` — all use `findMatchingItems` + `disambiguationMessage`.
+- **Tests:** 15 new tests covering partial match, disambiguation, special characters, case-insensitivity, and all four command types. All 274 tests pass (7 skipped, pre-existing).
+- **Key files:** `api/src/game-engine.js` (helpers + handler updates), `tests/game-engine.test.js` (new "Fuzzy Item Name Matching" describe block).
+

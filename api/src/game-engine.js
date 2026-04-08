@@ -59,6 +59,49 @@ function matchesItemName(itemName, input) {
   return false;
 }
 
+// Fuzzy substring match: returns true if input appears anywhere in itemName (not just start).
+function fuzzyMatchesItemName(itemName, input) {
+  const nameLower = itemName.toLowerCase();
+  const inputLower = input.toLowerCase();
+  if (nameLower.includes(inputLower)) return true;
+  const nameNorm = normalizeForMatch(itemName);
+  const inputNorm = normalizeForMatch(input);
+  if (inputNorm && nameNorm.includes(inputNorm)) return true;
+  return false;
+}
+
+/**
+ * Find items matching a search term from a list of item IDs.
+ * Prioritizes exact/startsWith matches over fuzzy substring matches.
+ * @param {string} searchTerm - The user's input (e.g. "key", "journal")
+ * @param {string[]} itemIds - Array of item IDs to search within
+ * @param {object} worldItems - The world.items map (id → item definition)
+ * @returns {string[]} Array of matching item IDs
+ */
+function findMatchingItems(searchTerm, itemIds, worldItems) {
+  if (!searchTerm || !itemIds || itemIds.length === 0) return [];
+
+  // 1. Exact / startsWith matches (existing logic) — highest priority
+  const exactMatches = itemIds.filter((id) => {
+    const item = worldItems[id];
+    return item && matchesItemName(item.name, searchTerm);
+  });
+  if (exactMatches.length > 0) return exactMatches;
+
+  // 2. Substring matches (fuzzy) — case-insensitive, on both raw and normalized names
+  const fuzzyMatches = itemIds.filter((id) => {
+    const item = worldItems[id];
+    return item && fuzzyMatchesItemName(item.name, searchTerm);
+  });
+  return fuzzyMatches;
+}
+
+// Format a disambiguation message when multiple items match.
+function disambiguationMessage(searchTerm, itemIds, worldItems) {
+  const names = itemIds.map((id) => worldItems[id].name);
+  return `Did you mean:\n${names.map((n) => ` - ${n}`).join('\n')}\nPlease be more specific.`;
+}
+
 // Funny adjectives for resolving duplicate player names
 const SILLY_ADJECTIVES = [
   'Evil','Sparkly', 'Grumpy', 'Wobbly', 'Sneaky', 'Fluffy',
@@ -780,12 +823,17 @@ function handleTake(session, playerId, cmd) {
     return handleTakeFromGhost(session, playerId, cmd);
   }
 
-  const idx = roomState.items.findIndex((itemId) => {
-    const item = session.world.items[itemId];
-    return item && matchesItemName(item.name, cmd.noun);
-  });
+  const matches = findMatchingItems(cmd.noun, roomState.items, session.world.items);
 
-  if (idx === -1) {
+  if (matches.length > 1) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: disambiguationMessage(cmd.noun, matches, session.world.items) },
+    });
+    return { session, responses };
+  }
+
+  if (matches.length === 0) {
     responses.push({
       playerId,
       message: { type: 'error', text: `You don't see "${cmd.noun}" here.` },
@@ -793,7 +841,8 @@ function handleTake(session, playerId, cmd) {
     return { session, responses };
   }
 
-  const itemId = roomState.items[idx];
+  const itemId = matches[0];
+  const idx = roomState.items.indexOf(itemId);
   const item = session.world.items[itemId];
 
   if (!item.portable) {
@@ -849,12 +898,17 @@ function handleTakeFromGhost(session, playerId, cmd) {
   }
 
   const ghost = found.ghost;
-  const idx = ghost.inventory.findIndex((itemId) => {
-    const item = session.world.items[itemId];
-    return item && matchesItemName(item.name, cmd.noun);
-  });
+  const ghostMatches = findMatchingItems(cmd.noun, ghost.inventory, session.world.items);
 
-  if (idx === -1) {
+  if (ghostMatches.length > 1) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: disambiguationMessage(cmd.noun, ghostMatches, session.world.items) },
+    });
+    return { session, responses };
+  }
+
+  if (ghostMatches.length === 0) {
     responses.push({
       playerId,
       message: { type: 'error', text: `${ghost.playerName}'s ghost doesn't have "${cmd.noun}".` },
@@ -862,7 +916,8 @@ function handleTakeFromGhost(session, playerId, cmd) {
     return { session, responses };
   }
 
-  const itemId = ghost.inventory[idx];
+  const itemId = ghostMatches[0];
+  const idx = ghost.inventory.indexOf(itemId);
   const item = session.world.items[itemId];
   ghost.inventory.splice(idx, 1);
   player.inventory.push(itemId);
@@ -968,12 +1023,17 @@ function handleDrop(session, playerId, cmd) {
     return { session, responses };
   }
 
-  const idx = player.inventory.findIndex((itemId) => {
-    const item = session.world.items[itemId];
-    return item && matchesItemName(item.name, cmd.noun);
-  });
+  const matches = findMatchingItems(cmd.noun, player.inventory, session.world.items);
 
-  if (idx === -1) {
+  if (matches.length > 1) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: disambiguationMessage(cmd.noun, matches, session.world.items) },
+    });
+    return { session, responses };
+  }
+
+  if (matches.length === 0) {
     responses.push({
       playerId,
       message: { type: 'error', text: `You don't have "${cmd.noun}".` },
@@ -981,7 +1041,8 @@ function handleDrop(session, playerId, cmd) {
     return { session, responses };
   }
 
-  const itemId = player.inventory[idx];
+  const itemId = matches[0];
+  const idx = player.inventory.indexOf(itemId);
   const item = session.world.items[itemId];
 
   player.inventory.splice(idx, 1);
@@ -1018,18 +1079,25 @@ function handleUse(session, playerId, cmd) {
   }
 
   // Check player has the item
-  const itemId = player.inventory.find((id) => {
-    const item = session.world.items[id];
-    return item && matchesItemName(item.name, cmd.noun);
-  });
+  const matches = findMatchingItems(cmd.noun, player.inventory, session.world.items);
 
-  if (!itemId) {
+  if (matches.length > 1) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: disambiguationMessage(cmd.noun, matches, session.world.items) },
+    });
+    return { session, responses };
+  }
+
+  if (matches.length === 0) {
     responses.push({
       playerId,
       message: { type: 'error', text: `You don't have "${cmd.noun}".` },
     });
     return { session, responses };
   }
+
+  const itemId = matches[0];
 
   // Check for matching puzzles in the current room
   for (const [puzzleId, puzzle] of Object.entries(session.world.puzzles || {})) {
@@ -1157,18 +1225,26 @@ function handleGive(session, playerId, cmd) {
   const targetName = cmd.target.toLowerCase();
 
   // Find the item in inventory
-  const idx = player.inventory.findIndex((id) => {
-    const item = session.world.items[id];
-    return item && matchesItemName(item.name, cmd.noun);
-  });
+  const matches = findMatchingItems(cmd.noun, player.inventory, session.world.items);
 
-  if (idx === -1) {
+  if (matches.length > 1) {
+    responses.push({
+      playerId,
+      message: { type: 'error', text: disambiguationMessage(cmd.noun, matches, session.world.items) },
+    });
+    return { session, responses };
+  }
+
+  if (matches.length === 0) {
     responses.push({
       playerId,
       message: { type: 'error', text: `You don't have "${cmd.noun}".` },
     });
     return { session, responses };
   }
+
+  const itemId = matches[0];
+  const idx = player.inventory.indexOf(itemId);
 
   // Find the target player in the same room
   const targetEntry = Object.entries(session.players).find(
@@ -1184,7 +1260,6 @@ function handleGive(session, playerId, cmd) {
   }
 
   const [targetId, targetPlayer] = targetEntry;
-  const itemId = player.inventory[idx];
   const item = session.world.items[itemId];
 
   // Transfer the item
