@@ -5302,3 +5302,152 @@ describe('Get Items / Take Items / G Shortcut', () => {
     expect(updated.players['p2'].inventory).toContain('silver-coin');
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// Fuzzy matching on look / examine
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Fuzzy look/examine matching', () => {
+  function lookWorld() {
+    return loadWorld({
+      name: 'Look Fuzzy World',
+      startRoom: 'lobby',
+      rooms: {
+        lobby: {
+          name: 'Lobby',
+          description: 'A large lobby.',
+          exits: {},
+          items: ['red-book', 'old-book', 'silver-key'],
+          hazards: [],
+        },
+      },
+      items: {
+        'red-book': {
+          name: 'Red Book',
+          description: 'A book with a crimson cover.',
+          roomText: 'A red book sits on a shelf.',
+          portable: true,
+        },
+        'old-book': {
+          name: 'Old Book',
+          description: 'A dusty old tome.',
+          roomText: 'An old book gathers dust.',
+          portable: true,
+        },
+        'silver-key': {
+          name: 'Silver Key',
+          description: 'A small silver key.',
+          roomText: 'A silver key glints on the floor.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  function lookSession() {
+    const world = lookWorld();
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    return session;
+  }
+
+  // ── Single fuzzy match in room ────────────────────────────────────
+
+  test('"look key" finds "Silver Key" in the room', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'look key');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toContain('small silver key');
+  });
+
+  test('"examine key" finds "Silver Key" in the room', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'examine key');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toContain('small silver key');
+  });
+
+  // ── Disambiguation on look/examine ─────────────────────────────────
+
+  test('"look book" with "Red Book" and "Old Book" in room triggers disambiguation', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'look book');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain('Did you mean');
+    expect(msg.message.text).toContain('Red Book');
+    expect(msg.message.text).toContain('Old Book');
+  });
+
+  test('"examine book" with two books triggers disambiguation', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'examine book');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain('Did you mean');
+  });
+
+  // ── Item found in inventory ─────────────────────────────────────────
+
+  test('"look key" finds "Silver Key" in player inventory', () => {
+    let session = lookSession();
+    ({ session } = processCommand(session, 'p1', 'get silver key'));
+    const { responses } = processCommand(session, 'p1', 'look key');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toContain('small silver key');
+  });
+
+  // ── Inventory preferred over room ───────────────────────────────────
+
+  test('inventory match is preferred over room match', () => {
+    let session = lookSession();
+    // Pick up one book, leave the other in the room
+    ({ session } = processCommand(session, 'p1', 'get red book'));
+    const { responses } = processCommand(session, 'p1', 'look red');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toContain('crimson cover');
+  });
+
+  // ── Case insensitive ─────────────────────────────────────────────────
+
+  test('"look KEY" is case insensitive', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'look KEY');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toContain('small silver key');
+  });
+
+  test('"EXAMINE Silver Key" is case insensitive', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'EXAMINE Silver Key');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toContain('small silver key');
+  });
+
+  // ── No match ──────────────────────────────────────────────────────────
+
+  test('"look sword" with no matching item returns error', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'look sword');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('error');
+    expect(msg.message.text).toContain("don't see");
+  });
+
+  // ── Exact match ─────────────────────────────────────────────────────
+
+  test('"look red book" with exact match returns description (no disambiguation)', () => {
+    const session = lookSession();
+    const { responses } = processCommand(session, 'p1', 'look red book');
+    const msg = responses.find(r => r.playerId === 'p1');
+    expect(msg.message.type).toBe('message');
+    expect(msg.message.text).toContain('crimson cover');
+  });
+});

@@ -632,3 +632,12 @@ Two features implemented:
 - **Tests:** 15 new tests covering partial match, disambiguation, special characters, case-insensitivity, and all four command types. All 274 tests pass (7 skipped, pre-existing).
 - **Key files:** `api/src/game-engine.js` (helpers + handler updates), `tests/game-engine.test.js` (new "Fuzzy Item Name Matching" describe block).
 
+
+
+### 2026-04-08 — Fuzzy Matching Extended to look/examine
+
+- **Problem:** `handleLook` used `matchesItemName` directly (exact match only, no disambiguation, no fuzzy/substring support). All other item commands (take, drop, use, give) already used `findMatchingItems`.
+- **Fix:** Refactored `handleLook` to use `findMatchingItems` for both inventory and room items. Searches inventory first (preferred), falls back to room. Disambiguation message shown when multiple items match a partial term.
+- **Audit result:** All item-referencing commands now use `findMatchingItems`: take (line 826), take-from-ghost (line 901), drop (line 1004), use (line 1060), give (line 1206), and look/examine (refactored).
+- **Tests:** 12 new tests in "Fuzzy look/examine matching" block covering: single fuzzy match in room, disambiguation with multiple matches, inventory lookup, inventory-preferred-over-room, case insensitivity, no-match error, and exact match priority.
+- **All 539 tests pass** (2 skipped, pre-existing).

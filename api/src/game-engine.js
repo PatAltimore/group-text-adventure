@@ -774,26 +774,24 @@ function handleLook(session, playerId, cmd) {
     return { session, responses };
   }
 
-  // "examine <item>" — check inventory first, then room
-  const matchItem = (itemId) => {
-    const item = session.world.items[itemId];
-    return item && matchesItemName(item.name, cmd.noun);
-  };
+  // "examine <item>" — fuzzy match inventory first, then room
+  const roomState = session.roomStates[player.room];
+  const invMatches = findMatchingItems(cmd.noun, player.inventory, session.world.items);
+  const roomMatches = findMatchingItems(cmd.noun, roomState.items, session.world.items);
 
-  const invItem = player.inventory.find(matchItem);
-  if (invItem) {
-    const item = session.world.items[invItem];
+  // Prefer inventory matches; fall back to room matches
+  const matches = invMatches.length > 0 ? invMatches : roomMatches;
+
+  if (matches.length > 1) {
     responses.push({
       playerId,
-      message: { type: 'message', text: item.description },
+      message: { type: 'error', text: disambiguationMessage(cmd.noun, matches, session.world.items) },
     });
     return { session, responses };
   }
 
-  const roomState = session.roomStates[player.room];
-  const roomItem = roomState.items.find(matchItem);
-  if (roomItem) {
-    const item = session.world.items[roomItem];
+  if (matches.length === 1) {
+    const item = session.world.items[matches[0]];
     responses.push({
       playerId,
       message: { type: 'message', text: item.description },
