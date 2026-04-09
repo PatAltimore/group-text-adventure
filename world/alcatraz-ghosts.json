@@ -121,15 +121,15 @@
     },
     "pharmacy": {
       "name": "Pharmaceutical Records Room",
-      "description": "Filing cabinets overflow with medical records, prescription logs, incident reports. Alcatraz documented everything — every pill, every injection, every lobotomy. The records smell of mildew and secrecy. On a desk, someone's left research notes about Zozo: 'Patient Zero contracted in 1946 riot. Entity designation: Zozo. Transferred between inmates through violence. Last known host: Cell 14D, 1962. Entity remains active.' Below that, in different handwriting: 'Entity can be contained using Ovilus device calibrated to theta frequency. Device location: lighthouse keeper's quarters.' The hospital wing is south. A service ladder in the corner leads upward into darkness, but the hatch above is sealed shut.",
+      "description": "Filing cabinets overflow with medical records, prescription logs, incident reports. Alcatraz documented everything — every pill, every injection, every lobotomy. The records smell of mildew and secrecy. On a desk, someone's left research notes about Zozo: 'Patient Zero contracted in 1946 riot. Entity designation: Zozo. Transferred between inmates through violence. Last known host: Cell 14D, 1962. Entity remains active.' Below that, in different handwriting: 'Entity can be contained using Ovilus device calibrated to theta frequency. Device location: lighthouse keeper's quarters.' The hospital wing is south. A service ladder in the corner leads north through a narrow shaft toward the lighthouse, but the hatch above is sealed shut.",
       "exits": { "south": "hospital" },
       "items": ["ovilus-device"],
       "hazards": []
     },
     "lighthouse": {
       "name": "Lighthouse",
-      "description": "The oldest structure on Alcatraz Island. The lighthouse beam has been dark since the prison closed, but tonight it flickers with spectral light that casts no shadows. Circular stairs spiral around the light mechanism — a massive Fresnel lens that somehow still turns, grinding on corroded gears. From here you can see the entire prison complex spread below like a model of damnation. The keeper's quarters are cramped but preserved, bed made military-tight. On the small desk, a ship's log records strange occurrences: 'Entity confirmed. Full manifestation imminent. Require all scanning equipment for containment protocol. — Warden James A. Johnston, 1946.' The ladder down leads to the pharmacy.",
-      "exits": { "down": "pharmacy" },
+      "description": "The oldest structure on Alcatraz Island. The lighthouse beam has been dark since the prison closed, but tonight it flickers with spectral light that casts no shadows. Circular stairs spiral around the light mechanism — a massive Fresnel lens that somehow still turns, grinding on corroded gears. From here you can see the entire prison complex spread below like a model of damnation. The keeper's quarters are cramped but preserved, bed made military-tight. On the small desk, a ship's log records strange occurrences: 'Entity confirmed. Full manifestation imminent. Require all scanning equipment for containment protocol. — Warden James A. Johnston, 1946.' The passage south leads back down to the pharmacy.",
+      "exits": { "south": "pharmacy" },
       "items": [],
       "hazards": []
     },
@@ -350,7 +350,7 @@
       "goalName": "",
       "action": {
         "type": "openExit",
-        "direction": "up",
+        "direction": "north",
         "targetRoom": "lighthouse"
       }
     },
