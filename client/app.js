@@ -472,6 +472,7 @@
         break;
       case 'error':
         appendErrorMessage(msg.text);
+        showLobbyError(msg.text);
         break;
       case 'inventory':
         renderInventoryMessage(msg.items);
@@ -557,6 +558,19 @@
 
   function appendErrorMessage(text) {
     appendToOutput(createMsg('msg-error', text));
+  }
+
+  function showLobbyError(text) {
+    const lobbyScreen = screens.lobby;
+    if (!lobbyScreen || !lobbyScreen.classList.contains('active')) return;
+    let errEl = lobbyScreen.querySelector('.lobby-error');
+    if (!errEl) {
+      errEl = document.createElement('div');
+      errEl.className = 'lobby-error';
+      lobbyScreen.appendChild(errEl);
+    }
+    errEl.textContent = `⚠️ ${text}`;
+    errEl.classList.remove('hidden');
   }
 
   function appendCommandEcho(text) {

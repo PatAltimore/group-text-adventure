@@ -337,8 +337,27 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       return { body: '', status: 200 };
     }
     const worldId = data.worldId;
-    const worldJson = await getWorld(worldId);
-    const world = loadWorld(worldJson);
+    let worldJson, world;
+    try {
+      worldJson = await getWorld(worldId);
+    } catch (err) {
+      context.error(`[JOIN] Failed to load world file "${worldId}": ${err.message}`);
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'error',
+        text: `Could not load adventure "${worldId}". Please try another.`,
+      });
+      return { body: '', status: 200 };
+    }
+    try {
+      world = loadWorld(worldJson);
+    } catch (err) {
+      context.error(`[JOIN] World "${worldId}" failed validation: ${err.message}`);
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'error',
+        text: `Adventure "${worldId}" has configuration errors. Please try another.`,
+      });
+      return { body: '', status: 200 };
+    }
     session = createGameSession(world);
     session.hostPlayerId = playerId;
     await saveGameSession(gameId, {

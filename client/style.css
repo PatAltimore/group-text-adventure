@@ -440,6 +440,16 @@ html, body {
   margin-bottom: 12px;
 }
 
+.lobby-error {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
 .lobby-url-row {
   display: flex;
   gap: 8px;
