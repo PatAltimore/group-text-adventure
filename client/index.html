@@ -102,16 +102,6 @@
       <p class="landing-subtitle">Choose an adventure and invite your friends.</p>
 
       <div class="landing-form">
-        <label for="player-name" class="host-name-label">👤 Your Name</label>
-        <input
-          id="player-name"
-          type="text"
-          placeholder="Enter your name…"
-          maxlength="24"
-          autocomplete="off"
-          aria-label="Your player name"
-        >
-
         <div id="world-selector-group" class="world-selector-group">
           <label class="world-selector-label">Choose Adventure</label>
           <div id="world-selector-list" class="world-selector-list" role="radiogroup" aria-label="Select adventure world">
@@ -172,6 +162,16 @@
             <p class="setting-help">When enabled, puzzle rooms show a hint about what item is needed to solve the puzzle.</p>
           </div>
         </div>
+
+        <label for="player-name" class="host-name-label">👤 Your Name</label>
+        <input
+          id="player-name"
+          type="text"
+          placeholder="Enter your name…"
+          maxlength="24"
+          autocomplete="off"
+          aria-label="Your player name"
+        >
 
         <div class="landing-buttons">
           <button id="btn-host" class="btn btn-primary" disabled aria-label="Host a new game">
@@ -235,7 +235,7 @@
         autocomplete="off"
         aria-label="Game command"
       >
-      <button type="submit" class="btn btn-send" aria-label="Send command">Send</button>
+      <button type="submit" class="btn btn-send" aria-label="Send command">▶️ Go</button>
     </form>
   </section>
 
