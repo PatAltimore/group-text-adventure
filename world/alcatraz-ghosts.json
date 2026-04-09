@@ -48,7 +48,7 @@
     "broadway": {
       "name": "Broadway Cellblock",
       "description": "The main artery of Alcatraz. Three-tiered cells stretch into darkness on both sides, metal doors hanging open like broken teeth. The prisoners called this Broadway after the famous street — every new inmate had to walk this gauntlet while the population hurled insults and worse. Now only echoes walk here. Cell doors clang shut randomly, their locks broken for decades. Catwalks criss-cross above, rusted railings offering no safety. The entry hall is west. A corridor to the north leads deeper into D-Block. East opens to the mess hall. South drops down stairs toward the utility tunnels.",
-      "exits": { "north": "d-block", "east": "mess-hall", "west": "entry-hall" },
+      "exits": { "north": "d-block", "east": "mess-hall", "west": "entry-hall", "south": "utility-tunnel" },
       "items": [],
       "hazards": [
         {
