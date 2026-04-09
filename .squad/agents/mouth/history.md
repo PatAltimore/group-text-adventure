@@ -810,3 +810,26 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 **Key File Paths:**
 - World file: `world/alcatraz-ghosts.json`
 - Test command: `node --experimental-vm-modules node_modules/jest/bin/jest.js --silent`
+
+### 2026-07-18 — Fixed Alcatraz world not starting in production
+
+**Task:** Diagnose why `alcatraz-ghosts.json` wouldn't start when hosted from the browser despite passing all local tests.
+
+**Root Cause:** Import path mismatch in deployed code. `game-engine.js` imports `validate-world.js` via `../../world/validate-world.js` — correct locally (from `api/src/` up two levels to repo root) but broken in the deployed package where `src/` and `world/` are siblings (needs `../world/validate-world.js`). The `deploy.ps1` script patched this, but `deploy.sh` and the `azure.yaml` prepackage hooks did NOT, so any deployment via `azd` or bash would fail with a module-not-found error on `validate-world.js`, preventing `loadWorld` from running at all.
+
+**What was NOT the problem:**
+- `validateWorld` returns `valid: true` for alcatraz-ghosts.json (no errors, only empty-room warnings)
+- `loadWorld` succeeds locally — no puzzle/goal dependency issues
+- All 539 tests pass
+- World data itself is correct
+
+**Fix:**
+- Added `sed` path-patching to `deploy.sh` (matching the existing `deploy.ps1` logic)
+- Added path-patching to both `azure.yaml` prepackage hooks (windows pwsh + posix sh)
+- All three deployment paths now consistently patch `game-engine.js` before packaging
+
+**Files Changed:**
+- `deploy/deploy.sh` — added `sed` to patch `validate-world.js` import path
+- `azure.yaml` — added import path patching to both windows and posix prepackage hooks
+
+**Testing:** All 539 tests pass (2 skipped), no regressions.

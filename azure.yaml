@@ -31,6 +31,15 @@ services:
             Copy-Item $worldSrc -Destination $worldDst -Recurse -Force
             Write-Host "Copied world/ into api package"
 
+            # Fix import path: in the repo, api/src/ is two levels below world/
+            # (../../world/), but in the deployed package src/ is only one level
+            # below (../world/). Patch so the import resolves correctly.
+            $gePath = Join-Path $apiDir "src\game-engine.js"
+            $geContent = [System.IO.File]::ReadAllText($gePath)
+            $geContent = $geContent.Replace("'../../world/validate-world.js'", "'../world/validate-world.js'")
+            [System.IO.File]::WriteAllText($gePath, $geContent)
+            Write-Host "Patched game-engine.js import path for deployment structure."
+
             npm install --omit=dev
         posix:
           shell: sh
@@ -48,6 +57,12 @@ services:
             rm -rf "$WORLD_DST"
             cp -r "$WORLD_SRC" "$WORLD_DST"
             echo "Copied world/ into api package"
+
+            # Fix import path: in the repo, api/src/ is two levels below world/
+            # (../../world/), but in the deployed package src/ is only one level
+            # below (../world/). Patch so the import resolves correctly.
+            sed -i "s|'../../world/validate-world.js'|'../world/validate-world.js'|g" "$API_DIR/src/game-engine.js"
+            echo "Patched game-engine.js import path for deployment structure."
 
             npm install --omit=dev
 

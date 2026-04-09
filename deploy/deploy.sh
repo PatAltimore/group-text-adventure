@@ -222,6 +222,12 @@ rsync -a --exclude='node_modules' --exclude='local.settings.json' "$API_DIR/" "$
 # Copy world files into staging for deployed path resolution
 cp -r "$WORLD_DIR" "$STAGE_DIR/world"
 
+# Fix import paths: in the repo, api/src/ is two levels below the world/
+# directory (../../world/), but in the deployment zip src/ is only one level
+# below (../world/). Patch the staged copy so the import resolves correctly.
+sed -i "s|'../../world/validate-world.js'|'../world/validate-world.js'|g" "$STAGE_DIR/src/game-engine.js"
+info "Patched game-engine.js import paths for deployment structure."
+
 # Install production dependencies
 info "Installing production dependencies..."
 (cd "$STAGE_DIR" && npm install --omit=dev 2>&1)

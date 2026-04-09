@@ -173,6 +173,11 @@ export async function findPlayerByConnectionId(connectionId) {
 
 // ── Game State ────────────────────────────────────────────────────────
 
+// Azure Table Storage limits string properties to 32K characters (UTF-16).
+// Large game sessions (worlds with many rooms/items) can exceed this.
+// We chunk the JSON across numbered properties: stateJson_0, stateJson_1, etc.
+const STATE_CHUNK_SIZE = 30000; // chars per chunk, with safety margin
+
 /**
  * Save serialized game session state (room states, puzzle states, player states).
  * @param {string} gameId
@@ -180,14 +185,29 @@ export async function findPlayerByConnectionId(connectionId) {
  */
 export async function saveGameState(gameId, sessionState) {
   const client = getTableClient('GameState');
-  // Table Storage has a 64KB property limit; chunk if needed
   const stateJson = JSON.stringify(sessionState);
-  await client.upsertEntity({
+
+  const entity = {
     partitionKey: gameId,
     rowKey: 'state',
-    stateJson,
     updatedAt: new Date().toISOString(),
-  });
+  };
+
+  if (stateJson.length <= STATE_CHUNK_SIZE) {
+    entity.stateJson = stateJson;
+    entity.chunkCount = 0;
+  } else {
+    const chunks = [];
+    for (let i = 0; i < stateJson.length; i += STATE_CHUNK_SIZE) {
+      chunks.push(stateJson.substring(i, i + STATE_CHUNK_SIZE));
+    }
+    for (let i = 0; i < chunks.length; i++) {
+      entity[`stateJson_${i}`] = chunks[i];
+    }
+    entity.chunkCount = chunks.length;
+  }
+
+  await client.upsertEntity(entity);
 }
 
 /**
@@ -199,6 +219,15 @@ export async function loadGameState(gameId) {
   const client = getTableClient('GameState');
   try {
     const entity = await client.getEntity(gameId, 'state');
+
+    if (entity.chunkCount && entity.chunkCount > 0) {
+      let stateJson = '';
+      for (let i = 0; i < entity.chunkCount; i++) {
+        stateJson += entity[`stateJson_${i}`] || '';
+      }
+      return JSON.parse(stateJson);
+    }
+
     return JSON.parse(entity.stateJson);
   } catch (err) {
     if (err.statusCode === 404) return null;
