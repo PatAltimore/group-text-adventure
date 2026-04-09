@@ -1,0 +1,414 @@
+{
+  "name": "Alcatraz: The Zozo Investigation",
+  "description": "Your crew arrives at Alcatraz Island as the last ferry pulls away, its horn fading into the San Francisco Bay fog. The prison looms above — a concrete fortress abandoned for decades, but never truly empty. Tonight you're investigating reports of Zozo, a malevolent entity that's been terrorizing paranormal investigators. Your equipment cases are scattered throughout the facility — the warden had them delivered ahead of time, but something's moved them. The investigation begins at dusk. By dawn, you'll either have proof of the paranormal... or become part of Alcatraz's permanent collection of restless spirits.",
+  "synopsis": "Investigate haunted Alcatraz, confront Zozo",
+  "startRoom": "dock",
+  "rooms": {
+    "dock": {
+      "name": "Ferry Dock",
+      "description": "Waves slap against rotting pilings. The concrete dock is cracked and stained with decades of salt spray. Behind you, San Francisco's lights twinkle across the water — impossibly far away. Above, the prison hulks against the twilight sky, windows like dead eyes. A rusted chain-link gate stands open to the north, leading up a steep path. The metal groans in the wind, or maybe something else. Your EVP recorder case sits abandoned near a bollard — someone was here before you.",
+      "exits": { "north": "entry-hall" },
+      "items": ["evp-recorder"],
+      "hazards": []
+    },
+    "entry-hall": {
+      "name": "Entry Hall",
+      "description": "The prison's main entrance. Peeling paint reveals layers of institutional green and gray beneath. A reception desk slouches against the west wall, drawers hanging open like mouths. Bulletproof glass — now cracked and cloudy — separates what was once the visitor area from the processing zone. Hallways branch in three directions: west toward administration, east toward the cellblocks, and south back to the dock. Something scratched deep gouges into the linoleum floor — claw marks, or boot heels dragged by something stronger.",
+      "exits": { "north": "guard-tower", "east": "broadway", "west": "warden-office", "south": "dock" },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The temperature drops suddenly — your breath mists white in the air. A shadow moves across the bulletproof glass, though nothing stands behind it.",
+          "probability": 0.12,
+          "deathText": "The cold intensifies until frost crystallizes on your skin. The shadow in the glass steps forward, through the barrier, reaching for you. Your heart stops — not from fear, but from the absolute zero cold that floods your chest. They find your body the next morning, frozen from the inside out."
+        }
+      ]
+    },
+    "warden-office": {
+      "name": "Warden's Office",
+      "description": "Power and paranoia preserved in wood paneling and steel. The warden's desk is massive oak, its surface empty except for dust and a single desk lamp that occasionally flickers on without electricity. Filing cabinets line the north wall, their locks long since broken. Framed commendations hang crooked on the walls, the warden's face in every photo scratched out by unknown hands. Through the window, you can see the recreation yard below. The entry hall is east. A locked door to the north bears a faded sign: 'ARMORY - AUTHORIZED PERSONNEL ONLY.'",
+      "exits": { "east": "entry-hall" },
+      "items": ["thermal-camera", "armory-key"],
+      "hazards": []
+    },
+    "armory": {
+      "name": "Armory",
+      "description": "Gun racks stand empty, bolted to walls scarred by decades of violence suppressed and violence released. Ammunition shelves are bare except for a few scattered brass casings that roll across the floor when nobody's walking. A pegboard on the wall shows silhouettes of weapons that were once stored here — nightsticks, tear gas canisters, shotguns. The air tastes of gun oil and old rage. In the corner, someone's set up what looks like a spirit communication board, chalk symbols drawn around it. The warden's office is south.",
+      "exits": { "south": "warden-office" },
+      "items": ["spirit-box"],
+      "hazards": []
+    },
+    "guard-tower": {
+      "name": "Guard Tower",
+      "description": "Spiral stairs climb into shadow. This tower gave guards a 360-degree view of the prison — and prisoners a 360-degree view of their captivity. Narrow windows face every direction, glass long since broken, wind whistling through the frames. The view is magnificent and terrible: the bay, the city, and the prison below, all bathed in moonlight. A guard's logbook sits on a rusty metal chair, its final entry dated the day before the prison closed. The entry hall is south. A steel door to the north is sealed shut, its lock mechanism corroded.",
+      "exits": { "south": "entry-hall" },
+      "items": ["emf-detector"],
+      "hazards": []
+    },
+    "broadway": {
+      "name": "Broadway Cellblock",
+      "description": "The main artery of Alcatraz. Three-tiered cells stretch into darkness on both sides, metal doors hanging open like broken teeth. The prisoners called this Broadway after the famous street — every new inmate had to walk this gauntlet while the population hurled insults and worse. Now only echoes walk here. Cell doors clang shut randomly, their locks broken for decades. Catwalks criss-cross above, rusted railings offering no safety. The entry hall is west. A corridor to the north leads deeper into D-Block. East opens to the mess hall. South drops down stairs toward the utility tunnels.",
+      "exits": { "north": "d-block", "east": "mess-hall", "west": "entry-hall" },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Footsteps echo from empty cells. A voice whispers your name — but nobody knows your name. Not here. Not yet.",
+          "probability": 0.15,
+          "deathText": "The whispering grows louder, multiplying, a chorus of the damned speaking in unison. Cell doors slam in sequence, a mechanical wave rolling toward you. The final door catches your skull between steel and stone. The last thing you hear is laughter — hundreds of voices, laughing."
+        }
+      ]
+    },
+    "d-block": {
+      "name": "D-Block - Solitary Confinement",
+      "description": "The Hole. Where Alcatraz sent its worst — or those it wanted to break. Thick steel doors seal isolation cells, each a concrete box barely large enough to lie down in. Cell 14D stands open, its door hanging at an angle, hinges snapped by some tremendous force from the inside. Darkness pools in that cell like liquid, deeper than the absence of light should allow. Scratch marks cover every inch of the interior walls. The bars on the door have been bent outward. This is where Zozo was contained. Broadway lies south. A heavy blast door to the west is welded shut.",
+      "exits": { "south": "broadway" },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Something watches from inside Cell 14D. Not moving. Not breathing. Just watching with eyes you can't quite see but absolutely feel.",
+          "probability": 0.20,
+          "deathText": "You look into Cell 14D. The darkness looks back. It doesn't rush out — it pulls you in. Your crew finds your body in the morning, curled in the corner of 14D, hands wrapped around your own throat, face frozen in an expression of absolute terror. The cell door is closed from the inside."
+        }
+      ]
+    },
+    "mess-hall": {
+      "name": "Mess Hall",
+      "description": "Long metal tables bolted to the floor in perfect rows. Alcatraz served meals on a strict schedule — two thousand men eating in synchronized silence, watched by guards with rifles on the catwalks above. The kitchen pass-through is dark, but occasionally light flickers in there, accompanied by the sound of knives on cutting boards. Riot scars mark the walls — bullet holes, scorch marks from tear gas. The floor is still stained. Broadway is west. A service door to the south leads to the kitchen. A northern passage opens to the recreation yard.",
+      "exits": { "north": "rec-yard", "south": "kitchen", "west": "broadway" },
+      "items": [],
+      "hazards": []
+    },
+    "kitchen": {
+      "name": "Kitchen",
+      "description": "Industrial-scale cooking equipment rusts in the shadows. Massive ovens, steel prep tables, a dishwashing station that once processed thousands of plates per meal. The refrigerator door stands open, its interior blackened by mold and time. Something's been in here recently — footprints in the dust, but they don't lead anywhere, just stop in the middle of the room. A prep table holds what looks like an EMF detector, but the readings are pegged at maximum even though it's been switched off. The mess hall is north.",
+      "exits": { "north": "mess-hall" },
+      "items": ["rem-pod"],
+      "hazards": []
+    },
+    "rec-yard": {
+      "name": "Recreation Yard",
+      "description": "Concrete and despair under the open sky. High walls topped with ancient razor wire. The yard where inmates got one hour of sun per day — if they earned it. Guard towers loom at each corner, empty now but still menacing. In the center, painted lines mark where basketball courts and exercise areas once stood. The paint has faded to ghosts. At the north end, a small concrete structure — the old tool shed — is sealed with a modern padlock, strangely out of place. The mess hall is south.",
+      "exits": { "south": "mess-hall" },
+      "items": [],
+      "hazards": []
+    },
+    "tool-shed": {
+      "name": "Tool Shed",
+      "description": "A concrete bunker barely eight feet square. This is where maintenance equipment was stored under heavy guard — anything here could be turned into a weapon or escape tool. Rusted shovels, pickaxes, and coils of ancient chain hang from the walls. In the corner, someone's set up a surveillance station: monitors connected to cameras throughout the prison, all powered by a portable generator that hums with unnatural steadiness. On one monitor, you can see your own empty equipment cases — and in the background, a shadow that shouldn't be there. The recreation yard is south.",
+      "exits": { "south": "rec-yard" },
+      "items": ["sls-camera"],
+      "hazards": []
+    },
+    "utility-tunnel": {
+      "name": "Utility Corridor",
+      "description": "Beneath the cellblocks, a labyrinth of pipes and darkness. This tunnel system carried steam heat, water, sewage — the prison's hidden anatomy. Pipes leak steady drips that echo in the dark. Brick walls weep moisture. The air is thick and hard to breathe. Graffiti from the 1960s covers every surface — prisoner names, dates, desperate messages. But some of the writing is fresh, still wet, written in something that isn't paint. The stairs up lead north to Broadway. A passage west ends at the hospital wing.",
+      "exits": { "north": "broadway", "west": "hospital" },
+      "items": ["full-spectrum-camera"],
+      "hazards": [
+        {
+          "description": "The pipes groan and shriek with phantom steam. Shadows move between them, humanoid shapes that don't match any light source.",
+          "probability": 0.18,
+          "deathText": "A steam pipe explodes — but there's been no steam pressure in Alcatraz since 1963. Superheated vapor fills the tunnel. Your screams echo through the pipes, joining the chorus of voices that have always lived down here."
+        }
+      ]
+    },
+    "hospital": {
+      "name": "Hospital Wing",
+      "description": "Where inmates came to be healed, or to die. Examination rooms branch off a central corridor. Medical equipment rusts on trays — surgical instruments, syringes, restraints. The operating theater is visible through a cracked window: table still there, lights still hanging. A medicine cabinet hangs open, empty except for a few brown bottles with faded labels. The pharmaceutical records room to the north has been sealed with police tape — recent tape, dated this month. Someone's been investigating here. The utility tunnel is east.",
+      "exits": { "east": "utility-tunnel" },
+      "items": ["police-tape"],
+      "hazards": []
+    },
+    "pharmacy": {
+      "name": "Pharmaceutical Records Room",
+      "description": "Filing cabinets overflow with medical records, prescription logs, incident reports. Alcatraz documented everything — every pill, every injection, every lobotomy. The records smell of mildew and secrecy. On a desk, someone's left research notes about Zozo: 'Patient Zero contracted in 1946 riot. Entity designation: Zozo. Transferred between inmates through violence. Last known host: Cell 14D, 1962. Entity remains active.' Below that, in different handwriting: 'Entity can be contained using Ovilus device calibrated to theta frequency. Device location: lighthouse keeper's quarters.' The hospital wing is south. A service ladder in the corner leads upward into darkness, but the hatch above is sealed shut.",
+      "exits": { "south": "hospital" },
+      "items": ["ovilus-device"],
+      "hazards": []
+    },
+    "lighthouse": {
+      "name": "Lighthouse",
+      "description": "The oldest structure on Alcatraz Island. The lighthouse beam has been dark since the prison closed, but tonight it flickers with spectral light that casts no shadows. Circular stairs spiral around the light mechanism — a massive Fresnel lens that somehow still turns, grinding on corroded gears. From here you can see the entire prison complex spread below like a model of damnation. The keeper's quarters are cramped but preserved, bed made military-tight. On the small desk, a ship's log records strange occurrences: 'Entity confirmed. Full manifestation imminent. Require all scanning equipment for containment protocol. — Warden James A. Johnston, 1946.' The ladder down leads to the pharmacy.",
+      "exits": { "down": "pharmacy" },
+      "items": [],
+      "hazards": []
+    },
+    "containment-site": {
+      "name": "Cell 14D - Containment Site",
+      "description": "The darkness has receded from Cell 14D. Your equipment surrounds the cell in a precise array: EMF detector pegged at maximum, thermal camera showing a humanoid cold spot floating in the center, SLS camera tracking a skeletal figure visible only in its sensors, spirit box spewing garbled warnings, REM pod screaming alerts, EVP recorder capturing voices layered a hundred deep. The Ovilus device in your hands speaks in a calm, mechanical voice: 'ZOZO. CONTAIN. NOW.' The entity is here, trapped in a web of technology and determination. One puzzle remains: you must prove you've contained it. The full-spectrum camera will capture the evidence you need — photographic proof of a malevolent spirit bound by science and courage.",
+      "exits": { "south": "broadway" },
+      "items": [],
+      "hazards": []
+    }
+  },
+  "items": {
+    "evp-recorder": {
+      "name": "Digital Voice Recorder",
+      "description": "Professional EVP recorder used for capturing electronic voice phenomena. The LCD screen shows it's been recording for three days straight. Battery at 100% despite no charging. When you play back the audio, voices whisper in languages that never existed.",
+      "pickupText": "You pick up the EVP recorder. It's warm to the touch, still running. The audio buffer is full of voices — hundreds of them, overlapping, desperate.",
+      "roomText": "A digital voice recorder sits abandoned on the dock, its red recording light still blinking.",
+      "portable": true
+    },
+    "thermal-camera": {
+      "name": "Thermal Imaging Camera",
+      "description": "FLIR thermal camera for detecting temperature anomalies. Paranormal activity often manifests as cold spots. The viewfinder shows the warden's office is twenty degrees colder than the surrounding rooms, despite no airflow.",
+      "pickupText": "You lift the thermal camera. Through the viewfinder, you see heat signatures that don't match any living thing — human-shaped voids of absolute cold.",
+      "roomText": "A thermal imaging camera rests on the warden's desk, its viewfinder still warm from recent use.",
+      "portable": true
+    },
+    "spirit-box": {
+      "name": "Spirit Box",
+      "description": "Radio frequency sweeper that cycles through channels at high speed. Spirits supposedly manipulate the white noise to form words. This one is already on, cycling endlessly. Every few seconds you hear a word: 'HELP' ... 'TRAPPED' ... 'ZOZO' ... 'RUN'.",
+      "pickupText": "You grab the spirit box. It shrieks static in your hands, then a clear voice emerges: 'Thank you.' You didn't ask a question.",
+      "roomText": "A spirit box sits in the corner, surrounded by chalk symbols, cycling through radio frequencies and whispering warnings.",
+      "portable": true
+    },
+    "emf-detector": {
+      "name": "EMF Detector",
+      "description": "K-II electromagnetic field detector. LEDs light up to indicate EMF strength — green for normal, red for extreme. This one's been modified with additional sensors. Currently reading yellow, which should be impossible without active electrical systems.",
+      "pickupText": "You pick up the EMF detector. All five lights immediately jump to red. The device vibrates in your hand like it's trying to escape.",
+      "roomText": "An EMF detector lies on the guard's chair, lights flickering in patterns that almost look deliberate.",
+      "portable": true
+    },
+    "rem-pod": {
+      "name": "REM Pod",
+      "description": "Radiating electromagnetic field device with proximity sensors. Creates an EM field and alerts when anything enters it — living or otherwise. This unit is already active, its antenna glowing. The alarm has been going off so long the speaker is blown, producing only a raspy wheeze.",
+      "pickupText": "You take the REM pod. It immediately goes silent, then emits a single, clear tone — the sound of acknowledgment. Like it's been waiting for you.",
+      "roomText": "A REM pod sits on the prep table, antenna glowing, alarm blaring at something invisible circling it.",
+      "portable": true
+    },
+    "sls-camera": {
+      "name": "SLS Camera",
+      "description": "Structured Light Sensor camera that maps 3D space and tracks human forms — even forms invisible to the naked eye. The screen shows stick figures overlaid on the real world. Right now it's showing seventeen figures in an empty room. Seventeen figures watching the camera. Watching you.",
+      "pickupText": "You lift the SLS camera. The screen shows a stick figure standing directly in front of you, one hand reaching toward where you're holding the device.",
+      "roomText": "An SLS camera sits on the surveillance desk, its screen showing stick figures dancing in empty rooms.",
+      "portable": true
+    },
+    "full-spectrum-camera": {
+      "name": "Full-Spectrum Camera",
+      "description": "Modified camera that captures ultraviolet, visible, and infrared light simultaneously — the full electromagnetic spectrum. Shows things human eyes can't perceive. The lens is cracked but functional. The last photo shows a figure in Cell 14D, antlers where a head should be, eyes like burning coals.",
+      "pickupText": "You pick up the full-spectrum camera. Through the viewfinder, the tunnel is full of people — translucent, overlapping, all walking the same path they walked in life. In death. Forever.",
+      "roomText": "A full-spectrum camera lies against the tunnel wall, lens pointed at a brick wall covered in fresh, wet writing.",
+      "portable": true
+    },
+    "ovilus-device": {
+      "name": "Ovilus Device",
+      "description": "Controversial paranormal device that converts environmental readings into words using phonetic algorithms. Believers claim spirits manipulate the sensors to communicate. Skeptics call it a random word generator. This one only speaks one word, over and over: 'ZOZO.' Until you picked it up. Now it's silent, waiting.",
+      "pickupText": "You take the Ovilus device. It speaks clearly: 'READY. ZOZO. CONTAINMENT. PROTOCOL. ENGAGE.' The voice is calm, mechanical, certain.",
+      "roomText": "An Ovilus device sits among the medical records, speaking a single word repeatedly: 'ZOZO.'",
+      "portable": true
+    },
+    "armory-key": {
+      "name": "Armory Key",
+      "description": "Heavy brass key with a tag: 'ARMORY - AUTHORIZED PERSONNEL ONLY.' The metal is ice cold, colder than it should be. Frost crystals form on the tag as you watch.",
+      "pickupText": "You take the armory key from the warden's desk. It burns with cold in your hand. Something wanted you to find this.",
+      "roomText": "A brass key lies on the warden's desk, frosted with ice despite the room temperature.",
+      "portable": true
+    },
+    "bolt-cutters": {
+      "name": "Bolt Cutters",
+      "description": "Heavy-duty bolt cutters, industrial grade. The cutting jaws are still sharp despite decades of rust. Someone left these here recently — the handles are free of dust.",
+      "pickupText": "You lift the bolt cutters. They're heavier than they look, but perfectly balanced. A tool of escape, or entry.",
+      "roomText": "Bolt cutters lean against the wall, placed carefully, deliberately, as if someone knew you'd need them.",
+      "portable": true
+    },
+    "police-tape": {
+      "name": "Police Evidence Tape",
+      "description": "Fresh police tape sealing the pharmacy door. Yellow plastic printed with 'EVIDENCE - DO NOT CROSS.' Dated this month. Someone official has been investigating Zozo.",
+      "pickupText": "You tear down the police tape, breaking the official seal. Whatever they were protecting — or hiding — you're about to find it.",
+      "roomText": "Police evidence tape seals the north door, yellow plastic stark against the rotting wood frame.",
+      "portable": true
+    },
+    "containment-protocol": {
+      "name": "Containment Protocol",
+      "description": "A laminated card found in the lighthouse keeper's quarters. Printed instructions: 'ZOZO CONTAINMENT PROTOCOL: 1. Array all scanning equipment around Cell 14D. 2. Activate Ovilus device. 3. Document manifestation with full-spectrum camera. 4. Entity will remain contained as long as equipment functions. DO NOT turn off equipment.' Below, handwritten: 'God help us all.'",
+      "pickupText": "You read the containment protocol. The instructions are clear, precise, desperate. Someone spent years developing this procedure. Now it's yours.",
+      "roomText": "A laminated card lies on the lighthouse desk, corners worn from repeated handling.",
+      "portable": true
+    },
+    "zozo-photograph": {
+      "name": "Photograph of Zozo",
+      "description": "A full-spectrum photograph showing Cell 14D surrounded by equipment. In the center, clearly visible across all wavelengths, stands Zozo — seven feet tall, antlers branching from its head, eyes burning like coals. Trapped. Contained. Proven. This photograph will revolutionize paranormal investigation. Irrefutable evidence of a malevolent entity, captured and bound by science.",
+      "pickupText": "You hold the photograph. Proof. After decades of speculation, grainy videos, and dismissed testimony, here is absolute evidence. Zozo exists, and you contained it.",
+      "roomText": "The photograph lies on the ground, its image clear and undeniable — a demon in a cage of science.",
+      "portable": true
+    },
+    "camera-instructions": {
+      "name": "Camera Instructions",
+      "description": "A note attached to the containment protocol: 'Use full-spectrum camera for final verification. Entity will be visible across all wavelengths once contained. This is your proof.'",
+      "pickupText": "You read the camera instructions. The protocol is clear: document everything with the full-spectrum camera.",
+      "roomText": "A note about camera usage lies among the equipment.",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "unlock-armory": {
+      "room": "warden-office",
+      "description": "The armory door is locked with a heavy deadbolt. A keyhole glints in the old wood. Someone with authority could open this — or someone with the key.",
+      "requiredItem": "armory-key",
+      "hintText": "The armory key should fit this lock. Look for it in the warden's office.",
+      "solvedText": "You slide the armory key into the lock. It turns with a heavy click, frost crystals crackling off the metal. The armory door swings open, revealing the weapons room beyond.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "armory"
+      }
+    },
+    "find-bolt-cutters": {
+      "room": "armory",
+      "description": "The armory is full of shadows and empty weapon racks. Something valuable must be hidden here.",
+      "requiredItem": "thermal-camera",
+      "hintText": "The thermal camera can reveal hidden objects by their heat signatures. Scan the armory for temperature anomalies.",
+      "solvedText": "You scan the armory with the thermal camera. Behind a pegboard on the wall, a warm spot — body temperature, as if someone just touched it. You pull the pegboard away and find bolt cutters hidden in a wall cavity. Someone left them here recently.",
+      "isGoal": true,
+      "goalName": "Locate Investigation Tools",
+      "action": {
+        "type": "addItem",
+        "room": "armory",
+        "itemId": "bolt-cutters"
+      }
+    },
+    "cut-rec-yard-lock": {
+      "room": "rec-yard",
+      "description": "The tool shed is sealed with a modern padlock — someone wanted to keep people out, or keep something in. The hasp is heavy steel, but the bolt cutters could handle it.",
+      "requiredItem": "bolt-cutters",
+      "hintText": "Heavy-duty bolt cutters would make short work of this padlock.",
+      "solvedText": "You position the bolt cutters around the padlock hasp. The jaws bite through steel with a sharp crack that echoes across the empty yard. The tool shed is open.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "tool-shed"
+      }
+    },
+    "map-entity": {
+      "room": "d-block",
+      "description": "Cell 14D stands open, darkness pooling inside it like liquid. Something is in there. The SLS camera could reveal what human eyes cannot see.",
+      "requiredItem": "sls-camera",
+      "hintText": "The SLS camera maps 3D space and tracks forms invisible to normal sight. Point it at Cell 14D.",
+      "solvedText": "You raise the SLS camera toward Cell 14D. The screen explodes with data — a skeletal stick figure seven feet tall, antlers branching from its head, standing absolutely still in the darkness. Watching. The camera has mapped Zozo. The entity is confirmed.",
+      "isGoal": true,
+      "goalName": "Map the Entity",
+      "action": {
+        "type": "removeHazard",
+        "room": "d-block",
+        "hazard": "Something watches from inside Cell 14D. Not moving. Not breathing. Just watching with eyes you can't quite see but absolutely feel."
+      }
+    },
+    "detect-emf-spike": {
+      "room": "broadway",
+      "description": "The cellblock is electrically dead — no power since 1963. But something generates electromagnetic fields here. The EMF detector would show you where.",
+      "requiredItem": "emf-detector",
+      "hintText": "Paranormal activity generates strong electromagnetic fields. Use the EMF detector to track the source.",
+      "solvedText": "You sweep the cellblock with the EMF detector. The readings spike and pulse, leading you deeper into D-Block. The entity's presence creates massive electromagnetic disturbances. You've confirmed the paranormal source.",
+      "isGoal": true,
+      "goalName": "Detect Electromagnetic Anomaly",
+      "action": {
+        "type": "removeHazard",
+        "room": "broadway",
+        "hazard": "Footsteps echo from empty cells. A voice whispers your name — but nobody knows your name. Not here. Not yet."
+      }
+    },
+    "analyze-cold-spot": {
+      "room": "utility-tunnel",
+      "description": "The tunnel is cold, but paranormal cold spots are colder — absolute zero cold that shouldn't exist. You need better equipment to measure this.",
+      "requiredItem": "rem-pod",
+      "hintText": "The REM Pod creates an electromagnetic field and detects when anything enters it. Set it up to monitor the tunnel.",
+      "solvedText": "You activate the REM Pod in the tunnel. Its alarm immediately screams — something is moving through the electromagnetic field, circling you, testing boundaries. The REM Pod tracks movement invisible to human senses. The tunnel is clear for passage now that you're monitoring it.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "removeHazard",
+        "room": "utility-tunnel",
+        "hazard": "The pipes groan and shriek with phantom steam. Shadows move between them, humanoid shapes that don't match any light source."
+      }
+    },
+    "open-pharmacy": {
+      "room": "hospital",
+      "description": "The pharmaceutical records room is sealed with police tape dated this month. Recent investigation. Someone knows about Zozo. The tape bars your entry, but you need access to those records.",
+      "requiredItem": "police-tape",
+      "hintText": "You need to remove the police tape to access the pharmaceutical records room.",
+      "solvedText": "You tear down the police tape, breaking the seal. The yellow plastic falls away, and the door to the pharmaceutical records room swings open. Whatever they were protecting — or hiding — you're about to find it.",
+      "isGoal": true,
+      "goalName": "Access Containment Research",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "pharmacy"
+      }
+    },
+    "open-lighthouse-hatch": {
+      "room": "pharmacy",
+      "description": "A service ladder leads up through a narrow shaft to the lighthouse above. The rungs are old but solid, but the hatch at the top is sealed shut. The research notes mention the lighthouse keeper's quarters. That's where you'll find the final piece.",
+      "requiredItem": "spirit-box",
+      "hintText": "Sometimes the dead know things the living don't. Ask the spirits how to access the lighthouse.",
+      "solvedText": "You activate the spirit box in the pharmacy. Static washes over you, then words emerge: 'CLIMB' ... 'PUSH' ... 'HATCH' ... 'UNLOCKED.' The spirits are guiding you. You climb the ladder and push — the hatch swings open easily, never truly locked. The lighthouse keeper's quarters await above.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "openExit",
+        "direction": "up",
+        "targetRoom": "lighthouse"
+      }
+    },
+    "retrieve-protocol": {
+      "room": "lighthouse",
+      "description": "The lighthouse keeper's quarters hold the final piece: the containment protocol. Decades of research condensed into a single procedure.",
+      "requiredItem": "evp-recorder",
+      "hintText": "The EVP recorder captures voices from beyond. Play back the recordings in the lighthouse — let the spirits guide you to the containment protocol.",
+      "solvedText": "You play back the EVP recorder in the lighthouse keeper's quarters. Voices emerge, overlapping: 'DESK' ... 'DRAWER' ... 'PROTOCOL' ... 'READ IT.' You open the desk drawer and find a laminated card — the containment protocol. The instructions are clear, precise, desperate. You know what must be done.",
+      "isGoal": true,
+      "goalName": "Retrieve Containment Protocol",
+      "action": {
+        "type": "addItem",
+        "room": "lighthouse",
+        "itemId": "containment-protocol"
+      }
+    },
+    "activate-containment": {
+      "room": "d-block",
+      "description": "Cell 14D. Zozo's last known location. All your equipment surrounds the cell, sensors screaming with paranormal activity. You need the Ovilus device calibrated to theta frequency. The containment protocol is clear. You must activate it.",
+      "requiredItem": "ovilus-device",
+      "hintText": "The Ovilus device is the key to containment. Find it in the pharmaceutical records and bring it here.",
+      "solvedText": "You activate the Ovilus device in front of Cell 14D. It speaks with mechanical certainty: 'ZOZO. CONTAINMENT. PROTOCOL. ACTIVE.' Every piece of equipment activates in sequence — EMF detector, thermal camera, SLS camera, spirit box, REM pod, EVP recorder — creating a web of electromagnetic fields and sensor coverage around the cell. The entity is trapped, bound by technology and will. D-Block is safe. You've transformed it into a containment site.",
+      "isGoal": true,
+      "goalName": "Execute Containment Protocol",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "containment-site"
+      }
+    },
+    "verify-containment": {
+      "room": "containment-site",
+      "description": "Zozo is contained, trapped in a web of sensors and electromagnetic fields. The containment protocol requires verification — you must prove the entity is truly bound.",
+      "requiredItem": "containment-protocol",
+      "hintText": "Follow the protocol's verification procedure. It requires photographic documentation with specialized equipment.",
+      "solvedText": "You follow the containment protocol's verification steps, checking each piece of equipment. All sensors confirm: the entity is contained. The protocol is working. The way is clear to document the final proof.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "addItem",
+        "room": "containment-site",
+        "itemId": "camera-instructions"
+      }
+    },
+    "document-containment": {
+      "room": "containment-site",
+      "description": "Zozo is contained, trapped in a web of sensors and electromagnetic fields. But containment isn't proof. You need evidence — photographic documentation that will convince the world. The full-spectrum camera captures wavelengths human eyes cannot perceive.",
+      "requiredItem": "full-spectrum-camera",
+      "hintText": "The full-spectrum camera sees what others cannot. Document the containment — capture Zozo on camera.",
+      "solvedText": "You raise the full-spectrum camera and photograph the containment site. Through the viewfinder, Zozo is visible — a seven-foot figure with antlers, burning coal eyes, trapped in the center of your equipment array. The shutter clicks. Evidence captured. The investigation is complete. You've proven the existence of malevolent entities and developed a protocol to contain them. Alcatraz's most dangerous prisoner is finally locked down. The photograph will change paranormal investigation forever.",
+      "isGoal": true,
+      "goalName": "Photograph Contained Entity",
+      "action": {
+        "type": "addItem",
+        "room": "containment-site",
+        "itemId": "zozo-photograph"
+      }
+    }
+  }
+}
