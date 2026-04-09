@@ -118,6 +118,19 @@
   8. All app settings match exactly what `deploy/deploy.ps1` configures, including `AzureWebJobsFeatureFlags=EnableWorkerIndexing`.
 - **Validation:** Both Bicep files compile clean (`az bicep build`). All 150 existing tests pass.
 
+### 2026-04-09 — Azure Table Storage 32K Character Limit Discovery
+
+**From Coordinator (Direct troubleshooting):**
+- **Issue:** Alcatraz ghost world wouldn't start in production; no error visible to player. All local tests passed.
+- **Root cause:** Azure Table Storage enforces a **32K character limit per string property** (UTF-16 encoding). The Alcatraz session JSON serializes to 33,661 characters — exceeding the limit.
+- **Discovery method:** Added global try-catch wrapper to gameHub message handler. This surfaced a previously silent `PropertyValueTooLarge` exception from Azure.
+- **Solution:** Chunked storage — split stateJson into multiple properties (`stateJson_0`, `stateJson_1`, etc.) with 30K chunk boundary.
+- **Implementation:** `saveGameState()` chunks before storing; `loadGameState()` automatically concatenates chunks. API is unchanged; chunking is transparent to callers.
+- **Testing:** All 12 worlds verified end-to-end via WebSocket. No data loss.
+- **Pattern:** If a world approaches 32K session state, chunking is already implemented. Just deploy. If approaching 10+ chunks, consider offloading to Blob Storage instead.
+- **Key takeaway:** **Azure Table Storage has a 32K character limit per string property.** Large game sessions need chunked storage or alternative persistence.
+
+
 ### 2026-04-04 — Cross-Team Update: Data's Client Fixes
 
 **From Data (Frontend Dev):**

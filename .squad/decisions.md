@@ -473,6 +473,162 @@ Created a standalone browser-based visual editor for world JSON files at `client
 - **No existing files modified** — zero risk to game client or backend
 - **No tests needed** — this is a standalone UI tool; no server interaction
 
+### Fix: Alcatraz World Startup Failure — Azure Table Storage 32K Limit
+
+**By:** Coordinator (Backend)  
+**Date:** 2026-04-09
+
+#### What
+
+Fixed a silent startup failure in the Alcatraz ghost world caused by game session state exceeding Azure Table Storage's 32K character limit per string property.
+
+#### Root Cause
+
+- Azure Table Storage enforces a **32K character limit per string property** (UTF-16 encoding)
+- Alcatraz session JSON serializes to **33,661 characters**
+- When `saveGameState()` tried to save the state as a single `stateJson` property, Azure threw `PropertyValueTooLarge`
+- The error was silently caught by gameHub's existing try-catch wrapper, making it invisible to players
+
+#### Solution
+
+Implemented **chunked storage strategy**:
+- Split large state JSON into multiple properties: `stateJson_0`, `stateJson_1`, etc.
+- Chunk boundary: **30K bytes** (safety margin below 32K limit)
+- `saveGameState()` chunks the JSON before storing
+- `loadGameState()` automatically concatenates chunks back together
+- Solution is **backwards-compatible** — handles both old single-property and new chunked storage
+
+#### Key Decisions
+
+1. **Global error handler added to gameHub** — Wrapped message handler in try-catch to surface errors early (debugging aid for future issues)
+2. **Chunking is transparent to callers** — Save/load API unchanged; chunking is internal to storage functions
+3. **Automatic chunk reassembly** — No caller code needed modification; the loader handles multi-property concatenation
+4. **30K chunk boundary** — Provides 2K safety margin before hitting 32K Azure limit
+
+#### Testing & Validation
+
+- All 12 worlds verified working end-to-end via WebSocket test
+- No data loss or corruption during chunk serialization/deserialization
+- Alcatraz session loads and saves successfully
+
+#### Convention Going Forward
+
+When building worlds with large session state:
+1. Be aware Azure Table Storage has a **32K character limit per property**
+2. If session JSON approaches 32K, the chunked storage pattern is already in place — just deploy
+3. Monitor total session size; if chunking approaches 10+ chunks, consider offloading state to Blob Storage instead
+
+#### Impact
+
+- Modified: `api/src/functions/gameHub.js` (chunked storage, error handler)
+- All existing tests pass
+- Requires redeployment to take effect
+
+### Decision: Alcatraz Ghost Hunting World — Equipment-Based Paranormal Investigation
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-09
+
+#### What
+
+Created a new world themed around Ghost Adventures paranormal investigation at haunted Alcatraz prison, featuring the malevolent entity Zozo and authentic ghost hunting equipment.
+
+#### Key Decisions
+
+- **Equipment-as-puzzle-keys pattern** where paranormal sensors both detect threats and solve puzzles
+- Equipment includes: EMF detector, SLS camera, thermal camera, spirit box, REM pod, Ovilus device, full-spectrum camera
+- **15 rooms** spanning Alcatraz: dock, cellblocks, solitary, mess hall, hospital, lighthouse
+- **11 puzzles** with clear progression: unlock armory → find tools → map entity → execute containment → document proof
+- **6 goals** tracking major investigation milestones
+- Paranormal hazards removed by corresponding sensors
+
+#### Rationale
+
+1. **Thematic coherence**: Equipment functions match real Ghost Adventures methodology
+2. **Puzzle integration**: Sensors serve dual purpose (narrative + mechanical)
+3. **Progressive revelation**: Players gather equipment → detect entity → contain entity → prove existence
+4. **No dead items**: Every piece of equipment has a specific puzzle use
+
+#### Pattern for Future Worlds
+
+Equipment-based investigation worlds should:
+- Give each tool a clear mechanical purpose (not just flavor)
+- Make tool functions align with theme
+- Use removeHazard actions to show sensors actively protecting players
+- Build toward a final "proof" goal that validates the investigation
+
+#### Impact
+
+- New file: `world/alcatraz-ghosts.json`
+- All 541 tests pass
+- Requires deployment to make world available to players
+
+### Decision: Cleanup Timer Function
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-09
+
+#### What
+
+Added a daily Azure Functions Timer Trigger (`cleanup.js`) that deletes game sessions older than 30 days, along with their Players and GameState entries.
+
+#### Why
+
+Without cleanup, stale game data accumulates indefinitely in Table Storage. While storage costs are minimal, unbounded growth is bad hygiene and makes operational queries slower over time.
+
+#### Implementation
+
+- `cleanupOldGames(maxAgeDays)` added to `table-storage.js` — queries all GameSessions, filters by `createdAt` age, then deletes associated Players, GameState, and the session itself
+- `api/src/functions/cleanup.js` — thin timer trigger registered with `app.timer()`, runs at 3 AM UTC daily
+- Per-game error isolation: if one game fails to delete, the rest still proceed
+- Registered in `src/index.js` alongside other function imports
+
+#### Cost
+
+Zero additional cost. Consumption plan includes 1M free executions/month; this adds ~30/month.
+
+#### Impact
+
+- New file: `api/src/functions/cleanup.js`
+- Modified: `api/src/table-storage.js`, `api/src/index.js`
+- All 541 tests pass
+- Requires redeployment to take effect
+
+### Decision: Goal Rendering UI Design
+
+**By:** Data (Frontend Dev)  
+**Date:** 2026-04-09
+
+#### What
+
+Implemented client-side rendering for the goal achievement system, handling two new message types (`goalComplete` and `victoryComplete`) and adding goal progress display to room views.
+
+#### Key Decisions
+
+1. **Gold/Amber Color Scheme** — Used #FFD700 (gold) and #d4a017 (amber) for all goal-related elements. Gold conveys achievement and celebration.
+
+2. **Progressive Celebration Intensity** — Goal completion uses a 2px solid amber border; victory uses a 3px double gold border plus glow effects. Clear visual hierarchy: goals are special, but victory is THE moment.
+
+3. **ASCII Art in `<pre>` Tags** — Goal and victory messages include multi-line ASCII art. Used `<pre>` elements with `white-space: pre` to preserve formatting.
+
+4. **Inline Goal Progress Display** — Room views show "🏆 Goals: {N}/{M}" right after the room name. Small, subtle, non-intrusive but always visible.
+
+5. **Centralized Text Alignment** — Goal and victory messages are center-aligned. Makes ASCII art and celebration text feel like a unified "moment".
+
+6. **Separate Rendering Functions** — Created dedicated `renderGoalComplete()` and `renderVictoryComplete()` rather than cramming logic into the message handler.
+
+#### Integration Points
+
+- Backend will send `goalComplete` with `{ playerName, goalName, goalNumber, totalGoals, asciiArt }`
+- Backend will send `victoryComplete` with `{ asciiArt }`
+- Room data will include `goalProgress: { completed, total }` in look messages
+
+#### Impact
+
+- Modified: `client/app.js` (new rendering functions, message handlers)
+- No breaking changes; new messages are additive
+- Vanilla JS/CSS, no dependencies, follows existing patterns
+
 ## Governance
 
 - All meaningful changes require team consensus
