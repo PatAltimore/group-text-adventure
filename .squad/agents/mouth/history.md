@@ -783,3 +783,30 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 - World files: `world/*.json`
 - World validation: `world/validate-world.js`
 - Test suite: `node --experimental-vm-modules node_modules/jest/bin/jest.js --silent`
+
+### 2026-04-09 — Created Alcatraz ghost hunting world
+
+**Task:** Create a Ghost Adventures-themed world at haunted Alcatraz Federal Penitentiary, with paranormal investigation equipment, malevolent entity Zozo, 10+ rooms, and puzzle-gated progression.
+
+**Implementation:**
+- Created `world/alcatraz-ghosts.json` with 15 interconnected rooms, 13 items, and 11 puzzles
+- Theme: Paranormal investigation inspired by Ghost Adventures TV show
+- Featured authentic ghost hunting equipment: EMF detector, spirit box, SLS camera, thermal camera, Ovilus device, EVP recorder, REM pod, full-spectrum camera
+- Malevolent entity: Zozo (manifestation with antlers and burning coal eyes in Cell 14D)
+- Progression system: puzzles unlock new areas via openExit, removeHazard, and addItem actions
+- Synopsis: "Investigate haunted Alcatraz, confront Zozo" (5 words)
+
+**Critical Design Rules (enforced and validated):**
+1. Each item used by exactly one puzzle
+2. No circular dependencies
+3. Items reachable before puzzle
+4. Every item must be used
+
+**Validation Process:**
+1. Ran custom validation script to check: puzzle cross-references, room/item existence, single-use items, unused items, hazard text matches, exit conflicts
+2. Fixed multiple issues: circular dependencies, unused items, pre-existing exits, JSON syntax errors
+3. All 541 tests pass (539 passed, 2 skipped)
+
+**Key File Paths:**
+- World file: `world/alcatraz-ghosts.json`
+- Test command: `node --experimental-vm-modules node_modules/jest/bin/jest.js --silent`
