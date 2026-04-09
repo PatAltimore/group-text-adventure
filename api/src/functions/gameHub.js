@@ -164,10 +164,16 @@ app.generic('gameHubMessage', {
     eventType: 'user',
   }),
   handler: async (request, context) => {
-    await ensureTables();
-
     const connectionId = request.connectionContext.connectionId;
-    const serviceClient = getServiceClient();
+    let serviceClient;
+
+    try {
+      await ensureTables();
+      serviceClient = getServiceClient();
+    } catch (err) {
+      context.error(`[MSG] Init failed: ${err.message}`, err.stack);
+      return { body: '', status: 500 };
+    }
 
     let data;
     try {
@@ -188,46 +194,57 @@ app.generic('gameHubMessage', {
       return { body: '', status: 200 };
     }
 
-    const messageType = data.type;
+    try {
+      const messageType = data.type;
 
-    if (messageType === 'join') {
-      return await handleJoin(serviceClient, connectionId, data, context);
+      if (messageType === 'join') {
+        return await handleJoin(serviceClient, connectionId, data, context);
+      }
+
+      if (messageType === 'command') {
+        return await handleCommand(serviceClient, connectionId, data, context);
+      }
+
+      if (messageType === 'startGame') {
+        return await handleStartGame(serviceClient, connectionId, data, context);
+      }
+
+      if (messageType === 'setDeathTimeout') {
+        return await handleSetDeathTimeout(serviceClient, connectionId, data, context);
+      }
+
+      if (messageType === 'setHazardMultiplier') {
+        return await handleSetHazardMultiplier(serviceClient, connectionId, data, context);
+      }
+
+      if (messageType === 'setSayScope') {
+        return await handleSetSayScope(serviceClient, connectionId, data, context);
+      }
+
+      if (messageType === 'setHintsEnabled') {
+        return await handleSetHintsEnabled(serviceClient, connectionId, data, context);
+      }
+
+      if (messageType === 'revive') {
+        return await handleRevive(serviceClient, connectionId, data, context);
+      }
+
+      await sendToConnection(serviceClient, connectionId, {
+        type: 'error',
+        text: `Unknown message type: "${messageType}". Send "join", "command", or "startGame".`,
+      });
+
+      return { body: '', status: 200 };
+    } catch (err) {
+      context.error(`[MSG] Unhandled error in ${data.type} handler: ${err.message}`, err.stack);
+      try {
+        await sendToConnection(serviceClient, connectionId, {
+          type: 'error',
+          text: `Server error: ${err.message}`,
+        });
+      } catch { /* connection may be gone */ }
+      return { body: '', status: 200 };
     }
-
-    if (messageType === 'command') {
-      return await handleCommand(serviceClient, connectionId, data, context);
-    }
-
-    if (messageType === 'startGame') {
-      return await handleStartGame(serviceClient, connectionId, data, context);
-    }
-
-    if (messageType === 'setDeathTimeout') {
-      return await handleSetDeathTimeout(serviceClient, connectionId, data, context);
-    }
-
-    if (messageType === 'setHazardMultiplier') {
-      return await handleSetHazardMultiplier(serviceClient, connectionId, data, context);
-    }
-
-    if (messageType === 'setSayScope') {
-      return await handleSetSayScope(serviceClient, connectionId, data, context);
-    }
-
-    if (messageType === 'setHintsEnabled') {
-      return await handleSetHintsEnabled(serviceClient, connectionId, data, context);
-    }
-
-    if (messageType === 'revive') {
-      return await handleRevive(serviceClient, connectionId, data, context);
-    }
-
-    await sendToConnection(serviceClient, connectionId, {
-      type: 'error',
-      text: `Unknown message type: "${messageType}". Send "join", "command", or "startGame".`,
-    });
-
-    return { body: '', status: 200 };
   },
 });
 
