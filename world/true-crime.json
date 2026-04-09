@@ -1,6 +1,7 @@
 {
   "name": "Shadows Over Blackwater",
-  "description": "The call came at 2 AM — the hour when nothing good happens. Victor Crane, shipping magnate and philanthropist, found dead in his private study at the Crane estate. One bullet, close range, no forced entry. The rain hasn't stopped since. You're Detective Harlow, twenty years on the force, and you've seen enough bodies to know when a case stinks. This one reeks. Crane had enemies — a bitter wife, a crooked partner, a scorned ex-employee, a disinherited brother. Everyone had motive. Everyone had opportunity. The department wants this closed fast, but you don't do fast. You do thorough. Grab your badge, your notebook, and whatever passes for courage these days. The truth is out there, buried under lies and money. Find it.",
+  "displayOrder": 8,
+  "description":"The call came at 2 AM — the hour when nothing good happens. Victor Crane, shipping magnate and philanthropist, found dead in his private study at the Crane estate. One bullet, close range, no forced entry. The rain hasn't stopped since. You're Detective Harlow, twenty years on the force, and you've seen enough bodies to know when a case stinks. This one reeks. Crane had enemies — a bitter wife, a crooked partner, a scorned ex-employee, a disinherited brother. Everyone had motive. Everyone had opportunity. The department wants this closed fast, but you don't do fast. You do thorough. Grab your badge, your notebook, and whatever passes for courage these days. The truth is out there, buried under lies and money. Find it.",
   "synopsis": "Investigate a noir murder mystery.",
   "startRoom": "precinct-office",
   "rooms": {

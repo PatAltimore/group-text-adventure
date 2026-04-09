@@ -1,6 +1,7 @@
 {
   "name": "Paranormal Mysteries",
-  "description": "You are a paranormal investigator chasing a thread that spans continents and decades. Roswell signals match cryptid sightings in the Pacific Northwest. Stonehenge readings echo the Bermuda Triangle. A pattern is emerging — something vast, something aware. Your investigation begins in Point Pleasant, West Virginia, where the Mothman has been sighted again after forty years of silence.",
+  "displayOrder": 10,
+  "description":"You are a paranormal investigator chasing a thread that spans continents and decades. Roswell signals match cryptid sightings in the Pacific Northwest. Stonehenge readings echo the Bermuda Triangle. A pattern is emerging — something vast, something aware. Your investigation begins in Point Pleasant, West Virginia, where the Mothman has been sighted again after forty years of silence.",
   "synopsis": "Investigate cryptids, UFOs, and strange phenomena.",
   "startRoom": "mothman-bridge",
   "rooms": {

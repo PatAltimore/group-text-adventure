@@ -1,6 +1,7 @@
 {
   "name": "Dead Man's Fortune",
-  "description": "The longboat grinds against black sand and you tumble ashore, gasping. Behind you, the stolen sloop lists and sinks beneath the waves — your only way off this island, gone. But you didn't come here to leave. You came for Captain Blackwood's treasure, the fortune that drove a hundred pirates mad and sent twice as many to their graves. The torn map clutched in your fist shows a skull-shaped mountain, an X scratched deep into the parchment. Somewhere on this island, beneath rock and bone and centuries of jungle, a king's ransom waits in the dark. The surf hisses at your heels. Parrots scream from the treeline. And somewhere in the green tangle ahead, something watches you arrive.",
+  "displayOrder": 7,
+  "description":"The longboat grinds against black sand and you tumble ashore, gasping. Behind you, the stolen sloop lists and sinks beneath the waves — your only way off this island, gone. But you didn't come here to leave. You came for Captain Blackwood's treasure, the fortune that drove a hundred pirates mad and sent twice as many to their graves. The torn map clutched in your fist shows a skull-shaped mountain, an X scratched deep into the parchment. Somewhere on this island, beneath rock and bone and centuries of jungle, a king's ransom waits in the dark. The surf hisses at your heels. Parrots scream from the treeline. And somewhere in the green tangle ahead, something watches you arrive.",
   "synopsis": "Find legendary pirate treasure on skull island.",
   "startRoom": "shipwreck-beach",
   "rooms": {

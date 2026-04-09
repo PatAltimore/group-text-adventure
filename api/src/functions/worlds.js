@@ -39,12 +39,19 @@ async function listWorlds() {
             name: data.name || file,
             description: data.description || '',
             synopsis: data.synopsis || '',
+            displayOrder: data.displayOrder,
           });
         } catch {
           // Skip malformed files
           continue;
         }
       }
+
+      worlds.sort((a, b) => {
+        const aOrder = a.displayOrder ?? Infinity;
+        const bOrder = b.displayOrder ?? Infinity;
+        return aOrder - bOrder;
+      });
 
       return worlds;
     } catch {

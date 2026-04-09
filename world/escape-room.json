@@ -1,6 +1,7 @@
 {
   "name": "The Clockmaker's Mansion",
-  "description": "Your eyes snap open on cold marble. The air tastes of dust and machine oil. Above you, a dead chandelier. Behind you, an oak door fitted with seven locks — none of which will turn. A note on the floor, written in impossibly precise handwriting: 'Welcome, guests. I am the Clockmaker. This mansion is my masterpiece, and you are its newest pieces. Find the seven keys, or become part of the collection.' From somewhere deep in the house, a grandfather clock begins to chime — not marking the hour, but counting down.",
+  "displayOrder": 2,
+  "description":"Your eyes snap open on cold marble. The air tastes of dust and machine oil. Above you, a dead chandelier. Behind you, an oak door fitted with seven locks — none of which will turn. A note on the floor, written in impossibly precise handwriting: 'Welcome, guests. I am the Clockmaker. This mansion is my masterpiece, and you are its newest pieces. Find the seven keys, or become part of the collection.' From somewhere deep in the house, a grandfather clock begins to chime — not marking the hour, but counting down.",
   "synopsis": "Find seven keys to escape the mansion.",
   "startRoom": "foyer",
   "rooms": {

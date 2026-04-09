@@ -1,6 +1,7 @@
 {
   "name": "The Forgotten Mechanica",
-  "description": "The fog parts to reveal an island that shouldn't exist. Jutting from calm waters, the coastline is a mix of weathered stone and corroded brass mechanisms half-buried in moss. You've come seeking answers about the D'ni — a civilization that vanished centuries ago, leaving only their incomprehensible machines. According to the journals you recovered, this island was their proving ground, a place where apprentices learned to manipulate the ancient technology. The air hums with latent energy. Somewhere among these ruins lies the Heart of Ages, a device said to unlock the very fabric between worlds. The tide is rising. Time to explore.",
+  "displayOrder": 11,
+  "description":"The fog parts to reveal an island that shouldn't exist. Jutting from calm waters, the coastline is a mix of weathered stone and corroded brass mechanisms half-buried in moss. You've come seeking answers about the D'ni — a civilization that vanished centuries ago, leaving only their incomprehensible machines. According to the journals you recovered, this island was their proving ground, a place where apprentices learned to manipulate the ancient technology. The air hums with latent energy. Somewhere among these ruins lies the Heart of Ages, a device said to unlock the very fabric between worlds. The tide is rising. Time to explore.",
   "synopsis": "Unlock secrets of an abandoned mechanical civilization.",
   "startRoom": "stone-dock",
   "rooms": {

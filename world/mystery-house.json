@@ -1,6 +1,7 @@
 {
   "name": "The Mystery House",
-  "description": "Rain lashes against broken windows as thunder cracks the sky. You stand before Blackwood Manor — a Victorian mansion abandoned by the living. Not by the dead, the locals whisper. The iron gates hang open like broken teeth. Dead vines choke the crumbling facade. Lightning reveals windows that seem to watch with malevolent intent. Your car died a mile back. The storm is worsening. Cold rain runs down your collar as you cross the threshold — the only shelter is within those rotting walls. The front door slams behind you. The lock clicks with terrible finality. There is no going back.",
+  "displayOrder": 9,
+  "description":"Rain lashes against broken windows as thunder cracks the sky. You stand before Blackwood Manor — a Victorian mansion abandoned by the living. Not by the dead, the locals whisper. The iron gates hang open like broken teeth. Dead vines choke the crumbling facade. Lightning reveals windows that seem to watch with malevolent intent. Your car died a mile back. The storm is worsening. Cold rain runs down your collar as you cross the threshold — the only shelter is within those rotting walls. The front door slams behind you. The lock clicks with terrible finality. There is no going back.",
   "synopsis": "Uncover dark secrets in a haunted manor.",
   "startRoom": "entrance-hall",
   "rooms": {

@@ -1,6 +1,7 @@
 {
   "name": "The Lost Pyramid",
-  "description": "A sandstorm has scoured away three thousand years of silence. The pyramid stands exposed against the sky, its entrance gaping like a wound in the earth. Hieroglyphics flanking the threshold promise two things: treasure beyond imagining, and death for any who seek it. You take the torch. You step inside. Behind you, the sand shifts and seals the way out. The desert has swallowed your retreat. Forward, then. Into the dark.",
+  "displayOrder": 5,
+  "description":"A sandstorm has scoured away three thousand years of silence. The pyramid stands exposed against the sky, its entrance gaping like a wound in the earth. Hieroglyphics flanking the threshold promise two things: treasure beyond imagining, and death for any who seek it. You take the torch. You step inside. Behind you, the sand shifts and seals the way out. The desert has swallowed your retreat. Forward, then. Into the dark.",
   "synopsis": "Brave ancient traps inside a buried pyramid.",
   "startRoom": "entrance",
   "rooms": {

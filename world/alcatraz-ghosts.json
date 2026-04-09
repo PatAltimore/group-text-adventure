@@ -1,6 +1,7 @@
 {
   "name": "Alcatraz: The Zozo Investigation",
-  "description": "Your crew arrives at Alcatraz Island as the last ferry pulls away, its horn fading into the San Francisco Bay fog. The prison looms above — a concrete fortress abandoned for decades, but never truly empty. Tonight you're investigating reports of Zozo, a malevolent entity that's been terrorizing paranormal investigators. Your equipment cases are scattered throughout the facility — the warden had them delivered ahead of time, but something's moved them. The investigation begins at dusk. By dawn, you'll either have proof of the paranormal... or become part of Alcatraz's permanent collection of restless spirits.",
+  "displayOrder": 12,
+  "description":"Your crew arrives at Alcatraz Island as the last ferry pulls away, its horn fading into the San Francisco Bay fog. The prison looms above — a concrete fortress abandoned for decades, but never truly empty. Tonight you're investigating reports of Zozo, a malevolent entity that's been terrorizing paranormal investigators. Your equipment cases are scattered throughout the facility — the warden had them delivered ahead of time, but something's moved them. The investigation begins at dusk. By dawn, you'll either have proof of the paranormal... or become part of Alcatraz's permanent collection of restless spirits.",
   "synopsis": "Investigate haunted Alcatraz, confront Zozo",
   "startRoom": "dock",
   "rooms": {
