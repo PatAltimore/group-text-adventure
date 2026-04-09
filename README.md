@@ -11,7 +11,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 ## Features
 
 - **1–20 Multiplayer** — Host and join games via URL or QR code; use Web Share API or clipboard to invite
-- **Multiple Worlds** — Choose from 6 pre-built adventures (Forgotten Castle, Clockmaker's Mansion, Space Station, The Lost Pyramid, Blackwood Manor, Paranormal Mysteries) or create your own
+- **Multiple Worlds** — Choose from 13 pre-built adventures spanning fantasy, sci-fi, horror, mystery, and more — or create your own
 - **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Danger (Low/Medium/High), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
 - **Real-Time Sync** — All actions broadcast instantly via Web PubSub
 - **Hazard System** — Rooms can contain hazards with variable death probability; defeated players respawn after timer expires
@@ -29,7 +29,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 - **Share Link & QR Code** — Share button copies the join URL instantly. QR Code button displays a scannable QR code for easy mobile joining. QR code always visible on host screen.
 - **Host New Game Button** — Easily start a fresh game from the game header without navigating away.
 - **Improved Help Command** — Help text now features clear sections and enhanced readability for easier command discovery.
-- **World Editor** — Create and edit custom worlds visually with the built-in editor. Visit `<game-url>/editor.html` (e.g., https://textgtagame.z5.web.core.windows.net/editor.html) to design your own worlds interactively
+- **World Editor** — Create and edit custom worlds visually with the built-in editor. Visit `<game-url>/editor.html` (for example, https://textgtagame.z5.web.core.windows.net/editor.html) to design your own worlds interactively.
 
 ---
 
@@ -118,7 +118,7 @@ The game runs on Azure serverless infrastructure:
 
 ## The Worlds
 
-Choose from six pre-built adventures, each with unique themes, puzzles, and challenges:
+Choose from thirteen pre-built adventures, each with unique themes, puzzles, and challenges:
 
 ### 🏰 The Forgotten Castle
 - **Theme:** Medieval fantasy castle exploration
@@ -127,28 +127,63 @@ Choose from six pre-built adventures, each with unique themes, puzzles, and chal
 
 ### 🕰️ The Clockmaker's Mansion
 - **Theme:** Victorian steampunk escape room
-- **Highlights:** Time-based puzzles, intricate mechanisms, mysterious artifacts
+- **Highlights:** Time-based puzzles, intricate mechanisms, seven hidden keys
 - **File:** `escape-room.json`
 
-### 🚀 Space Station
+### 🚀 The Derelict Station
 - **Theme:** Sci-fi space station survival
 - **Highlights:** Technical challenges, alien artifacts, zero-gravity navigation
 - **File:** `space-adventure.json`
 
+### 🌿 The Temple of the Jaguar God
+- **Theme:** Lost Mayan jungle temple expedition
+- **Highlights:** Ancient traps, jungle survival, hidden treasure vaults
+- **File:** `jungle-adventure.json`
+
 ### 🔺 The Lost Pyramid
 - **Theme:** Ancient Egyptian expedition and treasure hunt
 - **Highlights:** Hieroglyphic puzzles, hidden chambers, ancient traps
-- **File:** `pyramid-world.json`
+- **File:** `egyptian-pyramid.json`
 
-### 👻 Blackwood Manor
+### 🔴 Mars: The Buried City
+- **Theme:** Mars exploration discovering an ancient civilization
+- **Highlights:** Alien technology, underground ruins, terraforming mysteries
+- **File:** `mars-adventure.json`
+
+### 🏴‍☠️ Dead Man's Fortune
+- **Theme:** Pirate treasure hunt on a skull-shaped island
+- **Highlights:** Sea caves, booby traps, legendary pirate gold
+- **File:** `pirate-treasure.json`
+
+### 🕵️ Shadows Over Blackwater
+- **Theme:** Noir-style murder mystery investigation
+- **Highlights:** Crime scene evidence, suspect interrogation, plot twists
+- **File:** `true-crime.json`
+
+### 👻 The Mystery House
 - **Theme:** Spooky haunted mansion mystery
 - **Highlights:** Supernatural encounters, hidden secrets, eerie atmosphere
 - **File:** `mystery-house.json`
 
 ### 👽 Paranormal Mysteries
 - **Theme:** Cryptids, aliens, UFOs, and unexplained phenomena
-- **Highlights:** Bermuda Triangle, Stonehenge, extraterrestrial encounters, cryptid investigations
-- **File:** `paranormal-world.json`
+- **Highlights:** Bermuda Triangle, Stonehenge, extraterrestrial encounters
+- **File:** `paranormal-mysteries.json`
+
+### ⚙️ The Forgotten Mechanica
+- **Theme:** Myst-inspired mechanical puzzle world
+- **Highlights:** Ancient machines, environmental puzzles, mysterious contraptions
+- **File:** `myst-island.json`
+
+### 👻 Alcatraz: The Zozo Investigation
+- **Theme:** Ghost hunting at haunted Alcatraz prison
+- **Highlights:** Paranormal equipment, spirit communication, confronting the entity Zozo
+- **File:** `alcatraz-ghosts.json`
+
+### 🌙 Hollow Moon
+- **Theme:** Lunar mining colony mystery — is the moon an alien space station?
+- **Highlights:** Hard sci-fi, ancient alien structures, hollow interior discovery
+- **File:** `hollow-moon.json`
 
 ### World Format
 
@@ -208,7 +243,7 @@ Worlds are defined as JSON files in `world/` with the following structure:
 npm test
 ```
 
-Tests use Jest with ESM support. Currently **274 tests passing** across 4 test suites. Test files are in `tests/`.
+Tests use Jest with ESM support. Currently **539 tests passing** across 6 test suites. Test files are in `tests/`.
 
 ### Client
 
@@ -315,10 +350,20 @@ group-text-adventure/
 │   │       ├── health.js       # Health check endpoint
 │   │       └── worlds.js       # World list API
 │   └── package.json            # API dependencies
-├── world/                      # Game world definitions
+├── world/                      # Game world definitions (13 worlds)
 │   ├── default-world.json      # "The Forgotten Castle"
 │   ├── escape-room.json        # "The Clockmaker's Mansion"
-│   └── space-adventure.json    # "The Derelict Station"
+│   ├── space-adventure.json    # "The Derelict Station"
+│   ├── jungle-adventure.json   # "The Temple of the Jaguar God"
+│   ├── egyptian-pyramid.json   # "The Lost Pyramid"
+│   ├── mars-adventure.json     # "Mars: The Buried City"
+│   ├── pirate-treasure.json    # "Dead Man's Fortune"
+│   ├── true-crime.json         # "Shadows Over Blackwater"
+│   ├── mystery-house.json      # "The Mystery House"
+│   ├── paranormal-mysteries.json # "Paranormal Mysteries"
+│   ├── myst-island.json        # "The Forgotten Mechanica"
+│   ├── alcatraz-ghosts.json    # "Alcatraz: The Zozo Investigation"
+│   └── hollow-moon.json        # "Hollow Moon"
 ├── tests/                      # Test suite (Jest)
 ├── deploy/                     # Azure deployment scripts
 │   ├── deploy.ps1              # PowerShell deployment (Windows)
