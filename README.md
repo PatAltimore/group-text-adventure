@@ -1,362 +1,217 @@
 # 🏰 Group Text Adventure
 
-**A real-time multiplayer text adventure game built on Azure.**
+**A real-time multiplayer text adventure game.**
 
-Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to find the ultimate treasure. Using voice commands (or text), navigate dungeons, manage inventory, and communicate with teammates in real time via WebSocket.
+Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to find the ultimate treasure. Navigate dungeons, manage inventory, and communicate with teammates in real time.
 
 🎮 **[Play the Live Demo](https://textgtagame.z5.web.core.windows.net)** — Try it now!
 
 ---
 
-## Features
+## About the Game
 
-- **1–20 Multiplayer** — Host and join games via URL or QR code; use Web Share API or clipboard to invite
-- **Multiple Worlds** — Choose from 6 pre-built adventures (Forgotten Castle, Clockmaker's Mansion, Space Station, The Lost Pyramid, Blackwood Manor, Paranormal Mysteries) or create your own
-- **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Danger (Low/Medium/High), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
-- **Real-Time Sync** — All actions broadcast instantly via Web PubSub
-- **Hazard System** — Rooms can contain hazards with variable death probability; defeated players respawn after timer expires
-- **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can pick them up with the "get" command
-- **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
-- **Puzzle Rooms** — 🧩 Emoji prefix marks puzzle rooms; optional hints show required items
-- **Goal System** — Puzzles marked as goals trigger ASCII art celebrations when solved and broadcast to all players. When all goals are completed, a victory screen celebrates the entire group's success. Goal progress is displayed in the room view.
-- **Map Command** — Navigate with an ASCII map showing visited rooms up to 2 rooms away. Current room marked with [*], unvisited rooms shown as [?].
-- **Displaced Items** — Items not in their original room display distinctly as "dropped items"
-- **Explore & Interact** — Navigate rooms, examine items, collect treasures
-- **Collaborative Puzzles** — Solve challenges that require teamwork and item trading
-- **Inventory & Items** — Pick up, drop, use, and give items to other players
-- **Direct Communication** — Say messages to players in the same room (or globally, per lobby settings)
-- **Room Awareness** — See who's nearby and what's in each room
-- **Share Link & QR Code** — Share button copies the join URL instantly. QR Code button displays a scannable QR code for easy mobile joining. QR code always visible on host screen.
-- **Host New Game Button** — Easily start a fresh game from the game header without navigating away.
-- **Improved Help Command** — Help text now features clear sections and enhanced readability for easier command discovery.
-- **World Editor** — Create and edit custom worlds visually with the built-in editor. Visit `<game-url>/editor.html` (e.g., https://textgtagame.z5.web.core.windows.net/editor.html) to design your own worlds interactively
+Group Text Adventure is a browser-based multiplayer game where players explore rooms, collect items, solve puzzles, and work together to reach the goal. The host creates a game session and shares a link; everyone joins instantly with no install required.
+
+**Key features:**
+
+- **1–20 Multiplayer** — Host and join games via URL or QR code
+- **Multiple Worlds** — Choose from 6 pre-built adventures or create your own
+- **Customizable Lobby** — Host adjusts Respawn Timer, Hazard Danger, Say Scope, and Puzzle Hints
+- **Hazard System** — Rooms can contain hazards; defeated players respawn after a timer
+- **Ghost System** — Dead or disconnected players become ghosts; their items drop to the floor
+- **Puzzle Rooms** — 🧩 Emoji marks puzzle rooms; solve them with the right items
+- **Goal System** — Completing all goals triggers a victory screen for everyone
+- **Map Command** — ASCII map shows visited rooms and nearby unexplored areas
+- **World Editor** — Build custom worlds visually at `<game-url>/editor.html`
 
 ---
 
 ## How to Play
 
-### Supported Commands
+### Quick Start
+
+1. **Host a Game** — Enter your name and select a world
+2. **Configure Lobby** — Adjust settings (optional)
+3. **Create Game** — Click "Host New Game"
+4. **Share the Link** — Invite friends via the Share button or QR code
+5. **Start When Ready** — Click "Start Game" once everyone joins
+6. **Explore Together** — Use commands to move, interact, solve puzzles, and avoid hazards
+
+### Commands
 
 | Command | Syntax | Example |
 |---------|--------|---------|
-| **Go** | `go <direction>` or shortcut `<n/s/e/w>` | `go north` or `n` |
-| **Look** | `look` or `look <item>` | `look` or `look torch` |
+| **Go** | `go <direction>` or `n/s/e/w` | `go north` or `n` |
+| **Look** | `look` or `look <item>` | `look torch` |
 | **Examine** | `examine <item>` | `examine torch` |
-| **Get** | `get <item>` or `get items` or `g` | `get torch` or `get items` or `g` |
+| **Get** | `get <item>` or `get items` or `g` | `get torch` |
 | **Drop** | `drop <item>` | `drop torch` |
 | **Inventory** | `inventory` or `i` | `i` |
 | **Use** | `use <item>` | `use key` |
 | **Give** | `give <item> to <player>` | `give key to Alice` |
-| **Say** | `say <message>` | `say Help me with the puzzle!` |
+| **Say** | `say <message>` | `say Help me!` |
 | **Map** | `map` | `map` |
 | **Help** | `help` | `help` |
 
-### Partial Name Matching
-
-All item commands support **partial/fuzzy name matching**, so you don't need to type the full item name:
-- ✅ `look book` matches "red book" or "old book"
-- ✅ `get torch` matches "wooden torch" or "silver torch"
-- ✅ `examine statue` matches "golden statue"
-- ✅ `drop key` matches "brass key"
-- ✅ `use lock` matches "silver lock" or "iron lock"
-- ✅ `give ring to Alice` matches "golden ring"
-
-**Disambiguation:** If multiple items match (e.g., "old book" and "red book" both match "book"), the game will ask you to be more specific. Simply add another word to distinguish them.
-
-### Quick Start
-
-1. **Host a Game** — Enter your name and select a world
-2. **Configure Lobby** — Adjust Respawn Timer, Hazard Danger, Say Scope, and Puzzle Hints (optional)
-3. **Create Game** — Click "Host New Game"
-4. **Share the Link** — Click the Share button to invite friends via Web Share API or clipboard
-5. **Start When Ready** — Once everyone joins, click "Start Game"
-6. **Explore Together** — Use commands to move, interact, solve puzzles, and avoid hazards
-7. **Collaborate** — Trade items, solve challenges, reach the treasure; dead players respawn after the timer
+All item commands support **partial name matching** — `get torch` matches "wooden torch" or "silver torch". If multiple items match, the game asks you to be more specific.
 
 ---
 
-## Architecture
+## Worlds
 
-The game runs on Azure serverless infrastructure:
+Choose from six pre-built adventures, or create your own by adding a JSON file to the `world/` directory.
 
-```
-┌──────────────────┐
-│   Web Browser    │
-│  (Vanilla JS)    │
-└────────┬─────────┘
-         │ WebSocket
-         ▼
-┌──────────────────────────┐       ┌─────────────────┐
-│   Azure Web PubSub       │─────> │  Azure Functions│
-│   (Real-time messaging)  │       │  (Game logic)   │
-└──────────────────────────┘       └────────┬────────┘
-                                            │
-                                            ▼
-                                  ┌─────────────────┐
-                                  │  Azure Table    │
-                                  │  Storage        │
-                                  │  (Game state)   │
-                                  └─────────────────┘
-```
-
-**Data Flow:**
-
-1. Player opens static website (hosted on Azure Storage)
-2. Client calls `/api/negotiate` to get a Web PubSub connection token
-3. Client connects to Web PubSub via WebSocket
-4. Commands flow through Web PubSub → Azure Functions (game engine) → Table Storage
-5. Game state is broadcast back to all connected players in real time
-
-**Key API Endpoints:**
-
-- `/api/negotiate` — Web PubSub connection setup
-- `/api/gameHub` — Core game logic handler
-- `/api/worlds` — List available world definitions
-- `/api/health` — Service health check
+| World | Theme | File |
+|-------|-------|------|
+| 🏰 The Forgotten Castle | Medieval fantasy castle | `default-world.json` |
+| 🕰️ The Clockmaker's Mansion | Victorian steampunk escape room | `escape-room.json` |
+| 🚀 Space Station | Sci-fi survival | `space-adventure.json` |
+| 🔺 The Lost Pyramid | Ancient Egyptian expedition | `egyptian-pyramid.json` |
+| 👻 Blackwood Manor | Haunted mansion mystery | `mystery-house.json` |
+| 👽 Paranormal Mysteries | Cryptids, aliens, and UFOs | `paranormal-mysteries.json` |
 
 ---
 
-## The Worlds
+## Configuring the World JSON
 
-Choose from six pre-built adventures, each with unique themes, puzzles, and challenges:
+Worlds are defined as JSON files in the `world/` directory. No code changes are needed — just add or edit a `.json` file.
 
-### 🏰 The Forgotten Castle
-- **Theme:** Medieval fantasy castle exploration
-- **Highlights:** 9 items, 4 puzzles, hidden throne room, secret garden
-- **File:** `default-world.json`
-
-### 🕰️ The Clockmaker's Mansion
-- **Theme:** Victorian steampunk escape room
-- **Highlights:** Time-based puzzles, intricate mechanisms, mysterious artifacts
-- **File:** `escape-room.json`
-
-### 🚀 Space Station
-- **Theme:** Sci-fi space station survival
-- **Highlights:** Technical challenges, alien artifacts, zero-gravity navigation
-- **File:** `space-adventure.json`
-
-### 🔺 The Lost Pyramid
-- **Theme:** Ancient Egyptian expedition and treasure hunt
-- **Highlights:** Hieroglyphic puzzles, hidden chambers, ancient traps
-- **File:** `pyramid-world.json`
-
-### 👻 Blackwood Manor
-- **Theme:** Spooky haunted mansion mystery
-- **Highlights:** Supernatural encounters, hidden secrets, eerie atmosphere
-- **File:** `mystery-house.json`
-
-### 👽 Paranormal Mysteries
-- **Theme:** Cryptids, aliens, UFOs, and unexplained phenomena
-- **Highlights:** Bermuda Triangle, Stonehenge, extraterrestrial encounters, cryptid investigations
-- **File:** `paranormal-world.json`
-
-### World Format
-
-Worlds are defined as JSON files in `world/` with the following structure:
+### Top-Level Structure
 
 ```json
 {
   "name": "World Name",
-  "description": "World description",
+  "description": "Brief description shown on the world selection screen",
+  "startRoom": "entrance"
+}
+```
+
+### Rooms
+
+```json
+"rooms": {
+  "entrance": {
+    "name": "Castle Entrance",
+    "description": "You stand before a massive iron gate.",
+    "exits": {
+      "north": "courtyard",
+      "east": "guardhouse"
+    },
+    "items": ["torch", "key"],
+    "hazards": [
+      {
+        "description": "A loose flagstone gives way!",
+        "probability": 0.2,
+        "deathText": "You fall into a pit."
+      }
+    ]
+  }
+}
+```
+
+- **exits** — Maps direction names (`north`, `south`, `east`, `west`, `up`, `down`) to room IDs
+- **items** — List of item IDs starting in this room
+- **hazards** — Optional. `probability` is a 0–1 chance of triggering on entry; `deathText` is shown on death
+
+### Items
+
+```json
+"items": {
+  "torch": {
+    "name": "Wooden Torch",
+    "description": "A flickering torch that lights the way.",
+    "roomText": "A torch is mounted on the wall.",
+    "pickupText": "You grab the torch.",
+    "portable": true
+  },
+  "gate": {
+    "name": "Iron Gate",
+    "description": "A heavy locked gate.",
+    "portable": false
+  }
+}
+```
+
+- **roomText** — Text shown when the item is in the room (optional; defaults to item name)
+- **portable** — Set to `false` for fixed scenery items that cannot be picked up
+
+### Puzzles
+
+```json
+"puzzles": {
+  "openGate": {
+    "room": "entrance",
+    "requiredItem": "key",
+    "solvedText": "The gate swings open!",
+    "isGoal": true,
+    "hint": "You need something to unlock the gate.",
+    "action": {
+      "type": "openExit",
+      "direction": "north",
+      "targetRoom": "courtyard"
+    }
+  }
+}
+```
+
+- **room** — The room ID where this puzzle can be solved
+- **requiredItem** — Item ID the player must `use` to solve the puzzle
+- **isGoal** — When `true`, completing this puzzle counts toward the group victory condition
+- **hint** — Shown when puzzle hints are enabled in lobby settings
+- **action.type** — Currently supports `openExit` (unlocks a new direction) and `removeItem` (removes an item from a room)
+
+### Full Example
+
+```json
+{
+  "name": "The Forgotten Castle",
+  "description": "A medieval castle with hidden secrets.",
   "startRoom": "entrance",
   "rooms": {
-    "roomId": {
-      "name": "Room Name",
-      "description": "Long description",
-      "exits": { "north": "targetRoom", "south": "otherRoom" },
-      "items": ["itemId1", "itemId2"],
-      "hazards": ["Description of hazard"]
+    "entrance": {
+      "name": "Castle Entrance",
+      "description": "A cold stone passage leads inside.",
+      "exits": { "north": "great-hall" },
+      "items": ["torch"]
+    },
+    "great-hall": {
+      "name": "Great Hall",
+      "description": "A vast hall with a locked door to the north.",
+      "exits": { "south": "entrance" },
+      "items": ["key"]
     }
   },
   "items": {
-    "itemId": {
-      "name": "Item Name",
-      "description": "Item description",
-      "pickupText": "Message when picked up",
+    "torch": {
+      "name": "Torch",
+      "description": "A burning torch.",
+      "portable": true
+    },
+    "key": {
+      "name": "Old Key",
+      "description": "A rusted iron key.",
+      "pickupText": "You pocket the key.",
       "portable": true
     }
   },
   "puzzles": {
-    "puzzleId": {
-      "room": "roomId",
-      "requiredItem": "itemId",
-      "solvedText": "Success message",
+    "unlockDoor": {
+      "room": "great-hall",
+      "requiredItem": "key",
+      "solvedText": "The door unlocks with a click.",
+      "isGoal": true,
       "action": {
         "type": "openExit",
         "direction": "north",
-        "targetRoom": "newRoom"
+        "targetRoom": "treasure-room"
       }
     }
   }
 }
 ```
 
-**You can create new worlds** by editing the JSON structure — no code changes needed. Place your world file in `world/` and deploy.
-
----
-
-## Local Development
-
-### Prerequisites
-
-- **Node.js** 18+
-- **Azure Functions Core Tools** (for running the API locally)
-
-### Running Tests
-
-```bash
-npm test
-```
-
-Tests use Jest with ESM support. Currently **274 tests passing** across 4 test suites. Test files are in `tests/`.
-
-### Client
-
-The client is vanilla **HTML, CSS, and JavaScript** with no build step. Just open `client/index.html` in a browser or serve it locally:
-
-```bash
-cd client
-python -m http.server 8000
-# or: npx http-server
-```
-
-Then navigate to `http://localhost:8000`.
-
-### API (Azure Functions)
-
-To run the game engine locally:
-
-```bash
-cd api
-npm install
-func start
-```
-
-The API will start on `http://localhost:7071`. The client defaults to this URL when no `config.json` is found.
-
----
-
-## Deploy to Azure
-
-### Quick Deploy
-
-**Windows (PowerShell):**
-```powershell
-pwsh -NoProfile -File .\deploy\deploy.ps1 -AppName mygame -Location westus2
-```
-
-**Linux/macOS (Bash):**
-```bash
-chmod +x deploy/deploy.sh
-./deploy/deploy.sh --app-name mygame --location westus2
-```
-
-### Parameters
-
-| Parameter | Required | Default | Description |
-|-----------|----------|---------|-------------|
-| `AppName` / `--app-name` | Yes | — | Base name for resources (3–12 alphanumeric, starts with letter) |
-| `Location` / `--location` | No | `westus2` | Azure region |
-| `ResourceGroup` / `--resource-group` | No | `rg-text-adventure` | Resource group name |
-
-### What Gets Created
-
-| Resource | Name | Purpose | Cost |
-|----------|------|---------|------|
-| **Storage Account** | `{AppName}game` | Table Storage + Static Website | ~$0.01/month |
-| **Azure Web PubSub** | `{AppName}-wps` | Real-time messaging (Free tier: 20 connections, 20K msgs/day) | Free |
-| **Azure Function App** | `{AppName}-func` | Game engine (Consumption: 1M executions/month free) | Free |
-
-**Estimated total: ~$0/month** for a prototype with light traffic.
-
-### After Deployment
-
-The script outputs three URLs:
-
-- **Game URL** — Share this with players (the static website)
-- **Function App URL** — Backend (players don't need this)
-- **Web PubSub URL** — WebSocket endpoint (auto-handled by client)
-
-### Tear Down
-
-Delete all resources:
-
-```bash
-az group delete --name rg-text-adventure --yes
-```
-
-### Re-deploy
-
-The deployment scripts are **idempotent**. Run them again to update code without recreating resources:
-
-```powershell
-.\deploy\deploy.ps1 -AppName mygame
-```
-
-For detailed troubleshooting, see **[deploy/README.md](deploy/README.md)**.
-
----
-
-## Project Structure
-
-```
-group-text-adventure/
-├── client/                     # Frontend (vanilla HTML/CSS/JS)
-│   ├── index.html              # Game UI (landing, lobby, game screen)
-│   ├── app.js                  # Client logic, WebSocket handling
-│   └── style.css               # Styling
-├── api/                        # Azure Functions backend
-│   ├── src/
-│   │   ├── game-engine.js      # Core game logic (pure functions)
-│   │   ├── command-parser.js   # Command parsing
-│   │   └── functions/          # Azure Function handlers
-│   │       ├── gameHub.js      # Main game logic handler
-│   │       ├── negotiate.js    # Web PubSub connection setup
-│   │       ├── health.js       # Health check endpoint
-│   │       └── worlds.js       # World list API
-│   └── package.json            # API dependencies
-├── world/                      # Game world definitions
-│   ├── default-world.json      # "The Forgotten Castle"
-│   ├── escape-room.json        # "The Clockmaker's Mansion"
-│   └── space-adventure.json    # "The Derelict Station"
-├── tests/                      # Test suite (Jest)
-├── deploy/                     # Azure deployment scripts
-│   ├── deploy.ps1              # PowerShell deployment (Windows)
-│   ├── deploy.sh               # Bash deployment (Linux/macOS)
-│   └── README.md               # Detailed deployment guide
-├── infra/                      # Azure infrastructure as code
-├── .github/                    # GitHub workflows
-├── .squad/                     # AI team configuration
-├── azure.yaml                  # Azure Developer CLI config
-├── package.json                # Root scripts
-├── LICENSE                     # MIT License
-└── README.md                   # This file
-```
-
----
-
-## Tech Stack
-
-- **Frontend:** Vanilla JavaScript, HTML5, CSS3 (no frameworks)
-- **Backend:** Azure Functions (Node.js 18+)
-- **Real-Time:** Azure Web PubSub (WebSocket)
-- **Persistence:** Azure Table Storage
-- **Hosting:** Azure Static Website (Storage Account)
-- **Testing:** Jest (ESM-compatible)
-- **Game Logic:** Pure, side-effect-free functions for easy testing and portability
-
 ---
 
 ## License
 
 MIT License © 2026 Pat Altimore. See [LICENSE](LICENSE) for details.
-
----
-
-## Contributing
-
-Found a bug or have a feature idea? Open an issue or submit a pull request!
-
----
-
-**Ready to play?** Start with `npm test` to verify everything works, then host your first game with the deployment scripts. 🏰
