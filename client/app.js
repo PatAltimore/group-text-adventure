@@ -140,7 +140,7 @@
     } else if (name === 'join-manual') {
       els.manualJoinName.focus();
     } else if (name === 'landing') {
-      els.playerName.focus();
+      screens[name].scrollTop = 0;
     }
   }
 
@@ -1118,9 +1118,6 @@
       e.preventDefault();
       showScreen('home');
     });
-
-    // Focus on name input
-    els.playerName.focus();
 
     // Game-not-found: host a new game
     document.getElementById('btn-host-from-notfound').addEventListener('click', () => {
