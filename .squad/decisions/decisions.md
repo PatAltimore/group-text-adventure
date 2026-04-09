@@ -1086,3 +1086,81 @@ Frontend team (Chunk) will need to:
 3. Include `sayScope` in `startGame` message
 4. Display current sayScope setting in lobby
 
+
+---
+
+## 27. World Display Ordering via displayOrder Field
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-10  
+**Status:** Implemented
+
+### Decision
+
+- Each world JSON has a top-level \\\displayOrder: N\\\ field (integer, right after \\\
+ame\\\)
+- The \\\/api/worlds\\\ endpoint includes \\\displayOrder\\\ in each world object and sorts ascending by it
+- Worlds without \\\displayOrder\\\ sort to the end (\\\?? Infinity\\\)
+- The Forgotten Castle is always first (displayOrder: 1) as the original world
+
+### Impact
+
+- **Frontend:** The \\\displayOrder\\\ field is now available in the worlds API response
+- **World Management:** New worlds should include a \\\displayOrder\\\ value (pick next available number or insert between existing values)
+- All 539 tests pass
+
+---
+
+## 28. Hollow Moon World (Adventure 13)
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-09  
+**Status:** Implemented
+
+### Decision
+
+Added \\\world/hollow-moon.json\\\ — a new adventure world set on a lunar mining colony where players discover the moon is an ancient alien space station.
+
+**World Specifications:**
+- **displayOrder:** 13 (next sequential after Alcatraz)
+- **Size:** 14 rooms, 10 puzzles, 6 goals (largest room count, under 30KB for Table Storage)
+- **Progression:** Linear descent (Surface → moonbase → mining → underground → alien core)
+- **Puzzle Design:**
+  - Two \\\emoveHazard\\\ puzzles (optional safety): helmet-lamp neutralizes darkness, geiger-counter neutralizes radiation
+  - One \\\ddItem\\\ puzzle (narrative): decoding the moon's origin reveals the origin-hologram item
+- **Backtracking:** Puzzles gate deeper areas; players revisit earlier zones for items
+
+### Impact
+
+- New file: \\\world/hollow-moon.json\\\ (30KB)
+- No existing files modified
+- All 539 tests pass
+
+---
+
+## 29. Backend: hintsEnabled Storage + adventureName/gameCode in Messages
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-10  
+**Status:** Implemented
+
+### Decisions
+
+1. **hintsEnabled bug fix:** The \\\handleStartGame\\\ handler now reads \\\data.hintsEnabled\\\ from the host's startGame message and stores it in \\\session.hintsEnabled\\\. Previously it was never persisted, so hints were always enabled regardless of host setting.
+
+2. **adventureName + gameCode:** Added \\\dventureName\\\ (from \\\session.world.name\\\) and \\\gameCode\\\ (the gameId) to three server-to-client messages:
+   - \\\gameStart\\\ (host receives on game creation)
+   - \\\gameInfo\\`\ (joiners receive on first join)
+   - \\\gameInfo\\`\ (reconnectors receive on reconnect)
+
+**Technical Details:**
+- \\\hintsEnabled\\`\ coerced to boolean via \\\=== true || === 'true'\\`\ to handle both boolean and string values
+- \\\dventureName\\`\ uses optional chaining (\\\session.world?.name || ''\\`\) for safety
+- \\\gameCode\\`\ is just the \\`gameId\\` string (already available in scope)
+
+### Impact
+
+- **Backend:** Modified \\`api/src/functions/gameHub.js\\` (3 message objects + 1 settings block)
+- **Frontend:** Can now read \\`adventureName\\` and \\`gameCode\\` from \\`gameStart\\` and \\`gameInfo\\` messages for banner display
+- All 539 tests pass, no regressions
+
