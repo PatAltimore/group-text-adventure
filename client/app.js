@@ -864,7 +864,7 @@
     if (els.gameTitle && msg.adventureName) {
       const name = msg.adventureName || 'Group Text Adventure';
       const code = msg.gameCode || state.gameId || '';
-      els.gameTitle.textContent = `🏰 ${name}${code ? ' · ' + code : ''}`;
+      els.gameTitle.textContent = `🏰 Group Text Adventure — ${name}${code ? ' — ' + code : ''}`;
     }
 
     // Reconnection: server restored player state
@@ -910,7 +910,7 @@
     if (els.gameTitle) {
       const name = msg.adventureName || 'Group Text Adventure';
       const code = msg.gameCode || state.gameId || '';
-      els.gameTitle.textContent = `🏰 ${name}${code ? ' · ' + code : ''}`;
+      els.gameTitle.textContent = `🏰 Group Text Adventure — ${name}${code ? ' — ' + code : ''}`;
     }
     showScreen('game');
     if (msg.shareHint) {
