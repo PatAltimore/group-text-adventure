@@ -484,6 +484,8 @@ async function handleJoin(serviceClient, connectionId, data, context) {
       reconnected: true,
       inventory: inventoryItems,
       ghosts: ghostNames,
+      adventureName: session.world?.name || '',
+      gameCode: gameId,
     };
     if (session.started) {
       gameInfoMsg.room = getPlayerView(session, playerId);
@@ -546,6 +548,8 @@ async function handleJoin(serviceClient, connectionId, data, context) {
     players,
     reconnected: false,
     ghosts: ghostNames,
+    adventureName: session.world?.name || '',
+    gameCode: gameId,
   };
   if (session.started) {
     gameInfoMsg.room = getPlayerView(session, playerId);
@@ -636,6 +640,11 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
       session.sayScope = ['room', 'global'].includes(data.sayScope) ? data.sayScope : 'room';
     }
 
+    // Apply hints setting if provided by host
+    if (data.hintsEnabled !== undefined) {
+      session.hintsEnabled = data.hintsEnabled === true || data.hintsEnabled === 'true';
+    }
+
     await saveGameState(gameId, session);
 
     // Send personalized gameStart to each player via direct connection.
@@ -655,6 +664,8 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
             hazardMultiplier: session.hazardMultiplier || 1,
             sayScope: session.sayScope || 'room',
             hintsEnabled: session.hintsEnabled !== false,
+            adventureName: session.world?.name || '',
+            gameCode: gameId,
             shareHint: 'Invite others to join by selecting the Share button! 📤',
           });
         }

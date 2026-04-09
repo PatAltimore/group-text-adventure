@@ -45,6 +45,8 @@
   // --- DOM References ---
   const $ = (sel) => document.querySelector(sel);
   const screens = {
+    home: $('#screen-home'),
+    'join-manual': $('#screen-join-manual'),
     join: $('#screen-join'),
     landing: $('#screen-landing'),
     lobby: $('#screen-lobby'),
@@ -52,18 +54,25 @@
     'game-not-found': $('#screen-game-not-found'),
   };
   const els = {
-    // Join screen
+    // Home screen
+    btnGoHost: $('#btn-go-host'),
+    btnGoJoin: $('#btn-go-join'),
+
+    // Manual join screen
+    manualJoinName: $('#manual-join-name'),
+    manualJoinCode: $('#manual-join-code'),
+    btnManualJoin: $('#btn-manual-join'),
+    linkManualJoinBack: $('#link-manual-join-back'),
+
+    // Join screen (URL-based)
     joinPlayerName: $('#join-player-name'),
     joinDisplayCode: $('#join-display-code'),
     btnJoinStart: $('#btn-join-start'),
     
-    // Landing screen
+    // Landing screen (host setup)
     playerName: $('#player-name'),
     btnHost: $('#btn-host'),
-    btnJoin: $('#btn-join'),
-    joinCodeGroup: $('#join-code-group'),
-    joinCode: $('#join-code'),
-    btnJoinGo: $('#btn-join-go'),
+    linkHostBack: $('#link-host-back'),
     
     // Lobby screen
     btnCopyUrl: $('#btn-copy-url'),
@@ -128,6 +137,8 @@
       els.commandInput.focus();
     } else if (name === 'join') {
       els.joinPlayerName.focus();
+    } else if (name === 'join-manual') {
+      els.manualJoinName.focus();
     } else if (name === 'landing') {
       els.playerName.focus();
     }
@@ -849,6 +860,12 @@
     if (msg.adventureName && els.lobbyAdventureName) {
       els.lobbyAdventureName.textContent = `Adventure: ${msg.adventureName}`;
     }
+    // Update game banner title for joiners/reconnectors
+    if (els.gameTitle && msg.adventureName) {
+      const name = msg.adventureName || 'Group Text Adventure';
+      const code = msg.gameCode || state.gameId || '';
+      els.gameTitle.textContent = `🏰 ${name}${code ? ' · ' + code : ''}`;
+    }
 
     // Reconnection: server restored player state
     if (msg.reconnected) {
@@ -889,6 +906,12 @@
 
   function handleGameStart(msg) {
     dismissDeathOverlay();
+    // Update banner with adventure name and game code
+    if (els.gameTitle) {
+      const name = msg.adventureName || 'Group Text Adventure';
+      const code = msg.gameCode || state.gameId || '';
+      els.gameTitle.textContent = `🏰 ${name}${code ? ' · ' + code : ''}`;
+    }
     showScreen('game');
     if (msg.shareHint) {
       appendToOutput(createMsg('msg-share-hint', msg.shareHint));
@@ -998,27 +1021,88 @@
     showScreen('join');
   }
 
-  // --- Landing Screen Logic ---
-  function initLanding() {
-    const urlGameId = getGameIdFromUrl();
-    
-    // If URL has game code, show join screen instead
-    if (urlGameId) {
-      initJoin();
-      return;
+  // --- Home Screen Logic ---
+  function initHome() {
+    // "Host a Game" → load worlds (if needed) and show host setup screen
+    els.btnGoHost.addEventListener('click', async () => {
+      els.btnGoHost.disabled = true;
+      els.btnGoHost.textContent = 'Loading…';
+      await loadWorlds();
+      els.btnGoHost.disabled = false;
+      els.btnGoHost.textContent = 'Host a Game';
+      initLanding();
+      showScreen('landing');
+    });
+
+    // "Join a Game" → show manual join screen
+    els.btnGoJoin.addEventListener('click', () => {
+      initJoinManual();
+      showScreen('join-manual');
+    });
+
+    showScreen('home');
+  }
+
+  // --- Manual Join Screen Logic ---
+  function initJoinManual() {
+    const nameInput = els.manualJoinName;
+    const codeInput = els.manualJoinCode;
+    const btn = els.btnManualJoin;
+
+    // Remove old listeners by cloning
+    const newName = nameInput.cloneNode(true);
+    nameInput.parentNode.replaceChild(newName, nameInput);
+    els.manualJoinName = newName;
+
+    const newCode = codeInput.cloneNode(true);
+    codeInput.parentNode.replaceChild(newCode, codeInput);
+    els.manualJoinCode = newCode;
+
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    els.btnManualJoin = newBtn;
+
+    function updateBtn() {
+      els.btnManualJoin.disabled = !els.manualJoinName.value.trim() || !els.manualJoinCode.value.trim();
     }
 
-    // Enable/disable buttons based on name input
+    els.manualJoinName.addEventListener('input', updateBtn);
+    els.manualJoinCode.addEventListener('input', updateBtn);
+
+    // Enter key in either input
+    els.manualJoinName.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !els.btnManualJoin.disabled) {
+        e.preventDefault();
+        els.btnManualJoin.click();
+      }
+    });
+    els.manualJoinCode.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !els.btnManualJoin.disabled) {
+        e.preventDefault();
+        els.btnManualJoin.click();
+      }
+    });
+
+    els.btnManualJoin.addEventListener('click', () => {
+      state.playerName = els.manualJoinName.value.trim();
+      state.gameId = els.manualJoinCode.value.trim().toUpperCase();
+      state.isHost = false;
+      startJoin();
+    });
+
+    // Back link
+    els.linkManualJoinBack.addEventListener('click', (e) => {
+      e.preventDefault();
+      showScreen('home');
+    });
+  }
+
+  // --- Landing Screen Logic (Host Setup) ---
+  function initLanding() {
+    // Enable/disable host button based on name input
     els.playerName.addEventListener('input', () => {
       const hasName = els.playerName.value.trim().length > 0;
       els.btnHost.disabled = !hasName;
-      els.btnJoin.disabled = !hasName;
-      els.btnJoinGo.disabled = !hasName || !els.joinCode.value.trim();
-    });
-
-    els.joinCode.addEventListener('input', () => {
-      els.btnJoinGo.disabled =
-        !els.playerName.value.trim() || !els.joinCode.value.trim();
     });
 
     // Host button
@@ -1026,24 +1110,13 @@
       state.playerName = els.playerName.value.trim();
       state.isHost = true;
       state.gameId = generateGameId();
-      // state.worldId is already set by card selection
       startHost();
     });
 
-    // Join button — toggle code input
-    els.btnJoin.addEventListener('click', () => {
-      els.joinCodeGroup.classList.toggle('hidden');
-      if (!els.joinCodeGroup.classList.contains('hidden')) {
-        els.joinCode.focus();
-      }
-    });
-
-    // Join go
-    els.btnJoinGo.addEventListener('click', () => {
-      state.playerName = els.playerName.value.trim();
-      state.gameId = els.joinCode.value.trim();
-      state.isHost = false;
-      startJoin();
+    // Back link
+    els.linkHostBack.addEventListener('click', (e) => {
+      e.preventDefault();
+      showScreen('home');
     });
 
     // Focus on name input
@@ -1055,7 +1128,7 @@
       state.gameId = null;
       state.isHost = false;
       state.pendingRejoin = false;
-      showScreen('landing');
+      showScreen('home');
     });
   }
 
@@ -1310,21 +1383,29 @@
       try {
         await connectWebSocket(sessionGameId);
       } catch {
-        // Reconnection failed — fall back to normal landing flow
+        // Reconnection failed — fall back to home screen
         state.pendingRejoin = false;
         clearSession();
         els.gameOutput.innerHTML = '';
-        await loadWorlds();
-        initLanding();
+        initHome();
+        initCommandInput();
+        initShareOverlay();
       }
       return;
     }
 
     // Normal flow
-    await loadWorlds();
-    initLanding();
-    initCommandInput();
-    initShareOverlay();
+    if (urlGameId) {
+      // URL has ?game= param — go directly to URL-based join screen
+      initJoin();
+      initCommandInput();
+      initShareOverlay();
+    } else {
+      // No URL param — show home screen
+      initHome();
+      initCommandInput();
+      initShareOverlay();
+    }
   }
 
   document.addEventListener('DOMContentLoaded', init);

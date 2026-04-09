@@ -10,6 +10,58 @@
   <script src="app.js" defer></script>
 </head>
 <body>
+  <!-- ===== Home Screen ===== -->
+  <section id="screen-home" class="screen active" role="main" aria-label="Home">
+    <div class="home-container">
+      <h1 class="home-title">🏰 Group Text Adventure</h1>
+      <p class="home-subtitle">Uncover mysteries, solve puzzles, and survive — together.</p>
+      <div class="home-buttons">
+        <button id="btn-go-host" class="btn btn-primary btn-home" aria-label="Host a game">Host a Game</button>
+        <button id="btn-go-join" class="btn btn-secondary btn-home" aria-label="Join a game">Join a Game</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Manual Join Screen ===== -->
+  <section id="screen-join-manual" class="screen" role="main" aria-label="Join game by code">
+    <div class="join-container">
+      <h1 class="join-title">🏰 Join Adventure</h1>
+      <p class="join-subtitle">Enter the game code to join</p>
+
+      <div class="join-form">
+        <div class="join-name-section">
+          <label for="manual-join-name" class="join-name-label">👤 Your Name</label>
+          <input
+            id="manual-join-name"
+            type="text"
+            placeholder="What should other players call you?"
+            maxlength="24"
+            autocomplete="off"
+            aria-label="Your player name"
+          >
+        </div>
+
+        <div class="join-name-section">
+          <label for="manual-join-code" class="join-name-label">🔑 Game Code</label>
+          <input
+            id="manual-join-code"
+            type="text"
+            placeholder="Enter 6-character code…"
+            maxlength="12"
+            autocomplete="off"
+            aria-label="Game code"
+          >
+        </div>
+
+        <button id="btn-manual-join" class="btn btn-primary btn-large" disabled aria-label="Join game">
+          Join Game →
+        </button>
+
+        <a id="link-manual-join-back" href="#" class="join-host-link">← Back</a>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== Join Screen ===== -->
   <section id="screen-join" class="screen" role="main" aria-label="Join game">
     <div class="join-container">
@@ -44,10 +96,10 @@
   </section>
 
   <!-- ===== Landing Screen ===== -->
-  <main id="screen-landing" class="screen active" role="main" aria-label="Game lobby">
+  <main id="screen-landing" class="screen" role="main" aria-label="Host game setup">
     <div class="landing-container">
-      <h1 class="landing-title">🏰 Group Text Adventure</h1>
-      <p class="landing-subtitle">Explore dungeons, solve puzzles, and survive — together.</p>
+      <h1 class="landing-title">🏰 Host a Game</h1>
+      <p class="landing-subtitle">Choose an adventure and invite your friends.</p>
 
       <div class="landing-form">
         <label for="player-name" class="host-name-label">👤 Your Name</label>
@@ -125,23 +177,9 @@
           <button id="btn-host" class="btn btn-primary" disabled aria-label="Host a new game">
             Host New Game
           </button>
-          <button id="btn-join" class="btn btn-secondary" disabled aria-label="Join an existing game">
-            Join Game
-          </button>
         </div>
 
-        <div id="join-code-group" class="join-code-group hidden">
-          <label for="join-code" class="sr-only">Game Code</label>
-          <input
-            id="join-code"
-            type="text"
-            placeholder="Enter game code…"
-            maxlength="12"
-            autocomplete="off"
-            aria-label="Game code to join"
-          >
-          <button id="btn-join-go" class="btn btn-primary" disabled>Join →</button>
-        </div>
+        <a id="link-host-back" href="#" class="join-host-link">← Back</a>
       </div>
     </div>
   </main>

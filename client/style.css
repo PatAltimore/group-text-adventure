@@ -121,6 +121,53 @@ html, body {
   font-size: 16px;
 }
 
+/* ===== Home Screen ===== */
+#screen-home {
+  align-items: center;
+  justify-content: center;
+}
+
+.home-container {
+  text-align: center;
+  max-width: 460px;
+  padding: 24px;
+  width: 100%;
+}
+
+.home-title {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+}
+
+.home-subtitle {
+  color: var(--text-dim);
+  margin-bottom: 48px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.home-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn-home {
+  padding: 20px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  letter-spacing: 0.01em;
+}
+
+/* ===== Manual Join Screen ===== */
+#screen-join-manual {
+  align-items: center;
+  justify-content: center;
+}
+
 /* ===== Join Screen ===== */
 #screen-join {
   align-items: center;
@@ -546,6 +593,8 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
 }
 
 .game-header-right {
