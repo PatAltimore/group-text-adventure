@@ -289,3 +289,12 @@
   - **10 failing (expected)**: all tests that require `getPlayerView()` to return `solvedDescription` when puzzles are solved — awaiting engine implementation from Mouth
   - Key design decision: for rooms with multiple puzzles, `solvedDescription` only activates when ALL puzzles in the room are solved (not just one)
   - All 547 other tests across 6 suites still pass; zero regressions introduced
+
+- **2026-04-07 — Puzzle Emoji Tests (28 new tests, all passing)**
+  - File: /tests/puzzle-emoji.test.js — 28 tests covering 3 new features
+  - **Feature 1: Puzzle Room Emoji in Room Titles** (8 tests): `getPlayerView()` now returns room names with emoji prefixes: 🧩 for unsolved puzzles, ✅ for all puzzles solved, no prefix for no puzzles. Tests cover single/multi-puzzle rooms, state transitions (🧩 → ✅), persistence after leaving/returning.
+  - **Feature 2: Puzzle Emoji on Map** (8 tests): `handleMap()` shows emoji prefixes on room names in map output. Tests cover current room, adjacent rooms (depth-1), depth-2 rooms, transitions after solving puzzles, multi-puzzle rooms showing 🧩 when partially solved and ✅ when fully solved.
+  - **Feature 3: Camera Item Disambiguation** (12 tests): Fixed Alcatraz bug where "use camera" was matching both "Full-Spectrum Camera" and "Camera Instructions" (now renamed to "Verification Instructions"). Tests verify "camera" searches only match the camera item, "verification"/"instructions" only match the renamed item, fuzzy matching still works, and disambiguation triggers for truly ambiguous cases.
+  - Inline test world created with 7 rooms, 6 items, 5 puzzles — uses only cardinal directions (north/south/east/west) per validator requirements
+  - All tests PASS — Mouth's implementation complete for Features 1, 2, and 3!
+  - Total: 585 tests pass across 8 suites (2 skipped)

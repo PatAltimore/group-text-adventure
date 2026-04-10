@@ -480,3 +480,34 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Why Merriweather:** Specifically designed for on-screen readability. Renders cleanly at small sizes on dark backgrounds, making it ideal for this dark-themed game UI. Libre Baskerville was considered but Merriweather's screen-first design wins for a web game context.
 - **Fallback stack:** Updated from monospace fallbacks to serif: Georgia, 'Times New Roman', serif.
 - **Variable name --font-mono kept as-is** to avoid renaming across ~20+ references in style.css and editor.css.
+
+### 2026-04-09 — Victory Trophy ASCII Art Redesign
+
+- **Problem:** Original victory art was a crown design using `$` symbols. Pat said it "doesn't look like a trophy" and "is not the design I approved."
+- **Fix:** Redesigned `getVictoryAsciiArt()` in `api/src/game-engine.js` (lines 30-62) with a classic chalice/cup trophy shape instead of the crown.
+- **New design features:** 
+  - Classic trophy cup silhouette — wide bowl at top, narrowing stem, stable base
+  - "VICTORY" engraved on the cup rim
+  - "* CHAMPION *" plaque on the base
+  - Decorative stars border (★ ･ﾟ･ﾟ☆) top and bottom for celebration
+  - Grander and taller than the individual goal trophy (27 lines vs 10 lines)
+- **Preserved elements:** Kept "All goals have been achieved!" and "You conquered the adventure!" text below the trophy
+- **Font context:** Trophy is rendered in CSS class using monospace font stack (`Cascadia Mono`, `Fira Code`, `JetBrains Mono`, `Consolas`, `Monaco`, monospace) so space-based alignment works correctly
+- **Files modified:** `api/src/game-engine.js` (getVictoryAsciiArt function)
+- **Function signature unchanged:** Still returns string array joined with '\n'
+- **Note:** No copy exists in `api/world/` — only one location to update
+## Learnings
+
+### 2026-04-09 — Victory Art Redesign: Trophy → #1 Ribbon
+- **Problem:** Pat rejected the trophy design from earlier today, wants a **#1 ribbon** instead — like a first-place award rosette.
+- **Fix:** Completely redesigned getVictoryAsciiArt() in pi/src/game-engine.js (lines 30-66) with a #1 award ribbon design.
+- **New design features:**
+  - First-place rosette/ribbon with circular decorative border using # characters
+  - Prominent "#1" badge in the center with decorative box (*===*)
+  - Flowing ribbon tails streaming down from the rosette
+  - Large and celebratory (26 lines of art)
+  - Symmetrical design centered on screen
+  - Uses simple ASCII: #, /, \\, |, -, *, = for clean monospace rendering
+- **Preserved elements:** Kept "All goals have been achieved!" and "You conquered the adventure!" text below, kept star borders
+- **Monospace context:** Renders in CSS monospace font stack so alignment is precise
+- **Learning:** Trophy wasn't the right metaphor — Pat specifically wanted a ribbon award. The #1 rosette better conveys "first place winner" than a trophy.

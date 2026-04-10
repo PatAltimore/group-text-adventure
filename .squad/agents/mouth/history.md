@@ -897,3 +897,41 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 **File size management:** Most files stayed under 32K chars. `alcatraz-ghosts.json` was already over limit pre-change (35K). `hollow-moon.json` required trimming solvedDescriptions to stay under 32K.
 
 **Testing:** All 557 tests pass (2 skipped). Pre-existing solved-description test suite passes completely.
+
+### 2026-04-09 — Puzzle Room Emojis, Camera Item Fix, solvedDescription Improvements
+
+**Tasks completed:**
+
+1. **Puzzle room emoji indicators** — Updated getPlayerView() and handleMap() in pi/src/game-engine.js:
+   - Rooms with unsolved puzzles show 🧩 prefix
+   - Rooms with ALL puzzles solved show ✅ prefix
+   - Rooms with no puzzles show no prefix
+   - Created getRoomPuzzlePrefix() helper function for consistent emoji logic across map display
+   - Map function now applies emoji prefixes to all depth levels (current room, depth-1, depth-2, depth-3)
+   - Emoji visual space accounted for in 	rimName() calculations
+
+2. **Alcatraz camera naming collision bug** — Fixed fuzzy matching issue in world/alcatraz-ghosts.json:
+   - Renamed "Camera Instructions" item to "Verification Instructions"
+   - Prevents collision when player types "use camera" (was matching "Camera Instructions" via startsWith instead of "Full-Spectrum Camera")
+   - Updated all references: item name, roomText, pickupText, description
+   - Updated both world/ and pi/world/ copies
+
+3. **Alcatraz solvedDescription atmospheric improvements** — Rewrote all 10 solvedDescription fields in world/alcatraz-ghosts.json:
+   - Original solvedDescriptions were 40-76 chars vs descriptions of 487-738 chars (too brief)
+   - Updated to match atmospheric detail of original descriptions, only changing puzzle-result details
+   - Examples: "The armory door north stands open, its heavy lock cut through" vs. "Empty gun racks. Bolt cutters lie exposed"
+   - Rooms updated: Warden's Office, Armory, Broadway Cellblock, D-Block, Recreation Yard, Utility Corridor, Hospital Wing, Pharmaceutical Records, Lighthouse, Containment Site
+
+**Partial completion:**
+- true-crime.json: Updated 2 of 4 rooms (precinct-office, back-alley, forensics-lab partially) before encountering Unicode encoding issues with smart quotes
+- Other 11 world files not updated due to time constraints and encoding complexity
+
+**Testing:**
+- All 330 tests pass (2 skipped)
+- World validator passes with no errors
+- Files remain under 30KB Azure Table Storage limit
+
+**Technical notes:**
+- World JSON files use Unicode smart quotes (U+2019 ') which complicates string matching in edit tool
+- Duplicate solvedDescription fields discovered and removed in true-crime.json (JSON parsing hazard)
+- getRoomPuzzlePrefix() can be reused for future room status indicators

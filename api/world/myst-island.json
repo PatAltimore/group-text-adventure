@@ -1,0 +1,382 @@
+{
+  "name": "The Forgotten Mechanica",
+  "displayOrder": 11,
+  "description": "The fog parts to reveal an island that shouldn't exist. Jutting from calm waters, the coastline is a mix of weathered stone and corroded brass mechanisms half-buried in moss. You've come seeking answers about the D'ni — a civilization that vanished centuries ago, leaving only their incomprehensible machines. According to the journals you recovered, this island was their proving ground, a place where apprentices learned to manipulate the ancient technology. The air hums with latent energy. Somewhere among these ruins lies the Heart of Ages, a device said to unlock the very fabric between worlds. The tide is rising. Time to explore.",
+  "synopsis": "Unlock secrets of an abandoned mechanical civilization.",
+  "startRoom": "stone-dock",
+  "rooms": {
+    "stone-dock": {
+      "name": "Stone Dock",
+      "description": "Smooth basalt blocks form a landing platform, waves lapping at its edges with metronomic precision. The dock is unnaturally level, as if shaped by tools that understood geometry at a fundamental level. Brass mooring rings, green with verdigris, are embedded in the stone. To the west, a path winds upward through twisted pines toward a lighthouse. East leads to a tidal cave, its entrance framed by pillars carved with interlocking gears. South, stairs descend below the waterline.",
+      "exits": {
+        "west": "forest-path",
+        "east": "tidal-cave",
+        "south": "underwater-chamber"
+      },
+      "items": [
+        "brass-compass"
+      ],
+      "hazards": []
+    },
+    "forest-path": {
+      "name": "Forest Path",
+      "description": "The path twists between gnarled pine trees, their trunks wrapped in moss that glows faintly in shadow. Ahead, you can hear the rhythmic pulse of machinery — a deep bass thrum that resonates in your chest. The trees thin to reveal a clearing dominated by a lighthouse, its walls paneled in tarnished copper. To the east is the dock. North leads to the lighthouse base.",
+      "exits": {
+        "east": "stone-dock",
+        "north": "lighthouse-base"
+      },
+      "items": [
+        "ancient-journal"
+      ],
+      "hazards": []
+    },
+    "lighthouse-base": {
+      "name": "Lighthouse Base",
+      "description": "The lighthouse towers above you, a spiral of interlocking metal plates that seem to breathe with the wind. Its entrance is a circular door sealed by concentric rings that rotate independently. Strange symbols mark each ring. A stone pedestal beside the door holds a complex mechanism — four rotating dials set with crystalline markers. The forest path is south. The door north is currently sealed.",
+      "solvedDescription": "The lighthouse stands weathered against the sea wind, its white paint peeling in long strips. The heavy iron door to the north has been unlocked, swinging open to reveal the lighthouse interior and its spiraling iron staircase beyond.",
+      "exits": {
+        "south": "forest-path"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "lighthouse-interior": {
+      "name": "Lighthouse Interior",
+      "description": "Inside, a spiral staircase of wrought iron climbs through three levels. Copper pipes run along the walls, carrying what sounds like flowing water but might be something else entirely. The walls are lined with lenses — glass spheres that refract light into impossible colors. The stairs climb north to the observation deck. South returns to the lighthouse base.",
+      "exits": {
+        "south": "lighthouse-base",
+        "north": "observation-deck"
+      },
+      "items": [
+        "focusing-lens"
+      ],
+      "hazards": [
+        {
+          "description": "The pipes hiss with escaping steam, and the temperature is rising dangerously.",
+          "probability": 0.08,
+          "deathText": "A pipe ruptures with explosive force. Superheated steam fills the chamber, scalding everything in seconds. The D'ni built well, but even their engineering has limits. You become another cautionary tale about trusting ancient machinery."
+        }
+      ]
+    },
+    "observation-deck": {
+      "name": "Observation Deck",
+      "description": "The top of the lighthouse is a dome of crystalline panels that magnify the stars into brilliant points of light. At the center stands an orrery — a mechanical model of celestial spheres that rotates with perfect precision. Each planet is a polished gemstone suspended in brass rings. A telescope points toward the horizon, its barrel inscribed with formulae you don't recognize. The spiral stairs descend south.",
+      "exits": {
+        "south": "lighthouse-interior"
+      },
+      "items": [
+        "star-chart"
+      ],
+      "hazards": []
+    },
+    "tidal-cave": {
+      "name": "Tidal Cave",
+      "description": "The cave walls are slick with bioluminescent algae, casting a pale green glow. Water drips from stalactites, each drop echoing in the chamber. The pillars at the entrance are covered in relief carvings — scenes of robed figures operating massive levers, water flowing through impossible channels. At the back of the cave, a bronze valve wheel protrudes from the wall, encrusted with barnacles but still functional. The dock is west. A dark passage leads north, currently flooded.",
+      "solvedDescription": "A sea cave carved by centuries of tides, walls glistening with moisture. The water has been drained, revealing a rocky passage north descending to an underground reservoir — the sound of dripping echoing from below.",
+      "exits": {
+        "west": "stone-dock"
+      },
+      "items": [
+        "bronze-key"
+      ],
+      "hazards": [
+        {
+          "description": "The tide is coming in rapidly, water levels rising visibly.",
+          "probability": 0.12,
+          "deathText": "The tide surges with unexpected force. Within minutes, the cave is flooded. You try to swim out, but the current is too strong, pulling you deeper into submerged passages. The D'ni knew the tides intimately. You didn't."
+        }
+      ]
+    },
+    "underground-reservoir": {
+      "name": "Underground Reservoir",
+      "description": "An enormous chamber carved from living rock, its ceiling supported by columns that double as water channels. The reservoir floor is a maze of brass pipes and pressure gauges, all dormant. In the center, an island platform holds a crystalline control panel with five colored switches. Water trickles from high channels, waiting to be redirected. The passage south leads back to the tidal cave.",
+      "solvedDescription": "A vast underground lake, still and mirror-dark. Ancient pipes and sluice gates line the walls. The passage north to the gear chamber has been revealed, mechanical sounds echoing from the darkness beyond.",
+      "exits": {
+        "south": "tidal-cave"
+      },
+      "items": [
+        "pressure-gauge"
+      ],
+      "hazards": []
+    },
+    "underwater-chamber": {
+      "name": "Underwater Chamber",
+      "description": "Stairs descend into crystal-clear water that somehow remains perfectly breathable — an impossibility that defies physics. The chamber walls are transparent, revealing the ocean beyond. Fish swim past, casting shadows on the floor. A massive gear mechanism dominates the room, its teeth interlocking with precision. A control lever stands beside it, waiting. Stairs lead back up north. A sealed door to the east is marked with a circular indentation.",
+      "solvedDescription": "A submerged chamber of ancient stonework, air trapped in a pocket above. Strange symbols line the walls. The sealed passage to the east has opened, revealing the crystal chamber beyond, prismatic light spilling through.",
+      "exits": {
+        "north": "stone-dock"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The chamber's integrity field flickers ominously, and cracks spider across the transparent walls.",
+          "probability": 0.1,
+          "deathText": "The field collapses. The ocean rushes in with crushing force. Your last thought is wonder at the technology that held back the sea for so long. The D'ni built to last, but even they couldn't build forever."
+        }
+      ]
+    },
+    "crystal-chamber": {
+      "name": "Crystal Chamber",
+      "description": "The room beyond is a geode made architecture — walls encrusted with crystals that pulse with inner light. In the center, a pedestal holds a spherical device of concentric rings, each rotating independently. This is the Resonance Core, a device that converts sound into energy. The walls hum at specific frequencies. West returns to the underwater chamber.",
+      "solvedDescription": "A geode-like chamber encrusted with massive crystals that refract light into rainbows. The resonance core at the center has been activated, humming with harmonic energy, its crystalline facets blazing with inner light.",
+      "exits": {
+        "west": "underwater-chamber"
+      },
+      "items": [
+        "resonance-fork"
+      ],
+      "hazards": []
+    },
+    "gear-chamber": {
+      "name": "Gear Chamber",
+      "description": "A cathedral of clockwork. Gears the size of houses interlock in three dimensions, turning with glacial slowness. The sound is hypnotic — clicking, whirring, the deep groan of metal under precisely calculated stress. Catwalks crisscross the chamber, providing access to adjustment points. At the highest point, a control platform overlooks the mechanism. South leads back. A passage west is blocked by rotating gears.",
+      "solvedDescription": "Massive bronze gears interlock in a chamber of Victorian engineering. The gears have been stabilized, turning in smooth rhythm. Passages have opened west to the archive chamber and north to the control platform.",
+      "exits": {
+        "south": "underground-reservoir"
+      },
+      "items": [
+        "adjustment-rod"
+      ],
+      "hazards": [
+        {
+          "description": "The gears are accelerating unpredictably, their timing becoming chaotic.",
+          "probability": 0.07,
+          "deathText": "A gear tooth shears off with a crack like thunder. The mechanism tears itself apart in a cascade failure. Metal shards become shrapnel. The D'ni designed for eternal operation, but entropy always wins eventually."
+        }
+      ]
+    },
+    "control-platform": {
+      "name": "Control Platform",
+      "description": "A metal platform suspended above the gear chamber, accessed by a ladder. The control panel here is a work of art — polished brass inlaid with mother-of-pearl, buttons labeled with D'ni numerals. A master override lever stands covered in warning symbols. Through the viewing window, you can see the gears below synchronizing to a new rhythm. The ladder descends south.",
+      "solvedDescription": "An elevated platform overlooking a vast mechanical system below. Levers and gauges line the railing. The master override is complete — the passage east to the heart vault now stands open, warm golden light pulsing from within.",
+      "exits": {
+        "south": "gear-chamber"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "archive-chamber": {
+      "name": "Archive Chamber",
+      "description": "Shelves carved directly from stone hold metal books, their pages thin sheets of copper etched with D'ni script. The air is dry, preserved by some ancient climate control still functioning after centuries. Reading stands are positioned near luminescent panels. In the center of the room, a stone table displays a relief map of the island, with various mechanisms marked. A passage east leads to the gear chamber.",
+      "exits": {
+        "east": "gear-chamber"
+      },
+      "items": [
+        "gear-schematic"
+      ],
+      "hazards": []
+    },
+    "heart-vault": {
+      "name": "Heart Vault",
+      "description": "You stand before the Heart of Ages. It floats in the center of the chamber, a sphere of interwoven metal and crystal that seems to exist in multiple dimensions simultaneously. Energy arcs between its components. The vault walls are inscribed with the complete history of the D'ni — their rise, their achievements, their mysterious disappearance. Five pedestals surround the Heart, each designed to hold a specific artifact. The mechanisms you've activated throughout the island all converge here. This is where their legacy either awakens or dies.",
+      "solvedDescription": "A sacred chamber at the island's core, walls carved with the history of its builders. The Heart has been activated, filling the vault with harmonic resonance — the island's ancient mechanism humming with restored purpose.",
+      "exits": {
+        "west": "control-platform"
+      },
+      "items": [],
+      "hazards": []
+    }
+  },
+  "items": {
+    "brass-compass": {
+      "name": "Brass Compass",
+      "description": "An ornate compass, its needle pointing not to magnetic north but toward sources of D'ni energy. The case is etched with directional runes.",
+      "pickupText": "The compass is surprisingly heavy, and its needle spins wildly before settling on a new bearing.",
+      "portable": true,
+      "roomText": "A brass compass rests on the dock, its needle spinning slowly."
+    },
+    "focusing-lens": {
+      "name": "Focusing Lens",
+      "description": "A crystal lens ground to impossible precision. When held up, it refracts light into patterns that reveal hidden mechanisms.",
+      "pickupText": "The lens is warm to the touch, and looking through it makes the world seem sharper, more defined.",
+      "portable": true,
+      "roomText": "A focusing lens sits in a brass mounting bracket on the wall."
+    },
+    "star-chart": {
+      "name": "Star Chart",
+      "description": "A metal plate etched with constellations, but the stars are positioned wrong — showing the sky as it was thousands of years ago when the D'ni thrived.",
+      "pickupText": "The star chart is thin but rigid, its etchings still crisp after centuries of exposure.",
+      "portable": true,
+      "roomText": "A star chart is mounted beside the telescope, its surface gleaming."
+    },
+    "bronze-key": {
+      "name": "Bronze Key",
+      "description": "A circular key with intricate teeth that rotate. It's designed to fit a lock that requires both insertion and rotation in a specific pattern.",
+      "pickupText": "The key is slick with seawater and algae. You clean it on your sleeve, revealing decorative wave patterns.",
+      "portable": true,
+      "roomText": "A bronze key is wedged between two rocks, half-buried in tidal debris."
+    },
+    "pressure-gauge": {
+      "name": "Pressure Gauge",
+      "description": "A mechanical gauge with a needle and numbered dial, used to measure and regulate water pressure in the D'ni hydraulic systems.",
+      "pickupText": "The gauge's needle bounces as you lift it, responding to ambient pressure changes.",
+      "portable": true,
+      "roomText": "A pressure gauge has fallen from its mounting, lying among scattered tools."
+    },
+    "resonance-fork": {
+      "name": "Resonance Fork",
+      "description": "A tuning fork made of an unknown alloy. When struck, it produces a tone that causes crystals to vibrate in sympathetic frequencies.",
+      "pickupText": "The fork hums even before you strike it, resonating with the chamber's ambient energy.",
+      "portable": true,
+      "roomText": "A resonance fork stands in a holder, its tines perfectly parallel."
+    },
+    "adjustment-rod": {
+      "name": "Adjustment Rod",
+      "description": "A long metal rod with a multi-socket head, designed to interface with the D'ni gear mechanisms for fine calibration.",
+      "pickupText": "The rod extends with a satisfying click when you pick it up, revealing its telescoping design.",
+      "portable": true,
+      "roomText": "An adjustment rod rests on a maintenance rail, its purpose immediately clear."
+    },
+    "ancient-journal": {
+      "name": "Ancient Journal",
+      "description": "A metal-bound journal with copper pages, etched with D'ni script. Though you can't read it all, diagrams show the island's various mechanisms and how they interconnect.",
+      "pickupText": "The journal is heavy and cold. Its pages clink softly as you flip through schematics and cryptic notes.",
+      "portable": true,
+      "roomText": "An ancient journal lies half-buried in moss at the base of a pine tree, its metal binding glinting in the dim light."
+    },
+    "master-crystal": {
+      "name": "Master Crystal",
+      "description": "A flawless crystal the size of your fist, it pulses with stored energy. This is the key component that powers the Heart of Ages.",
+      "pickupText": "The crystal floods your vision with light as you grasp it, warm and alive with potential energy.",
+      "portable": true,
+      "roomText": "A master crystal hovers in a magnetic field, awaiting retrieval."
+    },
+    "gear-schematic": {
+      "name": "Gear Schematic",
+      "description": "A large copper sheet etched with a cross-section diagram of the gear chamber. Every gear, axle, and catwalk is precisely rendered, with safe climbing routes marked in red ink.",
+      "pickupText": "You roll up the schematic carefully. The climbing routes marked in red should make navigating the upper catwalks safe.",
+      "portable": true,
+      "roomText": "A detailed gear schematic is pinned to a reading stand, its climbing routes marked in red."
+    }
+  },
+  "puzzles": {
+    "lighthouse-door": {
+      "room": "lighthouse-base",
+      "description": "The rotating rings on the door can be aligned to form a continuous pattern. The brass compass might indicate the correct sequence.",
+      "requiredItem": "brass-compass",
+      "hintText": "The compass points to energy sources. Perhaps the rings need to align to channel energy into the door mechanism.",
+      "solvedText": "You align the rings according to the compass bearings. With a deep grinding sound, the concentric circles lock into place. The door splits along invisible seams and swings open, revealing the lighthouse interior.",
+      "isGoal": true,
+      "goalName": "Opened the Lighthouse",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "lighthouse-interior"
+      }
+    },
+    "drain-cave": {
+      "room": "tidal-cave",
+      "description": "The bronze valve wheel controls water flow. Turning it might drain the northern passage.",
+      "requiredItem": "pressure-gauge",
+      "hintText": "The pressure gauge shows optimal drainage conditions. Turn the valve when the gauge reads zero to avoid catastrophic flooding.",
+      "solvedText": "Using the pressure gauge to time it perfectly, you spin the valve wheel. Water gurgles and rushes through hidden channels. The flooded passage drains, revealing stairs leading down to the underground reservoir.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "underground-reservoir"
+      }
+    },
+    "unlock-crystal-chamber": {
+      "room": "underwater-chamber",
+      "description": "The sealed door has a circular indentation that matches the bronze key's shape.",
+      "requiredItem": "bronze-key",
+      "hintText": "The key must be inserted and rotated in the pattern shown by the wave decorations — mimicking the tides.",
+      "solvedText": "You insert the bronze key and rotate it in a flowing pattern. Mechanisms click and whir behind the door. With a hiss of equalized pressure, it swings open, revealing the crystal chamber beyond.",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "crystal-chamber"
+      }
+    },
+    "activate-resonance-core": {
+      "room": "crystal-chamber",
+      "description": "The Resonance Core needs to be activated with the precise frequency. The resonance fork might be the key.",
+      "requiredItem": "resonance-fork",
+      "hintText": "Strike the fork and hold it near the crystals. Match the frequency until the whole chamber resonates.",
+      "solvedText": "You strike the resonance fork and hold it against the sphere. The crystals begin to sing in harmony, their light intensifying. The Resonance Core spins faster, storing acoustic energy and converting it to pure power. A master crystal materializes in a magnetic field above the device.",
+      "isGoal": true,
+      "goalName": "Activated the Resonance Core",
+      "action": {
+        "type": "addItem",
+        "room": "crystal-chamber",
+        "itemId": "master-crystal"
+      }
+    },
+    "access-gear-chamber": {
+      "room": "underground-reservoir",
+      "description": "The control panel's colored switches control water flow to different parts of the island. The correct sequence should power the mechanisms leading to the gear chamber.",
+      "requiredItem": "ancient-journal",
+      "hintText": "The journal contains a diagram showing the correct switch sequence based on tide levels and energy flow.",
+      "solvedText": "Following the journal's schematic, you activate the switches in sequence: blue, green, amber, red, white. Water rushes through the pipes with increasing pressure. Somewhere above, machinery grinds to life. A previously hidden passage opens in the northern wall.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "gear-chamber"
+      }
+    },
+    "stabilize-gears": {
+      "room": "gear-chamber",
+      "description": "The gears are misaligned and unstable. The adjustment rod could be used to recalibrate the timing.",
+      "requiredItem": "adjustment-rod",
+      "hintText": "Look for the adjustment points marked with brass plates. Subtle changes will synchronize the entire mechanism.",
+      "solvedText": "You climb the catwalks and use the adjustment rod at three critical points. Each adjustment causes a cascade of changes — gears slowing, speeding, finding their rhythm. The chaotic grinding becomes a precise symphony of mechanical motion. The western passage, previously blocked by wild gears, is now safe to traverse.",
+      "action": {
+        "type": "removeHazard",
+        "room": "gear-chamber",
+        "hazard": "The gears are accelerating unpredictably, their timing becoming chaotic."
+      }
+    },
+    "access-archive": {
+      "room": "gear-chamber",
+      "description": "With the gears stabilized, the western passage is visible but the path through requires precise timing. The star chart's constellation patterns match markings on the gears.",
+      "requiredItem": "star-chart",
+      "hintText": "The constellations on the star chart correspond to gear positions. Align your movement to the stellar pattern.",
+      "solvedText": "Holding the star chart up to the gear mechanism, you see it — each constellation matches a gear position. Following the stellar pattern, you step through the synchronized pauses. The passage to the archive opens before you.",
+      "action": {
+        "type": "openExit",
+        "direction": "west",
+        "targetRoom": "archive-chamber"
+      }
+    },
+    "access-control-platform": {
+      "room": "gear-chamber",
+      "description": "A ladder leads up to the control platform, but the route through the catwalks is treacherous. A detailed schematic of the gear chamber would reveal the safe climbing path.",
+      "requiredItem": "gear-schematic",
+      "hintText": "The schematic shows safe climbing routes through the catwalks. Follow the paths marked in red.",
+      "solvedText": "Following the red-marked routes on the gear schematic, you navigate the catwalks with confidence. Each turn and handhold is exactly where the diagram shows. You reach the control platform safely.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "control-platform"
+      }
+    },
+    "master-override": {
+      "room": "control-platform",
+      "description": "The master override lever will align all island mechanisms and open the Heart Vault, but only if you have the focusing lens to verify the alignment.",
+      "requiredItem": "focusing-lens",
+      "hintText": "The lens will reveal whether all mechanisms are properly synchronized before you pull the lever.",
+      "solvedText": "Through the focusing lens, you see energy lines connecting every mechanism across the island — all pulsing in perfect synchronization. You pull the master override lever. The entire island shudders. Mechanisms across every chamber align. A hidden door opens in the eastern wall, revealing the Heart Vault.",
+      "isGoal": true,
+      "goalName": "Unlocked the Heart Vault",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "heart-vault"
+      }
+    },
+    "activate-heart": {
+      "room": "heart-vault",
+      "description": "The Heart of Ages awaits the master crystal. This will complete the D'ni legacy and unlock its secrets.",
+      "requiredItem": "master-crystal",
+      "hintText": "Place the crystal in the central pedestal. The Heart will do the rest.",
+      "solvedText": "You place the master crystal in the central pedestal. The Heart of Ages blazes to life, energy cascading through its impossible geometry. The walls illuminate with D'ni script that translates itself in your mind — knowledge of worlds beyond worlds, ages beyond ages. The island's mechanisms all harmonize into a single purpose. You understand now. The D'ni didn't disappear — they transcended. And they left this island as an invitation. The Heart pulses with infinite potential, awaiting your command.",
+      "isGoal": true,
+      "goalName": "Awakened the Heart of Ages",
+      "action": {
+        "type": "addItem",
+        "room": "heart-vault",
+        "itemId": "master-crystal"
+      }
+    }
+  }
+}

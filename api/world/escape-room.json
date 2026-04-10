@@ -1,0 +1,300 @@
+{
+  "name": "The Clockmaker's Mansion",
+  "displayOrder": 2,
+  "description": "Your eyes snap open on cold marble. The air tastes of dust and machine oil. Above you, a dead chandelier. Behind you, an oak door fitted with seven locks — none of which will turn. A note on the floor, written in impossibly precise handwriting: 'Welcome, guests. I am the Clockmaker. This mansion is my masterpiece, and you are its newest pieces. Find the seven keys, or become part of the collection.' From somewhere deep in the house, a grandfather clock begins to chime — not marking the hour, but counting down.",
+  "synopsis": "Find seven keys to escape the mansion.",
+  "startRoom": "foyer",
+  "rooms": {
+    "foyer": {
+      "name": "The Grand Foyer",
+      "description": "Checkered marble stretches beneath a crystal chandelier that hasn't burned in years. The front door looms behind you — massive oak reinforced with iron bands, seven keyholes glinting in the half-light. All locked. A grand staircase sweeps upward, but a velvet rope blocks the way, cinched to a brass post by a small combination lock. Hallways branch east toward a parlor and west toward a dining room. Above the door, a faded portrait of a stern old man stares down — the Clockmaker, his painted eyes seeming to follow every step you take.",
+      "solvedDescription": "A grand entrance hall with checkered marble floors and a crystal chandelier overhead. The front door is sealed tight. The velvet rope across the staircase has been removed, and the way north to the upper hallway now stands open and inviting.",
+      "exits": {
+        "east": "parlor",
+        "west": "dining-room"
+      },
+      "items": [
+        "welcome-note"
+      ],
+      "hazards": []
+    },
+    "parlor": {
+      "name": "The Parlor",
+      "description": "Time stopped here long ago. Velvet armchairs circle a fireplace gone cold, their cushions still bearing the impressions of guests who never returned. A grandfather clock ticks in the corner — the only sound — its pendulum swinging behind dusty glass. Bookshelves crowd the north wall, leather spines fading to anonymity. One volume, bound in red, juts slightly from the rest. A door to the south is sealed behind an ornate brass mechanism. The foyer lies west.",
+      "exits": {
+        "west": "foyer"
+      },
+      "items": [
+        "red-book"
+      ],
+      "hazards": []
+    },
+    "dining-room": {
+      "name": "The Dining Room",
+      "description": "A long mahogany table set for a feast that never came. Tarnished candelabras drip with ancient wax. Fine china wears a skin of dust. Crystal goblets stand half-full of something dark and long since dried. The air smells faintly of vinegar and old silver. A serving hatch in the north wall leads to the kitchen, but something heavy on the other side holds it shut. The foyer is east. A narrow door to the south bears a painted musical note, its blue paint peeling at the edges.",
+      "solvedDescription": "A formal dining room with a long mahogany table set for a dinner party that never happened. Candelabras flicker with real flame. The doors have been unlocked — south opens to a music room where faint melodies drift through, and north reveals the kitchen beyond.",
+      "exits": {
+        "east": "foyer"
+      },
+      "items": [
+        "silver-fork"
+      ],
+      "hazards": [
+        {
+          "description": "Candlelight shivers against the walls — something breathes through the house, a draft from a passage you cannot find.",
+          "probability": 0,
+          "deathText": ""
+        }
+      ]
+    },
+    "music-room": {
+      "name": "The Music Room",
+      "description": "The acoustics shift the moment you cross the threshold — every footstep sharpens, every breath amplifies. A grand piano commands the center of this small chamber, its lid propped open to reveal strings thick with dust. Violins, a harp, and a cello line the walls like patient sentinels. One violin case lies open but empty, its velvet interior molded to the shape of something decidedly not a violin. The dining room is north.",
+      "exits": {
+        "north": "dining-room"
+      },
+      "items": [
+        "sheet-music"
+      ],
+      "hazards": []
+    },
+    "kitchen": {
+      "name": "The Kitchen",
+      "description": "Copper pots hang from ceiling racks like frozen bells. A vast industrial space of iron and cracked tile. The ancient wood-burning stove still radiates a ghost of warmth — someone was here not long ago. The pantry door to the west hangs open, its padlock already sprung. On the stone counter, a mortar and pestle cradles traces of green powder that stings your nostrils. The serving hatch south leads back to the dining room. A narrow servants' staircase climbs north, swallowed by darkness.",
+      "solvedDescription": "A vintage kitchen with copper pots and a cast-iron stove. The gas leak has been sealed — the shutoff valve turned, air now clear and safe to breathe. Ingredients and utensils line the countertops in orderly rows.",
+      "exits": {
+        "south": "dining-room"
+      },
+      "items": [
+        "iron-key",
+        "pantry-note"
+      ],
+      "hazards": [
+        {
+          "description": "The gas line hisses faintly — don't strike any sparks near the stove.",
+          "probability": 0.15,
+          "deathText": "Your boot strikes the iron stove grate. A single spark. The gas catches with a sound like the world inhaling — then the kitchen erupts in white heat. The Clockmaker's mansion claims another guest who lingered too long."
+        }
+      ]
+    },
+    "study": {
+      "name": "The Clockmaker's Study",
+      "description": "The Clockmaker's private sanctum. Technical drawings of impossibly intricate mechanisms plaster every surface — the desk, the walls, even the ceiling. Gears and springs litter the floor like brass confetti. A half-assembled clock sits on the desk, its heart missing: no mainspring. Behind a tilted painting, a wall safe is visible, its four-digit combination lock gleaming. The hallway lies south. A locked door to the north has a keyhole cut in the unmistakable shape of a musical note.",
+      "solvedDescription": "Dark wood panels and floor-to-ceiling bookshelves line the walls. A globe sits beside a leather chair. The hidden door to the north has swung open, revealing the observatory beyond — the faint gleam of brass instruments visible through the doorway.",
+      "exits": {
+        "south": "upper-hallway"
+      },
+      "items": [
+        "gear-piece"
+      ],
+      "hazards": []
+    },
+    "upper-hallway": {
+      "name": "The Upper Hallway",
+      "description": "A corridor of absences. At the top of the grand staircase, empty portrait frames line the walls — every painting removed, leaving only dust outlines and dangling wires. The carpet is threadbare along a path worn between doors by countless footsteps. Moonlight bleeds through a cracked window at the hall's end, painting silver streaks across the floor. The study is north. A guest bedroom lies to the east. The stairs descend south to the foyer.",
+      "exits": {
+        "north": "study",
+        "east": "guest-bedroom",
+        "south": "foyer"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "guest-bedroom": {
+      "name": "The Guest Bedroom",
+      "description": "A four-poster bed sags under moth-eaten curtains, the silk frayed to cobwebs. The dresser mirror is cracked in a spiderweb pattern — and in its fractured reflection, something catches your eye: the wallpaper behind the bed bears a subtly different pattern than the rest. A wardrobe leans against the west wall, its door hanging ajar, exhaling the scent of cedar and age. The upper hallway is west.",
+      "solvedDescription": "A cozy bedroom with floral wallpaper and a four-poster bed. A music box sits on the nightstand, now repaired and playing its delicate melody. Behind the wallpaper panel to the east, a secret workshop has been revealed, tools and gears visible within.",
+      "exits": {
+        "west": "upper-hallway"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "secret-workshop": {
+      "name": "The Secret Workshop",
+      "description": "The air changes behind the wallpaper — cooler, tinged with brass and oil. This is the Clockmaker's true workshop. Workbenches overflow with tiny gears, coiled springs, and half-finished automatons frozen in various states of assembly. A mechanical bird perches in a wire cage, beak open in a song it will never finish. In the center of the room stands a clockwork door fitted with seven keyhole slots, each a different shape, barring a passage east. The guest bedroom is west.",
+      "exits": {
+        "west": "guest-bedroom"
+      },
+      "items": [
+        "clockwork-key"
+      ],
+      "hazards": []
+    },
+    "observatory": {
+      "name": "The Observatory",
+      "description": "The mansion's crown — a domed chamber open to the heavens. A brass telescope points at the night sky through a slit in the ceiling. Constellations sweep across the dome in faded gold, and small brass stars embedded in the plaster catch the moonlight like scattered coins. At the center, a complex orrery — a mechanical model of the solar system — rests on a stone pedestal, its planets frozen mid-orbit, waiting for a hand to set them spinning again. A hatch in the floor leads down to the study.",
+      "exits": {
+        "south": "study"
+      },
+      "items": [
+        "master-key"
+      ],
+      "hazards": []
+    }
+  },
+  "items": {
+    "welcome-note": {
+      "name": "The Clockmaker's Welcome",
+      "description": "Aged parchment, the handwriting unnervingly precise — each letter identical, as if printed by a machine that learned to mimic humanity. 'Seven locks, seven keys. Each room holds a piece of the answer. Work together, think together, escape together. — The Clockmaker.' On the back, four digits are scratched deep into the paper: 4-7-1-9.",
+      "pickupText": "You lift the note from the marble. The handwriting is meticulous — mechanical, even. Each letter identical to the last. The numbers scratched on the back feel deliberate, urgent. Someone meant for you to find this.",
+      "roomText": "A folded note lies on the checkered marble, pinned beneath a small brass gear.",
+      "portable": true
+    },
+    "red-book": {
+      "name": "Red Book",
+      "description": "Cracked red leather, gold-stamped spine: 'The Art of Hidden Passages.' A silk ribbon marks a chapter: 'The truth hides behind the pattern that breaks the pattern. Where wallpaper lies, walls lie too.'",
+      "pickupText": "The red book slides free with a soft click from somewhere behind the shelf — a mechanism triggered, then silence. Whatever that did, it wasn't in this room.",
+      "roomText": "One volume — bound in cracked red leather — juts from the shelf like a lever waiting to be pulled.",
+      "portable": true
+    },
+    "silver-fork": {
+      "name": "Silver Tuning Fork",
+      "description": "Heavier than any fork should be. The handle is engraved with a cascade of tiny musical notes, and when you hold it close, you feel it vibrate against your fingers. Not a fork at all — a tuning fork, disguised as cutlery.",
+      "pickupText": "The moment you lift it, the fork sings — a clear, crystalline tone that hangs in the dusty air far longer than it should. This is no utensil. It's an instrument.",
+      "roomText": "One fork catches the light differently — ornate silver, untouched by tarnish, as if placed here on purpose.",
+      "portable": true
+    },
+    "sheet-music": {
+      "name": "The Clockmaker's Lullaby",
+      "description": "'The Clockmaker's Lullaby' — a short, haunting composition in a minor key. At the bottom, in the same mechanical handwriting: 'Play this to open what sound has sealed. Let the melody do what muscle cannot.'",
+      "pickupText": "You lift the sheet music from the stand. The notes seem almost to hum as your eyes trace them — a melody that burrows into your mind and refuses to leave.",
+      "roomText": "Sheet music rests on the piano stand, its title visible in elegant script: 'The Clockmaker's Lullaby.'",
+      "portable": true
+    },
+    "iron-key": {
+      "name": "Iron Key",
+      "description": "Brutal and heavy, wrought iron with teeth cut in a jagged zigzag. A paper tag hangs from the bow, reading 'GAS SHUTOFF — DO NOT LOSE' in frantic handwriting — different from the Clockmaker's precise script.",
+      "pickupText": "The iron key is startlingly cold, as if it has been waiting in the dark for years. Its weight settles in your palm like a warning.",
+      "roomText": "A crude iron key sits on the counter beside the mortar and pestle, its paper tag curling with age.",
+      "portable": true
+    },
+    "gear-piece": {
+      "name": "Brass Gear",
+      "description": "A precision-machined brass gear, no larger than a coin. The Clockmaker's mark — a tiny hourglass — is stamped on one face. Set apart from the chaos on the desk, positioned with obvious care. It belongs somewhere specific.",
+      "pickupText": "The gear is warm from the desk lamp above, smooth as a polished coin. It clicks faintly as you turn it between your fingers, as if already engaging with a mechanism only it can feel.",
+      "roomText": "Amid the chaos on the desk, one small brass gear sits apart — deliberately placed, obviously important.",
+      "portable": true
+    },
+    "music-box": {
+      "name": "Music Box",
+      "description": "A clockwork music box, delicate as a held breath. Inside, a tiny porcelain ballerina stands en pointe, waiting. The mechanism is wound tight but refuses to play — a small gear is missing from its heart. On the base, an inscription: 'The Clockmaker's Lullaby.'",
+      "pickupText": "You cradle the music box in your hands. The ballerina trembles on her spring — eager, patient. She has been waiting a long time to dance.",
+      "roomText": "A music box sits on the nightstand, its glass lid revealing a tiny ballerina frozen mid-pirouette.",
+      "portable": true
+    },
+    "clockwork-key": {
+      "name": "Clockwork Key",
+      "description": "A key unlike any key. Interlocking gears and coiled springs form its shaft, and as you watch, the teeth shift — clicking, rearranging, becoming something new. The Clockmaker's masterwork: a key that can become any key.",
+      "pickupText": "The moment you touch it, the clockwork key transforms in your hand — gears whirring, teeth reshaping themselves with soft, precise clicks. It's alive. It's beautiful.",
+      "roomText": "On the nearest workbench, an intricate key of interlocking gears turns slowly, reshaping itself in the lamplight.",
+      "portable": true
+    },
+    "master-key": {
+      "name": "Master Key",
+      "description": "Golden, heavy, final. Seven notches line its shaft — one for each lock on the front door. The bow is cast in the shape of a clock face, its hands frozen at midnight. This is the way out. This is what every puzzle was building toward.",
+      "pickupText": "The master key drops into your palm with the weight of every room you've crossed, every puzzle you've solved, every lock that tried to keep you here. The front door is waiting.",
+      "roomText": "Behind glass, the master key gleams — golden, seven-notched, unmistakable. The end of the game.",
+      "portable": true
+    },
+    "pantry-note": {
+      "name": "Pantry Note",
+      "description": "A scrap of paper, pinned crookedly. The handwriting is shakier than the Clockmaker's usual precision: 'The velvet rope: 3-2-5-8. Or was that the safe? Curse this failing memory. One code for one lock, one for the other. — C.M.'",
+      "pickupText": "You snatch the scrap. Two codes — 3-2-5-8 and the one from the welcome note. Two locks somewhere in this house. The Clockmaker couldn't remember which went where. You'll have to.",
+      "roomText": "A scrap of paper, pinned crookedly inside the pantry, flutters in a draft you cannot feel.",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "open-music-room": {
+      "room": "dining-room",
+      "description": "The narrow door south is sealed tight. A musical note is painted on its face in faded blue — not decoration, but instruction. The silver fork from the table rings with an impossible purity when struck. Sound opened this door once. Sound will open it again.",
+      "requiredItem": "silver-fork",
+      "hintText": "A musical note marks this door. Something nearby resonates with a pure, clear tone — strike it against something solid.",
+      "solvedText": "You strike the silver fork against the door frame. A single, perfect note rings out — and the painted symbol blazes blue for one heartbeat. The lock surrenders with a whisper. The door swings south into darkness, and the music room breathes its first fresh air in years.",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "music-room"
+      }
+    },
+    "open-kitchen": {
+      "room": "dining-room",
+      "description": "The serving hatch north won't budge — something massive blocks it from the kitchen side. But the Clockmaker built everything in this house to respond to sound and rhythm. The sheet music speaks of melodies that move what muscle cannot.",
+      "requiredItem": "sheet-music",
+      "hintText": "The hatch is blocked from the other side. No amount of force will move it — but the Clockmaker's mechanisms respond to music, not strength.",
+      "solvedText": "You press the sheet music against the hatch and hum The Clockmaker's Lullaby. The melody seeps through the cracks like smoke. On the other side, gears engage — a heavy clockwork mechanism groans to life, dragging the obstruction aside. The hatch swings open north, releasing a rush of warm, copper-scented air from the kitchen beyond.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "kitchen"
+      }
+    },
+    "open-upstairs": {
+      "room": "foyer",
+      "description": "A velvet rope bars the grand staircase north, cinched by a combination lock to a brass post. Four digits. The welcome note has numbers scratched into its back — 4-7-1-9.",
+      "requiredItem": "welcome-note",
+      "hintText": "The combination lock needs four digits. Have you checked the back of everything you've picked up?",
+      "solvedText": "4-7-1-9. The tumblers fall with four satisfying clicks. The velvet rope slithers to the marble floor, and the grand staircase yawns open to the north — dusty, dark, and waiting.",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "upper-hallway"
+      }
+    },
+    "open-secret-workshop": {
+      "room": "guest-bedroom",
+      "description": "Behind the bed, the wallpaper pattern breaks — subtly wrong, a seam where no seam should be. The red book described exactly this: 'Where wallpaper lies, walls lie too.' Press the pattern that doesn't belong.",
+      "requiredItem": "red-book",
+      "hintText": "The wallpaper behind the bed doesn't quite match. You've read about this technique somewhere — in a book about hidden passages, perhaps.",
+      "solvedText": "You press your palm flat against the mismatched wallpaper. A click. A breath of cool, oily air. The entire panel swings inward, revealing a hidden workshop to the east — the Clockmaker's true sanctum, untouched and waiting in the dark. Dust motes spiral through the shaft of light that cuts into the secret room.",
+      "isGoal": true,
+      "goalName": "Find the Secret Workshop",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "secret-workshop"
+      }
+    },
+    "open-observatory": {
+      "room": "study",
+      "description": "The door north bears a keyhole cut in the shape of a musical note — too delicate for any ordinary key. The music box plays The Clockmaker's Lullaby, and its gear housing matches this lock precisely. A key that plays music for a lock that listens.",
+      "requiredItem": "music-box",
+      "hintText": "This keyhole is shaped like a musical note — no ordinary key will fit. Something that makes music and has the right mechanism might serve.",
+      "solvedText": "You press the music box into the musical keyhole. It fits. The ballerina begins to spin, and The Clockmaker's Lullaby fills the stairwell — delicate, triumphant. The lock yields with a whisper, and the door opens north onto a spiral staircase climbing toward starlight.",
+      "isGoal": true,
+      "goalName": "Open the Observatory",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "observatory"
+      }
+    },
+    "fix-music-box": {
+      "room": "guest-bedroom",
+      "description": "The music box is wound tight but silent — a tiny gear is missing from its mechanism, leaving an empty socket the exact size of the gear piece from the study. One small piece to make it whole.",
+      "requiredItem": "gear-piece",
+      "hintText": "The music box has an empty gear socket. A small, precisely machined gear from elsewhere in the house would fit perfectly.",
+      "solvedText": "The gear piece slides into the socket with a soft, perfect click. The mechanism shudders — then sings. The ballerina spins to life, porcelain arms raised, as The Clockmaker's Lullaby fills the room like a half-remembered dream. The repaired music box hums in your hands, ready to unlock whatever it was made for.",
+      "isGoal": true,
+      "goalName": "Repair the Music Box",
+      "action": {
+        "type": "addItem",
+        "room": "guest-bedroom",
+        "itemId": "music-box"
+      }
+    },
+    "clear-gas-hazard": {
+      "room": "kitchen",
+      "description": "Gas hisses from the line near the stove — thin, persistent, deadly. Behind the counter, a shutoff valve waits, but its handle has been replaced with a keyhole. The iron key's jagged teeth would match that mechanism.",
+      "requiredItem": "iron-key",
+      "hintText": "The gas shutoff valve is behind the counter, but it needs a key — something heavy and iron, with teeth that match the mechanism.",
+      "solvedText": "The iron key grinds into the shutoff valve and turns with a reluctant screech. The hissing dies. The shimmer above the burners fades to nothing. You exhale — the air already tastes cleaner. Behind the valve, a scrap of paper flutters free, previously hidden in the gap.",
+      "action": {
+        "type": "removeHazard",
+        "room": "kitchen",
+        "hazard": "The gas line hisses faintly — don't strike any sparks near the stove."
+      }
+    }
+  }
+}

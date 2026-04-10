@@ -1,0 +1,404 @@
+{
+  "name": "Paranormal Mysteries",
+  "displayOrder": 10,
+  "description": "You are a paranormal investigator chasing a thread that spans continents and decades. Roswell signals match cryptid sightings in the Pacific Northwest. Stonehenge readings echo the Bermuda Triangle. A pattern is emerging — something vast, something aware. Your investigation begins in Point Pleasant, West Virginia, where the Mothman has been sighted again after forty years of silence.",
+  "synopsis": "Investigate cryptids, UFOs, and strange phenomena.",
+  "startRoom": "mothman-bridge",
+  "rooms": {
+    "mothman-bridge": {
+      "name": "Silver Bridge Ruins",
+      "description": "Fog clings to the ruined pilings of the Silver Bridge in Point Pleasant, West Virginia. The original collapsed in 1967, killing forty-six — but locals say the Mothman appeared just before, a warning no one heeded. Red reflectors on the memorial catch your headlights and blink like eyes. The air tastes metallic, electric. Something watches from above. Your EMF detector crackles to life, needle pinned hard to the right. A dirt road north disappears into dense Appalachian forest. East, a research trailer hunches by the riverbank.",
+      "exits": {
+        "north": "bigfoot-forest",
+        "east": "research-trailer"
+      },
+      "items": [
+        "emf-detector"
+      ],
+      "hazards": [
+        {
+          "description": "A leathery rustle overhead. Shadows shift at the edge of your vision — something with wings circles in the fog.",
+          "probability": 0.08,
+          "deathText": "Red eyes ignite in the darkness. Massive wings crack the air like a sail in a gale. Something ancient descends — talons, shadow, and prophecy. The Mothman’s warning was meant for you."
+        }
+      ]
+    },
+    "research-trailer": {
+      "name": "Paranormal Research Station",
+      "description": "The trailer reeks of stale coffee and ozone. Monitoring equipment hums on every surface. Bulletin boards sag under newspaper clippings connected by red string — ‘MOTHMAN SIGHTINGS 1966-1967’ on one, ‘UFO ACTIVITY CORRELATION’ on another. A laptop glows with a map of red pins: Point Pleasant, Roswell, Area 51, Stonehenge, the Bermuda Triangle. All connected. A whiteboard reads in frantic handwriting: ‘If you’re reading this, I’m gone. Follow the signal. The key is at Roswell. — Dr. Webb.’ The bridge is west. A hidden path north is circled on a hand-drawn map tacked to the wall.",
+      "exits": {
+        "west": "mothman-bridge",
+        "north": "bigfoot-forest"
+      },
+      "items": [
+        "research-journal",
+        "night-vision-goggles"
+      ],
+      "hazards": []
+    },
+    "bigfoot-forest": {
+      "name": "Pacific Northwest Territory",
+      "description": "Old-growth evergreens blot out the sky beneath the Cascade Mountains. Bigfoot country. Parallel scratches score the tree trunks eight feet up — too high for a bear, too deep for claws you recognize. Trampled underbrush traces a path deeper into the woods. Rhythmic wood-knocking echoes from somewhere ahead, then stops. Your equipment registers infrasound — frequencies below hearing that settle in your gut like dread. The research trailer is south. Tire tracks west lead to an abandoned facility. East, the canopy opens onto a clearing.",
+      "exits": {
+        "south": "research-trailer",
+        "west": "abandoned-lab",
+        "east": "ufo-landing-site"
+      },
+      "items": [
+        "sasquatch-hair-sample"
+      ],
+      "hazards": [
+        {
+          "description": "Branches snap under enormous weight. The treeline shivers — something far too large moves just beyond sight.",
+          "probability": 0.1,
+          "deathText": "A roar splits the forest — primal, inhuman. Something nine feet tall crashes through the undergrowth, rank with musk and fury. You see it for one terrible second. Massive hands seize you like kindling. The forest swallows your scream."
+        }
+      ]
+    },
+    "abandoned-lab": {
+      "name": "Secret Research Laboratory",
+      "description": "A Cold War bunker carved into the hillside, swallowed by decades of neglect. Rusted ‘AUTHORIZED PERSONNEL ONLY’ signs hang crooked on sagging chain-link. Inside, fluorescent tubes flicker and buzz. Filing cabinets line the concrete walls — Project Blue Book documents, cryptid autopsy photographs, blurred UFO stills. Someone cataloged it all. A locked vault door north reads ‘SPECIMEN STORAGE — LEVEL 4 CLEARANCE.’ The metal is cold to the touch. The forest is east. A tunnel south drops into darkness.",
+      "solvedDescription": "A Cold War bunker. Fluorescent tubes flicker. Filing cabinets hold Blue Book docs, cryptid photos. Vault open, cold air rising. Forest east. South, tunnel descends to chamber.",
+      "exits": {
+        "east": "bigfoot-forest",
+        "south": "underground-chamber"
+      },
+      "items": [
+        "classified-dossier",
+        "security-badge"
+      ],
+      "hazards": [
+        {
+          "description": "The air is thick and stale — sealed for decades, sour with decay and chemical residue that burns the back of your throat.",
+          "probability": 0.05,
+          "deathText": "A pocket of toxic gas, trapped for fifty years, finds release. Your lungs seize. The floor tilts. The abandoned lab claims another keeper of its secrets."
+        }
+      ],
+      "solvedDescription": "A Cold War bunker carved into the hillside. Rusted signs and sagging chain-link mark the entrance. The specimen vault to the south has been unlocked, revealing the underground chamber below. The Area 51 entrance is north."
+    },
+    "underground-chamber": {
+      "name": "Subterranean Storage",
+      "description": "A vault blasted into bedrock, damp and cold. Specimen containers line steel shelving — preserved tissue labeled ‘UNKNOWN PRIMATE,’ debris tagged ‘UNIDENTIFIED AERIAL PHENOMENON,’ and one jar marked ‘EXTRATERRESTRIAL BIOLOGICAL ENTITY.’ A shattered container drips formaldehyde onto the floor, its contents long gone. Strange geometric symbols are gouged into the rock walls — patterns that seem to shift when you look away. A stone archway west bears the same symbols, humming faintly. The lab is north.",
+      "solvedDescription": "Vault in bedrock. Specimens on shelves — tissue, impossible jars. Wall symbols frozen, purpose done. Archway west glows blue — spacecraft beyond. Lab north.",
+      "exits": {
+        "north": "abandoned-lab"
+      },
+      "items": [
+        "alien-artifact"
+      ],
+      "hazards": [],
+      "solvedDescription": "A vault blasted into bedrock, specimen containers lining steel shelves. The fluorescent tubes flicker. To the west, the archway lock has been overridden — the passage stands open, blue-violet bioluminescence pulsing from the vessel beyond."
+    },
+    "ufo-landing-site": {
+      "name": "Forest Clearing — Scorch Pattern",
+      "description": "A perfect circle of scorched earth, fifty feet across. Grass reduced to ash in geometric spirals. Trees at the perimeter bend outward, frozen mid-blast. Your Geiger counter clicks in agitated bursts — elevated radiation, the signature of exotic propulsion. Soil samples glow faintly in your bag. Three circular depressions at the center form a triangle: landing gear. The sky presses down here, heavy, as if light itself is being absorbed. The forest is west. A metal hatch at the circle’s center opens into something not built by human hands.",
+      "exits": {
+        "west": "bigfoot-forest",
+        "south": "alien-spacecraft"
+      },
+      "items": [
+        "radiation-badge",
+        "strange-metal"
+      ],
+      "hazards": [
+        {
+          "description": "The air vibrates at a frequency that makes your teeth ache and your fillings hum — residual energy pulsing from deep below.",
+          "probability": 0.12,
+          "deathText": "The vibration spikes. Equipment shorts out in a shower of sparks. The air ripples like water — then tears. You glimpse something vast and geometrically impossible before reality folds shut, taking you with it."
+        }
+      ]
+    },
+    "alien-spacecraft": {
+      "name": "Extraterrestrial Vessel",
+      "description": "The walls are seamless bio-organic metal, warm and faintly yielding under your palm. Bioluminescence pulses through them — blue, then violet — like blood through veins. No rivets. No welds. No seams. Hieroglyphic symbols flow across surfaces like oil on water. A central pillar rises from the floor, studded with touch-interface glyphs. Your translator spits fragments: ‘...WARNING... BARRIER BREACH... DIMENSIONAL ANCHOR FAILING...’ A passage leads deeper north. The landing site hatch is above.",
+      "solvedDescription": "Bio-organic walls pulse — ship awakened. Hieroglyphs fixed. Pillar thrums. Translator: '...PORTAL ACTIVE... ROSWELL CONFIRMED...' Portal north to desert. Hatch above.",
+      "exits": {
+        "south": "ufo-landing-site",
+        "north": "roswell-crash"
+      },
+      "items": [
+        "alien-interface-key"
+      ],
+      "hazards": [
+        {
+          "description": "Gravity lurches without warning — crushing pressure one heartbeat, sickening weightlessness the next.",
+          "probability": 0.15,
+          "deathText": "Gravity inverts. You slam into the ceiling with bone-cracking force, hang suspended for one weightless second, then drop. The alien ship registers no disturbance. It was never built for human fragility."
+        }
+      ],
+      "solvedDescription": "Seamless bio-organic metal walls pulse blue to violet. Bioluminescent veins course through the structure. The navigation console glows with activated controls. A shimmering portal to the north has been opened, connecting to a distant crash site. The underground chamber is east."
+    },
+    "roswell-crash": {
+      "name": "Roswell Crash Site — 1947",
+      "description": "New Mexico desert. July 1947 — where it all began. The military called it a weather balloon. The sand is still fused to glass in places, crunching underfoot. Metal fragments litter the ground — impossibly light, impossibly strong, warm in your hands despite the cold night air. A half-collapsed military tent shelters crates marked ‘PROJECT MOGUL — TOP SECRET.’ One crate yawns open, revealing communication devices of unmistakable alien manufacture. East, a road cuts toward Area 51. South, a tunnel mouth gapes in the desert rock.",
+      "exits": {
+        "south": "alien-spacecraft",
+        "east": "area-51-entrance"
+      },
+      "items": [
+        "extraterrestrial-communicator"
+      ],
+      "hazards": []
+    },
+    "area-51-entrance": {
+      "name": "Area 51 — Restricted Access",
+      "description": "Chain-link and razor wire stretch to the horizon. Signs every fifty feet: ‘RESTRICTED AREA.’ ‘PHOTOGRAPHY PROHIBITED.’ ‘USE OF DEADLY FORCE AUTHORIZED.’ The guard towers stand empty — evacuated two days ago after an ‘incident.’ Beyond the fence, hangars loom large enough for aircraft that don’t officially exist. The gate’s biometric scanner pulses red, waiting. Your security badge from the abandoned lab might still register. Roswell is west. North, through the fence, the main hangar waits.",
+      "solvedDescription": "Gate open — badge accepted, scanner green. Towers empty, turrets dark. 'RESTRICTED AREA' signs toothless. Hangars beyond. Roswell west. Hangar north open.",
+      "exits": {
+        "west": "roswell-crash"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Automated turrets track movement along the perimeter — servo motors whining, laser designators sweeping the dust.",
+          "probability": 0.18,
+          "deathText": "A red dot settles on your chest. The turret doesn’t hesitate, doesn’t question. Three rounds. You never hear the third. Area 51 keeps its secrets."
+        }
+      ],
+      "solvedDescription": "Chain-link and razor wire stretch to the horizon. The automated turrets stand silent, laser designators dark. The main gate north hangs open, the hangar beyond accessible. Warning signs line the road. The abandoned lab is south."
+    },
+    "area-51-hangar": {
+      "name": "Hangar 18 — Recovered Technology",
+      "description": "The legendary hangar. A massive disc-shaped craft fills the space — silver, seamless, hovering an inch above its cradle. Scaffolding bristles with diagnostic equipment. Workbenches hold components that defy physics: anti-gravity coils, zero-point energy cells, technology centuries beyond anything human. The air smells of ozone and hot metal. A master terminal displays a star map with one system pulsing. A navigation console nearby glows with familiar geometric symbols. The gate is south. West, a transport tunnel leads to the Bermuda Triangle monitoring station.",
+      "exits": {
+        "south": "area-51-entrance",
+        "west": "bermuda-monitoring"
+      },
+      "items": [
+        "star-map"
+      ],
+      "hazards": []
+    },
+    "bermuda-monitoring": {
+      "name": "Bermuda Triangle — Deep Sea Station",
+      "description": "An underwater station bolted to the ocean floor in the heart of the Triangle. Reinforced portholes frame the deep Atlantic — black water, bioluminescent drifters, crushing silence. This is where ships and planes vanish. Instruments shriek with magnetic anomalies. A wall of monitors catalogues decades of disappearances — Flight 19, the USS Cyclops, dozens more. No wreckage. No bodies. A central viewing sphere peers into an undersea chasm where geometric structures glow in the dark — not natural, not human. The Area 51 tunnel is east. A passage north leads to Stonehenge.",
+      "solvedDescription": "Underwater station in the Triangle. Instruments quiet, anomalies flatlined. Monitors catalogue disappearances. Viewing sphere peers into pulsing structures below. Area 51 east. Stonehenge north.",
+      "exits": {
+        "east": "area-51-hangar",
+        "north": "stonehenge"
+      },
+      "items": [
+        "dimensional-resonator"
+      ],
+      "hazards": [
+        {
+          "description": "The hull groans — a deep, metallic shudder. Rivets weep condensation. The abyss presses in, patient and absolute.",
+          "probability": 0.1,
+          "deathText": "A porthole cracks. A mile of ocean punches through. The implosion is instant — crushing, total. The Triangle claims another."
+        }
+      ],
+      "solvedDescription": "The underwater station holds steady, hull reinforced and no longer groaning. Portholes frame the deep Atlantic. Instruments record stable readings. The station feels secure for the first time. The Stonehenge portal is east."
+    },
+    "stonehenge": {
+      "name": "Stonehenge — Ancient Anchor Point",
+      "description": "Salisbury Plain, England. Five thousand years old. Forty-ton stones hauled from Wales by methods still unexplained — until now. Stonehenge isn’t a monument. It’s an anchor. The stones mirror the geometric pattern from the alien ship, from Area 51, from the Triangle. Nodes in a planetary network, holding something back. The center stone bears an indentation shaped for an artifact. Your instruments scream — dimensional barriers, reality anchors, a lock straining against something immense. Wind moans through the circle, carrying sounds that might be voices. The Bermuda station is south.",
+      "solvedDescription": "Salisbury Plain. Stones hum, patterns blazing. Anchor engaged, purpose restored. Center stone projects constellations matching Area 51 maps. Barriers hold. Bermuda south.",
+      "exits": {
+        "south": "bermuda-monitoring"
+      },
+      "items": [
+        "ancient-keystone"
+      ],
+      "hazards": [
+        {
+          "description": "Reality stutters. For a heartbeat, the stones vanish and you glimpse somewhere else — somewhere wrong, somewhere watching.",
+          "probability": 0.2,
+          "deathText": "The barrier ruptures. Through the gap you see what the stones hold back — geometries that shouldn’t exist, a hunger older than planets, vast as galaxies. Then the barrier snaps shut. You are simply gone. Erased from causality."
+        }
+      ],
+      "solvedDescription": "Salisbury Plain, England. The ancient stones hum with activated energy, their true purpose revealed. A star map has materialized at the center of the circle, projected by the stones themselves. The Bermuda monitoring station is west."
+    }
+  },
+  "items": {
+    "emf-detector": {
+      "name": "EMF Detector",
+      "description": "A handheld electromagnetic field detector — standard paranormal investigation kit. The needle swings hard near the bridge, registering massive interference from an unknown source.",
+      "pickupText": "You snatch the EMF detector from your bag. It shrieks to life, needle slamming right.",
+      "portable": true,
+      "roomText": "Your EMF detector rests on the bridge railing, its needle twitching with phantom readings."
+    },
+    "research-journal": {
+      "name": "Dr. Webb’s Research Journal",
+      "description": "Leather-bound, swollen with notes, photographs, and hand-drawn diagrams. Dr. Webb connected Mothman sightings to UFO activity. Bigfoot territories to magnetic anomalies. All of it linked. The final entry: ‘The alien artifact is the key. It opens the way to Roswell.’",
+      "pickupText": "You take the journal. The pages are soft with handling, the research brilliant and terrifying — decades of work tracing one impossible pattern.",
+      "portable": true,
+      "roomText": "A battered research journal lies open on the desk, its pages dense with notes and frantic diagrams."
+    },
+    "night-vision-goggles": {
+      "name": "Night Vision Goggles",
+      "description": "Military-grade optics, modified for paranormal research. They let you see in total darkness — and sometimes reveal things that prefer it.",
+      "pickupText": "You lift the goggles from their case. The lenses are cold against your fingers, the optics unsettlingly sharp.",
+      "portable": true,
+      "roomText": "Modified night vision goggles sit in a foam-lined case, lenses gleaming."
+    },
+    "sasquatch-hair-sample": {
+      "name": "Sasquatch Hair Sample",
+      "description": "Coarse black hair snagged on bark — not from any known primate. Thicker than human hair, wiry, reeking of pine and musk. DNA analysis would return ‘unidentified hominid.’ Proof, if anyone would believe it.",
+      "pickupText": "You bag the hair sample with tweezers. It’s coarse as wire, and the musky animal smell clings to your gloves.",
+      "portable": true,
+      "roomText": "Coarse black hair snags on the bark of a deeply scratched tree — too high for a bear, too thick to be human."
+    },
+    "classified-dossier": {
+      "name": "Classified Government Dossier",
+      "description": "A manila folder stamped ‘TOP SECRET — EYES ONLY.’ Photographs of UFO crashes. Biological samples. And the damning truth — government acknowledgment that extraterrestrial contact occurred in 1947. They’ve known all along.",
+      "pickupText": "You leaf through the dossier. Your hands shake. Decades of cover-up, laid bare in fading photographs and redacted memos.",
+      "portable": true,
+      "roomText": "A TOP SECRET dossier sits in an open filing cabinet, its cover page facing up — as if someone wanted it found."
+    },
+    "security-badge": {
+      "name": "Level 4 Security Badge",
+      "description": "A government clearance badge from the 1960s, laminated and yellowed. The biometric strip still glows faintly — impossibly, still active after decades.",
+      "pickupText": "You pocket the badge. The biometric strip pulses warm against your thigh, as if recognizing a new owner.",
+      "portable": true,
+      "roomText": "A faded security badge dangles from a hook beside the vault door, its biometric strip glowing faintly."
+    },
+    "alien-artifact": {
+      "name": "Alien Artifact",
+      "description": "A smooth crystalline object that shifts between states — solid one moment, translucent and ghostly the next. It hums at a frequency you feel in your molars. Dr. Webb’s notes called it the key: it opens pathways, bypassing normal space.",
+      "pickupText": "You lift the artifact. It’s lighter than air and heavy as stone, simultaneously. Your fingertips buzz where crystal meets skin.",
+      "portable": true,
+      "roomText": "A crystalline artifact hovers above a pedestal, slowly rotating, refracting light that has no visible source."
+    },
+    "radiation-badge": {
+      "name": "Radiation Dosimeter",
+      "description": "A clip-on badge glowing angry red — significant exposure. The radiation signature is exotic propulsion, not nuclear decay. Something else entirely.",
+      "pickupText": "You clip the dosimeter to your belt. Its red glow seeps through your shirt pocket like a warning you can’t ignore.",
+      "portable": true,
+      "roomText": "A radiation dosimeter lies in the scorched grass, its indicator pulsing bright red."
+    },
+    "strange-metal": {
+      "name": "Unknown Metal Fragment",
+      "description": "A metallic shard, impossibly light. Crumple it and it springs back to shape, smooth and warm. Not from Earth.",
+      "pickupText": "You pocket the fragment. It’s warm against your palm and vibrates faintly, like a tuning fork struck hours ago.",
+      "portable": true,
+      "roomText": "A shard of strange metal juts from the ash, catching light with an oily, unnatural sheen."
+    },
+    "alien-interface-key": {
+      "name": "Alien Interface Key",
+      "description": "A crystalline rod etched with glyphs that glow at your touch. It translates human intent into commands the vessel understands — a bridge between species.",
+      "pickupText": "You draw the key from its socket. The ship’s bioluminescence dims, as if something just blinked.",
+      "portable": true,
+      "roomText": "A crystalline rod protrudes from the central pillar, pulsing with soft blue light."
+    },
+    "extraterrestrial-communicator": {
+      "name": "ET Communication Device",
+      "description": "Recovered from the Roswell wreckage. It projects holographic star maps and receives signals from deep space — signals that correlate exactly with paranormal events on Earth. They’ve been watching. Guiding.",
+      "pickupText": "You activate the communicator. A holographic display blooms in midair — Earth, ringed by monitoring satellites of unknown origin. Your stomach drops.",
+      "portable": true,
+      "roomText": "An alien device rests in an open crate, its surface studded with touch-sensitive glyphs that pulse faintly."
+    },
+    "star-map": {
+      "name": "Galactic Navigation Chart",
+      "description": "A holographic star map of the Milky Way. One trinary system pulses 37 light-years away. Earth is marked with a beacon. We are being watched.",
+      "pickupText": "You download the chart to your handheld. The beacon on Earth pulses in sync with your heartbeat — or your heartbeat syncs with it.",
+      "portable": true,
+      "roomText": "A holographic star map rotates above the control terminal, stars drifting like embers."
+    },
+    "dimensional-resonator": {
+      "name": "Dimensional Resonance Device",
+      "description": "Recovered technology that generates dimensional frequencies. This is what causes the Triangle’s disappearances — objects shifted out of phase with reality, lost between worlds.",
+      "pickupText": "You disconnect the resonator. For one sickening instant, your hand passes through it like smoke before solidifying again.",
+      "portable": true,
+      "roomText": "A complex device bolted to the floor thrums with inner light, radiating geometries that hurt to follow."
+    },
+    "ancient-keystone": {
+      "name": "Dimensional Keystone",
+      "description": "Carved stone, five thousand years old, covered in geometric symbols identical to the alien technology. Stonehenge isn’t ancient human construction. It’s an anchor built by something else, using humans as labor. This keystone controls the network.",
+      "pickupText": "You lift the keystone. It thrums in your hands like a struck bell. The standing stones pulse once, in unison. The barrier shivers.",
+      "portable": true,
+      "roomText": "An intricately carved stone rests at the base of the center monolith, warm to the touch, glowing from within."
+    }
+  },
+  "puzzles": {
+    "unlock-archway": {
+      "room": "underground-chamber",
+      "description": "The stone archway west is carved with geometric symbols matching the alien artifact. A crystalline depression in the keystone waits, perfectly shaped.",
+      "requiredItem": "alien-artifact",
+      "hintText": "The archway’s symbols mirror the artifact’s facets — crystal and stone, shaped to fit together.",
+      "solvedText": "You press the artifact into the depression. Symbols flare — white, blue, violet. Space buckles. The archway shimmers and its view shifts: no longer rock, but the interior of an alien vessel. The path west is open.",
+      "action": {
+        "type": "openExit",
+        "direction": "west",
+        "targetRoom": "alien-spacecraft"
+      }
+    },
+    "activate-ship-portal": {
+      "room": "alien-spacecraft",
+      "description": "The central pillar is studded with interface glyphs. With the right key, you could access the ship’s navigation and open a portal to any node in the network.",
+      "requiredItem": "alien-interface-key",
+      "hintText": "The pillar’s socket matches the crystalline rods found aboard. An interface key would bring the ship’s systems online.",
+      "solvedText": "You slot the interface key into the pillar. It pulses once. The glyphs rearrange into readable coordinates — the ship is alive, functional, eager. A portal irises open north, locked onto Roswell crash site coordinates burned into the vessel’s memory.",
+      "isGoal": true,
+      "goalName": "Activate the Alien Vessel",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "roswell-crash"
+      }
+    },
+    "bypass-area-51-gate": {
+      "room": "area-51-entrance",
+      "description": "The gate is sealed by a biometric scanner requiring Level 4 clearance or higher. The automated defenses remain active — approaching without clearance is suicide.",
+      "requiredItem": "security-badge",
+      "hintText": "The scanner accepts biometric badges. Cold War-era credentials might still be in the system — the military rarely purges its own databases.",
+      "solvedText": "You press the vintage badge to the scanner. It flickers — ‘CLEARANCE VERIFIED — WELCOME DR. WEBB.’ The gate unlocks with a heavy clunk. Turrets power down, servos whining into silence. North, the hangar stands open. Dr. Webb worked here, decades ago.",
+      "isGoal": true,
+      "goalName": "Breach Area 51",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "area-51-hangar"
+      }
+    },
+    "unlock-specimen-vault": {
+      "room": "abandoned-lab",
+      "description": "The vault door requires Level 4 security clearance. A card reader beside it blinks red, patient and waiting.",
+      "requiredItem": "security-badge",
+      "hintText": "The reader accepts security badges. Someone with high-level clearance worked here — their credentials might still be around.",
+      "solvedText": "You swipe the badge. Green light. ‘AUTHORIZED.’ Heavy bolts retract with a grinding shudder, and the vault door swings open on long-dormant hinges. Cold air rises from the underground chamber below.",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "underground-chamber"
+      }
+    },
+    "stabilize-bermuda-station": {
+      "room": "bermuda-monitoring",
+      "description": "Pressure warnings flash across every console. The dimensional resonator is generating unstable frequencies, stressing the hull to its limit. Disconnecting it might be the only way to survive.",
+      "requiredItem": "dimensional-resonator",
+      "hintText": "The resonator is the source of the dimensional stress. Pull it from its housing and the station might hold.",
+      "solvedText": "You wrench the resonator free. The humming dies. The geometric structures outside flicker and fade. Pressure warnings go dark, one by one, and the hull settles with a groan of relief. The Triangle’s grip loosens.",
+      "action": {
+        "type": "removeHazard",
+        "room": "bermuda-monitoring",
+        "hazard": "The hull groans — a deep, metallic shudder. Rivets weep condensation. The abyss presses in, patient and absolute."
+      }
+    },
+    "deactivate-area-51-defenses": {
+      "room": "area-51-entrance",
+      "description": "Even with the gate open, automated defense systems patrol the perimeter. Your EMF detector could trace their control signals to the source.",
+      "requiredItem": "emf-detector",
+      "hintText": "The turrets run on electromagnetic control signals. An EMF detector could follow those signals back to their junction box.",
+      "solvedText": "You sweep the EMF detector in widening arcs until it locks onto a buried control junction. A few wire cuts and the defenses die — turrets droop, motion sensors blink out. The perimeter falls silent.",
+      "action": {
+        "type": "removeHazard",
+        "room": "area-51-entrance",
+        "hazard": "Automated turrets track movement along the perimeter — servo motors whining, laser designators sweeping the dust."
+      }
+    },
+    "activate-stonehenge-portal": {
+      "room": "stonehenge",
+      "description": "The center stone bears an indentation perfectly shaped for the keystone. This is the master control — the anchor stabilizing the entire planetary network. Activating it reveals the truth.",
+      "requiredItem": "ancient-keystone",
+      "hintText": "The indentation in the center stone mirrors the keystone’s shape exactly. Stone calls to stone.",
+      "solvedText": "You place the keystone. It clicks home with a sound like distant thunder. Every stone in the circle ignites — brilliant, blinding, ancient. The air tears open. Through the rift you see it all: the network spanning Earth, monitoring stations in orbit, a civilization that built these anchors to hold reality together. We were never alone. We were always protected. The barrier holds. You have uncovered the greatest truth in human history.",
+      "isGoal": true,
+      "goalName": "Unlock the Dimensional Network",
+      "action": {
+        "type": "addItem",
+        "room": "stonehenge",
+        "itemId": "star-map"
+      }
+    }
+  }
+}

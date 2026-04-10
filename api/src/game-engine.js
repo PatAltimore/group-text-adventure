@@ -2,7 +2,7 @@
 // All state is passed in and returned; functions are side-effect free.
 
 import { parseCommand } from './command-parser.js';
-import { validateWorld } from '../../world/validate-world.js';
+import { validateWorld } from '../world/validate-world.js';
 
 /**
  * Get ASCII art for a goal completion
@@ -29,30 +29,39 @@ export function getGoalAsciiArt() {
  */
 export function getVictoryAsciiArt() {
   return [
-    '              oooo$$$$$$$$$$$$oooo',
-    '          oo$$$$$$$$$$$$$$$$$$$$$$$$o',
-    '       oo$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o',
-    '      o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o',
-    '     o$$$$$$$$$    $$$$$$$$$    $$$$$$$$$$o',
-    '    o$$$$$$$$$      $$$$$$$      $$$$$$$$$$o',
-    '    $$$$$$$$$$      $$$$$$$      $$$$$$$$$$$',
-    '    $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$',
-    '    $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$',
-    '     o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o',
-    '      o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o',
-    '        o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o',
-    '          oo$$$$$$$$$$$$$$$$$$$$$$$$oo',
-    '     o$$$$$$$$$$oooooooooooo$$$$$$$$$$$$o',
-    '    o$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$o',
-    '   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$',
-    '  $$$$$  V I C T O R Y   C R O W N  $$$$$',
-    '  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$',
-    '   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$',
-    '    oo$$$   $$$   $$$   $$$   $$$   $$oo',
-    '       oo$$$$$$$$$$$$$$$$$$$$$$$$$$$oo',
     '',
-    '       All goals have been achieved!',
-    '      You conquered the adventure!',
+    '              ★ ･ﾟ･ﾟ☆ ･ﾟ･ﾟ★ ･ﾟ･ﾟ☆ ･ﾟ･ﾟ★',
+    '',
+    '                    ___====-_',
+    '              _--^^^#####//      \\\\#####^^^--_',
+    '           _-^##########//  (()  \\\\##########^-_',
+    '          -############||    )    ||############-',
+    '         -#############|| /-----\\ ||#############-',
+    '        -##############||//     \\\\||##############-',
+    '       |###############|||       |||###############|',
+    '       |###############||         ||###############|',
+    '      |################||  *===*  ||################|',
+    '      |################||  | 1 |  ||################|',
+    '      |################||  | # |  ||################|',
+    '      |################||  |   |  ||################|',
+    '       |###############||  *===*  ||###############|',
+    '       |###############||         ||###############|',
+    '        -##############||         ||##############-',
+    '         -#############||         ||#############-',
+    '          -############\\\\         //############-',
+    '           -###########\\\\       //-###########-',
+    '             -#########\\\\     //#########-',
+    '               -#######\\\\   //#######-',
+    '                  -####\\\\  //####-',
+    '                    -##\\\\//##-',
+    '                      -\\\\//- ',
+    '                       \\\\// ',
+    '                        \\/ ',
+    '',
+    '           All goals have been achieved!',
+    '          You conquered the adventure!',
+    '',
+    '              ★ ･ﾟ･ﾟ☆ ･ﾟ･ﾟ★ ･ﾟ･ﾟ☆ ･ﾟ･ﾟ★',
   ].join('\n');
 }
 
@@ -529,13 +538,26 @@ export function getPlayerView(session, playerId) {
   // Check if room has an unsolved puzzle
   let roomName = room.name;
   let hintText;
-  for (const [puzzleId, puzzle] of Object.entries(session.world.puzzles || {})) {
-    if (puzzle.room === player.room && !session.puzzleStates[puzzleId]?.solved) {
+  
+  // Check puzzle state for this room
+  const roomPuzzles = Object.entries(session.world.puzzles || {})
+    .filter(([, puzzle]) => puzzle.room === player.room);
+  
+  if (roomPuzzles.length > 0) {
+    const allSolved = roomPuzzles.every(([puzzleId]) => session.puzzleStates[puzzleId]?.solved);
+    const hasUnsolved = roomPuzzles.some(([puzzleId]) => !session.puzzleStates[puzzleId]?.solved);
+    
+    if (allSolved) {
+      roomName = `✅ ${room.name}`;
+    } else if (hasUnsolved) {
       roomName = `🧩 ${room.name}`;
-      if (session.hintsEnabled && puzzle.hintText) {
-        hintText = puzzle.hintText;
+      // Find hint text from any unsolved puzzle
+      for (const [puzzleId, puzzle] of roomPuzzles) {
+        if (!session.puzzleStates[puzzleId]?.solved && session.hintsEnabled && puzzle.hintText) {
+          hintText = puzzle.hintText;
+          break;
+        }
       }
-      break;
     }
   }
 
@@ -1416,7 +1438,8 @@ export function handleMap(session, playerId) {
   const visited = new Set(player.visitedRooms || [currentRoom]);
   const shownRooms = new Set([currentRoom]);
 
-  const currentName = session.world.rooms[currentRoom].name;
+  const currentPrefix = getRoomPuzzlePrefix(session, currentRoom);
+  const currentName = currentPrefix + session.world.rooms[currentRoom].name;
   const lines = [];
   lines.push('── MAP ──────────────────');
   lines.push(`[*] ${trimName(currentName, 20)} (you)`);
@@ -1432,7 +1455,7 @@ export function handleMap(session, playerId) {
     const isVisited = visited.has(roomId);
 
     const label = isVisited
-      ? trimName(session.world.rooms[roomId].name, 18)
+      ? trimName(getRoomPuzzlePrefix(session, roomId) + session.world.rooms[roomId].name, 18)
       : '???';
     shownRooms.add(roomId);
 
@@ -1450,7 +1473,7 @@ export function handleMap(session, playerId) {
         const isVisited2 = visited.has(roomId2);
 
         const label2 = isVisited2
-          ? trimName(session.world.rooms[roomId2].name, 16)
+          ? trimName(getRoomPuzzlePrefix(session, roomId2) + session.world.rooms[roomId2].name, 16)
           : '???';
         shownRooms.add(roomId2);
 
@@ -1469,7 +1492,7 @@ export function handleMap(session, playerId) {
             const isVisited3 = visited.has(roomId3);
 
             const label3 = isVisited3
-              ? trimName(session.world.rooms[roomId3].name, 14)
+              ? trimName(getRoomPuzzlePrefix(session, roomId3) + session.world.rooms[roomId3].name, 14)
               : '???';
             shownRooms.add(roomId3);
 
@@ -1491,4 +1514,25 @@ export function handleMap(session, playerId) {
 function trimName(name, maxLen) {
   if (name.length <= maxLen) return name;
   return name.substring(0, maxLen - 1) + '…';
+}
+
+function getRoomPuzzlePrefix(session, roomId) {
+  const roomPuzzles = Object.entries(session.world.puzzles || {})
+    .filter(([, puzzle]) => puzzle.room === roomId);
+  
+  if (roomPuzzles.length === 0) {
+    return '';
+  }
+  
+  const allSolved = roomPuzzles.every(([puzzleId]) => session.puzzleStates[puzzleId]?.solved);
+  if (allSolved) {
+    return '✅ ';
+  }
+  
+  const hasUnsolved = roomPuzzles.some(([puzzleId]) => !session.puzzleStates[puzzleId]?.solved);
+  if (hasUnsolved) {
+    return '🧩 ';
+  }
+  
+  return '';
 }

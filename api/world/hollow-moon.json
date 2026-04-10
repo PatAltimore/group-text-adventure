@@ -1,0 +1,459 @@
+{
+  "name": "Hollow Moon",
+  "displayOrder": 13,
+  "description": "The Shackleton Mining Colony clings to the rim of the moon's south pole, drilling for helium-3 — the fuel that keeps Earth's fusion reactors burning. Routine seismic surveys have returned impossible readings: vast hollow spaces deep beneath the regolith, geometrically precise cavities that no natural process could explain. Command says instrument error. The geologists say lava tubes. But the drill broke through into something last night — smooth walls, perfect angles, and darkness that swallowed the floodlights whole. You're the first one down.",
+  "synopsis": "Uncover what lies beneath a lunar mining colony.",
+  "startRoom": "landing-pad",
+  "rooms": {
+    "landing-pad": {
+      "name": "Landing Pad",
+      "description": "The cargo shuttle rests on scorched landing struts, heat shimmer still rising from the descent engines. Gray regolith stretches to every horizon under a sky of absolute black, Earth hanging blue and impossibly distant above the crater rim. Supply crates stamped with the Shackleton Mining Colony logo are stacked near the airlock. A pressurized tunnel leads north to the command center. A footpath of compacted regolith heads east toward the crater rim.",
+      "exits": {
+        "north": "command-center",
+        "east": "crater-rim"
+      },
+      "items": [
+        "access-card"
+      ],
+      "hazards": []
+    },
+    "crater-rim": {
+      "name": "Crater Rim",
+      "description": "You stand on the rim of Shackleton Crater, a vast bowl of permanent shadow stretching below. The sun hangs at a razor-sharp angle, painting the regolith in blinding white and absolute black with no gradient between. Bootprints from survey teams trail off in every direction, some disappearing over the rim into darkness. A path leads west to the landing pad. A service ladder climbs north to the observation deck.",
+      "exits": {
+        "west": "landing-pad",
+        "north": "observation-deck"
+      },
+      "items": [
+        "helmet-lamp"
+      ],
+      "hazards": []
+    },
+    "observation-deck": {
+      "name": "Observation Deck",
+      "description": "An elevated platform of welded aluminum struts supports a panoramic viewport dome. The entire mining operation is visible from here — drill site floodlights, cargo bay cranes, the thin access road winding across the regolith. A rack of survey instruments lines the south railing. Stars burn steady and unwinking overhead, sharp as needles in the vacuum. The ladder leads south to the crater rim.",
+      "exits": {
+        "south": "crater-rim"
+      },
+      "items": [
+        "sonar-device"
+      ],
+      "hazards": []
+    },
+    "command-center": {
+      "name": "Command Center",
+      "description": "Banks of monitors cast cold light across the operations room, most showing nominal life-support readings. A central holotable displays a topographic map of the mining area with one sector blinking red — the anomalous seismic zone. The air recyclers hum their constant low note. The landing pad is south and living quarters are east. A security door to the west reads 'CARGO BAY — AUTHORIZED PERSONNEL,' its card reader blinking red.",
+      "solvedDescription": "Bay door open.",
+      "exits": {
+        "south": "landing-pad",
+        "east": "living-quarters"
+      },
+      "items": [
+        "comm-device"
+      ],
+      "hazards": [],
+      "solvedDescription": "Banks of monitors cast cold light. The holotable blinks red over the anomalous sector. The landing pad is south, living quarters east. The cargo bay door west stands open."
+    },
+    "living-quarters": {
+      "name": "Living Quarters",
+      "description": "Four bunks bolted to the walls of this pressurized module, thin mattresses still bearing the impressions of sleeping bodies. Personal effects scatter the shelves — family photos, dog-eared paperbacks, a chess set frozen mid-game. The air is stale, recycled too many times. A kitchenette occupies one corner, its coffee maker still warm. The command center is west.",
+      "exits": {
+        "west": "command-center"
+      },
+      "items": [
+        "geiger-counter"
+      ],
+      "hazards": []
+    },
+    "cargo-bay": {
+      "name": "Cargo Bay",
+      "description": "A cavernous pressurized hangar filled with the machinery of extraction. Helium-3 transport canisters line the far wall, each the size of a car. Overhead cranes hang motionless on their tracks. Crates of mining equipment sit on heavy-duty pallets, manifests fluttering in the ventilation currents. The command center is east. A ramp descends south to ore processing.",
+      "exits": {
+        "east": "command-center",
+        "south": "ore-processing"
+      },
+      "items": [
+        "seismic-charges",
+        "repair-kit"
+      ],
+      "hazards": []
+    },
+    "ore-processing": {
+      "name": "Ore Processing",
+      "description": "Conveyor belts and crushing machines fill this industrial module, all idle now. Fine lunar dust coats every surface despite the air filtration. Sample trays line a workbench, each labeled with depth markers. The facility was built to extract helium-3, but some deeper samples look wrong — crystalline structures too regular, too intentional. The cargo bay is north. The drill site is east.",
+      "exits": {
+        "north": "cargo-bay",
+        "east": "drill-site"
+      },
+      "items": [
+        "spectrometer"
+      ],
+      "hazards": []
+    },
+    "drill-site": {
+      "name": "Drill Site",
+      "description": "The main bore shaft descends into darkness, its reinforced collar still warm from the last drilling run. Floodlights illuminate a web of cracks radiating from the shaft through the surrounding regolith. This is where the drill broke through — the bit dropped three meters into nothing before the emergency brake caught it. Ore sample trays are scattered near the drill console. Ore processing is west. The shaft to the north is sealed with blast doors, their surface buckled outward from below.",
+      "solvedDescription": "Tunnel blasted.",
+      "exits": {
+        "west": "ore-processing"
+      },
+      "items": [
+        "ore-sample"
+      ],
+      "hazards": [
+        {
+          "description": "Cracks radiate from the bore shaft and fine dust sifts from the ceiling with each vibration. The rock here is under enormous stress.",
+          "probability": 0.08,
+          "deathText": "A deep crack splits the ceiling. Lunar rock cascades down in slow-motion freefall, silent in the vacuum. Your suit integrity alarm shrieks once before a slab of regolith pins you to the floor."
+        }
+      ],
+      "solvedDescription": "The bore shaft descends into darkness, cracks radiating through regolith. Ore processing is west. The blast doors north have been blown open, tunnel beyond."
+    },
+    "sealed-tunnel": {
+      "name": "Sealed Tunnel",
+      "description": "The blast doors gave way to a rough-hewn tunnel descending at a steep angle into the lunar subsurface. The walls transition from natural regolith to something smoother and darker within the first twenty meters. Your bootlights barely penetrate the darkness. The air from your suit sensors reads vacuum, but the tunnel walls absorb sound in an unnatural way. The drill site is south. The passage north is blocked by a collapsed section of ceiling, support beams twisted like broken bones.",
+      "solvedDescription": "Passage shored.",
+      "exits": {
+        "south": "drill-site"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Total darkness engulfs the tunnel beyond your suit lights. Without proper illumination, a single misstep could send you into an unseen crevasse.",
+          "probability": 0.1,
+          "deathText": "Your boot finds empty air where floor should be. You pitch forward into absolute darkness. The fall is short but the landing is not — your helmet cracks against stone and the suit breach alarm screams briefly before silence reclaims the tunnel."
+        }
+      ],
+      "solvedDescription": "The tunnel descends steeply, walls smooth and dark. Floodlights illuminate the passage. The drill site is south. The collapsed ceiling is cleared, passage north open."
+    },
+    "hollow-cavern": {
+      "name": "Hollow Cavern",
+      "description": "The tunnel opens into a space so vast your headlamp cannot find the far wall. The floor is unnaturally smooth — polished basalt, or something that resembles it. Your footsteps produce a deep resonant hum that takes several seconds to decay, as though the entire chamber is a tuning fork. The ceiling arches overhead in a perfect curve. Nothing in nature makes curves this precise. The sealed tunnel leads south.",
+      "solvedDescription": "East wall open.",
+      "exits": {
+        "south": "sealed-tunnel"
+      },
+      "items": [
+        "crystal-key"
+      ],
+      "hazards": [],
+      "solvedDescription": "The cavern stretches far, polished floor humming. The eastern wall stands open to the resonance chamber. The sealed tunnel leads south."
+    },
+    "resonance-chamber": {
+      "name": "Resonance Chamber",
+      "description": "A smaller chamber branches from the cavern, its walls covered in geometric patterns that catch and reflect light in strange ways. The patterns aren't carved — they seem embedded in the rock itself, as though the stone grew around them. A low vibration pulses through the floor at a frequency felt in the bones rather than heard. The grooves form what might be writing, or circuitry, or both. The hollow cavern is west.",
+      "solvedDescription": "Way north open.",
+      "exits": {
+        "west": "hollow-cavern"
+      },
+      "items": [
+        "alien-tablet"
+      ],
+      "hazards": [
+        {
+          "description": "The resonant frequency intensifies without warning, vibrating through your bones and blurring your vision.",
+          "probability": 0.08,
+          "deathText": "The vibration hits a harmonic your body cannot withstand. Your vision dissolves into static, suit readings spike and flatline in the same instant. The chamber continues its ancient hum, indifferent."
+        }
+      ],
+      "solvedDescription": "Geometric patterns pulse with decoded meaning. A passage north has opened along a geometric seam. The hollow cavern is west."
+    },
+    "alien-antechamber": {
+      "name": "Alien Antechamber",
+      "description": "The architecture here abandons all pretense of geology. Hexagonal columns of dark crystalline material rise from floor to ceiling, their surfaces faintly luminous with an internal blue-white glow. The air — impossibly, there is air here — carries a faint ozone scent. A circular doorway dominates the north wall, its frame inscribed with geometric patterns matching the resonance chamber. An energy field shimmers across the opening. The resonance chamber is south.",
+      "solvedDescription": "Key set.",
+      "exits": {
+        "south": "resonance-chamber"
+      },
+      "items": [
+        "power-cell"
+      ],
+      "hazards": [
+        {
+          "description": "An invisible radiation source pulses from the crystalline columns. Your suit dosimeter creeps upward with each passing moment.",
+          "probability": 0.12,
+          "deathText": "The radiation accumulates faster than your suit can shield. Nausea hits first, then trembling. You collapse between the glowing columns as your cells break down, the alien light pulsing on, indifferent."
+        }
+      ],
+      "solvedDescription": "Hexagonal crystal columns glow steady, radiation neutralized. The doorway north stands open, energy field gone. The resonance chamber is south."
+    },
+    "control-room": {
+      "name": "Ancient Control Room",
+      "description": "A vast semicircular chamber lined with consoles of unknown material — dark, smooth, neither metal nor stone. Holographic displays flicker at the edge of perception, ghostly star charts and orbital diagrams that fade when viewed directly. At the center sits a raised platform with a cradle shaped for something roughly humanoid but not quite. The technology is millions of years old, yet surfaces warm beneath your gloved fingertips. The antechamber is south. A massive sealed iris door dominates the north wall.",
+      "solvedDescription": "Iris opened.",
+      "exits": {
+        "south": "alien-antechamber"
+      },
+      "items": [
+        "star-map"
+      ],
+      "hazards": [
+        {
+          "description": "Consoles flicker to life unpredictably, discharging arcs of energy across the chamber floor.",
+          "probability": 0.1,
+          "deathText": "An arc of blue-white energy lances from a console to your suit. Every system overloads simultaneously. The alien technology powers down as though nothing happened, leaving your suit dark and still."
+        }
+      ],
+      "solvedDescription": "Consoles hum with power, star charts bright and stable. The antechamber is south. The iris door north has dilated open to the core chamber."
+    },
+    "core-chamber": {
+      "name": "Core Chamber",
+      "description": "You stand at the geometric center of the moon. The chamber is a perfect sphere, hundreds of meters across, its walls alive with slowly pulsing light that shifts through colors you have never seen. At the center, suspended in a gravitational field, floats a crystalline structure — the heart of whatever this place truly is. The scale is incomprehensible. This is not a natural satellite. This was built, parked in Earth's orbit, and forgotten — or hidden. The control room is south.",
+      "solvedDescription": "Origin revealed.",
+      "exits": {
+        "south": "control-room"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The gravitational field at the moon's center fluctuates unpredictably, alternating between crushing force and weightlessness.",
+          "probability": 0.05,
+          "deathText": "The gravitational field spikes. Your body is pulled in every direction simultaneously, forces exceeding what human physiology can withstand. You have a fraction of a second to appreciate the engineering before it tears you apart."
+        }
+      ],
+      "solvedDescription": "The chamber pulses with decoded patterns, holographic projections looping endlessly. The crystalline heart’s origin is understood. The control room is south."
+    }
+  },
+  "items": {
+    "access-card": {
+      "name": "Security Badge",
+      "description": "A standard-issue Shackleton Colony security badge with your photo laminated beneath a barcode. The magnetic strip grants access to restricted areas of the facility.",
+      "roomText": "A security badge lies on a supply crate near the airlock, its lanyard coiled beside it.",
+      "pickupText": "You clip the access card to your suit. The barcode glows faintly under your headlamp.",
+      "portable": true
+    },
+    "helmet-lamp": {
+      "name": "Mining Headlamp",
+      "description": "A high-powered xenon headlamp designed for deep-shaft mining. It clips to your helmet's mounting rail and casts a beam strong enough to illuminate a cavern.",
+      "roomText": "A high-powered mining headlamp sits on a gear rack, its lens clean and ready.",
+      "pickupText": "You mount the headlamp to your helmet rail. It clicks into place and the beam cuts through the dark like a blade.",
+      "portable": true
+    },
+    "comm-device": {
+      "name": "Emergency Radio",
+      "description": "A handheld radio tuned to the colony's emergency frequency. Static crackles from the speaker — the signal cannot reach Earth from inside the base, but it might reach the orbital relay.",
+      "roomText": "A handheld radio rests on the holotable, its charge light blinking green.",
+      "pickupText": "You pocket the radio. Static hisses briefly from the speaker before settling to silence.",
+      "portable": true
+    },
+    "geiger-counter": {
+      "name": "Geiger Counter",
+      "description": "A portable radiation detector with an analog needle resting at zero. A green LED blinks steadily, confirming it is operational and background radiation is normal.",
+      "roomText": "A radiation detector sits on a shelf above one of the bunks, its green LED blinking steadily.",
+      "pickupText": "You take the geiger counter. The needle twitches once, then settles back to zero.",
+      "portable": true
+    },
+    "seismic-charges": {
+      "name": "Seismic Charges",
+      "description": "Three shaped demolition charges packed in a blast-resistant case, each no bigger than a soup can. Standard equipment for clearing rock falls in mine shafts. A detonator is wired into the case lid.",
+      "roomText": "A blast-resistant case marked 'DEMOLITION — HANDLE WITH CARE' sits between two equipment pallets.",
+      "pickupText": "You lift the case carefully. The charges shift inside with a muffled clink. Three should be more than enough.",
+      "portable": true
+    },
+    "repair-kit": {
+      "name": "Structural Repair Kit",
+      "description": "A heavy canvas roll containing welding tools, structural epoxy, and collapsible support struts. Everything needed to shore up a compromised tunnel section.",
+      "roomText": "A canvas tool roll hangs from a hook on the wall, bulging with welding equipment and structural epoxy.",
+      "pickupText": "You shoulder the repair kit. It is heavy but well-organized — everything needed for emergency tunnel shoring.",
+      "portable": true
+    },
+    "ore-sample": {
+      "name": "Anomalous Ore Sample",
+      "description": "A chunk of regolith from the deepest bore level, sealed in a clear sample container. Under light, faint geometric patterns are visible in the crystal structure — too regular to be natural.",
+      "roomText": "A sealed sample container sits on the drill console, its contents catching the floodlight in odd geometric refractions.",
+      "pickupText": "You pick up the ore sample. The crystal patterns inside shift as the light changes — probably an optical illusion. Probably.",
+      "portable": true
+    },
+    "spectrometer": {
+      "name": "Mass Spectrometer",
+      "description": "A handheld mass spectrometer used for field analysis of mineral samples. Its screen displays molecular composition in real-time.",
+      "roomText": "A mass spectrometer hums quietly on the workbench, its screen showing a default calibration pattern.",
+      "pickupText": "You take the spectrometer. Its screen flickers to life, ready for analysis.",
+      "portable": true
+    },
+    "sonar-device": {
+      "name": "Seismic Imager",
+      "description": "A seismic imaging unit that maps underground structures by analyzing sound wave reflections. Its display shows a rough wireframe of surrounding geology.",
+      "roomText": "A seismic imaging unit is clamped to the railing, its screen showing a cross-section of the subsurface.",
+      "pickupText": "You detach the sonar device. The display updates, showing concentric void spaces far below — impossibly regular.",
+      "portable": true
+    },
+    "crystal-key": {
+      "name": "Crystal Key",
+      "description": "A hexagonal prism of dark crystal, cool to the touch and faintly luminous. Six faces are etched with geometric patterns matching the grooves in the resonance chamber walls.",
+      "roomText": "Something glows faintly in a hexagonal depression in the cavern floor — a dark crystal prism pulsing with inner light.",
+      "pickupText": "You lift the crystal key from its socket. The cavern's resonant hum shifts pitch, as though the chamber noticed.",
+      "portable": true
+    },
+    "alien-tablet": {
+      "name": "Alien Tablet",
+      "description": "A thin slab of dark crystal covered in dense geometric script. The symbols shift subtly when viewed from different angles, encoding information in three dimensions.",
+      "roomText": "A thin crystal slab rests on a raised pedestal, its surface dense with shifting geometric symbols.",
+      "pickupText": "You take the alien tablet. The symbols rearrange as you tilt it, encoding layers of meaning you cannot yet parse.",
+      "portable": true
+    },
+    "power-cell": {
+      "name": "Alien Power Cell",
+      "description": "A cylindrical object that fits in both hands, its surface warm and faintly vibrating. Blue-white light pulses from hairline seams in its casing.",
+      "roomText": "A cylindrical device pulses with blue-white light in a charging cradle between two columns.",
+      "pickupText": "You ease the power cell from its cradle. It hums warmly in your hands, and the columns dim slightly.",
+      "portable": true
+    },
+    "star-map": {
+      "name": "Stellar Navigation Disc",
+      "description": "A translucent disc that projects a three-dimensional star chart when held at the correct angle. One star system is highlighted, connected by a dotted line to Earth's solar system.",
+      "roomText": "A translucent disc sits on the central console, projecting a faint three-dimensional star chart above its surface.",
+      "pickupText": "You take the star map. The projection collapses into the disc, holographic stars dimming to faint trapped light.",
+      "portable": true
+    },
+    "origin-hologram": {
+      "name": "Origin Recording",
+      "description": "A holographic projection showing the moon's construction — vast machines assembling the shell around a central core, a fleet of ships arriving from a distant star system. The recording replays on an endless loop, a memory preserved for eons.",
+      "roomText": "A holographic projection fills the air above the crystalline heart — the moon's construction, replaying in an endless loop of light and memory.",
+      "pickupText": "You reach into the projection and something solid materializes — a recording crystal containing the entire history of this place.",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "unlock-cargo-bay": {
+      "room": "command-center",
+      "description": "A security door to the west reads 'CARGO BAY — AUTHORIZED PERSONNEL.' Its card reader blinks red, demanding credentials.",
+      "requiredItem": "access-card",
+      "hintText": "The card reader expects a valid security badge. Standard colony credentials should work.",
+      "solvedText": "You swipe the access card through the reader. It beeps twice, flashes green, and the security door hisses open, revealing the cavernous cargo bay beyond.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "openExit",
+        "direction": "west",
+        "targetRoom": "cargo-bay"
+      }
+    },
+    "blast-sealed-tunnel": {
+      "room": "drill-site",
+      "description": "The shaft to the north is sealed with blast doors, their surface buckled outward from below. Whatever is down there pushed hard enough to deform reinforced steel.",
+      "requiredItem": "seismic-charges",
+      "hintText": "The blast doors are warped but intact. Shaped demolition charges placed at the stress fractures could blow them open.",
+      "solvedText": "You place the three charges at the fracture points and retreat behind the drill console. The detonation is silent in the vacuum — three sharp flashes, then the blast doors buckle inward and tumble into darkness. A gaping tunnel mouth stares back at you, exhaling ancient dust. The way north is open.",
+      "isGoal": true,
+      "goalName": "Breach the Sealed Tunnel",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "sealed-tunnel"
+      }
+    },
+    "illuminate-tunnel": {
+      "room": "sealed-tunnel",
+      "description": "The darkness ahead is absolute. Your standard suit lights barely penetrate five meters into the tunnel. Moving forward without better illumination is reckless.",
+      "requiredItem": "helmet-lamp",
+      "hintText": "A high-powered mining headlamp would cut through this darkness. Check the surface equipment racks.",
+      "solvedText": "You switch on the mining headlamp and the tunnel floods with light. The xenon beam reaches deep into the passage, revealing the smooth dark walls stretching ahead. The darkness retreats, and with it, the worst of the danger. You can see where you're stepping now.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "removeHazard",
+        "room": "sealed-tunnel",
+        "hazard": "Total darkness engulfs the tunnel beyond your suit lights. Without proper illumination, a single misstep could send you into an unseen crevasse."
+      }
+    },
+    "clear-collapsed-passage": {
+      "room": "sealed-tunnel",
+      "description": "The passage north is blocked by collapsed ceiling material. Twisted support beams and fractured regolith form a wall of debris. With the right tools, you could shore up the remaining structure and clear a path.",
+      "requiredItem": "repair-kit",
+      "hintText": "Structural epoxy and support struts could stabilize the collapse enough to clear a passage through.",
+      "solvedText": "You weld the collapsible struts into place, inject structural epoxy along the fracture lines, and carefully remove the loose debris. The repair holds. A narrow but passable tunnel opens to the north, the walls growing impossibly smooth beyond the collapse zone.",
+      "isGoal": true,
+      "goalName": "Discover the Hollow Chamber",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "hollow-cavern"
+      }
+    },
+    "scan-cavern-walls": {
+      "room": "hollow-cavern",
+      "description": "The cavern is vast and featureless — smooth walls curving in every direction. There must be more here, but finding it in this enormous space without instruments would take years.",
+      "requiredItem": "sonar-device",
+      "hintText": "A seismic imaging device could map the cavern's hidden structure and reveal passages invisible to the naked eye.",
+      "solvedText": "You activate the seismic imager and sweep the cavern walls. The display lights up — behind the eastern wall, a complex of smaller chambers, perfectly geometric. You follow the strongest signal to a hairline seam in the rock and push. A section of wall pivots silently inward, revealing a passage to the east.",
+      "isGoal": true,
+      "goalName": "Detect Artificial Structures",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "resonance-chamber"
+      }
+    },
+    "analyze-alien-script": {
+      "room": "resonance-chamber",
+      "description": "The geometric patterns covering the walls pulse with faint energy. They could be writing, circuitry, or both — but understanding them requires more than human eyes.",
+      "requiredItem": "spectrometer",
+      "hintText": "A mass spectrometer could analyze the molecular composition of the patterns and identify their structure. The results might decode their meaning.",
+      "solvedText": "You run the spectrometer across the wall patterns. The readings are extraordinary — the grooves contain trace elements not found in any known periodic table. As the spectrometer maps the molecular structure, the patterns begin to glow brighter. A section of the north wall splits open with a hiss of pressurized air, revealing an alien corridor beyond.",
+      "isGoal": true,
+      "goalName": "Decode the Ancient Writing",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "alien-antechamber"
+      }
+    },
+    "neutralize-radiation": {
+      "room": "alien-antechamber",
+      "description": "The crystalline columns emit radiation at wavelengths your suit was never designed to handle. Extended exposure is dangerous. A precise instrument could identify the source frequency and help you avoid the worst of it.",
+      "requiredItem": "geiger-counter",
+      "hintText": "A radiation detector could map the emission patterns and identify safe paths between the columns.",
+      "solvedText": "You sweep the geiger counter between the columns, mapping the radiation pattern. The emissions come in pulses — predictable once you know the frequency. You mark the safe corridors on your suit display. The chamber is still alien, but no longer lethal.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "removeHazard",
+        "room": "alien-antechamber",
+        "hazard": "An invisible radiation source pulses from the crystalline columns. Your suit dosimeter creeps upward with each passing moment."
+      }
+    },
+    "unseal-gateway": {
+      "room": "alien-antechamber",
+      "description": "The circular doorway to the north shimmers with an energy field. The frame is inscribed with hexagonal indentations that match nothing in human engineering.",
+      "requiredItem": "crystal-key",
+      "hintText": "The hexagonal indentations in the doorframe suggest a key of matching geometry. Something crystalline, perhaps, found deeper in these structures.",
+      "solvedText": "You press the crystal key into the largest hexagonal indentation. It sinks flush and light races along the geometric patterns in the frame. The energy field flickers, thins, and dissolves. The circular doorway stands open, revealing a vast chamber beyond. Ancient air — impossibly fresh — flows past you.",
+      "isGoal": false,
+      "goalName": "",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "control-room"
+      }
+    },
+    "power-ancient-systems": {
+      "room": "control-room",
+      "description": "The consoles flicker with residual power but lack the energy to fully activate. A cylindrical cradle at the center platform pulses dimly, shaped to receive something specific.",
+      "requiredItem": "power-cell",
+      "hintText": "The cradle at the center platform needs a power source — something cylindrical that pulses with the same blue-white energy as the alien technology.",
+      "solvedText": "You seat the power cell in the cradle. It locks into place with a resonant click and blue-white energy floods through the console network. Holographic displays blaze to life — star charts, orbital mechanics, structural schematics of the moon itself. The iris door to the north dilates open, revealing the core beyond. This control room has been waiting millions of years for someone to turn the lights back on.",
+      "isGoal": true,
+      "goalName": "Activate the Ancient Control Room",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "core-chamber"
+      }
+    },
+    "decode-origin": {
+      "room": "core-chamber",
+      "description": "The crystalline heart of the moon floats in its gravitational cradle, pulsing with light. A projection interface near the south wall has a disc-shaped receptacle — the same dimensions as the navigation disc from the control room.",
+      "requiredItem": "star-map",
+      "hintText": "The projection interface needs a stellar navigation disc to decode the moon's origin data. There may be one in the control room.",
+      "solvedText": "You place the stellar navigation disc into the receptacle. The crystalline heart flares brilliant white. Holographic projections fill the entire sphere — you see the moon being constructed around this core by machines of impossible scale, towed across interstellar space from a system in Orion's Belt, and parked in Earth orbit. It was a seed vault, a laboratory, a watchtower. The builders are long gone, but their greatest creation has been orbiting Earth for four billion years, waiting to be understood. The mystery of the moon's origin is solved.",
+      "isGoal": true,
+      "goalName": "Decode the Moon's Origin",
+      "action": {
+        "type": "addItem",
+        "room": "core-chamber",
+        "itemId": "origin-hologram"
+      }
+    }
+  }
+}
