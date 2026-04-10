@@ -539,9 +539,20 @@ export function getPlayerView(session, playerId) {
     }
   }
 
+  // Use solvedDescription if ALL puzzles in this room have been solved
+  let description = room.description;
+  if (room.solvedDescription) {
+    const roomPuzzles = Object.entries(session.world.puzzles || {})
+      .filter(([, puzzle]) => puzzle.room === player.room);
+    if (roomPuzzles.length > 0 &&
+        roomPuzzles.every(([puzzleId]) => session.puzzleStates[puzzleId]?.solved)) {
+      description = room.solvedDescription;
+    }
+  }
+
   const view = {
     name: roomName,
-    description: room.description,
+    description,
     exits: Object.keys(roomState.exits),
     items,
     players: otherPlayers,

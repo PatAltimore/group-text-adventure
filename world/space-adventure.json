@@ -1,7 +1,7 @@
 {
   "name": "The Derelict Station",
   "displayOrder": 3,
-  "description":"Three months of silence from Research Station Kharon-7. No distress call. No bodies. Your salvage crew docked expecting scrap metal and hazard pay — then the airlock sealed behind you and the station's AI stirred awake, cycling power through empty corridors like a faltering pulse. The crew logs are locked on the command deck, twelve compartments deep. Whatever happened here, the station remembers. You just have to survive long enough to ask.",
+  "description": "Three months of silence from Research Station Kharon-7. No distress call. No bodies. Your salvage crew docked expecting scrap metal and hazard pay — then the airlock sealed behind you and the station's AI stirred awake, cycling power through empty corridors like a faltering pulse. The crew logs are locked on the command deck, twelve compartments deep. Whatever happened here, the station remembers. You just have to survive long enough to ask.",
   "synopsis": "Survive a dying space station.",
   "startRoom": "airlock",
   "rooms": {
@@ -20,6 +20,7 @@
     "main-corridor": {
       "name": "Main Corridor — Section A",
       "description": "The station's central spine stretches into gloom, its ceiling choked with conduit bundles and dead light panels. Every third panel sputters to life, then dies — the AI's restless pulse. Scorch marks claw across the east wall where a panel has ruptured, the metal peeled back like burnt skin. The air sits heavy, metallic, coating the back of your throat. To the south is the airlock. West, frosted glass doors are stenciled 'MEDICAL BAY'. East, a cargo lift door stands open. A sealed bulkhead to the north blocks the way forward.",
+      "solvedDescription": "The corridor stretches the length of the ship, emergency lighting casting everything in amber. Hull panels are buckled and wiring hangs loose. The bulkhead door to the north has been unlocked, crew quarters accessible beyond.",
       "exits": {
         "south": "airlock",
         "west": "medical-bay",
@@ -49,6 +50,7 @@
     "medical-bay": {
       "name": "Medical Bay",
       "description": "White tiles, most cracked, some stained rust-brown. Overturned gurneys catch the light at wrong angles. A surgical lamp swings in slow arcs overhead — no breeze to explain it. The antiseptic smell has gone sour, curdled by something underneath. Medical cabinets line the far wall, smashed open and gutted. To the north, the quarantine chamber door sits behind a biometric lock glowing a steady, patient red. The main corridor is east.",
+      "solvedDescription": "Sterile white walls and surgical equipment under flickering lights. Auto-doc units line the far wall. The quarantine chamber lock to the north now glows green, its reinforced door unsealed and ready for entry.",
       "exits": {
         "east": "main-corridor"
       },
@@ -66,6 +68,7 @@
     "cargo-hold": {
       "name": "Cargo Hold",
       "description": "A cavernous bay yawning two decks high, stacked with shipping containers mag-locked to the deck plates. The overhead lights are dead. Only the slow blink of container status LEDs breaks the blackness — red, amber, green — like the breathing of sleeping machines. Your footsteps echo off walls you can't see. A cargo manifest terminal flickers near the north wall, its screen half-dead. The main corridor is west. A freight elevator to the north has power, but its call panel is dark.",
+      "solvedDescription": "Massive cargo containers are mag-locked to the deck, some broken open with contents scattered. The critical cargo has been secured — emergency supplies locked down and inventoried, a salvage manifest ready for command review.",
       "exits": {
         "west": "main-corridor"
       },
@@ -95,6 +98,7 @@
     "laboratory": {
       "name": "Research Laboratory",
       "description": "Specimen tanks line the walls in rows — most cracked, drained, dark. One still hums with power, its glass fogged with condensation, something pale suspended inside. Holographic displays stutter overhead: molecular diagrams, gene sequences, structures that pulse like living tissue. Lab benches lie buried under shattered beakers and scattered data pads. The crew quarters are west. A blast door to the north reads 'REACTOR — LEVEL 5 CLEARANCE', its lock glowing red.",
+      "solvedDescription": "Research stations with holographic displays showing interrupted experiments. Specimen containment units hum quietly. The blast door to the north has been unlocked, the reactor room visible beyond through reinforced glass.",
       "exits": {
         "west": "crew-quarters"
       },
@@ -123,6 +127,7 @@
     "reactor-room": {
       "name": "Reactor Control Room",
       "description": "The station's heart. A cylindrical reactor core rises through the center of the room, sheathed in shielding that pulses blue-white, casting everything in stark, shifting light. The vibration here is bone-deep — you feel it in your teeth, in your chest. Control consoles ring the perimeter, most dark. One labeled 'LIFE SUPPORT OVERRIDE' still glows, waiting for an authorization chip. The air is thick and ten degrees too warm, heavy with the smell of hot metal. The lab is south. A ladder to the north climbs toward the command deck, but an energy barrier shimmers across the way.",
+      "solvedDescription": "The reactor core pulses behind shielding glass, casting blue light across the chamber. Life support hums at full power, the air clean and warm. The energy barrier to the north has dropped, command deck access restored.",
       "exits": {
         "south": "laboratory"
       },

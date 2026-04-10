@@ -1,29 +1,35 @@
 {
   "name": "Shadows Over Blackwater",
   "displayOrder": 8,
-  "description":"The call came at 2 AM — the hour when nothing good happens. Victor Crane, shipping magnate and philanthropist, found dead in his private study at the Crane estate. One bullet, close range, no forced entry. The rain hasn't stopped since. You're Detective Harlow, twenty years on the force, and you've seen enough bodies to know when a case stinks. This one reeks. Crane had enemies — a bitter wife, a crooked partner, a scorned ex-employee, a disinherited brother. Everyone had motive. Everyone had opportunity. The department wants this closed fast, but you don't do fast. You do thorough. Grab your badge, your notebook, and whatever passes for courage these days. The truth is out there, buried under lies and money. Find it.",
+  "description": "The call came at 2 AM — the hour when nothing good happens. Victor Crane, shipping magnate and philanthropist, found dead in his private study at the Crane estate. One bullet, close range, no forced entry. The rain hasn't stopped since. You're Detective Harlow, twenty years on the force, and you've seen enough bodies to know when a case stinks. This one reeks. Crane had enemies — a bitter wife, a crooked partner, a scorned ex-employee, a disinherited brother. Everyone had motive. Everyone had opportunity. The department wants this closed fast, but you don't do fast. You do thorough. Grab your badge, your notebook, and whatever passes for courage these days. The truth is out there, buried under lies and money. Find it.",
   "synopsis": "Investigate a noir murder mystery.",
   "startRoom": "precinct-office",
   "rooms": {
     "precinct-office": {
       "name": "Precinct Office",
       "description": "Fluorescent lights hum overhead, painting everything the color of old coffee. Your desk is a battlefield of case files and cold cups. The bulletin board behind you is pinned with photos of Victor Crane — alive and not. A phone rings somewhere, unanswered. The squad room smells of burnt grounds and stale ambition. To the north, the Crane mansion awaits. East leads to the forensics lab. South, the back alleys where informants and trouble live in equal measure.",
+      "solvedDescription": "Fluorescent lights, old coffee color. Desk of case files and cold cups. Bulletin board: Crane photos. Mansion north. Forensics east. Alleys south. West, interrogation unlocked — probable cause, warrant signed.",
       "exits": {
         "north": "crane-mansion-foyer",
         "east": "forensics-lab",
         "south": "back-alley"
       },
-      "items": []
+      "items": [],
+      "solvedDescription": "Fluorescent lights paint everything the color of old coffee. Your desk is buried in case files. The bulletin board connects the evidence. Probable cause has been established — the interrogation room to the west is now open. The forensics lab is north."
     },
     "crane-mansion-foyer": {
       "name": "Crane Mansion Foyer",
       "description": "Crystal chandeliers hang from a vaulted ceiling three stories up, but half the bulbs are dead. The marble floor is veined with black, like the house itself is rotting from within. A grand staircase sweeps upward into shadow. Oil portraits of the Crane family line the walls — Victor's painted smile looks different now that you've seen his corpse. Crime scene tape blocks the north passage to the study. A faint perfume lingers — jasmine and something sharper. Helena Crane's scent. The air tastes like money and secrets.",
+      "solvedDescription": "Chandeliers half-dead. Marble veined black. Staircase into shadow. Crane portraits on walls. Crime tape blocks north study. East, bedroom ajar, Helena's jasmine scent. Air of money and secrets.",
       "exits": {
         "south": "precinct-office",
         "north": "crime-scene-study"
       },
-      "items": ["bloody-cufflink"],
-      "hazards": []
+      "items": [
+        "bloody-cufflink"
+      ],
+      "hazards": [],
+      "solvedDescription": "Crystal chandeliers hang from the vaulted ceiling, half the bulbs dead. The marble floor is veined with black. Fiber analysis has revealed a trail east — the master bedroom door now stands open, crime scene tape marking the threshold. The parlor is west. The front steps are south."
     },
     "crime-scene-study": {
       "name": "Crime Scene — Victor's Study",
@@ -32,7 +38,11 @@
         "south": "crane-mansion-foyer",
         "east": "wine-cellar"
       },
-      "items": ["murder-weapon", "insurance-policy", "threatening-letter"],
+      "items": [
+        "murder-weapon",
+        "insurance-policy",
+        "threatening-letter"
+      ],
       "hazards": []
     },
     "wine-cellar": {
@@ -41,44 +51,58 @@
       "exits": {
         "west": "crime-scene-study"
       },
-      "items": ["embezzlement-ledger"],
-      "hazards": [{
-        "description": "A rat darts across your foot in the darkness. You stumble backward into a wine rack, and bottles cascade down like glass rain.",
-        "probability": 0.06,
-        "deathText": "The heavy oak rack topples onto you. Hundreds of bottles shatter, and the rack pins you beneath its weight. The last thing you see is red wine pooling around you, indistinguishable from blood. They find you the next morning. Case closed — on you."
-      }]
+      "items": [
+        "embezzlement-ledger"
+      ],
+      "hazards": [
+        {
+          "description": "A rat darts across your foot in the darkness. You stumble backward into a wine rack, and bottles cascade down like glass rain.",
+          "probability": 0.06,
+          "deathText": "The heavy oak rack topples onto you. Hundreds of bottles shatter, and the rack pins you beneath its weight. The last thing you see is red wine pooling around you, indistinguishable from blood. They find you the next morning. Case closed — on you."
+        }
+      ]
     },
     "master-bedroom": {
       "name": "Master Bedroom",
       "description": "Helena Crane's domain. The bed is made with military precision — silk sheets, not a wrinkle. But the vanity tells a different story: prescription bottles crowd the mirror, and a half-empty bottle of vodka hides behind the perfumes. The closet door stands open, revealing clothes for two different lives — conservative black for the grieving widow, red silk for someone who wasn't grieving at all. A jewelry box on the nightstand has a false bottom. This room smells of jasmine perfume and carefully maintained lies. West returns to the foyer.",
+      "solvedDescription": "Helena's domain. Bed: military precision. Vanity: pills, vodka. Closet: black for the widow, red for the affair. Jewelry box open, false bottom exposed — secrets pried loose. Foyer west.",
       "exits": {
         "west": "crane-mansion-foyer"
       },
       "items": [],
-      "hazards": []
+      "hazards": [],
+      "solvedDescription": "Helena Crane’s domain. The bed made with military precision. The vanity tells the real story — prescriptions, scattered jewelry. A hidden compartment has been found, revealing a burner phone. The foyer is west."
     },
     "forensics-lab": {
       "name": "Forensics Lab",
       "description": "White tile walls, stainless steel tables, the antiseptic smell of truth stripped bare. Dr. Vasquez runs a tight ship — every surface gleams, every sample is labeled in her precise handwriting. UV lights cast the room in an alien blue glow. Microscopes line the counter like sentinels. A whiteboard tracks evidence: blood type, powder residue, fiber analysis. The facts don't lie, even when everyone else does. This is where hunches come to be confirmed or destroyed. West returns to the precinct.",
+      "solvedDescription": "White tile, steel, antiseptic truth. Vasquez's lab: gleaming, precise. UV blue. Whiteboard updated — timestamps red, three faces on new timeline. Garage footage enhanced on monitor. Precinct west.",
       "exits": {
         "west": "precinct-office"
       },
-      "items": ["forensic-report"],
-      "hazards": []
+      "items": [
+        "forensic-report"
+      ],
+      "hazards": [],
+      "solvedDescription": "White tile walls, stainless steel tables, antiseptic air. The security footage has been analyzed — a complete case file compiled from the evidence. The precinct is south."
     },
     "back-alley": {
       "name": "Back Alley",
       "description": "Rain pools in broken asphalt, reflecting neon signs that stutter and buzz. Dumpsters overflow with the city's refuse. A stray cat watches you from a fire escape with the suspicious eyes of someone who's seen too much. The alley connects the precinct district to the waterfront bars where Blackwater's underbelly drinks and deals. Graffiti on the brick wall reads 'SNITCHES GET STITCHES' in dripping red paint. East leads to the Rusty Anchor bar. North returns to the precinct. The south end of the alley disappears into the parking garage shadows.",
+      "solvedDescription": "Rain in broken asphalt, neon stuttering. Cat on fire escape. Alley to waterfront bars. Rusty Anchor east. Precinct north. South, parking garage beckons — tire marks and answers.",
       "exits": {
         "north": "precinct-office",
         "east": "rusty-anchor-bar"
       },
       "items": [],
-      "hazards": [{
-        "description": "Footsteps echo behind you — heavy, deliberate. Someone doesn't want you asking questions in this neighborhood.",
-        "probability": 0.08,
-        "deathText": "You turn too late. A blunt impact at the base of your skull, and the wet pavement rushes up to meet your face. Your badge clatters into a puddle. The rain keeps falling. Another unsolved case in Blackwater."
-      }]
+      "hazards": [
+        {
+          "description": "Footsteps echo behind you — heavy, deliberate. Someone doesn't want you asking questions in this neighborhood.",
+          "probability": 0.08,
+          "deathText": "You turn too late. A blunt impact at the base of your skull, and the wet pavement rushes up to meet your face. Your badge clatters into a puddle. The rain keeps falling. Another unsolved case in Blackwater."
+        }
+      ],
+      "solvedDescription": "Rain pools in broken asphalt, reflecting stuttering neon. Dumpsters overflow. The threat in the shadows has been neutralized. A cufflink trace leads south to the parking garage, now accessible. The precinct is north."
     },
     "rusty-anchor-bar": {
       "name": "The Rusty Anchor",
@@ -86,12 +110,16 @@
       "exits": {
         "west": "back-alley"
       },
-      "items": ["bartender-statement"],
-      "hazards": [{
-        "description": "Dominic Crane spots you from his booth. His eyes narrow, and he reaches inside his coat. You can't tell if he's going for a flask or something worse.",
-        "probability": 0.07,
-        "deathText": "It wasn't a flask. The gunshot is deafening in the small bar. Dominic stands over you, shaking, muttering about how you were going to pin it on him like everyone else. Sal dials 911 too late. The case dies with its detective."
-      }]
+      "items": [
+        "bartender-statement"
+      ],
+      "hazards": [
+        {
+          "description": "Dominic Crane spots you from his booth. His eyes narrow, and he reaches inside his coat. You can't tell if he's going for a flask or something worse.",
+          "probability": 0.07,
+          "deathText": "It wasn't a flask. The gunshot is deafening in the small bar. Dominic stands over you, shaking, muttering about how you were going to pin it on him like everyone else. Sal dials 911 too late. The case dies with its detective."
+        }
+      ]
     },
     "parking-garage": {
       "name": "Waterfront Parking Garage",
@@ -100,30 +128,38 @@
         "north": "back-alley",
         "east": "warehouse-office"
       },
-      "items": ["security-footage"],
+      "items": [
+        "security-footage"
+      ],
       "hazards": []
     },
     "warehouse-office": {
       "name": "Webb's Warehouse Office",
       "description": "Marcus Webb keeps his real books here, away from the glass towers downtown. The office is a converted shipping container — industrial desk, filing cabinets with combination locks, a coffee maker that's seen better decades. Shipping manifests paper the walls, but the numbers don't add up — they never do with Webb. A photograph on the desk shows Marcus and Victor shaking hands at a charity gala, smiles sharp enough to cut. The partnership that made them both rich is the same one that might have gotten Victor killed. West returns to the parking garage.",
+      "solvedDescription": "Webb's real books. Shipping container office — desk, locked cabinets. Manifests, numbers wrong. Photo: Marcus and Victor, sharp smiles. Thugs scattered. Secrets open. Parking garage west.",
       "exits": {
         "west": "parking-garage"
       },
       "items": [],
-      "hazards": [{
-        "description": "Two of Webb's dockworkers block the doorway, arms crossed. They don't appreciate detectives poking around the boss's private office.",
-        "probability": 0.12,
-        "deathText": "Webb's men are thorough and professional. They work you over with the mechanical efficiency of longshoremen who've done this before. Your body turns up floating in the harbor three days later. The department calls it an accident. Nobody believes it. Nobody investigates."
-      }]
+      "hazards": [
+        {
+          "description": "Two of Webb's dockworkers block the doorway, arms crossed. They don't appreciate detectives poking around the boss's private office.",
+          "probability": 0.12,
+          "deathText": "Webb's men are thorough and professional. They work you over with the mechanical efficiency of longshoremen who've done this before. Your body turns up floating in the harbor three days later. The department calls it an accident. Nobody believes it. Nobody investigates."
+        }
+      ],
+      "solvedDescription": "Marcus Webb’s real books are here in this converted shipping container. The thugs blocking the door have been dealt with — the office is clear and accessible. Filing cabinets line the walls. The dock is south."
     },
     "interrogation-room": {
       "name": "Interrogation Room",
       "description": "Bare walls, one table, two chairs, a one-way mirror. The overhead light is deliberately harsh — every pore, every twitch, every lie shows up like a bruise under this light. A recording device sits on the table, red light steady. This is where cases end. Where the careful architecture of alibis crumbles under the weight of evidence. The chair across from you is empty. For now. East returns to the precinct.",
+      "solvedDescription": "Bare walls, table, chairs, mirror. Harsh light. Recorder blinking red. Case file spread, every thread connected. The chair won't stay empty. Precinct east.",
       "exits": {
         "east": "precinct-office"
       },
       "items": [],
-      "hazards": []
+      "hazards": [],
+      "solvedDescription": "Bare walls, one table, two chairs, a one-way mirror. The overhead light is deliberately harsh. The suspect has been broken — the murder solved. The truth sits heavy in the room. The precinct office is east."
     }
   },
   "items": {

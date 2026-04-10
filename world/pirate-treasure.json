@@ -1,35 +1,50 @@
 {
   "name": "Dead Man's Fortune",
   "displayOrder": 7,
-  "description":"The longboat grinds against black sand and you tumble ashore, gasping. Behind you, the stolen sloop lists and sinks beneath the waves — your only way off this island, gone. But you didn't come here to leave. You came for Captain Blackwood's treasure, the fortune that drove a hundred pirates mad and sent twice as many to their graves. The torn map clutched in your fist shows a skull-shaped mountain, an X scratched deep into the parchment. Somewhere on this island, beneath rock and bone and centuries of jungle, a king's ransom waits in the dark. The surf hisses at your heels. Parrots scream from the treeline. And somewhere in the green tangle ahead, something watches you arrive.",
+  "description": "The longboat grinds against black sand and you tumble ashore, gasping. Behind you, the stolen sloop lists and sinks beneath the waves — your only way off this island, gone. But you didn't come here to leave. You came for Captain Blackwood's treasure, the fortune that drove a hundred pirates mad and sent twice as many to their graves. The torn map clutched in your fist shows a skull-shaped mountain, an X scratched deep into the parchment. Somewhere on this island, beneath rock and bone and centuries of jungle, a king's ransom waits in the dark. The surf hisses at your heels. Parrots scream from the treeline. And somewhere in the green tangle ahead, something watches you arrive.",
   "synopsis": "Find legendary pirate treasure on skull island.",
   "startRoom": "shipwreck-beach",
   "rooms": {
     "shipwreck-beach": {
       "name": "Shipwreck Beach",
       "description": "Black volcanic sand stretches between jagged coral outcrops. The remains of a dozen ships rot in the shallows — splintered masts jutting from the water like the ribs of drowned giants. Your own sloop has already slipped beneath the surface, leaving nothing but bubbles and regret. To the east, a narrow trail disappears into a wall of green. The air smells of salt, tar, and something older — something that has been dead a very long time. Crabs scatter across bleached timbers. A tattered flag snaps in the wind, its skull-and-crossbones barely visible beneath decades of sun and storm.",
-      "exits": { "east": "jungle-trail" },
-      "items": ["torn-map"],
+      "solvedDescription": "Black sand between coral. Ships rot in shallows. Sloop sunk. Trail east into jungle. South, tide reveals a passage — hidden cove, coins glinting.",
+      "exits": {
+        "east": "jungle-trail"
+      },
+      "items": [
+        "torn-map"
+      ],
       "hazards": [
         {
           "description": "The tide is rising fast — the black sand shifts beneath your feet as waves claw higher up the beach.",
           "probability": 0.06,
           "deathText": "A rogue wave crashes over the coral barrier with terrifying force. The undertow seizes your legs and drags you into the churning shallows. The last thing you see is the dark shape of a hull timber spinning toward your head. The island keeps its secrets."
         }
-      ]
+      ],
+      "solvedDescription": "Black volcanic sand stretches between jagged coral outcrops. Ship remains rot in the shallows. To the south, a hidden cove has been revealed at low tide, accessible through the rocks. The jungle trail leads north."
     },
     "tidal-cove": {
       "name": "The Hidden Cove",
       "description": "A crescent of white sand cupped between sheer volcanic cliffs, invisible from the main beach. The water here is impossibly clear — you can see coins glinting on the sandy bottom, scattered like stars. A longboat lies overturned above the tideline, its hull crusted with barnacles but still sound. Carved into the cliff face, barely visible beneath curtains of hanging moss, are crude symbols: skulls, crossed bones, and an arrow pointing deeper into the rock. A rusted iron lantern hangs from a spike driven into the stone, its glass cracked but intact.",
-      "exits": { "north": "shipwreck-beach" },
-      "items": ["oil-lantern"],
+      "exits": {
+        "north": "shipwreck-beach"
+      },
+      "items": [
+        "oil-lantern"
+      ],
       "hazards": []
     },
     "jungle-trail": {
       "name": "Jungle Trail",
       "description": "The canopy closes overhead like a green cathedral, blocking out the sky. Enormous ferns unfurl across the path. Vines thick as a sailor's arm hang from mahogany trees draped in Spanish moss. The air is thick, wet, and buzzing with insects. Somewhere above, a parrot shrieks a sound disturbingly like laughter. The trail is old — cut by machete generations ago, now half-reclaimed by the jungle. Boot prints fossilized in dried mud suggest you are not the first to walk this path. You will not be the last. The beach lies west. The trail continues east toward crumbling stone walls visible through the trees.",
-      "exits": { "west": "shipwreck-beach", "east": "ruined-fort" },
-      "items": ["brass-compass"],
+      "exits": {
+        "west": "shipwreck-beach",
+        "east": "ruined-fort"
+      },
+      "items": [
+        "brass-compass"
+      ],
       "hazards": [
         {
           "description": "Rustling in the undergrowth — something long and scaled slides through the ferns just ahead of you.",
@@ -41,7 +56,12 @@
     "ruined-fort": {
       "name": "Fort Blackwood",
       "description": "The jungle parts to reveal crumbling stone walls draped in creeping vines — the remains of a pirate fortress, built to guard something worth killing for. Cannon emplacements face the sea through gaps in the battlements, their iron barrels orange with rust. The courtyard is littered with broken bottles, corroded cutlasses, and the scattered bones of men who died arguing over shares. A stone staircase climbs north to what remains of the captain's quarters. To the south, a muddy track descends into swampy lowlands. The jungle trail returns west. The eastern wall has partially collapsed, but the rubble looks deliberate — as if someone sealed a passage on purpose.",
-      "exits": { "west": "jungle-trail", "north": "captain-quarters", "south": "mangrove-swamp" },
+      "solvedDescription": "Crumbling walls in vines — pirate fortress. Cannons face the sea. Courtyard of bottles and bones. Stairs north to captain's quarters. South to swamp. West to jungle. East, rubble cleared to lookout tower.",
+      "exits": {
+        "west": "jungle-trail",
+        "north": "captain-quarters",
+        "south": "mangrove-swamp"
+      },
       "items": [],
       "hazards": [
         {
@@ -49,26 +69,39 @@
           "probability": 0.07,
           "deathText": "A section of the battlements gives way with a grinding roar. Tons of coral-stone crash into the courtyard, filling the air with dust and the sound of breaking bones — yours among them. Fort Blackwood buries another soul in its foundations."
         }
-      ]
+      ],
+      "solvedDescription": "Crumbling stone walls draped in vines — the remains of a pirate fortress. Cannon mounts rust in the salty air. To the east, the lookout tower door has been forced open, revealing the watchtower stairs. The jungle trail is west."
     },
     "captain-quarters": {
       "name": "Captain's Quarters",
       "description": "The upper chamber of the fort, open to the sky where the roof collapsed long ago. A mahogany desk — scarred with knife marks and burn rings — dominates the room. Charts are pinned to the walls with corroded daggers, their ink faded to ghosts. A hammock sways in the breeze, strung between pillars that no longer hold anything up. Through the broken windows, you can see the entire island: the beach to the west, the swamp to the south, and rising above the jungle canopy to the east, the unmistakable silhouette of Skull Mountain. A leather-bound journal lies open on the desk, its pages yellowed but legible. The courtyard is south.",
-      "exits": { "south": "ruined-fort" },
-      "items": ["captains-journal"],
+      "exits": {
+        "south": "ruined-fort"
+      },
+      "items": [
+        "captains-journal"
+      ],
       "hazards": []
     },
     "lookout-tower": {
       "name": "The Lookout Tower",
       "description": "You emerge through the cleared rubble onto a narrow platform high above the fort. The view steals your breath — emerald jungle rolling to white surf, the volcanic peak of Skull Mountain black against the sky, and far below, the treacherous mangrove swamp where the island's secrets sink and vanish. A rusted telescope bolted to the railing still turns, though its lenses are fogged with salt. Scratched into the stone floor is a crude diagram: a shovel, an X, and the words 'DIG WHERE THE DEAD MAN POINTS.' Below the carving, someone has wedged a shovel into a crack in the masonry, handle up, waiting for the next fool brave enough to follow a dead pirate's instructions.",
-      "exits": { "west": "ruined-fort" },
-      "items": ["rusty-shovel"],
+      "exits": {
+        "west": "ruined-fort"
+      },
+      "items": [
+        "rusty-shovel"
+      ],
       "hazards": []
     },
     "mangrove-swamp": {
       "name": "Mangrove Swamp",
       "description": "The ground turns to black mud and standing water. Mangrove roots twist out of the muck like clutching fingers, and the air reeks of decay and sulfur. Clouds of mosquitoes whine in your ears. Every step sinks ankle-deep, and some patches of ground look solid but shimmer with a deceptive wetness that promises a slow, sucking death. A bleached skeleton leans against a mangrove trunk, one bony arm extended south as if pointing the way — or warning you back. Its other hand clutches nothing, the fingers curled around empty air. The fort is north. A dark cave mouth gapes in the hillside to the south, framed by moss-covered stones carved to look like a screaming skull.",
-      "exits": { "north": "ruined-fort", "south": "skull-cave-entrance" },
+      "solvedDescription": "Black mud. Roots from muck. Quicksand staked safe. Skeleton by trunk, arm south, vault key dug free. Fort north. South, cave framed by skull-carved stones.",
+      "exits": {
+        "north": "ruined-fort",
+        "south": "skull-cave-entrance"
+      },
       "items": [],
       "hazards": [
         {
@@ -76,30 +109,42 @@
           "probability": 0.12,
           "deathText": "Your foot breaks through a thin crust of dried mud into something bottomless. Quicksand. You thrash, but every movement pulls you deeper. The black water rises past your waist, your chest, your chin. The last sound you hear is the wet, indifferent gurgle of the swamp swallowing you whole."
         }
-      ]
+      ],
+      "solvedDescription": "Black mud and standing water. Mangrove roots twist from the muck. The quicksand patches have been mapped and marked safe. The air still reeks of decay, but the ground feels stable. The skull cave entrance is east. The shipwreck beach is north."
     },
     "skull-cave-entrance": {
       "name": "Skull Cave Entrance",
       "description": "The cave mouth yawns open in the hillside, its stone lintel carved into the shape of a massive skull — eye sockets dark and hollow, jaw hanging open as if mid-scream. Wind moans through the opening, carrying the smell of damp stone and old death. The walls inside are slick with condensation, and beyond the first few feet, the darkness is absolute. You can hear water dripping somewhere deep within, echoing off unseen walls. Scratched into the stone beside the entrance, in a desperate hand: 'BRING LIGHT OR BRING NOTHING.' The swamp is north.",
-      "exits": { "north": "mangrove-swamp" },
-      "items": ["skeleton-key"],
+      "solvedDescription": "Cave mouth, skull lintel. Lantern light amber on slick walls. South along underground river, water like obsidian. 'BRING LIGHT OR BRING NOTHING.' Swamp north.",
+      "exits": {
+        "north": "mangrove-swamp"
+      },
+      "items": [
+        "skeleton-key"
+      ],
       "hazards": [
         {
           "description": "Loose stones shift overhead — the cave entrance is unstable, and vibrations could bring the ceiling down.",
           "probability": 0.08,
           "deathText": "A tremor ripples through the hillside. The skull-carved lintel cracks, and the ceiling comes down in a cascade of stone and dust. The cave entrance seals itself like a closing mouth, and the darkness inside becomes permanent. The island buries its secrets — and you with them."
         }
-      ]
+      ],
+      "solvedDescription": "The cave mouth yawns open, stone lintel carved into a massive skull. Torchlight now illuminates the interior. A passage south leads to the underground river, the way visible by flickering flame. The mangrove swamp is west."
     },
     "underground-river": {
       "name": "Underground River",
       "description": "Your lantern carves a trembling sphere of gold from the blackness. An underground river rushes through a cavern of staggering scale — the ceiling lost in darkness above, the water black and fast below. A narrow ledge of slick stone follows the river's edge south, barely wide enough for single file. Stalactites drip mineral water that tastes of iron and time. On the cavern wall, someone has painted symbols in what looks horribly like dried blood: arrows pointing south, a crude treasure chest, and beneath it all, a single word — 'BEWARE.' The lantern light catches something gold in the shallows — coins, scattered across the river bottom like a trail of breadcrumbs leading deeper underground.",
-      "exits": { "north": "skull-cave-entrance", "south": "trap-corridor" },
-      "items": ["cursed-doubloon"],
+      "exits": {
+        "north": "skull-cave-entrance",
+        "south": "trap-corridor"
+      },
+      "items": [
+        "cursed-doubloon"
+      ],
       "hazards": [
         {
           "description": "The river surges without warning — flash floods from the mountain above can fill this cavern in minutes.",
-          "probability": 0.10,
+          "probability": 0.1,
           "deathText": "A roar echoes from the darkness upstream. The river swells, climbing the ledge in seconds. The current hits you like a fist of black ice, ripping your grip from the stone and dragging you into the churning depths. Your lantern dies. The river carries you into the mountain's heart, where no light has ever reached."
         }
       ]
@@ -107,7 +152,10 @@
     "trap-corridor": {
       "name": "The Gauntlet",
       "description": "The cavern narrows into a corridor of fitted stone — not natural, but built. Built to kill. The walls are studded with tiny holes, each one a dart tube loaded with poison that hasn't lost its potency in three hundred years. Pressure plates checker the floor in a pattern that might be random or might be a code. The bones of previous treasure hunters crunch underfoot, their bleached remains arranged in attitudes of surprise and agony. At the far end of the corridor, a massive iron door is set into the living rock, its surface covered in verdigris and fitted with a single, ornate keyhole shaped like a grinning skull. Beyond that door — if the legends are true — lies Captain Blackwood's fortune.",
-      "exits": { "north": "underground-river" },
+      "solvedDescription": "Fitted stone — built to kill. Darts spent, pressure plates known. Bones underfoot. Iron door ajar, lock defeated. Beyond, golden light — Blackwood's fortune.",
+      "exits": {
+        "north": "underground-river"
+      },
       "items": [],
       "hazards": [
         {
@@ -115,13 +163,18 @@
           "probability": 0.13,
           "deathText": "Your heel finds a pressure plate. A soft click. Then a hiss from both walls simultaneously — a dozen darts, each one tipped with curare three centuries old and not one day less lethal. They find you before you can flinch. The poison is fast, at least. You join the other skeletons on the corridor floor, one more warning that no one will heed."
         }
-      ]
+      ],
+      "solvedDescription": "A corridor of fitted stone studded with dart tubes and pressure plates. The ancient traps have been disarmed. To the south, the treasure vault door stands unlocked, the final barrier cleared. The underground river is north."
     },
     "treasure-vault": {
       "name": "The Treasure Vault",
       "description": "Mountains of gold. That's what you see first — gold coins heaped in drifts like autumn leaves, gold bars stacked in neat rows, gold chalices and gold chains and a gold crown set with rubies the size of your thumbnail. Chests overflow with emeralds, sapphires, pearls, and uncut diamonds that catch your lantern light and throw it back in a thousand fractured rainbows. Against the far wall, Captain Blackwood himself sits in a carved throne, nothing but bones and a tricorn hat, his skeleton grinning at the fortune he could never spend and could never leave behind. In his lap rests a jade idol — an ancient thing, older than piracy, older than the island itself — its emerald eyes gleaming with a light that has nothing to do with your lantern. You found it. You actually found it. Now you just have to figure out how to get it home.",
-      "exits": { "north": "trap-corridor" },
-      "items": ["jade-idol"],
+      "exits": {
+        "north": "trap-corridor"
+      },
+      "items": [
+        "jade-idol"
+      ],
       "hazards": []
     }
   },

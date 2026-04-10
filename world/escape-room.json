@@ -1,29 +1,44 @@
 {
   "name": "The Clockmaker's Mansion",
   "displayOrder": 2,
-  "description":"Your eyes snap open on cold marble. The air tastes of dust and machine oil. Above you, a dead chandelier. Behind you, an oak door fitted with seven locks — none of which will turn. A note on the floor, written in impossibly precise handwriting: 'Welcome, guests. I am the Clockmaker. This mansion is my masterpiece, and you are its newest pieces. Find the seven keys, or become part of the collection.' From somewhere deep in the house, a grandfather clock begins to chime — not marking the hour, but counting down.",
+  "description": "Your eyes snap open on cold marble. The air tastes of dust and machine oil. Above you, a dead chandelier. Behind you, an oak door fitted with seven locks — none of which will turn. A note on the floor, written in impossibly precise handwriting: 'Welcome, guests. I am the Clockmaker. This mansion is my masterpiece, and you are its newest pieces. Find the seven keys, or become part of the collection.' From somewhere deep in the house, a grandfather clock begins to chime — not marking the hour, but counting down.",
   "synopsis": "Find seven keys to escape the mansion.",
   "startRoom": "foyer",
   "rooms": {
     "foyer": {
       "name": "The Grand Foyer",
       "description": "Checkered marble stretches beneath a crystal chandelier that hasn't burned in years. The front door looms behind you — massive oak reinforced with iron bands, seven keyholes glinting in the half-light. All locked. A grand staircase sweeps upward, but a velvet rope blocks the way, cinched to a brass post by a small combination lock. Hallways branch east toward a parlor and west toward a dining room. Above the door, a faded portrait of a stern old man stares down — the Clockmaker, his painted eyes seeming to follow every step you take.",
-      "exits": { "east": "parlor", "west": "dining-room" },
-      "items": ["welcome-note"],
+      "solvedDescription": "A grand entrance hall with checkered marble floors and a crystal chandelier overhead. The front door is sealed tight. The velvet rope across the staircase has been removed, and the way north to the upper hallway now stands open and inviting.",
+      "exits": {
+        "east": "parlor",
+        "west": "dining-room"
+      },
+      "items": [
+        "welcome-note"
+      ],
       "hazards": []
     },
     "parlor": {
       "name": "The Parlor",
       "description": "Time stopped here long ago. Velvet armchairs circle a fireplace gone cold, their cushions still bearing the impressions of guests who never returned. A grandfather clock ticks in the corner — the only sound — its pendulum swinging behind dusty glass. Bookshelves crowd the north wall, leather spines fading to anonymity. One volume, bound in red, juts slightly from the rest. A door to the south is sealed behind an ornate brass mechanism. The foyer lies west.",
-      "exits": { "west": "foyer" },
-      "items": ["red-book"],
+      "exits": {
+        "west": "foyer"
+      },
+      "items": [
+        "red-book"
+      ],
       "hazards": []
     },
     "dining-room": {
       "name": "The Dining Room",
       "description": "A long mahogany table set for a feast that never came. Tarnished candelabras drip with ancient wax. Fine china wears a skin of dust. Crystal goblets stand half-full of something dark and long since dried. The air smells faintly of vinegar and old silver. A serving hatch in the north wall leads to the kitchen, but something heavy on the other side holds it shut. The foyer is east. A narrow door to the south bears a painted musical note, its blue paint peeling at the edges.",
-      "exits": { "east": "foyer" },
-      "items": ["silver-fork"],
+      "solvedDescription": "A formal dining room with a long mahogany table set for a dinner party that never happened. Candelabras flicker with real flame. The doors have been unlocked — south opens to a music room where faint melodies drift through, and north reveals the kitchen beyond.",
+      "exits": {
+        "east": "foyer"
+      },
+      "items": [
+        "silver-fork"
+      ],
       "hazards": [
         {
           "description": "Candlelight shivers against the walls — something breathes through the house, a draft from a passage you cannot find.",
@@ -35,15 +50,25 @@
     "music-room": {
       "name": "The Music Room",
       "description": "The acoustics shift the moment you cross the threshold — every footstep sharpens, every breath amplifies. A grand piano commands the center of this small chamber, its lid propped open to reveal strings thick with dust. Violins, a harp, and a cello line the walls like patient sentinels. One violin case lies open but empty, its velvet interior molded to the shape of something decidedly not a violin. The dining room is north.",
-      "exits": { "north": "dining-room" },
-      "items": ["sheet-music"],
+      "exits": {
+        "north": "dining-room"
+      },
+      "items": [
+        "sheet-music"
+      ],
       "hazards": []
     },
     "kitchen": {
       "name": "The Kitchen",
       "description": "Copper pots hang from ceiling racks like frozen bells. A vast industrial space of iron and cracked tile. The ancient wood-burning stove still radiates a ghost of warmth — someone was here not long ago. The pantry door to the west hangs open, its padlock already sprung. On the stone counter, a mortar and pestle cradles traces of green powder that stings your nostrils. The serving hatch south leads back to the dining room. A narrow servants' staircase climbs north, swallowed by darkness.",
-      "exits": { "south": "dining-room" },
-      "items": ["iron-key", "pantry-note"],
+      "solvedDescription": "A vintage kitchen with copper pots and a cast-iron stove. The gas leak has been sealed — the shutoff valve turned, air now clear and safe to breathe. Ingredients and utensils line the countertops in orderly rows.",
+      "exits": {
+        "south": "dining-room"
+      },
+      "items": [
+        "iron-key",
+        "pantry-note"
+      ],
       "hazards": [
         {
           "description": "The gas line hisses faintly — don't strike any sparks near the stove.",
@@ -55,36 +80,56 @@
     "study": {
       "name": "The Clockmaker's Study",
       "description": "The Clockmaker's private sanctum. Technical drawings of impossibly intricate mechanisms plaster every surface — the desk, the walls, even the ceiling. Gears and springs litter the floor like brass confetti. A half-assembled clock sits on the desk, its heart missing: no mainspring. Behind a tilted painting, a wall safe is visible, its four-digit combination lock gleaming. The hallway lies south. A locked door to the north has a keyhole cut in the unmistakable shape of a musical note.",
-      "exits": { "south": "upper-hallway" },
-      "items": ["gear-piece"],
+      "solvedDescription": "Dark wood panels and floor-to-ceiling bookshelves line the walls. A globe sits beside a leather chair. The hidden door to the north has swung open, revealing the observatory beyond — the faint gleam of brass instruments visible through the doorway.",
+      "exits": {
+        "south": "upper-hallway"
+      },
+      "items": [
+        "gear-piece"
+      ],
       "hazards": []
     },
     "upper-hallway": {
       "name": "The Upper Hallway",
       "description": "A corridor of absences. At the top of the grand staircase, empty portrait frames line the walls — every painting removed, leaving only dust outlines and dangling wires. The carpet is threadbare along a path worn between doors by countless footsteps. Moonlight bleeds through a cracked window at the hall's end, painting silver streaks across the floor. The study is north. A guest bedroom lies to the east. The stairs descend south to the foyer.",
-      "exits": { "north": "study", "east": "guest-bedroom", "south": "foyer" },
+      "exits": {
+        "north": "study",
+        "east": "guest-bedroom",
+        "south": "foyer"
+      },
       "items": [],
       "hazards": []
     },
     "guest-bedroom": {
       "name": "The Guest Bedroom",
       "description": "A four-poster bed sags under moth-eaten curtains, the silk frayed to cobwebs. The dresser mirror is cracked in a spiderweb pattern — and in its fractured reflection, something catches your eye: the wallpaper behind the bed bears a subtly different pattern than the rest. A wardrobe leans against the west wall, its door hanging ajar, exhaling the scent of cedar and age. The upper hallway is west.",
-      "exits": { "west": "upper-hallway" },
+      "solvedDescription": "A cozy bedroom with floral wallpaper and a four-poster bed. A music box sits on the nightstand, now repaired and playing its delicate melody. Behind the wallpaper panel to the east, a secret workshop has been revealed, tools and gears visible within.",
+      "exits": {
+        "west": "upper-hallway"
+      },
       "items": [],
       "hazards": []
     },
     "secret-workshop": {
       "name": "The Secret Workshop",
       "description": "The air changes behind the wallpaper — cooler, tinged with brass and oil. This is the Clockmaker's true workshop. Workbenches overflow with tiny gears, coiled springs, and half-finished automatons frozen in various states of assembly. A mechanical bird perches in a wire cage, beak open in a song it will never finish. In the center of the room stands a clockwork door fitted with seven keyhole slots, each a different shape, barring a passage east. The guest bedroom is west.",
-      "exits": { "west": "guest-bedroom" },
-      "items": ["clockwork-key"],
+      "exits": {
+        "west": "guest-bedroom"
+      },
+      "items": [
+        "clockwork-key"
+      ],
       "hazards": []
     },
     "observatory": {
       "name": "The Observatory",
       "description": "The mansion's crown — a domed chamber open to the heavens. A brass telescope points at the night sky through a slit in the ceiling. Constellations sweep across the dome in faded gold, and small brass stars embedded in the plaster catch the moonlight like scattered coins. At the center, a complex orrery — a mechanical model of the solar system — rests on a stone pedestal, its planets frozen mid-orbit, waiting for a hand to set them spinning again. A hatch in the floor leads down to the study.",
-      "exits": { "south": "study" },
-      "items": ["master-key"],
+      "exits": {
+        "south": "study"
+      },
+      "items": [
+        "master-key"
+      ],
       "hazards": []
     }
   },

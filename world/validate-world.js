@@ -60,6 +60,9 @@ export function validateWorld(worldData) {
     if (!room.description || typeof room.description !== 'string') {
       errors.push(`Room \"${roomId}\": \"description\" is required and must be a string.`);
     }
+    if (room.solvedDescription !== undefined && typeof room.solvedDescription !== 'string') {
+      errors.push(`Room \"${roomId}\": \"solvedDescription\" must be a string when provided.`);
+    }
     if (!room.exits || typeof room.exits !== 'object') {
       errors.push(`Room \"${roomId}\": \"exits\" is required and must be an object.`);
       continue;

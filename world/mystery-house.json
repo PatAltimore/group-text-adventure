@@ -1,7 +1,7 @@
 {
   "name": "The Mystery House",
   "displayOrder": 9,
-  "description":"Rain lashes against broken windows as thunder cracks the sky. You stand before Blackwood Manor — a Victorian mansion abandoned by the living. Not by the dead, the locals whisper. The iron gates hang open like broken teeth. Dead vines choke the crumbling facade. Lightning reveals windows that seem to watch with malevolent intent. Your car died a mile back. The storm is worsening. Cold rain runs down your collar as you cross the threshold — the only shelter is within those rotting walls. The front door slams behind you. The lock clicks with terrible finality. There is no going back.",
+  "description": "Rain lashes against broken windows as thunder cracks the sky. You stand before Blackwood Manor — a Victorian mansion abandoned by the living. Not by the dead, the locals whisper. The iron gates hang open like broken teeth. Dead vines choke the crumbling facade. Lightning reveals windows that seem to watch with malevolent intent. Your car died a mile back. The storm is worsening. Cold rain runs down your collar as you cross the threshold — the only shelter is within those rotting walls. The front door slams behind you. The lock clicks with terrible finality. There is no going back.",
   "synopsis": "Uncover dark secrets in a haunted manor.",
   "startRoom": "entrance-hall",
   "rooms": {
@@ -27,6 +27,7 @@
     "library": {
       "name": "The Library",
       "description": "Walls of books reach toward a vaulted ceiling lost in shadow. Most volumes are rotted beyond reading, but some remain — forbidden grimoires, journals in trembling handwriting, medical texts from when surgery was butchery. The air smells of old leather and foxed paper, underlaid with something sharp and chemical. A massive oak desk dominates the center, buried in scattered papers and dried ink. The windows are boarded shut. Moonlight seeps through cracks, painting silver stripes across the dusty floor. A leather armchair faces the cold fireplace, positioned as if someone just stood up. The floorboards creak beneath you — only beneath you, you are certain. The entrance hall is west. A narrow door to the north is carved with strange symbols.",
+      "solvedDescription": "Books reach toward a vaulted ceiling. Some remain — grimoires, trembling journals. Air of leather and chemicals. A desk buried in papers. Moonlight through boarded windows. Entrance hall west. The door north stands ajar, symbols dark, exhaling ash from the study.",
       "exits": {
         "west": "entrance-hall",
         "north": "hidden-study"
@@ -41,11 +42,13 @@
           "probability": 0.1,
           "deathText": "The whispers crescendo into screams. Books launch from shelves like startled ravens. Pages slice skin like razors. The library devours you, adding your voice to its eternal chorus."
         }
-      ]
+      ],
+      "solvedDescription": "Walls of books reach toward a vaulted ceiling. Grimoires and trembling journals remain on shelves. The air smells of leather and something chemical. A desk is buried in scattered papers. The entrance hall is west. The narrow door north stands ajar, its carved symbols dark, exhaling ash from the study beyond."
     },
     "parlor": {
       "name": "The Parlor",
       "description": "A once-elegant sitting room, now home to rot and shadow. Moth-eaten curtains hang in tatters. The air carries a ghost of lavender — someone’s perfume, lingering decades past its owner. A grand piano stands in the corner, keys yellowed and cracked. When the wind moans through broken panes, you swear you hear a chord. Victorian furniture is arranged as if expecting guests who never arrived. Or perhaps they arrived and never left. A music box sits on the mantle, mechanism exposed and frozen mid-note. Photographs in silver frames show the Blackwood family — mother, father, three children — their faces scratched out by frantic fingers. The entrance hall is east. A door to the south is locked with a silver padlock.",
+      "solvedDescription": "A sitting room of rot and shadow. Ghost of lavender in the air. A yellowed piano in the corner. Photographs of the Blackwoods — faces scratched out. Entrance hall east. Southern door open, padlock loose, warm air from the greenhouse below.",
       "exits": {
         "east": "entrance-hall"
       },
@@ -59,7 +62,8 @@
           "probability": 0.09,
           "deathText": "The piano erupts into a frenzied symphony, keys hammering with impossible force. The sound bores into your skull like a hot wire. Your ears bleed. Your thoughts shatter. You collapse, and the music plays on over your body."
         }
-      ]
+      ],
+      "solvedDescription": "A sitting room of rot and shadow. The air carries a ghost of lavender. A yellowed piano stands in the corner. Photographs show the Blackwood family — faces scratched out. The entrance hall is east. The southern door stands open, silver padlock unlatched, warm air drifting from the greenhouse below."
     },
     "dining-room": {
       "name": "The Dining Room",
@@ -81,6 +85,7 @@
     "kitchen": {
       "name": "The Kitchen",
       "description": "A cavernous industrial kitchen from a bygone era. Copper pots hang from hooks, green with verdigris. A massive cast-iron stove hunches against the wall like a sleeping beast, still radiating a faint, impossible warmth. The butcher’s block is scarred with cuts that go too deep, stained too dark. Knives jut from the walls at odd angles — thrown in panic or rage. Water drips somewhere behind the walls, a slow metronome counting nothing. The pantry door hangs open, revealing empty shelves and scratch marks on the inside — fingernail gouges. A meat locker to the west is sealed with a heavy bolt. The dining room is south. A cellar door to the east is secured with a heavy padlock.",
+      "solvedDescription": "A cavernous kitchen. Copper pots green with verdigris. The stove radiates impossible warmth. Butcher block scarred dark. Water drips behind walls. Meat locker west bolted. Dining room south. Cellar door east open, padlock loose, cold air rising.",
       "exits": {
         "south": "dining-room",
         "west": "meat-locker"
@@ -95,11 +100,13 @@
           "probability": 0.12,
           "deathText": "The dripping becomes a deluge. Dark blood cascades from the ceiling, filling the room with nauseating speed. You slip, fall, drown in the accumulated sins of the house. Your body is never found."
         }
-      ]
+      ],
+      "solvedDescription": "A cavernous kitchen. Copper pots hang green with verdigris. The cast-iron stove radiates impossible warmth. The butcher block is scarred dark. Water drips behind the walls. The dining room is south. A meat locker west is bolted shut. The cellar door east hangs open, cold air rising from the stone steps below."
     },
     "conservatory": {
       "name": "The Conservatory",
       "description": "A glass-walled room that should be filled with light but somehow remains dark. Dead plants crowd the raised beds — roses grown into thorny masses, ivy that strangled itself, a small tree twisted into an agonized shape. Rain drums against the clouded panes. Occasionally lightning reveals the overgrown garden beyond — shapes moving between the hedgerows, gone when you blink. A fountain stands dry in the center, its basin cracked. The statue that once crowned it — a weeping angel — is missing its head. The air smells of wet soil and something sweetly rotten. Muddy footprints circle the fountain. Too small for adult feet. The dining room is west. A greenhouse passage leads south.",
+      "solvedDescription": "A glass room, gentler now. The fountain holds a black-petaled rose — love outlasting death. Faint grateful laughter. Footprints fading. Dining room west. Greenhouse south, calm and safe.",
       "exits": {
         "west": "dining-room",
         "south": "greenhouse"
@@ -107,7 +114,8 @@
       "items": [
         "withered-rose"
       ],
-      "hazards": []
+      "hazards": [],
+      "solvedDescription": "The glass-walled room feels gentler now — the writhing vines lie still, pacified. Dead plants remain, but the menace has faded. Rain drums softly against the panes. The dry fountain stands peaceful. The dining room is west. The greenhouse passage south feels safe to traverse."
     },
     "meat-locker": {
       "name": "The Meat Locker",
@@ -147,6 +155,7 @@
     "greenhouse": {
       "name": "The Greenhouse",
       "description": "A humid glass structure attached to the house, warmer than any room should be in this dead place. The air is thick and tropical, reeking of rotting meat. Plants grow here still — wrong plants. Leaves that flex like grasping fingers. Flowers with tooth-rimmed mouths. Venus flytraps grown to monstrous size. Thorned vines creep across the flagstones like serpents, rasping softly as they move. In the center stands a willow tree that has no business growing indoors, its drooping branches forming a curtain around something buried among its roots. The conservatory is north.",
+      "solvedDescription": "Humid glass, heat fading. Carnivorous plants droop — flytraps slack, vines limp. Willow frames the shattered crystal heart. Lights drift up — freed souls like fireflies. Conservatory north.",
       "exits": {
         "north": "conservatory"
       },
@@ -159,11 +168,13 @@
           "probability": 0.14,
           "deathText": "The carnivorous plants strike as one. Vines coil around your limbs, wrenching you down. Thorns puncture skin. The flytraps close over your face, wet and warm. The garden feeds. It is always hungry."
         }
-      ]
+      ],
+      "solvedDescription": "The humid glass structure is cooling. Carnivorous plants droop — flytraps slack, thorned vines limp and harmless. The willow tree stands quiet, its dark heart shattered among the roots. Gentle lights drift upward like freed souls. The conservatory is north."
     },
     "cellar": {
       "name": "The Wine Cellar",
       "description": "Stone steps descend into a vast cellar carved from living rock. The cold is immediate — a damp, bone-deep chill that seeps through your clothes and settles in your marrow. Wine racks stretch into darkness, bottles furred with dust and cobwebs. Most are shattered, broken in some long-ago rampage. The floor is sticky with ancient spills. Or so you tell yourself. Chains hang from the walls, their purpose best left unimagined. A wooden coffin rests against the far wall, lid slightly ajar. Words are carved into the stone ceiling: ‘REST ETERNAL, BARTHOLOMEW BLACKWOOD, WHO DARED DEFY DEATH AND DAMNED HIS LINE.’ An iron door to the west is sealed with arcane symbols — the final barrier. The kitchen is up a flight of stairs, but the cellar door is locked from this side.",
+      "solvedDescription": "Steps into a cellar carved from rock. Chill retreating. Wine racks in darkness. Chains slack. Coffin open — occupant grey ash. Ceiling: 'REST ETERNAL, BARTHOLOMEW BLACKWOOD.' Fresh air stirs above.",
       "exits": {},
       "items": [
         "consecrated-stake"
@@ -174,7 +185,8 @@
           "probability": 0.16,
           "deathText": "Bartholomew Blackwood rises from his coffin — patriarch of the damned, the warlock who traded his family’s souls for immortality. His touch is ice. His eyes are cinders. He drinks deep. Your body joins the others in the dark, one more servant in his eternal court."
         }
-      ]
+      ],
+      "solvedDescription": "Stone steps descend into the cellar. The bone-deep chill is receding. Wine racks stretch into darkness. Chains hang slack. The coffin stands open, its occupant reduced to grey ash. The carved ceiling reads: REST ETERNAL, BARTHOLOMEW BLACKWOOD. Above, fresh air stirs the dust."
     }
   },
   "items": {

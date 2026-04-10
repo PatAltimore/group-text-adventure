@@ -1,7 +1,7 @@
 {
   "name": "The Forgotten Mechanica",
   "displayOrder": 11,
-  "description":"The fog parts to reveal an island that shouldn't exist. Jutting from calm waters, the coastline is a mix of weathered stone and corroded brass mechanisms half-buried in moss. You've come seeking answers about the D'ni — a civilization that vanished centuries ago, leaving only their incomprehensible machines. According to the journals you recovered, this island was their proving ground, a place where apprentices learned to manipulate the ancient technology. The air hums with latent energy. Somewhere among these ruins lies the Heart of Ages, a device said to unlock the very fabric between worlds. The tide is rising. Time to explore.",
+  "description": "The fog parts to reveal an island that shouldn't exist. Jutting from calm waters, the coastline is a mix of weathered stone and corroded brass mechanisms half-buried in moss. You've come seeking answers about the D'ni — a civilization that vanished centuries ago, leaving only their incomprehensible machines. According to the journals you recovered, this island was their proving ground, a place where apprentices learned to manipulate the ancient technology. The air hums with latent energy. Somewhere among these ruins lies the Heart of Ages, a device said to unlock the very fabric between worlds. The tide is rising. Time to explore.",
   "synopsis": "Unlock secrets of an abandoned mechanical civilization.",
   "startRoom": "stone-dock",
   "rooms": {
@@ -33,6 +33,7 @@
     "lighthouse-base": {
       "name": "Lighthouse Base",
       "description": "The lighthouse towers above you, a spiral of interlocking metal plates that seem to breathe with the wind. Its entrance is a circular door sealed by concentric rings that rotate independently. Strange symbols mark each ring. A stone pedestal beside the door holds a complex mechanism — four rotating dials set with crystalline markers. The forest path is south. The door north is currently sealed.",
+      "solvedDescription": "The lighthouse stands weathered against the sea wind, its white paint peeling in long strips. The heavy iron door to the north has been unlocked, swinging open to reveal the lighthouse interior and its spiraling iron staircase beyond.",
       "exits": {
         "south": "forest-path"
       },
@@ -71,6 +72,7 @@
     "tidal-cave": {
       "name": "Tidal Cave",
       "description": "The cave walls are slick with bioluminescent algae, casting a pale green glow. Water drips from stalactites, each drop echoing in the chamber. The pillars at the entrance are covered in relief carvings — scenes of robed figures operating massive levers, water flowing through impossible channels. At the back of the cave, a bronze valve wheel protrudes from the wall, encrusted with barnacles but still functional. The dock is west. A dark passage leads north, currently flooded.",
+      "solvedDescription": "A sea cave carved by centuries of tides, walls glistening with moisture. The water has been drained, revealing a rocky passage north descending to an underground reservoir — the sound of dripping echoing from below.",
       "exits": {
         "west": "stone-dock"
       },
@@ -88,6 +90,7 @@
     "underground-reservoir": {
       "name": "Underground Reservoir",
       "description": "An enormous chamber carved from living rock, its ceiling supported by columns that double as water channels. The reservoir floor is a maze of brass pipes and pressure gauges, all dormant. In the center, an island platform holds a crystalline control panel with five colored switches. Water trickles from high channels, waiting to be redirected. The passage south leads back to the tidal cave.",
+      "solvedDescription": "A vast underground lake, still and mirror-dark. Ancient pipes and sluice gates line the walls. The passage north to the gear chamber has been revealed, mechanical sounds echoing from the darkness beyond.",
       "exits": {
         "south": "tidal-cave"
       },
@@ -99,6 +102,7 @@
     "underwater-chamber": {
       "name": "Underwater Chamber",
       "description": "Stairs descend into crystal-clear water that somehow remains perfectly breathable — an impossibility that defies physics. The chamber walls are transparent, revealing the ocean beyond. Fish swim past, casting shadows on the floor. A massive gear mechanism dominates the room, its teeth interlocking with precision. A control lever stands beside it, waiting. Stairs lead back up north. A sealed door to the east is marked with a circular indentation.",
+      "solvedDescription": "A submerged chamber of ancient stonework, air trapped in a pocket above. Strange symbols line the walls. The sealed passage to the east has opened, revealing the crystal chamber beyond, prismatic light spilling through.",
       "exits": {
         "north": "stone-dock"
       },
@@ -106,7 +110,7 @@
       "hazards": [
         {
           "description": "The chamber's integrity field flickers ominously, and cracks spider across the transparent walls.",
-          "probability": 0.10,
+          "probability": 0.1,
           "deathText": "The field collapses. The ocean rushes in with crushing force. Your last thought is wonder at the technology that held back the sea for so long. The D'ni built to last, but even they couldn't build forever."
         }
       ]
@@ -114,6 +118,7 @@
     "crystal-chamber": {
       "name": "Crystal Chamber",
       "description": "The room beyond is a geode made architecture — walls encrusted with crystals that pulse with inner light. In the center, a pedestal holds a spherical device of concentric rings, each rotating independently. This is the Resonance Core, a device that converts sound into energy. The walls hum at specific frequencies. West returns to the underwater chamber.",
+      "solvedDescription": "A geode-like chamber encrusted with massive crystals that refract light into rainbows. The resonance core at the center has been activated, humming with harmonic energy, its crystalline facets blazing with inner light.",
       "exits": {
         "west": "underwater-chamber"
       },
@@ -125,6 +130,7 @@
     "gear-chamber": {
       "name": "Gear Chamber",
       "description": "A cathedral of clockwork. Gears the size of houses interlock in three dimensions, turning with glacial slowness. The sound is hypnotic — clicking, whirring, the deep groan of metal under precisely calculated stress. Catwalks crisscross the chamber, providing access to adjustment points. At the highest point, a control platform overlooks the mechanism. South leads back. A passage west is blocked by rotating gears.",
+      "solvedDescription": "Massive bronze gears interlock in a chamber of Victorian engineering. The gears have been stabilized, turning in smooth rhythm. Passages have opened west to the archive chamber and north to the control platform.",
       "exits": {
         "south": "underground-reservoir"
       },
@@ -142,6 +148,7 @@
     "control-platform": {
       "name": "Control Platform",
       "description": "A metal platform suspended above the gear chamber, accessed by a ladder. The control panel here is a work of art — polished brass inlaid with mother-of-pearl, buttons labeled with D'ni numerals. A master override lever stands covered in warning symbols. Through the viewing window, you can see the gears below synchronizing to a new rhythm. The ladder descends south.",
+      "solvedDescription": "An elevated platform overlooking a vast mechanical system below. Levers and gauges line the railing. The master override is complete — the passage east to the heart vault now stands open, warm golden light pulsing from within.",
       "exits": {
         "south": "gear-chamber"
       },
@@ -162,6 +169,7 @@
     "heart-vault": {
       "name": "Heart Vault",
       "description": "You stand before the Heart of Ages. It floats in the center of the chamber, a sphere of interwoven metal and crystal that seems to exist in multiple dimensions simultaneously. Energy arcs between its components. The vault walls are inscribed with the complete history of the D'ni — their rise, their achievements, their mysterious disappearance. Five pedestals surround the Heart, each designed to hold a specific artifact. The mechanisms you've activated throughout the island all converge here. This is where their legacy either awakens or dies.",
+      "solvedDescription": "A sacred chamber at the island's core, walls carved with the history of its builders. The Heart has been activated, filling the vault with harmonic resonance — the island's ancient mechanism humming with restored purpose.",
       "exits": {
         "west": "control-platform"
       },

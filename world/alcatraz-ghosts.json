@@ -1,21 +1,30 @@
 {
   "name": "Alcatraz: The Zozo Investigation",
   "displayOrder": 12,
-  "description":"Your crew arrives at Alcatraz Island as the last ferry pulls away, its horn fading into the San Francisco Bay fog. The prison looms above — a concrete fortress abandoned for decades, but never truly empty. Tonight you're investigating reports of Zozo, a malevolent entity that's been terrorizing paranormal investigators. Your equipment cases are scattered throughout the facility — the warden had them delivered ahead of time, but something's moved them. The investigation begins at dusk. By dawn, you'll either have proof of the paranormal... or become part of Alcatraz's permanent collection of restless spirits.",
+  "description": "Your crew arrives at Alcatraz Island as the last ferry pulls away, its horn fading into the San Francisco Bay fog. The prison looms above — a concrete fortress abandoned for decades, but never truly empty. Tonight you're investigating reports of Zozo, a malevolent entity that's been terrorizing paranormal investigators. Your equipment cases are scattered throughout the facility — the warden had them delivered ahead of time, but something's moved them. The investigation begins at dusk. By dawn, you'll either have proof of the paranormal... or become part of Alcatraz's permanent collection of restless spirits.",
   "synopsis": "Investigate haunted Alcatraz, confront Zozo",
   "startRoom": "dock",
   "rooms": {
     "dock": {
       "name": "Ferry Dock",
       "description": "Waves slap against rotting pilings. The concrete dock is cracked and stained with decades of salt spray. Behind you, San Francisco's lights twinkle across the water — impossibly far away. Above, the prison hulks against the twilight sky, windows like dead eyes. A rusted chain-link gate stands open to the north, leading up a steep path. The metal groans in the wind, or maybe something else. Your EVP recorder case sits abandoned near a bollard — someone was here before you.",
-      "exits": { "north": "entry-hall" },
-      "items": ["evp-recorder"],
+      "exits": {
+        "north": "entry-hall"
+      },
+      "items": [
+        "evp-recorder"
+      ],
       "hazards": []
     },
     "entry-hall": {
       "name": "Entry Hall",
       "description": "The prison's main entrance. Peeling paint reveals layers of institutional green and gray beneath. A reception desk slouches against the west wall, drawers hanging open like mouths. Bulletproof glass — now cracked and cloudy — separates what was once the visitor area from the processing zone. Hallways branch in three directions: west toward administration, east toward the cellblocks, and south back to the dock. Something scratched deep gouges into the linoleum floor — claw marks, or boot heels dragged by something stronger.",
-      "exits": { "north": "guard-tower", "east": "broadway", "west": "warden-office", "south": "dock" },
+      "exits": {
+        "north": "guard-tower",
+        "east": "broadway",
+        "west": "warden-office",
+        "south": "dock"
+      },
       "items": [],
       "hazards": [
         {
@@ -28,28 +37,49 @@
     "warden-office": {
       "name": "Warden's Office",
       "description": "Power and paranoia preserved in wood paneling and steel. The warden's desk is massive oak, its surface empty except for dust and a single desk lamp that occasionally flickers on without electricity. Filing cabinets line the north wall, their locks long since broken. Framed commendations hang crooked on the walls, the warden's face in every photo scratched out by unknown hands. Through the window, you can see the recreation yard below. The entry hall is east. A locked door to the north bears a faded sign: 'ARMORY - AUTHORIZED PERSONNEL ONLY.'",
-      "exits": { "east": "entry-hall" },
-      "items": ["thermal-camera", "armory-key"],
+      "solvedDescription": "Dust and flickering light. The armory door north stands open.",
+      "exits": {
+        "east": "entry-hall"
+      },
+      "items": [
+        "thermal-camera",
+        "armory-key"
+      ],
       "hazards": []
     },
     "armory": {
       "name": "Armory",
       "description": "Gun racks stand empty, bolted to walls scarred by decades of violence suppressed and violence released. Ammunition shelves are bare except for a few scattered brass casings that roll across the floor when nobody's walking. A pegboard on the wall shows silhouettes of weapons that were once stored here — nightsticks, tear gas canisters, shotguns. The air tastes of gun oil and old rage. In the corner, someone's set up what looks like a spirit communication board, chalk symbols drawn around it. The warden's office is south.",
-      "exits": { "south": "warden-office" },
-      "items": ["spirit-box"],
+      "solvedDescription": "Empty gun racks. Bolt cutters lie exposed on the workbench.",
+      "exits": {
+        "south": "warden-office"
+      },
+      "items": [
+        "spirit-box"
+      ],
       "hazards": []
     },
     "guard-tower": {
       "name": "Guard Tower",
       "description": "Spiral stairs climb into shadow. This tower gave guards a 360-degree view of the prison — and prisoners a 360-degree view of their captivity. Narrow windows face every direction, glass long since broken, wind whistling through the frames. The view is magnificent and terrible: the bay, the city, and the prison below, all bathed in moonlight. A guard's logbook sits on a rusty metal chair, its final entry dated the day before the prison closed. The entry hall is south. A steel door to the north is sealed shut, its lock mechanism corroded.",
-      "exits": { "south": "entry-hall" },
-      "items": ["emf-detector"],
+      "exits": {
+        "south": "entry-hall"
+      },
+      "items": [
+        "emf-detector"
+      ],
       "hazards": []
     },
     "broadway": {
       "name": "Broadway Cellblock",
       "description": "The main artery of Alcatraz. Three-tiered cells stretch into darkness on both sides, metal doors hanging open like broken teeth. The prisoners called this Broadway after the famous street — every new inmate had to walk this gauntlet while the population hurled insults and worse. Now only echoes walk here. Cell doors clang shut randomly, their locks broken for decades. Catwalks criss-cross above, rusted railings offering no safety. The entry hall is west. A corridor to the north leads deeper into D-Block. East opens to the mess hall. South drops down stairs toward the utility tunnels.",
-      "exits": { "north": "d-block", "east": "mess-hall", "west": "entry-hall", "south": "utility-tunnel" },
+      "solvedDescription": "The EMF spike has resolved, readings at baseline.",
+      "exits": {
+        "north": "d-block",
+        "east": "mess-hall",
+        "west": "entry-hall",
+        "south": "utility-tunnel"
+      },
       "items": [],
       "hazards": [
         {
@@ -62,12 +92,15 @@
     "d-block": {
       "name": "D-Block - Solitary Confinement",
       "description": "The Hole. Where Alcatraz sent its worst — or those it wanted to break. Thick steel doors seal isolation cells, each a concrete box barely large enough to lie down in. Cell 14D stands open, its door hanging at an angle, hinges snapped by some tremendous force from the inside. Darkness pools in that cell like liquid, deeper than the absence of light should allow. Scratch marks cover every inch of the interior walls. The bars on the door have been bent outward. This is where Zozo was contained. Broadway lies south. A heavy blast door to the west is welded shut.",
-      "exits": { "south": "broadway" },
+      "solvedDescription": "Entity contained, readings stable. The passage east to containment is clear.",
+      "exits": {
+        "south": "broadway"
+      },
       "items": [],
       "hazards": [
         {
           "description": "Something watches from inside Cell 14D. Not moving. Not breathing. Just watching with eyes you can't quite see but absolutely feel.",
-          "probability": 0.20,
+          "probability": 0.2,
           "deathText": "You look into Cell 14D. The darkness looks back. It doesn't rush out — it pulls you in. Your crew finds your body in the morning, curled in the corner of 14D, hands wrapped around your own throat, face frozen in an expression of absolute terror. The cell door is closed from the inside."
         }
       ]
@@ -75,36 +108,57 @@
     "mess-hall": {
       "name": "Mess Hall",
       "description": "Long metal tables bolted to the floor in perfect rows. Alcatraz served meals on a strict schedule — two thousand men eating in synchronized silence, watched by guards with rifles on the catwalks above. The kitchen pass-through is dark, but occasionally light flickers in there, accompanied by the sound of knives on cutting boards. Riot scars mark the walls — bullet holes, scorch marks from tear gas. The floor is still stained. Broadway is west. A service door to the south leads to the kitchen. A northern passage opens to the recreation yard.",
-      "exits": { "north": "rec-yard", "south": "kitchen", "west": "broadway" },
+      "exits": {
+        "north": "rec-yard",
+        "south": "kitchen",
+        "west": "broadway"
+      },
       "items": [],
       "hazards": []
     },
     "kitchen": {
       "name": "Kitchen",
       "description": "Industrial-scale cooking equipment rusts in the shadows. Massive ovens, steel prep tables, a dishwashing station that once processed thousands of plates per meal. The refrigerator door stands open, its interior blackened by mold and time. Something's been in here recently — footprints in the dust, but they don't lead anywhere, just stop in the middle of the room. A prep table holds what looks like an EMF detector, but the readings are pegged at maximum even though it's been switched off. The mess hall is north.",
-      "exits": { "north": "mess-hall" },
-      "items": ["rem-pod"],
+      "exits": {
+        "north": "mess-hall"
+      },
+      "items": [
+        "rem-pod"
+      ],
       "hazards": []
     },
     "rec-yard": {
       "name": "Recreation Yard",
       "description": "Concrete and despair under the open sky. High walls topped with ancient razor wire. The yard where inmates got one hour of sun per day — if they earned it. Guard towers loom at each corner, empty now but still menacing. In the center, painted lines mark where basketball courts and exercise areas once stood. The paint has faded to ghosts. At the north end, a small concrete structure — the old tool shed — is sealed with a modern padlock, strangely out of place. The mess hall is south.",
-      "exits": { "south": "mess-hall" },
+      "solvedDescription": "Cracked concrete. The gate north is cut open, tool shed accessible.",
+      "exits": {
+        "south": "mess-hall"
+      },
       "items": [],
       "hazards": []
     },
     "tool-shed": {
       "name": "Tool Shed",
       "description": "A concrete bunker barely eight feet square. This is where maintenance equipment was stored under heavy guard — anything here could be turned into a weapon or escape tool. Rusted shovels, pickaxes, and coils of ancient chain hang from the walls. In the corner, someone's set up a surveillance station: monitors connected to cameras throughout the prison, all powered by a portable generator that hums with unnatural steadiness. On one monitor, you can see your own empty equipment cases — and in the background, a shadow that shouldn't be there. The recreation yard is south.",
-      "exits": { "south": "rec-yard" },
-      "items": ["sls-camera"],
+      "exits": {
+        "south": "rec-yard"
+      },
+      "items": [
+        "sls-camera"
+      ],
       "hazards": []
     },
     "utility-tunnel": {
       "name": "Utility Corridor",
       "description": "Beneath the cellblocks, a labyrinth of pipes and darkness. This tunnel system carried steam heat, water, sewage — the prison's hidden anatomy. Pipes leak steady drips that echo in the dark. Brick walls weep moisture. The air is thick and hard to breathe. Graffiti from the 1960s covers every surface — prisoner names, dates, desperate messages. But some of the writing is fresh, still wet, written in something that isn't paint. The stairs up lead north to Broadway. A passage west ends at the hospital wing.",
-      "exits": { "north": "broadway", "west": "hospital" },
-      "items": ["full-spectrum-camera"],
+      "solvedDescription": "The cold spot has dissipated, thermal readings stable.",
+      "exits": {
+        "north": "broadway",
+        "west": "hospital"
+      },
+      "items": [
+        "full-spectrum-camera"
+      ],
       "hazards": [
         {
           "description": "The pipes groan and shriek with phantom steam. Shadows move between them, humanoid shapes that don't match any light source.",
@@ -116,28 +170,44 @@
     "hospital": {
       "name": "Hospital Wing",
       "description": "Where inmates came to be healed, or to die. Examination rooms branch off a central corridor. Medical equipment rusts on trays — surgical instruments, syringes, restraints. The operating theater is visible through a cracked window: table still there, lights still hanging. A medicine cabinet hangs open, empty except for a few brown bottles with faded labels. The pharmaceutical records room to the north has been sealed with police tape — recent tape, dated this month. Someone's been investigating here. The utility tunnel is east.",
-      "exits": { "east": "utility-tunnel" },
-      "items": ["police-tape"],
+      "solvedDescription": "The pharmacy door north stands unlocked.",
+      "exits": {
+        "east": "utility-tunnel"
+      },
+      "items": [
+        "police-tape"
+      ],
       "hazards": []
     },
     "pharmacy": {
       "name": "Pharmaceutical Records Room",
       "description": "Filing cabinets overflow with medical records, prescription logs, incident reports. Alcatraz documented everything — every pill, every injection, every lobotomy. The records smell of mildew and secrecy. On a desk, someone's left research notes about Zozo: 'Patient Zero contracted in 1946 riot. Entity designation: Zozo. Transferred between inmates through violence. Last known host: Cell 14D, 1962. Entity remains active.' Below that, in different handwriting: 'Entity can be contained using Ovilus device calibrated to theta frequency. Device location: lighthouse keeper's quarters.' The hospital wing is south. A service ladder in the corner leads north through a narrow shaft toward the lighthouse, but the hatch above is sealed shut.",
-      "exits": { "south": "hospital" },
-      "items": ["ovilus-device"],
+      "solvedDescription": "The floor hatch north is open, passage to the lighthouse below.",
+      "exits": {
+        "south": "hospital"
+      },
+      "items": [
+        "ovilus-device"
+      ],
       "hazards": []
     },
     "lighthouse": {
       "name": "Lighthouse",
       "description": "The oldest structure on Alcatraz Island. The lighthouse beam has been dark since the prison closed, but tonight it flickers with spectral light that casts no shadows. Circular stairs spiral around the light mechanism — a massive Fresnel lens that somehow still turns, grinding on corroded gears. From here you can see the entire prison complex spread below like a model of damnation. The keeper's quarters are cramped but preserved, bed made military-tight. On the small desk, a ship's log records strange occurrences: 'Entity confirmed. Full manifestation imminent. Require all scanning equipment for containment protocol. — Warden James A. Johnston, 1946.' The passage south leads back down to the pharmacy.",
-      "exits": { "south": "pharmacy" },
+      "solvedDescription": "The containment protocol has been retrieved.",
+      "exits": {
+        "south": "pharmacy"
+      },
       "items": [],
       "hazards": []
     },
     "containment-site": {
       "name": "Cell 14D - Containment Site",
       "description": "The darkness has receded from Cell 14D. Your equipment surrounds the cell in a precise array: EMF detector pegged at maximum, thermal camera showing a humanoid cold spot floating in the center, SLS camera tracking a skeletal figure visible only in its sensors, spirit box spewing garbled warnings, REM pod screaming alerts, EVP recorder capturing voices layered a hundred deep. The Ovilus device in your hands speaks in a calm, mechanical voice: 'ZOZO. CONTAIN. NOW.' The entity is here, trapped in a web of technology and determination. One puzzle remains: you must prove you've contained it. The full-spectrum camera will capture the evidence you need — photographic proof of a malevolent spirit bound by science and courage.",
-      "exits": { "south": "broadway" },
+      "solvedDescription": "Containment verified and documented, readings confirmed stable.",
+      "exits": {
+        "south": "broadway"
+      },
       "items": [],
       "hazards": []
     }
