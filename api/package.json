@@ -10,7 +10,7 @@
   "scripts": {
     "start": "func start",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
-"test:ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --ci"
+    "test:ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --ci"
   },
   "dependencies": {
     "@azure/data-tables": "^13.2.2",
