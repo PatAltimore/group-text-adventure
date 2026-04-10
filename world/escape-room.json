@@ -8,7 +8,7 @@
     "foyer": {
       "name": "The Grand Foyer",
       "description": "Checkered marble stretches beneath a crystal chandelier that hasn't burned in years. The front door looms behind you — massive oak reinforced with iron bands, seven keyholes glinting in the half-light. All locked. A grand staircase sweeps upward, but a velvet rope blocks the way, cinched to a brass post by a small combination lock. Hallways branch east toward a parlor and west toward a dining room. Above the door, a faded portrait of a stern old man stares down — the Clockmaker, his painted eyes seeming to follow every step you take.",
-      "solvedDescription": "A grand entrance hall with checkered marble floors and a crystal chandelier overhead. The front door is sealed tight. The velvet rope across the staircase has been removed, and the way north to the upper hallway now stands open and inviting.",
+      "solvedDescription": "Checkered marble stretches beneath a crystal chandelier that hasn't burned in years. The front door looms behind you — massive oak reinforced with iron bands, seven keyholes glinting in the half-light. All locked. A grand staircase sweeps upward, and the velvet rope that once blocked the way has been removed — the combination lock solved, its tumblers fallen. Hallways branch east toward a parlor and west toward a dining room. Above the door, a faded portrait of a stern old man stares down — the Clockmaker, his painted eyes seeming to follow every step you take. The way north to the upper hallway now stands open and inviting.",
       "exits": {
         "east": "parlor",
         "west": "dining-room"
@@ -32,7 +32,7 @@
     "dining-room": {
       "name": "The Dining Room",
       "description": "A long mahogany table set for a feast that never came. Tarnished candelabras drip with ancient wax. Fine china wears a skin of dust. Crystal goblets stand half-full of something dark and long since dried. The air smells faintly of vinegar and old silver. A serving hatch in the north wall leads to the kitchen, but something heavy on the other side holds it shut. The foyer is east. A narrow door to the south bears a painted musical note, its blue paint peeling at the edges.",
-      "solvedDescription": "A formal dining room with a long mahogany table set for a dinner party that never happened. Candelabras flicker with real flame. The doors have been unlocked — south opens to a music room where faint melodies drift through, and north reveals the kitchen beyond.",
+      "solvedDescription": "A long mahogany table set for a feast that never came. Tarnished candelabras drip with ancient wax. Fine china wears a skin of dust. Crystal goblets stand half-full of something dark and long since dried. The air smells faintly of vinegar and old silver. The serving hatch in the north wall now stands open — The Clockmaker's Lullaby having moved the heavy obstruction aside, revealing the kitchen beyond. The foyer is east. The narrow door to the south, marked with a painted musical note, has swung open — the silver fork's perfect tone unlocking it — revealing the music room where faint melodies drift through.",
       "exits": {
         "east": "foyer"
       },
@@ -61,7 +61,7 @@
     "kitchen": {
       "name": "The Kitchen",
       "description": "Copper pots hang from ceiling racks like frozen bells. A vast industrial space of iron and cracked tile. The ancient wood-burning stove still radiates a ghost of warmth — someone was here not long ago. The pantry door to the west hangs open, its padlock already sprung. On the stone counter, a mortar and pestle cradles traces of green powder that stings your nostrils. The serving hatch south leads back to the dining room. A narrow servants' staircase climbs north, swallowed by darkness.",
-      "solvedDescription": "A vintage kitchen with copper pots and a cast-iron stove. The gas leak has been sealed — the shutoff valve turned, air now clear and safe to breathe. Ingredients and utensils line the countertops in orderly rows.",
+      "solvedDescription": "Copper pots hang from ceiling racks like frozen bells. A vast industrial space of iron and cracked tile. The ancient wood-burning stove still radiates a ghost of warmth — someone was here not long ago. The pantry door to the west hangs open, its padlock already sprung. On the stone counter, a mortar and pestle cradles traces of green powder that stings your nostrils. The serving hatch south leads back to the dining room. A narrow servants' staircase climbs north, swallowed by darkness. The gas line no longer hisses — the iron key having turned the shutoff valve, the dangerous leak sealed and the air now clear and safe to breathe.",
       "exits": {
         "south": "dining-room"
       },
@@ -80,7 +80,7 @@
     "study": {
       "name": "The Clockmaker's Study",
       "description": "The Clockmaker's private sanctum. Technical drawings of impossibly intricate mechanisms plaster every surface — the desk, the walls, even the ceiling. Gears and springs litter the floor like brass confetti. A half-assembled clock sits on the desk, its heart missing: no mainspring. Behind a tilted painting, a wall safe is visible, its four-digit combination lock gleaming. The hallway lies south. A locked door to the north has a keyhole cut in the unmistakable shape of a musical note.",
-      "solvedDescription": "Dark wood panels and floor-to-ceiling bookshelves line the walls. A globe sits beside a leather chair. The hidden door to the north has swung open, revealing the observatory beyond — the faint gleam of brass instruments visible through the doorway.",
+      "solvedDescription": "The Clockmaker's private sanctum. Technical drawings of impossibly intricate mechanisms plaster every surface — the desk, the walls, even the ceiling. Gears and springs litter the floor like brass confetti. A half-assembled clock sits on the desk, its heart missing: no mainspring. Behind a tilted painting, a wall safe is visible, its four-digit combination lock gleaming. The hallway lies south. The locked door to the north — its keyhole cut in the unmistakable shape of a musical note — has swung open, the music box having played its lullaby to unlock it. The observatory beyond is visible through the doorway, brass instruments gleaming in the starlight.",
       "exits": {
         "south": "upper-hallway"
       },

@@ -58,7 +58,7 @@
     "abandoned-lab": {
       "name": "Secret Research Laboratory",
       "description": "A Cold War bunker carved into the hillside, swallowed by decades of neglect. Rusted ‘AUTHORIZED PERSONNEL ONLY’ signs hang crooked on sagging chain-link. Inside, fluorescent tubes flicker and buzz. Filing cabinets line the concrete walls — Project Blue Book documents, cryptid autopsy photographs, blurred UFO stills. Someone cataloged it all. A locked vault door north reads ‘SPECIMEN STORAGE — LEVEL 4 CLEARANCE.’ The metal is cold to the touch. The forest is east. A tunnel south drops into darkness.",
-      "solvedDescription": "A Cold War bunker. Fluorescent tubes flicker. Filing cabinets hold Blue Book docs, cryptid photos. Vault open, cold air rising. Forest east. South, tunnel descends to chamber.",
+      "solvedDescription": "A Cold War bunker carved into the hillside, swallowed by decades of neglect. Rusted 'AUTHORIZED PERSONNEL ONLY' signs hang crooked. Inside, fluorescent tubes flicker. Filing cabinets line concrete walls — Project Blue Book documents, cryptid autopsy photographs, blurred UFO stills. Someone cataloged it all. The locked vault door south has been unlocked with your Level 4 clearance, revealing the specimen storage chamber below. The forest is east. The Area 51 entrance is north.",
       "exits": {
         "east": "bigfoot-forest",
         "south": "underground-chamber"
@@ -73,21 +73,19 @@
           "probability": 0.05,
           "deathText": "A pocket of toxic gas, trapped for fifty years, finds release. Your lungs seize. The floor tilts. The abandoned lab claims another keeper of its secrets."
         }
-      ],
-      "solvedDescription": "A Cold War bunker carved into the hillside. Rusted signs and sagging chain-link mark the entrance. The specimen vault to the south has been unlocked, revealing the underground chamber below. The Area 51 entrance is north."
+      ]
     },
     "underground-chamber": {
       "name": "Subterranean Storage",
       "description": "A vault blasted into bedrock, damp and cold. Specimen containers line steel shelving — preserved tissue labeled ‘UNKNOWN PRIMATE,’ debris tagged ‘UNIDENTIFIED AERIAL PHENOMENON,’ and one jar marked ‘EXTRATERRESTRIAL BIOLOGICAL ENTITY.’ A shattered container drips formaldehyde onto the floor, its contents long gone. Strange geometric symbols are gouged into the rock walls — patterns that seem to shift when you look away. A stone archway west bears the same symbols, humming faintly. The lab is north.",
-      "solvedDescription": "Vault in bedrock. Specimens on shelves — tissue, impossible jars. Wall symbols frozen, purpose done. Archway west glows blue — spacecraft beyond. Lab north.",
+      "solvedDescription": "A vault blasted into bedrock, damp and cold. Specimen containers line steel shelving — preserved tissue labeled 'UNKNOWN PRIMATE,' debris tagged 'UNIDENTIFIED AERIAL PHENOMENON,' one jar marked 'EXTRATERRESTRIAL BIOLOGICAL ENTITY.' A shattered container drips formaldehyde. Strange geometric symbols are gouged into rock walls. The stone archway west stands open, blue-violet bioluminescence pulsing from the alien vessel beyond. The lab is north.",
       "exits": {
         "north": "abandoned-lab"
       },
       "items": [
         "alien-artifact"
       ],
-      "hazards": [],
-      "solvedDescription": "A vault blasted into bedrock, specimen containers lining steel shelves. The fluorescent tubes flicker. To the west, the archway lock has been overridden — the passage stands open, blue-violet bioluminescence pulsing from the vessel beyond."
+      "hazards": []
     },
     "ufo-landing-site": {
       "name": "Forest Clearing — Scorch Pattern",
@@ -111,7 +109,7 @@
     "alien-spacecraft": {
       "name": "Extraterrestrial Vessel",
       "description": "The walls are seamless bio-organic metal, warm and faintly yielding under your palm. Bioluminescence pulses through them — blue, then violet — like blood through veins. No rivets. No welds. No seams. Hieroglyphic symbols flow across surfaces like oil on water. A central pillar rises from the floor, studded with touch-interface glyphs. Your translator spits fragments: ‘...WARNING... BARRIER BREACH... DIMENSIONAL ANCHOR FAILING...’ A passage leads deeper north. The landing site hatch is above.",
-      "solvedDescription": "Bio-organic walls pulse — ship awakened. Hieroglyphs fixed. Pillar thrums. Translator: '...PORTAL ACTIVE... ROSWELL CONFIRMED...' Portal north to desert. Hatch above.",
+      "solvedDescription": "The walls are seamless bio-organic metal, warm and faintly yielding. Bioluminescence pulses through them — blue, then violet. No rivets. No welds. No seams. Hieroglyphic symbols flow across surfaces like oil on water. The central pillar rises from the floor, its navigation console now glowing with activated controls. Your translator spits fragments: '...PORTAL ACTIVE... DIMENSIONAL ANCHOR STABLE...' A shimmering portal has been opened north. The landing site is above. The underground chamber is east.",
       "exits": {
         "south": "ufo-landing-site",
         "north": "roswell-crash"
@@ -125,8 +123,7 @@
           "probability": 0.15,
           "deathText": "Gravity inverts. You slam into the ceiling with bone-cracking force, hang suspended for one weightless second, then drop. The alien ship registers no disturbance. It was never built for human fragility."
         }
-      ],
-      "solvedDescription": "Seamless bio-organic metal walls pulse blue to violet. Bioluminescent veins course through the structure. The navigation console glows with activated controls. A shimmering portal to the north has been opened, connecting to a distant crash site. The underground chamber is east."
+      ]
     },
     "roswell-crash": {
       "name": "Roswell Crash Site — 1947",
@@ -143,7 +140,7 @@
     "area-51-entrance": {
       "name": "Area 51 — Restricted Access",
       "description": "Chain-link and razor wire stretch to the horizon. Signs every fifty feet: ‘RESTRICTED AREA.’ ‘PHOTOGRAPHY PROHIBITED.’ ‘USE OF DEADLY FORCE AUTHORIZED.’ The guard towers stand empty — evacuated two days ago after an ‘incident.’ Beyond the fence, hangars loom large enough for aircraft that don’t officially exist. The gate’s biometric scanner pulses red, waiting. Your security badge from the abandoned lab might still register. Roswell is west. North, through the fence, the main hangar waits.",
-      "solvedDescription": "Gate open — badge accepted, scanner green. Towers empty, turrets dark. 'RESTRICTED AREA' signs toothless. Hangars beyond. Roswell west. Hangar north open.",
+      "solvedDescription": "Chain-link and razor wire stretch to the horizon. Signs every fifty feet: 'RESTRICTED AREA.' 'PHOTOGRAPHY PROHIBITED.' 'USE OF DEADLY FORCE AUTHORIZED.' The guard towers stand empty — evacuated two days ago. Beyond the fence, hangars loom large enough for aircraft that don't officially exist. The gate's biometric scanner now pulses green, your badge accepted. The automated turrets stand silent. The main gate north hangs open. Roswell is west. The abandoned lab is south.",
       "exits": {
         "west": "roswell-crash"
       },
@@ -154,8 +151,7 @@
           "probability": 0.18,
           "deathText": "A red dot settles on your chest. The turret doesn’t hesitate, doesn’t question. Three rounds. You never hear the third. Area 51 keeps its secrets."
         }
-      ],
-      "solvedDescription": "Chain-link and razor wire stretch to the horizon. The automated turrets stand silent, laser designators dark. The main gate north hangs open, the hangar beyond accessible. Warning signs line the road. The abandoned lab is south."
+      ]
     },
     "area-51-hangar": {
       "name": "Hangar 18 — Recovered Technology",
@@ -172,7 +168,7 @@
     "bermuda-monitoring": {
       "name": "Bermuda Triangle — Deep Sea Station",
       "description": "An underwater station bolted to the ocean floor in the heart of the Triangle. Reinforced portholes frame the deep Atlantic — black water, bioluminescent drifters, crushing silence. This is where ships and planes vanish. Instruments shriek with magnetic anomalies. A wall of monitors catalogues decades of disappearances — Flight 19, the USS Cyclops, dozens more. No wreckage. No bodies. A central viewing sphere peers into an undersea chasm where geometric structures glow in the dark — not natural, not human. The Area 51 tunnel is east. A passage north leads to Stonehenge.",
-      "solvedDescription": "Underwater station in the Triangle. Instruments quiet, anomalies flatlined. Monitors catalogue disappearances. Viewing sphere peers into pulsing structures below. Area 51 east. Stonehenge north.",
+      "solvedDescription": "An underwater station bolted to the ocean floor in the heart of the Triangle. Reinforced portholes frame the deep Atlantic — black water, bioluminescent drifters, crushing silence. Instruments now record stable readings. A wall of monitors catalogues decades of disappearances — Flight 19, the USS Cyclops, dozens more. A central viewing sphere peers into the undersea chasm where geometric structures glow in the dark. The structures are stable now. The Area 51 tunnel is east. The Stonehenge portal is north.",
       "exits": {
         "east": "area-51-hangar",
         "north": "stonehenge"
@@ -186,13 +182,12 @@
           "probability": 0.1,
           "deathText": "A porthole cracks. A mile of ocean punches through. The implosion is instant — crushing, total. The Triangle claims another."
         }
-      ],
-      "solvedDescription": "The underwater station holds steady, hull reinforced and no longer groaning. Portholes frame the deep Atlantic. Instruments record stable readings. The station feels secure for the first time. The Stonehenge portal is east."
+      ]
     },
     "stonehenge": {
       "name": "Stonehenge — Ancient Anchor Point",
       "description": "Salisbury Plain, England. Five thousand years old. Forty-ton stones hauled from Wales by methods still unexplained — until now. Stonehenge isn’t a monument. It’s an anchor. The stones mirror the geometric pattern from the alien ship, from Area 51, from the Triangle. Nodes in a planetary network, holding something back. The center stone bears an indentation shaped for an artifact. Your instruments scream — dimensional barriers, reality anchors, a lock straining against something immense. Wind moans through the circle, carrying sounds that might be voices. The Bermuda station is south.",
-      "solvedDescription": "Salisbury Plain. Stones hum, patterns blazing. Anchor engaged, purpose restored. Center stone projects constellations matching Area 51 maps. Barriers hold. Bermuda south.",
+      "solvedDescription": "Salisbury Plain, England. Five thousand years old. Forty-ton stones hauled from Wales. Stonehenge isn't a monument. It's an anchor. The stones mirror the geometric pattern from the alien ship, from Area 51, from the Triangle. Nodes in a planetary network. The center stone's indentation now holds the artifact, and the ancient stones hum with activated energy. A star map has materialized at the center. Wind moans through. The Bermuda station is south.",
       "exits": {
         "south": "bermuda-monitoring"
       },
@@ -205,8 +200,7 @@
           "probability": 0.2,
           "deathText": "The barrier ruptures. Through the gap you see what the stones hold back — geometries that shouldn’t exist, a hunger older than planets, vast as galaxies. Then the barrier snaps shut. You are simply gone. Erased from causality."
         }
-      ],
-      "solvedDescription": "Salisbury Plain, England. The ancient stones hum with activated energy, their true purpose revealed. A star map has materialized at the center of the circle, projected by the stones themselves. The Bermuda monitoring station is west."
+      ]
     }
   },
   "items": {

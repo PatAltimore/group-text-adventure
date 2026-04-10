@@ -70,7 +70,7 @@
     "serpent-shrine": {
       "name": "The Serpent Shrine",
       "description": "A circular shrine dedicated to Kukulkan, the feathered serpent god. Colossal stone serpents coil around the columns, their bodies covered in jade mosaic scales that still catch the light. An altar at the center is stained dark with ancient offerings. The air is thick with a lingering scent of copal incense — impossible after all these centuries, yet unmistakable. An obsidian sacrificial knife rests on the altar, its edge still wickedly sharp. To the north, stone steps descend into darkness — you hear a dry, slithering sound from below. The courtyard lies to the west.",
-      "solvedDescription": "A stone altar carved with coiling serpents sits at the center of this jungle clearing. The snakes have retreated into the undergrowth, their hissing silenced. The shrine stands quiet now, ancient carvings safe to examine closely.",
+      "solvedDescription": "A circular shrine dedicated to Kukulkan, the feathered serpent god. Colossal stone serpents coil around the columns, their bodies covered in jade mosaic scales that still catch the light. An altar at the center is stained dark with ancient offerings. The air is thick with a lingering scent of copal incense — impossible after all these centuries, yet unmistakable. An obsidian sacrificial knife rests on the altar, its edge still wickedly sharp. To the north, stone steps descend into darkness — but the pitch-pine torch's resin smoke has driven the serpents into cracks and crevices, the pit falling silent and safe to traverse. The courtyard lies to the west.",
       "exits": {
         "west": "overgrown-courtyard",
         "north": "snake-pit"
@@ -100,7 +100,7 @@
     "temple-entrance": {
       "name": "Temple Entrance",
       "description": "The grand facade of the Temple of the Jaguar God towers above you — a stepped pyramid of enormous limestone blocks, its surface carved with scenes of ritual and conquest. Twin jaguar statues guard the entrance, their eyes set with polished obsidian that seems to follow your movement. A massive stone door to the north is sealed shut, bearing a circular indentation carved with jaguar motifs — shaped to hold a medallion. To the east, a collapsed gallery is partially accessible through a gap in the rubble. The courtyard lies to the south.",
-      "solvedDescription": "Massive stone doors carved with jaguar motifs guard the temple entrance. The sun medallion sits in its slot, and the doors have ground open to the north, revealing the hall of glyphs beyond — torchlight flickering from within.",
+      "solvedDescription": "The grand facade of the Temple of the Jaguar God towers above you — a stepped pyramid of enormous limestone blocks, its surface carved with scenes of ritual and conquest. Twin jaguar statues guard the entrance, their eyes set with polished obsidian that seems to follow your movement. To the north, the massive stone door that once bore a circular indentation has ground upward — the jade medallion having unlocked ancient counterweights — revealing the hall of glyphs beyond, torchlight flickering from within. To the east, a collapsed gallery is partially accessible through a gap in the rubble. The courtyard lies to the south.",
       "exits": {
         "south": "overgrown-courtyard",
         "east": "collapsed-gallery"
@@ -135,7 +135,7 @@
     "hall-of-glyphs": {
       "name": "The Hall of Glyphs",
       "description": "An immense hall whose walls are covered floor to ceiling in Mayan hieroglyphs — thousands of them, painted in red and blue pigments that still glow in the torchlight. The Long Count calendar spirals across the ceiling in an endless mathematical dance. Stone benches line the walls, where priests once sat to read the will of the gods. The carvings to the east depict a hidden chamber behind a wall of symbols, but the sequence to unlock it is indecipherable without a key. A passage leads north toward a chamber that reeks of old blood. The sealed temple door is back to the south.",
-      "solvedDescription": "Walls covered floor to ceiling in Mayan glyphs, each panel telling part of an ancient story. The glyphs have been decoded, and a hidden passage to the east has opened, leading into the mechanism chamber with its grinding stone gears.",
+      "solvedDescription": "An immense hall whose walls are covered floor to ceiling in Mayan hieroglyphs — thousands of them, painted in red and blue pigments that still glow in the torchlight. The Long Count calendar spirals across the ceiling in an endless mathematical dance. Stone benches line the walls, where priests once sat to read the will of the gods. The ancient map revealed the glyph sequence, and pressing the symbols in order — jaguar, serpent, sun, skull, eagle — split the east wall apart, revealing the mechanism chamber beyond with its grinding stone gears. A passage leads north toward a chamber that reeks of old blood. The sealed temple door is back to the south.",
       "exits": {
         "south": "temple-entrance",
         "north": "sacrificial-chamber"
@@ -163,7 +163,7 @@
     "sacrificial-chamber": {
       "name": "The Sacrificial Chamber",
       "description": "A blood-red chamber dominated by a massive stone altar stained black with the residue of a thousand ancient sacrifices. Channels carved into the stone once directed blood into collection basins shaped like snarling jaguar heads. The walls are painted with scenes of ritual sacrifice — priests in jaguar pelts, obsidian blades raised to the sky, hearts offered to the gods. A small golden idol sits on a shelf behind the altar — beautiful but somehow wrong, too light, a decoy. To the north, an enormous stone door is carved with a death's-head motif. A skull-shaped depression sits at its center. The hall of glyphs lies to the south.",
-      "solvedDescription": "A dark chamber with a blood-stained altar at its center. Obsidian blades gleam in alcoves. The jade skull placed on the altar has unlocked the vault door to the north, ancient stone grinding aside to reveal golden light beyond.",
+      "solvedDescription": "A blood-red chamber dominated by a massive stone altar stained black with the residue of a thousand ancient sacrifices. Channels carved into the stone once directed blood into collection basins shaped like snarling jaguar heads. The walls are painted with scenes of ritual sacrifice — priests in jaguar pelts, obsidian blades raised to the sky, hearts offered to the gods. A small golden idol sits on a shelf behind the altar — beautiful but somehow wrong, too light, a decoy. To the north, the enormous stone door carved with a death's-head motif stands open — the jade skull having been placed in its depression, its pyrite eyes projecting twin beams onto hidden sensors, unlocking the vault door and revealing golden light beyond. The hall of glyphs lies to the south.",
       "exits": {
         "south": "hall-of-glyphs"
       },
@@ -181,7 +181,7 @@
     "treasure-vault": {
       "name": "The Treasure Vault",
       "description": "You stand in the innermost sanctum of the Temple of the Jaguar God. The walls are plated with hammered gold that blazes in the torchlight. Jade, obsidian, and turquoise treasures are piled in stone alcoves — ceremonial masks, jeweled breastplates, feathered headdresses preserved for eternity. But your eyes are drawn to the far wall, where a massive stone jaguar crouches on a pedestal, its body carved from a single block of jade. Between its paws, a sealed compartment is visible — scratched into the stone beside it: 'ONLY THE BLADE OF THE GODS MAY FREE THE HEART OF THE JAGUAR.' The sacrificial chamber lies to the south.",
-      "solvedDescription": "Gold and jade fill every corner of this sealed chamber. The Heart of the Jaguar has been claimed from its pedestal — the legendary gem pulsing with an inner fire, its centuries of waiting finally ended.",
+      "solvedDescription": "You stand in the innermost sanctum of the Temple of the Jaguar God. The walls are plated with hammered gold that blazes in the torchlight. Jade, obsidian, and turquoise treasures are piled in stone alcoves — ceremonial masks, jeweled breastplates, feathered headdresses preserved for eternity. At the far wall, the massive stone jaguar crouches on its pedestal, its body carved from a single block of jade. Between its paws, the sealed compartment has been freed — the obsidian knife having cut through the ancient resin seal, the compartment springing open to reveal the Golden Jaguar resting on a bed of jade beads, its emerald eyes blazing with green fire. The sacrificial chamber lies to the south.",
       "exits": {
         "south": "sacrificial-chamber"
       },

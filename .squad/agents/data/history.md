@@ -511,3 +511,5 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Preserved elements:** Kept "All goals have been achieved!" and "You conquered the adventure!" text below, kept star borders
 - **Monospace context:** Renders in CSS monospace font stack so alignment is precise
 - **Learning:** Trophy wasn't the right metaphor — Pat specifically wanted a ribbon award. The #1 rosette better conveys "first place winner" than a trophy.
+
+- Pat rejected trophy and ribbon designs. Final decision: use same trophy cup art for both goal and victory.

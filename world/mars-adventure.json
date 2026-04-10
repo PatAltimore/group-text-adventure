@@ -78,7 +78,7 @@
     "cydonia-plateau": {
       "name": "Cydonia Plateau",
       "description": "The terrain rises onto a broad mesa of layered sedimentary rock — ancient lake beds, compressed over billions of years. Your instruments are going haywire. Magnetic anomalies spike in patterns too regular to be natural. The ground here feels different — harder, almost resonant beneath your boots, as though something vast lies just below the surface. To the east, an enormous formation rises from the plateau, casting a shadow that looks disturbingly like a human face. The dust plains are south.",
-      "solvedDescription": "The terrain rises onto a mesa of layered sedimentary rock. Instruments spike with anomalies too regular to be natural. Suit pressure seals hold steady with emergency oxygen. East, the Face looms against the pink sky. Dust plains south.",
+      "solvedDescription": "The terrain rises onto a mesa of layered sedimentary rock — ancient lake beds compressed over billions of years. Instruments go haywire. Magnetic anomalies spike in patterns too regular to be natural. The ground feels harder, almost resonant. The emergency oxygen tank stabilized your suit's micro-fractures. To the east, an enormous formation casts a shadow that looks like a human face. The dust plains are south.",
       "exits": {
         "south": "dust-plains",
         "east": "face-of-mars"
@@ -96,7 +96,7 @@
     "face-of-mars": {
       "name": "The Face on Mars",
       "description": "It is not a trick of light and shadow. Up close, the formation is unmistakably carved — a colossal humanoid face two kilometers long, half-buried in red dust. The features are weathered by a billion years of wind, but the symmetry is deliberate. The eyes are deep-set hollows, the mouth a dark cavity large enough to walk into, though it's choked with rockfall and compacted iron oxide. At the base, partially exposed by recent seismic activity, you can see what looks like fitted stonework beneath the natural rock. Your hands are shaking. The Cydonia plateau is west.",
-      "solvedDescription": "The colossal face stretches two kilometers, carved with deliberate symmetry. The mouth gapes open, rockfall cleared by the hammer. Fitted stonework shows beneath, the dark passage north beckoning into the interior. Cydonia plateau west.",
+      "solvedDescription": "Unmistakably carved — a colossal face two kilometers long. Weathered but deliberate symmetry. Fitted stonework beneath. The mouth has been cleared, revealing a carved passage descending into the Face. Ancient air rushes out. Cydonia plateau west.",
       "exits": {
         "west": "cydonia-plateau"
       },
@@ -109,7 +109,7 @@
     "face-entrance": {
       "name": "The Mouth of the Face",
       "description": "You stand inside the mouth of the Face on Mars. The carved stone throat descends at a steep angle into absolute darkness. The walls are smooth — too smooth for wind erosion. Geometric patterns are etched into the stone, spiraling inward like a language written in architecture. Your headlamp catches flecks of crystalline mineral embedded in the walls, and they glitter like frozen starlight. The air here — impossibly — reads slightly warmer on your sensors. Some geothermal source, deep below. The carved face exterior is south. A steep passage descends to the east into the buried structure.",
-      "solvedDescription": "Inside the mouth of the Face. The stone throat descends steeply, walls smooth and etched with spiraling patterns. Crystalline flecks glitter like starlight. Warmer air rises from below. The rappelling cable descends east, passage safe. Carved face south.",
+      "solvedDescription": "Inside the mouth of the Face. Carved throat descends steeply. Smooth walls etched with spiraling patterns. Crystalline minerals glitter. Warmer air from below. Grappling line secured. Descent safe. Carved face south. Passage descends east.",
       "exits": {
         "south": "face-of-mars",
         "east": "buried-corridor"
@@ -143,7 +143,7 @@
     "artifact-chamber": {
       "name": "The Artifact Chamber",
       "description": "A vast hexagonal chamber, its ceiling lost in shadow above the reach of your headlamp. Six alcoves are cut into the walls, each containing objects that defy immediate classification — crystalline polyhedra, metallic spheres with flowing surface patterns, and what appears to be a preserved botanical specimen sealed in transparent resin. A central plinth holds a pedestal with a crystal-shaped indentation. The walls are covered in dense inscriptions — the same script you saw in the corridor, but more complex, more detailed. Everything is covered in a fine layer of red dust that has filtered down over millennia. The corridor is south. A passage to the east leads toward a massive triangular structure visible through a gap in the wall.",
-      "solvedDescription": "A vast hexagonal chamber in shadow. Six alcoves hold alien objects catalogued by UV scanner. The central plinth holds a resonance crystal that fluoresced under ultraviolet. Inscriptions pulse faintly. Corridor south. East to the triangular structure.",
+      "solvedDescription": "Hexagonal chamber. Six alcoves with alien objects. UV scanner revealed the crystal key — now extracted. Dense inscriptions cover walls. Red dust everywhere. Corridor south. Passage east to pyramid.",
       "exits": {
         "south": "buried-corridor",
         "east": "pyramid-chamber"
@@ -161,7 +161,7 @@
     "pyramid-chamber": {
       "name": "The Pyramid Interior",
       "description": "You stand inside a structure that satellite imagery once dismissed as a natural mesa. It is anything but natural. The interior of the Pyramid is a single enormous space, its walls angling inward to meet at a point far above. Every surface is covered in metallic panels etched with circuit-like patterns that pulse with faint residual energy. At the center, a massive crystalline column rises from floor to apex, cloudy with age but still faintly luminous. Conduits run from the column to nodes in the walls — this was a machine. A power station. Perhaps a beacon. The artifact chamber is west. To the north, a sealed doorway bears a crystal-shaped lock mechanism.",
-      "solvedDescription": "Inside the Pyramid — walls angling to a point above, metallic panels pulsing with energy. The crystalline column glows, responding to the resonance crystal. The doorway north has irised open to the Nexus Core. Artifact chamber west.",
+      "solvedDescription": "Inside the Pyramid. Enormous space, walls angling upward. Metallic panels pulse with energy. Crystalline column rises to apex. This was a machine. Artifact chamber west. North doorway unlocked — crystal key activated it. Amber light spills from Nexus Core beyond.",
       "exits": {
         "west": "artifact-chamber"
       },
@@ -180,7 +180,7 @@
     "nexus-core": {
       "name": "The Nexus Core",
       "description": "The sealed door opens into a chamber that stops your heart. A spherical room, perfectly smooth, its walls a mosaic of interlocking crystalline tiles that glow with soft amber light. At the center, suspended in what can only be described as a field of visible energy, floats a complex mechanism — rings within rings, rotating slowly, each inscribed with the alien script. Holographic projections flicker around it: star maps, planetary diagrams, biological schematics. This is no ruin. This machine is dormant, not dead. It is waiting. A socket in the base of the mechanism is empty — shaped to receive a power source. The pyramid interior is south.",
-      "solvedDescription": "The spherical chamber blazes. Crystalline tiles pulse amber and gold. The mechanism spins — rings within rings, alien script like molten silver. The energy core feeds a billion-year machine. Holographic star maps and archives fill the room. Pyramid south.",
+      "solvedDescription": "Spherical room, crystalline tiles glowing amber. Complex mechanism floats — rings within rings. Energy core placed. Nexus blazes — holograms exploding outward. Star maps, schematics, alien faces. Data crystal materializes — the Martian Codex. Complete civilization record. They built this for whoever came next. Pyramid south.",
       "exits": {
         "south": "pyramid-chamber"
       },

@@ -7,7 +7,7 @@
   "rooms": {
     "landing-pad": {
       "name": "Landing Pad",
-      "description": "The cargo shuttle rests on scorched landing struts, heat shimmer still rising from the descent engines. Gray regolith stretches to every horizon under a sky of absolute black, Earth hanging blue and impossibly distant above the crater rim. Supply crates stamped with the Shackleton Mining Colony logo are stacked near the airlock. A pressurized tunnel leads north to the command center. A footpath of compacted regolith heads east toward the crater rim.",
+      "description": "Cargo shuttle rests on scorched landing struts, heat shimmer rising from engines. Gray regolith stretches to every horizon, Earth hanging blue above the crater rim. Supply crates stamped with colony logo are stacked near the airlock. Pressurized tunnel north to command center. Footpath east toward crater rim.",
       "exits": {
         "north": "command-center",
         "east": "crater-rim"
@@ -19,7 +19,7 @@
     },
     "crater-rim": {
       "name": "Crater Rim",
-      "description": "You stand on the rim of Shackleton Crater, a vast bowl of permanent shadow stretching below. The sun hangs at a razor-sharp angle, painting the regolith in blinding white and absolute black with no gradient between. Bootprints from survey teams trail off in every direction, some disappearing over the rim into darkness. A path leads west to the landing pad. A service ladder climbs north to the observation deck.",
+      "description": "You stand on Shackleton Crater's rim, vast bowl of permanent shadow below. Sun hangs at razor-sharp angle, painting regolith in blinding white and absolute black. Bootprints trail in every direction, some disappearing into darkness. Path west to landing pad. Service ladder climbs north to observation deck.",
       "exits": {
         "west": "landing-pad",
         "north": "observation-deck"
@@ -31,7 +31,7 @@
     },
     "observation-deck": {
       "name": "Observation Deck",
-      "description": "An elevated platform of welded aluminum struts supports a panoramic viewport dome. The entire mining operation is visible from here — drill site floodlights, cargo bay cranes, the thin access road winding across the regolith. A rack of survey instruments lines the south railing. Stars burn steady and unwinking overhead, sharp as needles in the vacuum. The ladder leads south to the crater rim.",
+      "description": "Aluminum platform supports panoramic viewport dome. Entire mining operation visible — drill site floodlights, cargo bay cranes, access road across regolith. Survey instruments line the south railing. Stars burn steady overhead, sharp as needles in vacuum. Ladder south to crater rim.",
       "exits": {
         "south": "crater-rim"
       },
@@ -42,8 +42,8 @@
     },
     "command-center": {
       "name": "Command Center",
-      "description": "Banks of monitors cast cold light across the operations room, most showing nominal life-support readings. A central holotable displays a topographic map of the mining area with one sector blinking red — the anomalous seismic zone. The air recyclers hum their constant low note. The landing pad is south and living quarters are east. A security door to the west reads 'CARGO BAY — AUTHORIZED PERSONNEL,' its card reader blinking red.",
-      "solvedDescription": "Bay door open.",
+      "description": "Banks of monitors show nominal life-support readings. Holotable displays topographic map with anomalous seismic zone blinking red. Air recyclers hum. Landing pad south, living quarters east. Security door west reads 'CARGO BAY — AUTHORIZED,' card reader blinking red.",
+      "solvedDescription": "Banks of monitors cast cold light. Holotable displays topographic map with anomalous zone blinking red. Air recyclers hum. Landing pad south, living quarters east. Security door west stands open to cargo bay.",
       "exits": {
         "south": "landing-pad",
         "east": "living-quarters"
@@ -51,12 +51,11 @@
       "items": [
         "comm-device"
       ],
-      "hazards": [],
-      "solvedDescription": "Banks of monitors cast cold light. The holotable blinks red over the anomalous sector. The landing pad is south, living quarters east. The cargo bay door west stands open."
+      "hazards": []
     },
     "living-quarters": {
       "name": "Living Quarters",
-      "description": "Four bunks bolted to the walls of this pressurized module, thin mattresses still bearing the impressions of sleeping bodies. Personal effects scatter the shelves — family photos, dog-eared paperbacks, a chess set frozen mid-game. The air is stale, recycled too many times. A kitchenette occupies one corner, its coffee maker still warm. The command center is west.",
+      "description": "Four bunks bolted to walls, thin mattresses bearing impressions of sleeping bodies. Personal effects on shelves — family photos, dog-eared paperbacks, chess set frozen mid-game. Air stale, recycled too many times. Kitchenette occupies one corner, coffee maker still warm. Command center west.",
       "exits": {
         "west": "command-center"
       },
@@ -67,7 +66,7 @@
     },
     "cargo-bay": {
       "name": "Cargo Bay",
-      "description": "A cavernous pressurized hangar filled with the machinery of extraction. Helium-3 transport canisters line the far wall, each the size of a car. Overhead cranes hang motionless on their tracks. Crates of mining equipment sit on heavy-duty pallets, manifests fluttering in the ventilation currents. The command center is east. A ramp descends south to ore processing.",
+      "description": "Pressurized hangar filled with extraction machinery. Helium-3 canisters line the far wall, each the size of a car. Overhead cranes hang motionless. Mining equipment sits on pallets, manifests fluttering in ventilation currents. Command center east. Ramp south to ore processing.",
       "exits": {
         "east": "command-center",
         "south": "ore-processing"
@@ -80,7 +79,7 @@
     },
     "ore-processing": {
       "name": "Ore Processing",
-      "description": "Conveyor belts and crushing machines fill this industrial module, all idle now. Fine lunar dust coats every surface despite the air filtration. Sample trays line a workbench, each labeled with depth markers. The facility was built to extract helium-3, but some deeper samples look wrong — crystalline structures too regular, too intentional. The cargo bay is north. The drill site is east.",
+      "description": "Conveyor belts and crushing machines fill this module, all idle. Lunar dust coats every surface. Sample trays line a workbench with depth markers. Facility built for helium-3, but deeper samples look wrong — crystalline structures too regular, too intentional. Cargo bay north. Drill site east.",
       "exits": {
         "north": "cargo-bay",
         "east": "drill-site"
@@ -92,8 +91,8 @@
     },
     "drill-site": {
       "name": "Drill Site",
-      "description": "The main bore shaft descends into darkness, its reinforced collar still warm from the last drilling run. Floodlights illuminate a web of cracks radiating from the shaft through the surrounding regolith. This is where the drill broke through — the bit dropped three meters into nothing before the emergency brake caught it. Ore sample trays are scattered near the drill console. Ore processing is west. The shaft to the north is sealed with blast doors, their surface buckled outward from below.",
-      "solvedDescription": "Tunnel blasted.",
+      "description": "The main bore shaft descends into darkness, its reinforced collar still warm from the last drilling run. Floodlights illuminate cracks radiating from the shaft through the regolith. This is where the drill broke through — the bit dropped three meters into nothing before the brake caught it. Ore sample trays are scattered near the console. Ore processing is west. The shaft north is sealed with blast doors, their surface buckled outward.",
+      "solvedDescription": "Bore shaft descends into darkness. Floodlights illuminate cracks through regolith. Ore samples scattered near console. Ore processing west. Blast doors north blown open. Gaping tunnel exhales ancient dust. Way north open.",
       "exits": {
         "west": "ore-processing"
       },
@@ -106,13 +105,12 @@
           "probability": 0.08,
           "deathText": "A deep crack splits the ceiling. Lunar rock cascades down in slow-motion freefall, silent in the vacuum. Your suit integrity alarm shrieks once before a slab of regolith pins you to the floor."
         }
-      ],
-      "solvedDescription": "The bore shaft descends into darkness, cracks radiating through regolith. Ore processing is west. The blast doors north have been blown open, tunnel beyond."
+      ]
     },
     "sealed-tunnel": {
       "name": "Sealed Tunnel",
-      "description": "The blast doors gave way to a rough-hewn tunnel descending at a steep angle into the lunar subsurface. The walls transition from natural regolith to something smoother and darker within the first twenty meters. Your bootlights barely penetrate the darkness. The air from your suit sensors reads vacuum, but the tunnel walls absorb sound in an unnatural way. The drill site is south. The passage north is blocked by a collapsed section of ceiling, support beams twisted like broken bones.",
-      "solvedDescription": "Passage shored.",
+      "description": "Blast doors gave way to steep tunnel descending into subsurface. Walls transition from regolith to something smoother within first twenty meters. Bootlights barely penetrate darkness. Drill site south. Passage north blocked by collapsed ceiling, support beams twisted like broken bones.",
+      "solvedDescription": "A tunnel descending into the subsurface. Walls transition to smoother stone. The headlamp illuminates the passage. The drill site is south. The collapsed ceiling has been cleared. Path north stands open.",
       "exits": {
         "south": "drill-site"
       },
@@ -123,26 +121,24 @@
           "probability": 0.1,
           "deathText": "Your boot finds empty air where floor should be. You pitch forward into absolute darkness. The fall is short but the landing is not — your helmet cracks against stone and the suit breach alarm screams briefly before silence reclaims the tunnel."
         }
-      ],
-      "solvedDescription": "The tunnel descends steeply, walls smooth and dark. Floodlights illuminate the passage. The drill site is south. The collapsed ceiling is cleared, passage north open."
+      ]
     },
     "hollow-cavern": {
       "name": "Hollow Cavern",
-      "description": "The tunnel opens into a space so vast your headlamp cannot find the far wall. The floor is unnaturally smooth — polished basalt, or something that resembles it. Your footsteps produce a deep resonant hum that takes several seconds to decay, as though the entire chamber is a tuning fork. The ceiling arches overhead in a perfect curve. Nothing in nature makes curves this precise. The sealed tunnel leads south.",
-      "solvedDescription": "East wall open.",
+      "description": "Tunnel opens into space so vast headlamp cannot find far wall. Floor unnaturally smooth — polished basalt. Footsteps produce deep resonant hum, as though chamber is tuning fork. Ceiling arches overhead in perfect curve. Nothing in nature makes curves this precise. Sealed tunnel south.",
+      "solvedDescription": "The vast cavern floor is smooth. Footsteps hum with resonance. Sealed tunnel south. The eastern wall has pivoted open to the resonance chamber.",
       "exits": {
         "south": "sealed-tunnel"
       },
       "items": [
         "crystal-key"
       ],
-      "hazards": [],
-      "solvedDescription": "The cavern stretches far, polished floor humming. The eastern wall stands open to the resonance chamber. The sealed tunnel leads south."
+      "hazards": []
     },
     "resonance-chamber": {
       "name": "Resonance Chamber",
-      "description": "A smaller chamber branches from the cavern, its walls covered in geometric patterns that catch and reflect light in strange ways. The patterns aren't carved — they seem embedded in the rock itself, as though the stone grew around them. A low vibration pulses through the floor at a frequency felt in the bones rather than heard. The grooves form what might be writing, or circuitry, or both. The hollow cavern is west.",
-      "solvedDescription": "Way north open.",
+      "description": "Smaller chamber branches from cavern, walls covered in geometric patterns catching light strangely. Patterns embedded in rock itself, as though stone grew around them. Low vibration pulses through floor at frequency felt in bones. Grooves form what might be writing, or circuitry, or both. Hollow cavern west.",
+      "solvedDescription": "Geometric patterns cover the walls. The spectrometer decoded them. Patterns glow brighter, north wall split open to an alien corridor. Hollow cavern west.",
       "exits": {
         "west": "hollow-cavern"
       },
@@ -155,13 +151,12 @@
           "probability": 0.08,
           "deathText": "The vibration hits a harmonic your body cannot withstand. Your vision dissolves into static, suit readings spike and flatline in the same instant. The chamber continues its ancient hum, indifferent."
         }
-      ],
-      "solvedDescription": "Geometric patterns pulse with decoded meaning. A passage north has opened along a geometric seam. The hollow cavern is west."
+      ]
     },
     "alien-antechamber": {
       "name": "Alien Antechamber",
-      "description": "The architecture here abandons all pretense of geology. Hexagonal columns of dark crystalline material rise from floor to ceiling, their surfaces faintly luminous with an internal blue-white glow. The air — impossibly, there is air here — carries a faint ozone scent. A circular doorway dominates the north wall, its frame inscribed with geometric patterns matching the resonance chamber. An energy field shimmers across the opening. The resonance chamber is south.",
-      "solvedDescription": "Key set.",
+      "description": "Architecture here abandons all pretense of geology. Hexagonal columns of dark crystalline material rise from floor to ceiling, surfaces faintly luminous with blue-white glow. The air — impossibly, there is air here — carries faint ozone scent. Circular doorway dominates north wall, frame inscribed with geometric patterns. Energy field shimmers across opening. Resonance chamber south.",
+      "solvedDescription": "Hexagonal columns glow blue-white. Safe corridors mapped through radiation. The crystal key unlocked the north doorway. Chamber beyond accessible. Resonance chamber south.",
       "exits": {
         "south": "resonance-chamber"
       },
@@ -174,13 +169,12 @@
           "probability": 0.12,
           "deathText": "The radiation accumulates faster than your suit can shield. Nausea hits first, then trembling. You collapse between the glowing columns as your cells break down, the alien light pulsing on, indifferent."
         }
-      ],
-      "solvedDescription": "Hexagonal crystal columns glow steady, radiation neutralized. The doorway north stands open, energy field gone. The resonance chamber is south."
+      ]
     },
     "control-room": {
       "name": "Ancient Control Room",
-      "description": "A vast semicircular chamber lined with consoles of unknown material — dark, smooth, neither metal nor stone. Holographic displays flicker at the edge of perception, ghostly star charts and orbital diagrams that fade when viewed directly. At the center sits a raised platform with a cradle shaped for something roughly humanoid but not quite. The technology is millions of years old, yet surfaces warm beneath your gloved fingertips. The antechamber is south. A massive sealed iris door dominates the north wall.",
-      "solvedDescription": "Iris opened.",
+      "description": "Vast semicircular chamber lined with consoles of unknown material — dark, smooth, neither metal nor stone. Holographic displays flicker at perception's edge, ghostly star charts and orbital diagrams fading when viewed directly. At center sits raised platform with humanoid cradle. Technology is millions of years old, yet surfaces warm beneath gloved fingertips. Antechamber south. Massive sealed iris door dominates north wall.",
+      "solvedDescription": "Semicircular chamber with alien consoles. Holograms blazing. Power cell floods energy through the network. Antechamber south. Iris door north open to core chamber.",
       "exits": {
         "south": "alien-antechamber"
       },
@@ -193,13 +187,11 @@
           "probability": 0.1,
           "deathText": "An arc of blue-white energy lances from a console to your suit. Every system overloads simultaneously. The alien technology powers down as though nothing happened, leaving your suit dark and still."
         }
-      ],
-      "solvedDescription": "Consoles hum with power, star charts bright and stable. The antechamber is south. The iris door north has dilated open to the core chamber."
+      ]
     },
     "core-chamber": {
       "name": "Core Chamber",
-      "description": "You stand at the geometric center of the moon. The chamber is a perfect sphere, hundreds of meters across, its walls alive with slowly pulsing light that shifts through colors you have never seen. At the center, suspended in a gravitational field, floats a crystalline structure — the heart of whatever this place truly is. The scale is incomprehensible. This is not a natural satellite. This was built, parked in Earth's orbit, and forgotten — or hidden. The control room is south.",
-      "solvedDescription": "Origin revealed.",
+      "description": "You stand at the geometric center of the moon. The chamber is a perfect sphere, hundreds of meters across, its walls alive with pulsing light that shifts through colors you have never seen. At the center, suspended in a gravitational field, floats a crystalline structure — the heart of this place. The scale is incomprehensible. This was built, parked in Earth's orbit, and forgotten. The control room is south.",
       "exits": {
         "south": "control-room"
       },

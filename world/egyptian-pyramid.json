@@ -26,7 +26,7 @@
     "grand-corridor": {
       "name": "The Grand Corridor",
       "description": "Painted gods process along the walls in vivid silence — jackal-headed Anubis weighing a feather against a human heart, golden barques sailing a river of stars, armies of the dead marching toward eternity. The pigments still burn with color after three millennia. Oil channels cut into the floor once held ribbons of flame; now they cradle only dust. The ceiling vaults high overhead, supported by pillars carved as bundled papyrus stalks. The entrance lies south. Passages branch west toward an offering hall and east toward a chamber dominated by a carved sphinx. A sealed stone door to the north bears a scarab-shaped indentation.",
-      "solvedDescription": "A vast corridor stretches into the pyramid's heart, walls covered in painted reliefs of pharaohs and gods. Torchlight dances across scenes of judgment and resurrection. The massive stone slab to the north has ground aside, revealing the entrance to the burial chamber.",
+      "solvedDescription": "Painted gods process along the walls in vivid silence — jackal-headed Anubis weighing a feather against a human heart, golden barques sailing a river of stars, armies of the dead marching toward eternity. The pigments still burn with color after three millennia. Oil channels cut into the floor once held ribbons of flame; now they cradle only dust. The ceiling vaults high overhead, supported by pillars carved as bundled papyrus stalks. The entrance lies south. Passages branch west toward an offering hall and east toward a chamber dominated by a carved sphinx. The massive stone door to the north has ground aside — the scarab set in its indentation unlocking ancient counterweights — revealing the burial chamber beyond.",
       "exits": {
         "south": "entrance",
         "west": "offering-hall",
@@ -44,7 +44,7 @@
     "hidden-passage": {
       "name": "Hidden Passage",
       "description": "The walls press in. Rough-hewn stone scrapes your shoulders as you shuffle through a tunnel never meant for the living. Cobwebs thick as gauze cling to your face and hair. The chisel marks are hasty, panicked — this passage was carved in secret, outside the master plan. Scratched into the wall in hieratic script, barely legible: 'FOR THE KEEPER ALONE.' The passage twists west to the entrance. To the north, it opens into a wider chamber.",
-      "solvedDescription": "A narrow passage behind the walls, used by ancient priests to move unseen. The trap mechanism has been cleared — pressure plates disabled, the corridor now safe to traverse without fear of ancient defenses.",
+      "solvedDescription": "The walls press in. Rough-hewn stone scrapes your shoulders as you shuffle through a tunnel never meant for the living. Cobwebs thick as gauze cling to your face and hair. The chisel marks are hasty, panicked — this passage was carved in secret, outside the master plan. Scratched into the wall in hieratic script, barely legible: 'FOR THE KEEPER ALONE.' The passage twists west to the entrance. To the north, it opens into the trap room — but the ancient scroll has revealed the safe path, rendering the pressure plate mechanism harmless for those who know the way.",
       "exits": {
         "west": "entrance",
         "north": "trap-room"
@@ -76,7 +76,7 @@
     "sphinx-chamber": {
       "name": "The Sphinx Chamber",
       "description": "A great sphinx crouches against the far wall, twice your height, its human face worn smooth by time into something both regal and unknowable. Between its outstretched paws, a stone pedestal holds a shallow bowl-shaped depression. Riddles in demotic script spiral across the walls — questions without answers, answers without questions. Moonlight slants down through a shaft in the ceiling, impossibly, painting the sphinx's face in cold silver. The grand corridor lies west. To the north, a heavy door carved with the Eye of Horus bars the way forward.",
-      "solvedDescription": "A chamber dominated by a stone sphinx, its inscrutable gaze fixed on all who enter. Riddles are carved into the floor in hieroglyphics. The sealed door to the north now stands open, the sphinx's puzzle answered, passage granted to the trap room beyond.",
+      "solvedDescription": "A great sphinx crouches against the far wall, twice your height, its human face worn smooth by time into something both regal and unknowable. Between its outstretched paws, the stone pedestal's shallow bowl now holds the sun disc, blazing where moonlight strikes it from above. Riddles in demotic script spiral across the walls — questions without answers, answers without questions. Moonlight slants down through a shaft in the ceiling, impossibly, painting the sphinx's face in cold silver. The grand corridor lies west. To the north, the heavy door carved with the Eye of Horus has split apart and ground open, granting passage to the trap room beyond.",
       "exits": {
         "west": "grand-corridor"
       },
@@ -105,7 +105,7 @@
     "burial-chamber": {
       "name": "The Burial Chamber",
       "description": "Stone sarcophagi ring the walls — servants, priests, nobles, all entombed to attend the pharaoh through eternity. Their painted faces stare with flat, patient eyes. Gold leaf curls from the ceiling in delicate spirals, drifting down like metallic snow. A low hum vibrates through the floor and into your bones. The pyramid is breathing in its sleep. The grand corridor lies south. To the east, an ornate doorway framed in lapis lazuli leads to the pharaoh's inner sanctum — but its mechanism demands an offering before it will open.",
-      "solvedDescription": "A solemn chamber housing an ornate sarcophagus, its surface carved with protective spells. Canopic jars stand sentinel in alcoves. The sealed wall to the east has cracked open, revealing a hidden passage leading to the pharaoh's tomb beyond.",
+      "solvedDescription": "Stone sarcophagi ring the walls — servants, priests, nobles, all entombed to attend the pharaoh through eternity. Their painted faces stare with flat, patient eyes. Gold leaf curls from the ceiling in delicate spirals, drifting down like metallic snow. A low hum vibrates through the floor and into your bones. The pyramid is breathing in its sleep. The grand corridor lies south. The ornate doorway to the east, framed in lapis lazuli, has swung open — the golden ankh having unlocked its elaborate mechanism — revealing the pharaoh's inner sanctum beyond, glowing with impossible golden light.",
       "exits": {
         "south": "grand-corridor"
       },
@@ -148,7 +148,7 @@
     "star-chamber": {
       "name": "The Star Chamber",
       "description": "The ceiling opens to the sky. A narrow shaft, cut with impossible precision, frames the North Star in its aperture — the ancient builders' final triumph of alignment. Star charts carved into the obsidian floor map constellations three thousand years dead, charting the soul's passage to the Field of Reeds. Lenses of polished crystal focus the starlight into a single beam that strikes a golden disc on the south wall. The disc can be rotated. The treasure room lies west. Something hums at the edge of hearing — the stars themselves, perhaps, singing the dead home.",
-      "solvedDescription": "A domed chamber whose ceiling is a map of the ancient Egyptian sky, lapis and gold leaf forming constellations. The hidden compartment has opened, revealing the star treasure — gleaming artifacts that catch the starlight painted above.",
+      "solvedDescription": "The ceiling opens to the sky. A narrow shaft, cut with impossible precision, frames the North Star in its aperture — the ancient builders' final triumph of alignment. Star charts carved into the obsidian floor map constellations three thousand years dead, charting the soul's passage to the Field of Reeds. Lenses of polished crystal focus the starlight into a single beam that strikes the golden disc on the south wall. The disc has been rotated, and the Eye of Horus placed in its slot — projecting constellations in cold fire across the floor. Where the beams converge, a hidden compartment has split open in the obsidian, revealing the Scepter of Ra, golden and radiant, humming with the authority of a god. The treasure room lies west.",
       "exits": {
         "west": "treasure-room"
       },

@@ -33,7 +33,7 @@
     "lighthouse-base": {
       "name": "Lighthouse Base",
       "description": "The lighthouse towers above you, a spiral of interlocking metal plates that seem to breathe with the wind. Its entrance is a circular door sealed by concentric rings that rotate independently. Strange symbols mark each ring. A stone pedestal beside the door holds a complex mechanism — four rotating dials set with crystalline markers. The forest path is south. The door north is currently sealed.",
-      "solvedDescription": "The lighthouse stands weathered against the sea wind, its white paint peeling in long strips. The heavy iron door to the north has been unlocked, swinging open to reveal the lighthouse interior and its spiraling iron staircase beyond.",
+      "solvedDescription": "The lighthouse towers above you, a spiral of interlocking metal plates that seem to breathe with the wind. Its entrance is a circular door sealed by concentric rings that rotate independently. Strange symbols mark each ring. A stone pedestal beside the door holds a complex mechanism — four rotating dials set with crystalline markers. The brass compass pointed the way, and the rotating rings have been aligned according to its bearings. With a deep grinding sound, the concentric circles locked into place. The door split along invisible seams and swung open, revealing the lighthouse interior. The forest path is south. The door north now stands open.",
       "exits": {
         "south": "forest-path"
       },
@@ -72,7 +72,7 @@
     "tidal-cave": {
       "name": "Tidal Cave",
       "description": "The cave walls are slick with bioluminescent algae, casting a pale green glow. Water drips from stalactites, each drop echoing in the chamber. The pillars at the entrance are covered in relief carvings — scenes of robed figures operating massive levers, water flowing through impossible channels. At the back of the cave, a bronze valve wheel protrudes from the wall, encrusted with barnacles but still functional. The dock is west. A dark passage leads north, currently flooded.",
-      "solvedDescription": "A sea cave carved by centuries of tides, walls glistening with moisture. The water has been drained, revealing a rocky passage north descending to an underground reservoir — the sound of dripping echoing from below.",
+      "solvedDescription": "The cave walls are slick with bioluminescent algae, casting a pale green glow. Water drips from stalactites, each drop echoing in the chamber. The pillars at the entrance are covered in relief carvings — scenes of robed figures operating massive levers, water flowing through impossible channels. At the back of the cave, the bronze valve wheel has been spun — using the pressure gauge to time it perfectly when the gauge read zero — water gurgling and rushing through hidden channels. The flooded passage to the north has drained, revealing stairs leading down to the underground reservoir. The dock is west.",
       "exits": {
         "west": "stone-dock"
       },
@@ -90,7 +90,7 @@
     "underground-reservoir": {
       "name": "Underground Reservoir",
       "description": "An enormous chamber carved from living rock, its ceiling supported by columns that double as water channels. The reservoir floor is a maze of brass pipes and pressure gauges, all dormant. In the center, an island platform holds a crystalline control panel with five colored switches. Water trickles from high channels, waiting to be redirected. The passage south leads back to the tidal cave.",
-      "solvedDescription": "A vast underground lake, still and mirror-dark. Ancient pipes and sluice gates line the walls. The passage north to the gear chamber has been revealed, mechanical sounds echoing from the darkness beyond.",
+      "solvedDescription": "An enormous chamber carved from living rock, its ceiling supported by columns that double as water channels. The reservoir floor is a maze of brass pipes and pressure gauges, all dormant. In the center, an island platform holds a crystalline control panel with five colored switches. Following the ancient journal's schematic, the switches were activated in sequence: blue, green, amber, red, white. Water rushed through the pipes with increasing pressure. Somewhere above, machinery ground to life. A previously hidden passage has opened in the northern wall, leading to the gear chamber — mechanical sounds echoing from the darkness beyond. The passage south leads back to the tidal cave.",
       "exits": {
         "south": "tidal-cave"
       },
@@ -102,7 +102,7 @@
     "underwater-chamber": {
       "name": "Underwater Chamber",
       "description": "Stairs descend into crystal-clear water that somehow remains perfectly breathable — an impossibility that defies physics. The chamber walls are transparent, revealing the ocean beyond. Fish swim past, casting shadows on the floor. A massive gear mechanism dominates the room, its teeth interlocking with precision. A control lever stands beside it, waiting. Stairs lead back up north. A sealed door to the east is marked with a circular indentation.",
-      "solvedDescription": "A submerged chamber of ancient stonework, air trapped in a pocket above. Strange symbols line the walls. The sealed passage to the east has opened, revealing the crystal chamber beyond, prismatic light spilling through.",
+      "solvedDescription": "Stairs descend into crystal-clear water that somehow remains perfectly breathable — an impossibility that defies physics. The chamber walls are transparent, revealing the ocean beyond. Fish swim past, casting shadows on the floor. A massive gear mechanism dominates the room, its teeth interlocking with precision. A control lever stands beside it, waiting. Stairs lead back up north. The sealed door to the east — its circular indentation having accepted the bronze key, rotated in a flowing pattern mimicking the tides — has swung open with a hiss of equalized pressure, revealing the crystal chamber beyond, prismatic light spilling through.",
       "exits": {
         "north": "stone-dock"
       },
@@ -130,7 +130,7 @@
     "gear-chamber": {
       "name": "Gear Chamber",
       "description": "A cathedral of clockwork. Gears the size of houses interlock in three dimensions, turning with glacial slowness. The sound is hypnotic — clicking, whirring, the deep groan of metal under precisely calculated stress. Catwalks crisscross the chamber, providing access to adjustment points. At the highest point, a control platform overlooks the mechanism. South leads back. A passage west is blocked by rotating gears.",
-      "solvedDescription": "Massive bronze gears interlock in a chamber of Victorian engineering. The gears have been stabilized, turning in smooth rhythm. Passages have opened west to the archive chamber and north to the control platform.",
+      "solvedDescription": "A cathedral of clockwork. Gears the size of houses interlock in three dimensions, turning with glacial slowness. The sound is hypnotic — clicking, whirring, the deep groan of metal under precisely calculated stress. Catwalks crisscross the chamber, providing access to adjustment points. At the highest point, a control platform overlooks the mechanism. The adjustment rod has been used at three critical points, each adjustment causing a cascade of changes — gears slowing, speeding, finding their rhythm. The chaotic grinding has become a precise symphony of mechanical motion. South leads back. The western passage, previously blocked by wild gears, is now safe to traverse — the star chart's constellation patterns having guided safe passage through the synchronized pauses to the archive chamber. Following the gear schematic's red-marked routes through the catwalks, the ladder north to the control platform is now accessible.",
       "exits": {
         "south": "underground-reservoir"
       },
@@ -169,7 +169,7 @@
     "heart-vault": {
       "name": "Heart Vault",
       "description": "You stand before the Heart of Ages. It floats in the center of the chamber, a sphere of interwoven metal and crystal that seems to exist in multiple dimensions simultaneously. Energy arcs between its components. The vault walls are inscribed with the complete history of the D'ni — their rise, their achievements, their mysterious disappearance. Five pedestals surround the Heart, each designed to hold a specific artifact. The mechanisms you've activated throughout the island all converge here. This is where their legacy either awakens or dies.",
-      "solvedDescription": "A sacred chamber at the island's core, walls carved with the history of its builders. The Heart has been activated, filling the vault with harmonic resonance — the island's ancient mechanism humming with restored purpose.",
+      "solvedDescription": "You stand before the Heart of Ages. It floats in the center of the chamber, a sphere of interwoven metal and crystal that seems to exist in multiple dimensions simultaneously. Energy arcs between its components. The vault walls are inscribed with the complete history of the D'ni — their rise, their achievements, their mysterious disappearance. Five pedestals surround the Heart, each designed to hold a specific artifact. The mechanisms you've activated throughout the island all converge here. Through the focusing lens, energy lines connected every mechanism across the island — all pulsing in perfect synchronization. The master override lever was pulled, the entire island shuddering as mechanisms across every chamber aligned. A hidden door opened in the eastern wall. The master crystal has been placed in the central pedestal, and the Heart of Ages blazes to life, energy cascading through its impossible geometry. The walls illuminate with D'ni script that translates itself in your mind — knowledge of worlds beyond worlds, ages beyond ages. The island's mechanisms all harmonize into a single purpose. The D'ni didn't disappear — they transcended. And they left this island as an invitation. The Heart pulses with infinite potential.",
       "exits": {
         "west": "control-platform"
       },
