@@ -279,3 +279,13 @@
   - Created inline `fuzzyWorld()` with 5 items (Dr. Webb's research journal, Rusty Key, Golden Key, Knight's Shield, Old Torch) and `exactMatchWorld()` with 2 items (Key, Rusty Key) for exact-match priority tests
   - Mouth also wrote 15 tests in `describe('Fuzzy Item Name Matching')` — both test blocks complement each other
   - Total: 312 tests in game-engine.test.js (305 pass, 7 skipped)
+
+- **2026-04-09 — Solved Description feature tests (18 tests: 8 pass, 10 expected failures)**
+  - File: `/tests/solved-description.test.js` — 18 tests across 7 describe blocks
+  - TDD-style: tests define spec for `solvedDescription` room field before Mouth's implementation lands
+  - Uses standalone inline world data (`WORLD_DATA`) — no modifications to `test-world.json`
+  - World has 6 rooms, 4 items, 4 puzzles covering: single-puzzle room, no-solvedDescription room, multi-puzzle room, unrelated room, room with solvedDescription but no puzzles
+  - **8 passing now** (baseline checks): unsolved rooms show normal `description`, backward-compat rooms without `solvedDescription` still work, partial multi-puzzle solve stays normal, room isolation for rooms without the feature, multiplayer pre-solve state
+  - **10 failing (expected)**: all tests that require `getPlayerView()` to return `solvedDescription` when puzzles are solved — awaiting engine implementation from Mouth
+  - Key design decision: for rooms with multiple puzzles, `solvedDescription` only activates when ALL puzzles in the room are solved (not just one)
+  - All 547 other tests across 6 suites still pass; zero regressions introduced

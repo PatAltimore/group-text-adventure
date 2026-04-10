@@ -846,3 +846,54 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 - `azure.yaml` — added import path patching to both windows and posix prepackage hooks
 
 **Testing:** All 539 tests pass (2 skipped), no regressions.
+
+## Learnings
+
+### 2026-04-10 — Added displayOrder field to world files
+
+**Task:** Add a `displayOrder` numeric field to all 12 world JSON files to control the order worlds appear on the host screen, and update the worlds API to sort by it.
+
+**Implementation:**
+- Added `"displayOrder": N` (1–12) as a top-level field in each world JSON, right after `"name"`
+- Updated `api/src/functions/worlds.js` to include `displayOrder` in the response and sort ascending by it
+- Worlds without `displayOrder` sort to the end via `?? Infinity`
+
+**Order:** The Forgotten Castle (1), The Clockmaker's Mansion (2), The Derelict Station (3), The Temple of the Jaguar God (4), The Lost Pyramid (5), Mars: The Buried City (6), Dead Man's Fortune (7), Shadows Over Blackwater (8), The Mystery House (9), Paranormal Mysteries (10), The Forgotten Mechanica (11), Alcatraz: The Zozo Investigation (12), Hollow Moon (13)
+
+**Testing:** All 539 tests pass (2 skipped), no regressions.
+
+### 2026-04-09 — Hollow Moon World
+
+- **New world:** `world/hollow-moon.json` (displayOrder: 13). Hard sci-fi theme — helium-3 mining colony on the moon's south pole discovers the moon is an ancient alien space station.
+- **Structure:** 14 rooms (surface→moonbase→mining→underground→alien), 14 items, 10 puzzles, 6 goals.
+- **Puzzle progression:** Linear descent from surface to core — unlock cargo bay → blast sealed tunnel → clear passage → scan cavern walls → decode writing → unseal gateway → power control room → decode origin. Two side puzzles (illuminate-tunnel, neutralize-radiation) use `removeHazard` action.
+- **File size:** ~30KB (within Azure Table Storage 32K limit).
+- **All 539 tests pass.** No regressions.
+
+### 2026-04-10 — Fixed hintsEnabled + added adventureName/gameCode to messages
+
+**Task:** Two backend fixes in `api/src/functions/gameHub.js`:
+
+1. **hintsEnabled bug:** `handleStartGame` never read `data.hintsEnabled` from the host's startGame message, so `session.hintsEnabled` was always `undefined`, causing `hintsEnabled !== false` to evaluate `true` regardless of host selection. Added a block after sayScope (line 643-646) to store the boolean.
+
+2. **adventureName/gameCode:** Added `adventureName: session.world?.name || ''` and `gameCode: gameId` to three message types:
+   - `gameStart` (sent to each player when host starts the game)
+   - `gameInfo` reconnection path (sent to reconnecting players)
+   - `gameInfo` new join path (sent to new players joining)
+
+**Testing:** All 539 tests pass (2 skipped), no regressions.
+
+### 2026-07-18 — Added solvedDescription support to game engine and all 13 worlds
+
+**Task:** When a puzzle changes room state (opens exit, removes hazard, adds item), the room description was stale. Added `solvedDescription` support so rooms show updated text after puzzles are solved.
+
+**Implementation:**
+1. **Engine (`api/src/game-engine.js`):** In `getPlayerView()`, after the puzzle emoji check, added logic to check if ALL puzzles in the current room are solved. If so and the room has a `solvedDescription` field, that text is used instead of the normal `description`.
+2. **Validator (`world/validate-world.js`):** Added validation for optional `solvedDescription` string field on rooms.
+3. **World files:** Added `solvedDescription` to 81 rooms across all 13 world JSON files. Each description reflects the post-puzzle state of the room.
+
+**Key design decision:** `solvedDescription` shows only when ALL puzzles in a room are solved (not any). This was dictated by pre-existing TDD tests in `tests/solved-description.test.js`. This makes sense for rooms with multiple puzzles — the solved description should reflect the fully-resolved state.
+
+**File size management:** Most files stayed under 32K chars. `alcatraz-ghosts.json` was already over limit pre-change (35K). `hollow-moon.json` required trimming solvedDescriptions to stay under 32K.
+
+**Testing:** All 557 tests pass (2 skipped). Pre-existing solved-description test suite passes completely.

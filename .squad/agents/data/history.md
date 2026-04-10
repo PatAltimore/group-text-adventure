@@ -461,3 +461,15 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **World synopses:** Added synopsis field (≤8 words) to all 8 world JSON files. Updated populateWorldSelector() in app.js to prefer world.synopsis over world.description for card text. Updated FALLBACK_WORLDS array with synopsis fields. Updated worlds.js API to return synopsis field.
 - **Files modified:** client/style.css, client/index.html, client/app.js, pi/src/functions/worlds.js, all 8 world/*.json files
 - **All 539 tests pass** (2 skipped) unchanged.
+
+### 2026-04-06 — Home Screen + Game Banner
+
+- **New home screen (screen-home):** Root entry point with two big buttons: "Host a Game" and "Join a Game". Replaces the old landing screen as the default visible screen.
+- **Manual join screen (screen-join-manual):** New screen for entering a game code manually. Has name input, code input, and "Join Game →" button (disabled until both filled). Back link returns to home.
+- **Landing screen refactored:** Now exclusively a host setup screen. Title changed to "🏰 Host a Game". Removed Join Game button and inline join code group. Added back link to home.
+- **Screen flow:** Root URL → home → host setup or manual join. URL with ?game= param → existing URL-based join screen (unchanged). Auto-rejoin and reconnect flows skip home as before.
+- **Game banner dynamic title:** handleGameStart and handleGameInfo now update #game-title with adventure name + game code (e.g., "🏰 The Forgotten Castle · ABC123"). Falls back to "Group Text Adventure" if adventureName absent.
+- **CSS additions:** Home screen styles (.home-container, .home-title, .home-subtitle, .home-buttons, .btn-home). Manual join screen reuses existing .join-container/.join-form. Game title gets min-width: 0 and flex: 1 for proper ellipsis in flex header.
+- **Listener cleanup:** initJoinManual clones inputs/button before attaching listeners to prevent duplicates on re-entry.
+- **Files modified:** client/index.html, client/app.js, client/style.css
+- **All 539 tests pass** (2 skipped) unchanged.
