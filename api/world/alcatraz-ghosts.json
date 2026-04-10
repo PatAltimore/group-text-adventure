@@ -257,7 +257,7 @@
     },
     "full-spectrum-camera": {
       "name": "Full-Spectrum Camera",
-      "description": "Modified camera that captures ultraviolet, visible, and infrared light simultaneously — the full electromagnetic spectrum. Shows things human eyes can't perceive. The lens is cracked but functional. The last photo shows a figure in Cell 14D, antlers where a head should be, eyes like burning coals.",
+      "description": "Modified camera that captures ultraviolet, visible, and infrared light simultaneously — the full electromagnetic spectrum. Shows things human eyes can't perceive. The lens is cracked but functional. The last photo shows a figure in Cell 14D, with a demon head and horns, eyes like burning coals.",
       "pickupText": "You pick up the full-spectrum camera. Through the viewfinder, the tunnel is full of people — translucent, overlapping, all walking the same path they walked in life. In death. Forever.",
       "roomText": "A full-spectrum camera lies against the tunnel wall, lens pointed at a brick wall covered in fresh, wet writing.",
       "portable": true
@@ -299,7 +299,7 @@
     },
     "zozo-photograph": {
       "name": "Photograph of Zozo",
-      "description": "A full-spectrum photograph showing Cell 14D surrounded by equipment. In the center, clearly visible across all wavelengths, stands Zozo — seven feet tall, antlers branching from its head, eyes burning like coals. Trapped. Contained. Proven. This photograph will revolutionize paranormal investigation. Irrefutable evidence of a malevolent entity, captured and bound by science.",
+      "description": "A full-spectrum photograph showing Cell 14D surrounded by equipment. In the center, clearly visible across all wavelengths, stands Zozo — seven feet tall, with a demon head and horns, eyes burning like coals. Trapped. Contained. Proven. This photograph will revolutionize paranormal investigation. Irrefutable evidence of a malevolent entity, captured and bound by science.",
       "pickupText": "You hold the photograph. Proof. After decades of speculation, grainy videos, and dismissed testimony, here is absolute evidence. Zozo exists, and you contained it.",
       "roomText": "The photograph lies on the ground, its image clear and undeniable — a demon in a cage of science.",
       "portable": true
@@ -360,7 +360,7 @@
       "description": "Cell 14D stands open, darkness pooling inside it like liquid. Something is in there. The SLS camera could reveal what human eyes cannot see.",
       "requiredItem": "sls-camera",
       "hintText": "The SLS camera maps 3D space and tracks forms invisible to normal sight. Point it at Cell 14D.",
-      "solvedText": "You raise the SLS camera toward Cell 14D. The screen explodes with data — a skeletal stick figure seven feet tall, antlers branching from its head, standing absolutely still in the darkness. Watching. The camera has mapped Zozo. The entity is confirmed.",
+      "solvedText": "You raise the SLS camera toward Cell 14D. The screen explodes with data — a skeletal stick figure seven feet tall with horns, standing absolutely still in the darkness. Watching. The camera has mapped Zozo. The entity is confirmed.",
       "isGoal": true,
       "goalName": "Map the Entity",
       "action": {
@@ -472,7 +472,7 @@
       "description": "Zozo is contained, trapped in a web of sensors and electromagnetic fields. But containment isn't proof. You need evidence — photographic documentation that will convince the world. The full-spectrum camera captures wavelengths human eyes cannot perceive.",
       "requiredItem": "full-spectrum-camera",
       "hintText": "The full-spectrum camera sees what others cannot. Document the containment — capture Zozo on camera.",
-      "solvedText": "You raise the full-spectrum camera and photograph the containment site. Through the viewfinder, Zozo is visible — a seven-foot figure with antlers, burning coal eyes, trapped in the center of your equipment array. The shutter clicks. Evidence captured. The investigation is complete. You've proven the existence of malevolent entities and developed a protocol to contain them. Alcatraz's most dangerous prisoner is finally locked down. The photograph will change paranormal investigation forever.",
+      "solvedText": "You raise the full-spectrum camera and photograph the containment site. Through the viewfinder, Zozo is visible — a seven-foot figure with a demon head and horns, burning coal eyes, trapped in the center of your equipment array. The shutter clicks. Evidence captured. The investigation is complete. You've proven the existence of malevolent entities and developed a protocol to contain them. Alcatraz's most dangerous prisoner is finally locked down. The photograph will change paranormal investigation forever.",
       "isGoal": true,
       "goalName": "Photograph Contained Entity",
       "action": {
