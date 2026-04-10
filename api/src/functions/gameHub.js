@@ -624,7 +624,7 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
 
     // Apply death timeout if provided by host
     if (data.deathTimeout) {
-      const timeout = Math.max(15, Math.min(60, parseInt(data.deathTimeout) || 30));
+      const timeout = Math.max(5, Math.min(60, parseInt(data.deathTimeout) || 30));
       session.deathTimeout = timeout;
     }
 
@@ -799,7 +799,7 @@ async function handleSetDeathTimeout(serviceClient, connectionId, data, context)
     return { body: '', status: 200 };
   }
 
-  const timeout = Math.min(60, Math.max(15, Number(data.timeout) || 30));
+  const timeout = Math.min(60, Math.max(5, Number(data.timeout) || 30));
   session.deathTimeout = timeout;
   await saveGameState(gameId, session);
 

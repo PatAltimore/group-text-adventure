@@ -2358,7 +2358,7 @@ describe('Hazard Death System (Stef)', () => {
     test('deathTimeout is passed to clients on game start (present on session)', () => {
       const session = hazardSessionStef();
       expect(typeof session.deathTimeout).toBe('number');
-      expect(session.deathTimeout).toBeGreaterThanOrEqual(15);
+      expect(session.deathTimeout).toBeGreaterThanOrEqual(5);
       expect(session.deathTimeout).toBeLessThanOrEqual(60);
     });
   });
