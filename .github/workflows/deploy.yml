@@ -32,8 +32,8 @@ jobs:
         working-directory: ./api
 
       - name: Run tests
-        run: node --experimental-vm-modules ./node_modules/jest/bin/jest.js
-        working-directory: .
+        run: npm run test:ci
+        working-directory: ./api
 
       # Azure CLI Login with OIDC (federated credentials)
       # 

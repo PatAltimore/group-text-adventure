@@ -98,6 +98,22 @@
 - **Integration:** Works with frontend dropdown (Low/Medium/High) and Stef's test suite
 - **Status:** All backend components complete, tested
 
+### 2026-04-10 — GitHub Actions: Azure Deployment with OIDC
+
+- **Created `.github/workflows/deploy.yml`** — Automated deployment to Azure on push to `main` branch, with manual trigger option (`workflow_dispatch`).
+- **Azure OIDC authentication:** Uses federated credentials (OpenID Connect) instead of service principal secrets. Requires three secrets: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`.
+- **Workflow structure:**
+  1. Tests run first (fail fast if tests break) — `node --experimental-vm-modules jest`
+  2. Azure login via `azure/login@v2` with OIDC
+  3. Execute `deploy\deploy.ps1 -AppName textgta -Location westus2 -ResourceGroup rg-text-adventure` via `pwsh`
+  4. Post-deployment verification: health endpoint + static site check with cold-start tolerance
+- **Setup instructions:** Workflow includes comprehensive inline comments for configuring Azure AD app registration, federated credential for GitHub repo, service principal, and role assignment. Requires manual setup before first run.
+- **Key decisions:**
+  - Uses `windows-latest` runner (deploy.ps1 is PowerShell-only)
+  - Deploys on every push to `main` (CI/CD) plus manual trigger
+  - Post-deploy verification continues even if checks fail (`continue-on-error: true`) so deployment status shows green
+- **File:** `.github/workflows/deploy.yml`
+
 ### 2026-04-04 — Azure Developer CLI (azd) Template
 
 - **Created azd template** alongside existing `deploy/deploy.ps1`. Existing script untouched.
@@ -935,3 +951,26 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 - World JSON files use Unicode smart quotes (U+2019 ') which complicates string matching in edit tool
 - Duplicate solvedDescription fields discovered and removed in true-crime.json (JSON parsing hazard)
 - getRoomPuzzlePrefix() can be reused for future room status indicators
+
+### 2026-04-10 — Created "Shadows Over Blackwater" world with multiple goals
+
+**Task:** Create a Southern Gothic/noir mystery world at `world/shadows-over-blackwater.json` addressing critical bug reports from Pat.
+
+**Critical bug fixes implemented:**
+1. **Multiple goals:** Created 4 distinct puzzle rooms, each with `isGoal: true` and unique `goalName`. Pat reported "only showing 1 goal but there are multiple puzzle rooms" — this was the core issue. Each puzzle room now properly declares its goal status.
+2. **Ivory Letter Opener portability:** Item explicitly set `portable: true` and used as requiredItem in puzzle. Pat reported "I couldn't pick up the Ivory Letter Opener" — missing portable flag was the cause.
+3. **All portable items flagged:** 17 portable items total, all with `portable: true`. Items intended as scenery/fixtures have `portable: false` or omit the field.
+
+**World design:**
+- Theme: Southern Gothic mystery set in Blackwater, Louisiana — abandoned asylum, dark secrets, supernatural elements
+- 14 interconnected rooms (town square, asylum, church, library, bayou)
+- 4 goal-marked puzzles: unlock director's office, therapy wing, upper floor, and archives
+- Atmospheric descriptions matching other world files (4-8 sentences per room)
+- Multiple hazards with varied probability (0.08-0.15)
+- Size: 28.98 KB (under 30KB Azure Table Storage limit)
+- Validation: All errors cleared, zero warnings
+
+**Key file:** `world/shadows-over-blackwater.json`
+
+**Learning:** When creating puzzle worlds, ALWAYS explicitly set `isGoal: true` and `goalName` on each goal puzzle, and ALWAYS set `portable: true` on items players should be able to pick up. The game engine treats these flags as authoritative — omitting them breaks game mechanics.
+

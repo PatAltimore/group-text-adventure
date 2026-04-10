@@ -298,3 +298,21 @@
   - Inline test world created with 7 rooms, 6 items, 5 puzzles — uses only cardinal directions (north/south/east/west) per validator requirements
   - All tests PASS — Mouth's implementation complete for Features 1, 2, and 3!
   - Total: 585 tests pass across 8 suites (2 skipped)
+
+- **2026-04-07 — Shadows Over Blackwater world tests (21 new tests, all passing)**
+  - File: `/tests/shadows-over-blackwater.test.js` — comprehensive validation tests for new world file
+  - Pat reported 2 bugs: (1) "Only showing 1 goal" → world needs multiple isGoal: true puzzles, (2) "Couldn't pick up Ivory Letter Opener" → item missing portable: true
+  - World file created by another agent during test development (appeared after 165s polling)
+  - Tests verified BOTH bugs are fixed: world has 4 goal puzzles with isGoal: true + goalName, Ivory Letter Opener has portable: true
+  - 21 tests across 10 describe blocks:
+    1. **World Validation** (2): file loads, passes validateWorld()
+    2. **Multiple Goals** (2): at least 3 goals, each has goalName
+    3. **Item Portability** (3): Ivory Letter Opener portable, all puzzle items portable, commonly portable items (keys, documents, etc.) portable
+    4. **Puzzle Solvability** (4): requiredItem exists, room exists, action references valid rooms/directions, hint/solved text present
+    5. **Room Quality** (3): puzzle rooms have solvedDescription (warning only), all rooms have name/description/exits, startRoom valid
+    6. **Item Placement** (2): items in room.items exist in items section, all items have name/description/roomText/portable
+    7. **Room Connectivity** (2): BFS reachability from startRoom, bidirectional exits (except puzzle-gated)
+    8. **File Constraints** (2): world file under 30KB, metadata fields present (name, description, synopsis, displayOrder)
+  - Test patterns from existing tests: ESM imports, validateWorld() returns `{valid, errors, warnings}` not array, loadWorld from JSON.parse(readFileSync)
+  - Warnings: 4 puzzle rooms missing solvedDescription (optional but recommended), 7 rooms puzzle-gated (unreachable without items), 4 one-way exits
+  - Total: 445 tests (all passing)
