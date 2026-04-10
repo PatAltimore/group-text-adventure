@@ -1,22 +1,99 @@
 name: Deploy to Azure
 
-# This workflow deploys the game to Azure on every push to main.
-# It can also be triggered manually via the Actions tab.
+# Deploys the game to Azure.
+# - Push to main → production deploy
+# - Pull request to main → test environment deploy
+# - Manual trigger → choose test or production
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # Manual trigger option
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - production
 
 permissions:
   id-token: write # Required for OIDC authentication
   contents: read
+  pull-requests: write # Required for PR comments
+
+# Azure CLI Login with OIDC (federated credentials)
+#
+# REQUIRED SECRETS (configure in GitHub Settings > Secrets and variables > Actions):
+#   - AZURE_CLIENT_ID: Application (client) ID from your Azure AD App Registration
+#   - AZURE_TENANT_ID: Directory (tenant) ID from your Azure AD
+#   - AZURE_SUBSCRIPTION_ID: Azure subscription ID where resources will be deployed
+#
+# SETUP INSTRUCTIONS:
+#
+# 1. Create an Azure AD App Registration:
+#    az ad app create --display-name "GitHub-GroupTextAdventure-Deploy"
+#    (Save the "appId" from the output — this is your AZURE_CLIENT_ID)
+#
+# 2. Create a Service Principal for the app:
+#    az ad sp create --id <appId>
+#
+# 3. Add federated credentials for GitHub Actions (you need BOTH):
+#
+#    a) Production — triggers on push to main:
+#       az ad app federated-credential create \
+#         --id <appId> \
+#         --parameters '{
+#           "name": "GitHub-Main-Branch",
+#           "issuer": "https://token.actions.githubusercontent.com",
+#           "subject": "repo:PatAltimore/group-text-adventure:ref:refs/heads/main",
+#           "audiences": ["api://AzureADTokenExchange"]
+#         }'
+#
+#    b) Pull Requests — triggers on PRs to main:
+#       az ad app federated-credential create \
+#         --id <appId> \
+#         --parameters '{
+#           "name": "GitHub-Pull-Requests",
+#           "issuer": "https://token.actions.githubusercontent.com",
+#           "subject": "repo:PatAltimore/group-text-adventure:pull_request",
+#           "audiences": ["api://AzureADTokenExchange"]
+#         }'
+#
+# 4. Grant the Service Principal "Contributor" role on your subscription:
+#    az role assignment create \
+#      --assignee <appId> \
+#      --role Contributor \
+#      --scope /subscriptions/<subscriptionId>
+#
+# 5. Add the three secrets to GitHub:
+#    - Go to: Settings > Secrets and variables > Actions > New repository secret
+#    - Add: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
+#
+# 6. (Optional) Create a GitHub Actions environment called "production" with
+#    required reviewers to enable approval gates for production deploys.
+#
+# For more details: https://learn.microsoft.com/azure/developer/github/connect-from-azure
 
 jobs:
-  deploy:
+  # ──────────────────────────────────────────────────────────────
+  # TEST — runs on PRs to main and manual triggers selecting test
+  # ──────────────────────────────────────────────────────────────
+  test:
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'test')
     runs-on: windows-latest
-    
+    concurrency:
+      group: deploy-test
+      cancel-in-progress: true
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,12 +103,7 @@ jobs:
         with:
           node-version: '20'
 
-      # CRITICAL: Run tests first — fail fast if tests break
       - name: Install dependencies
-        run: npm install
-        working-directory: ./api
-
-      - name: Install dependencies ci
         run: npm ci
         working-directory: ./api
 
@@ -39,45 +111,6 @@ jobs:
         run: npm run test:ci
         working-directory: ./api
 
-      # Azure CLI Login with OIDC (federated credentials)
-      # 
-      # REQUIRED SECRETS (configure in GitHub Settings > Secrets and variables > Actions):
-      #   - AZURE_CLIENT_ID: Application (client) ID from your Azure AD App Registration
-      #   - AZURE_TENANT_ID: Directory (tenant) ID from your Azure AD
-      #   - AZURE_SUBSCRIPTION_ID: Azure subscription ID where resources will be deployed
-      #
-      # SETUP INSTRUCTIONS:
-      # 
-      # 1. Create an Azure AD App Registration:
-      #    az ad app create --display-name "GitHub-GroupTextAdventure-Deploy"
-      #    (Save the "appId" from the output — this is your AZURE_CLIENT_ID)
-      #
-      # 2. Create a Service Principal for the app:
-      #    az ad sp create --id <appId>
-      #
-      # 3. Add federated credentials for GitHub Actions:
-      #    az ad app federated-credential create \
-      #      --id <appId> \
-      #      --parameters '{
-      #        "name": "GitHub-Main-Branch",
-      #        "issuer": "https://token.actions.githubusercontent.com",
-      #        "subject": "repo:OWNER/REPO:ref:refs/heads/main",
-      #        "audiences": ["api://AzureADTokenExchange"]
-      #      }'
-      #    (Replace OWNER/REPO with your GitHub org/repo, e.g., "patricka/group-text-adventure")
-      #
-      # 4. Grant the Service Principal "Contributor" role on your subscription:
-      #    az role assignment create \
-      #      --assignee <appId> \
-      #      --role Contributor \
-      #      --scope /subscriptions/<subscriptionId>
-      #
-      # 5. Add the three secrets to GitHub:
-      #    - Go to: Settings > Secrets and variables > Actions > New repository secret
-      #    - Add: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
-      #
-      # For more details: https://learn.microsoft.com/azure/developer/github/connect-from-azure
-      
       - name: Azure Login (OIDC)
         uses: azure/login@v2
         with:
@@ -85,23 +118,99 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # Deploy to Azure using the existing deploy script
-      # This script provisions all resources (Resource Group, Storage, Web PubSub, Function App)
-      # and deploys the application code
-      - name: Deploy to Azure
+      - name: Deploy to test environment
+        run: |
+          .\deploy\deploy.ps1 -AppName textgta-test -Location westus2 -ResourceGroup rg-text-adventure-test
+        shell: pwsh
+
+      - name: Verify test deployment
+        run: |
+          Write-Host "Test deployment complete. Verifying endpoints..."
+          Start-Sleep -Seconds 30
+
+          try {
+            $response = Invoke-WebRequest -Uri "https://textgta-test-func.azurewebsites.net/api/health" -UseBasicParsing -TimeoutSec 30
+            if ($response.StatusCode -eq 200) {
+              Write-Host "✅ Health endpoint responded with 200 OK"
+              Write-Host $response.Content
+            } else {
+              Write-Warning "⚠️ Health endpoint returned status $($response.StatusCode)"
+            }
+          } catch {
+            Write-Warning "⚠️ Health endpoint verification failed: $_"
+            Write-Host "This may be due to cold start. Check the Azure Portal for function status."
+          }
+
+          try {
+            $response = Invoke-WebRequest -Uri "https://textgtatestgame.z5.web.core.windows.net" -UseBasicParsing -TimeoutSec 10
+            if ($response.StatusCode -eq 200) {
+              Write-Host "✅ Test static website is accessible"
+            }
+          } catch {
+            Write-Warning "⚠️ Test static website verification failed: $_"
+          }
+        shell: pwsh
+        continue-on-error: true
+
+      - name: Comment test URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🧪 **Test deployment ready!**\n\n🔗 https://textgtatestgame.z5.web.core.windows.net\n\nThis test environment will be updated with each push to this PR.'
+            })
+
+  # ──────────────────────────────────────────────────────────────
+  # PRODUCTION — runs on push to main and manual production trigger
+  # ──────────────────────────────────────────────────────────────
+  deploy-production:
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+    runs-on: windows-latest
+    environment: production
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./api
+
+      - name: Run tests
+        run: npm run test:ci
+        working-directory: ./api
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to production
         run: |
           .\deploy\deploy.ps1 -AppName textgta -Location westus2 -ResourceGroup rg-text-adventure
         shell: pwsh
 
-      # Optional: Post-deployment validation
-      - name: Verify deployment
+      - name: Verify production deployment
         run: |
-          Write-Host "Deployment complete. Verifying endpoints..."
-          
-          # Wait 30 seconds for cold start
+          Write-Host "Production deployment complete. Verifying endpoints..."
           Start-Sleep -Seconds 30
-          
-          # Test health endpoint
+
           try {
             $response = Invoke-WebRequest -Uri "https://textgta-func.azurewebsites.net/api/health" -UseBasicParsing -TimeoutSec 30
             if ($response.StatusCode -eq 200) {
@@ -114,8 +223,7 @@ jobs:
             Write-Warning "⚠️ Health endpoint verification failed: $_"
             Write-Host "This may be due to cold start. Check the Azure Portal for function status."
           }
-          
-          # Verify static site
+
           try {
             $response = Invoke-WebRequest -Uri "https://textgtagame.z5.web.core.windows.net" -UseBasicParsing -TimeoutSec 10
             if ($response.StatusCode -eq 200) {
@@ -125,4 +233,4 @@ jobs:
             Write-Warning "⚠️ Static website verification failed: $_"
           }
         shell: pwsh
-        continue-on-error: true # Don't fail the deployment if verification has issues
+        continue-on-error: true

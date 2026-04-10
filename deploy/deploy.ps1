@@ -15,7 +15,7 @@
 #>
 param(
     [Parameter(Mandatory = $true)]
-    [ValidatePattern('^[a-zA-Z][a-zA-Z0-9]{2,11}$')]
+    [ValidatePattern('^[a-zA-Z][a-zA-Z0-9-]{2,15}$')]
     [string]$AppName,
 
     [string]$Location = "eastus",
