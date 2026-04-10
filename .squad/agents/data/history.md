@@ -473,3 +473,10 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Listener cleanup:** initJoinManual clones inputs/button before attaching listeners to prevent duplicates on re-entry.
 - **Files modified:** client/index.html, client/app.js, client/style.css
 - **All 539 tests pass** (2 skipped) unchanged.
+
+### 2026-04-09 — Font Change: VT323 → Merriweather
+
+- **Font choice:** Replaced VT323 (retro pixel) with Merriweather (serif, screen-optimized book font).
+- **Why Merriweather:** Specifically designed for on-screen readability. Renders cleanly at small sizes on dark backgrounds, making it ideal for this dark-themed game UI. Libre Baskerville was considered but Merriweather's screen-first design wins for a web game context.
+- **Fallback stack:** Updated from monospace fallbacks to serif: Georgia, 'Times New Roman', serif.
+- **Variable name --font-mono kept as-is** to avoid renaming across ~20+ references in style.css and editor.css.
