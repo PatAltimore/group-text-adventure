@@ -159,7 +159,7 @@
     "murder-weapon": {
       "name": "Ivory Letter Opener",
       "description": "A Victorian letter opener with an ivory handle, now tagged as evidence. But this isn't the murder weapon — Victor was shot. So why is this blade smeared with dried blood? Lab analysis reveals the blood belongs to someone else entirely. Someone cut themselves here, recently, in a struggle that happened before the gunshot. The killer was wounded. Somewhere out there, a suspect is hiding a fresh cut.",
-      "portable": false,
+      "portable": true,
       "roomText": "An ivory letter opener lies in an evidence bag on the desk, its blade stained dark with blood that doesn't belong to the victim."
     },
     "insurance-policy": {
@@ -245,6 +245,8 @@
       "requiredItem": "insurance-policy",
       "hintText": "The insurance policy was increased six weeks before the murder — Helena was planning ahead. A woman this calculating would keep her communications hidden. Check her personal effects carefully.",
       "solvedText": "The insurance policy's timeline nags at you. Six weeks of planning means six weeks of communication. You run your fingers along Helena's jewelry box and find the seam — a false bottom. Inside: a prepaid burner phone, its screen still glowing with damning messages. Helena wasn't mourning. She was orchestrating.",
+      "isGoal": true,
+      "goalName": "Uncover Helena's Conspiracy",
       "action": {
         "type": "addItem",
         "room": "master-bedroom",
@@ -269,6 +271,8 @@
       "requiredItem": "bloody-cufflink",
       "hintText": "Dominic's cufflink proves he was at the mansion. But how did he get there? The back alley connects to the waterfront — someone in this neighborhood might have seen his car that night.",
       "solvedText": "You show the cufflink to a homeless man sheltering in a doorway. His eyes widen. 'Yeah, I seen that. Guy with the silver jewelry, fancy coat. Parked in the garage south of here, came stumbling back around one in the morning, hand bleeding. Nearly ran me over pulling out.' The parking garage — south. Security cameras might have caught everything.",
+      "isGoal": true,
+      "goalName": "Place the Suspect at the Crime Scene",
       "action": {
         "type": "openExit",
         "direction": "south",
@@ -281,6 +285,8 @@
       "requiredItem": "security-footage",
       "hintText": "Raw security footage is good, but enhanced and timestamped footage is courtroom-ready. Dr. Vasquez in the forensics lab can extract every detail — plate numbers, facial features, exact timings.",
       "solvedText": "Dr. Vasquez works through the footage frame by frame, enhancing plates, isolating faces, building a timeline. When she's done, she hands you a folder. 'Three suspects, Detective. All present, all lying about their alibis. I've compiled everything — forensics, financials, witness testimony — into a complete case file. It's enough for an arrest.' She pauses. 'More than enough.'",
+      "isGoal": true,
+      "goalName": "Build the Forensic Case File",
       "action": {
         "type": "addItem",
         "room": "forensics-lab",
@@ -293,6 +299,8 @@
       "requiredItem": "bartender-statement",
       "hintText": "You have physical evidence and forensics, but you need witness testimony to establish a timeline that the DA will accept. Someone who saw Dominic that night — before and after — could break the case open.",
       "solvedText": "You lay Sal's statement on the captain's desk. He reads it twice. 'Dominic Crane left the bar at 11:30, said he was going to his brother's house. Came back at 1 AM with a cut on his hand and the look of a man who'd done something terrible.' The captain picks up the phone. 'I'll call the DA. You've got your interrogation room.' He nods toward the west corridor. 'Make it count, Harlow.'",
+      "isGoal": true,
+      "goalName": "Secure the Interrogation Warrant",
       "action": {
         "type": "openExit",
         "direction": "west",
