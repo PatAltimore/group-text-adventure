@@ -42,7 +42,8 @@
 6. **Validation before deployment:** npm install must be loud (no output piping without error checking). Staging directory must contain all 7 required files before zip creation. Post-deploy health check with retry tolerance for cold-start.
 
 ## Learnings
-
+
+
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
 ### 2026-04-04 — Cross-Team: Data's Share Button + QR Overlay
@@ -271,7 +272,8 @@
 - **Room visibility:** getPlayerView now returns ghosts: ["Alice's ghost"] array. Added getGhostsInRoom() helper.
 - **Loot command:** loot Bob's ghost transfers all items from ghost to player. Ghost fades away (deleted) when inventory is emptied. Room notified.
 - **Take from ghost:** 	ake <item> from <name>'s ghost takes a single item. Ghost fades when last item taken.
-- **Reconnection via ghost:** indGhostByName + econnectPlayer(session, ghostName, newPlayerId) — restores player to ghost's room with remaining inventory. Ghost removed.
+- **Reconnection via ghost:** indGhostByName + 
+econnectPlayer(session, ghostName, newPlayerId) — restores player to ghost's room with remaining inventory. Ghost removed.
 - **Ghost timeout:** Changed from 5 minutes (disconnect model) to 30 minutes (GHOST_TIMEOUT_MS). inalizeGhost drops items to room floor when timeout expires.
 - **Command parser:** Added loot verb set. Extended 	ake to parse 	ake <item> from <target> pattern.
 - **gameHub.js:** Disconnect handler announces ghost to room players. Join handler checks for ghost match. Cleanup uses cleanupExpiredGhosts.
@@ -691,7 +693,8 @@ Two features implemented:
 **Key patterns followed:**
 - Matched exact JSON structure from gyptian-pyramid.json reference (rooms, items, puzzles, hazards with probability/deathText objects)
 - All exits bidirectional; puzzle-gated exits (face-of-mars→face-entrance, pyramid-chamber→nexus-core) use openExit actions
-- emoveHazard puzzle action hazard field matches room hazard description exactly (string equality check in game engine)
+- 
+emoveHazard puzzle action hazard field matches room hazard description exactly (string equality check in game engine)
 - Items revealed by puzzles (crystal-key, martian-codex) use ddItem action and are NOT in room items arrays initially
 - Validation script (world/validate-world.js) passes with 0 errors, 0 warnings
 - Added preset option in client/editor.html dropdown for the new world
@@ -821,7 +824,7 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 - Created `world/alcatraz-ghosts.json` with 15 interconnected rooms, 13 items, and 11 puzzles
 - Theme: Paranormal investigation inspired by Ghost Adventures TV show
 - Featured authentic ghost hunting equipment: EMF detector, spirit box, SLS camera, thermal camera, Ovilus device, EVP recorder, REM pod, full-spectrum camera
-- Malevolent entity: Zozo (manifestation with antlers and burning coal eyes in Cell 14D)
+- Malevolent entity: Zozo (manifestation with a demon head and horns, and burning coal eyes in Cell 14D)
 - Progression system: puzzles unlock new areas via openExit, removeHazard, and addItem actions
 - Synopsis: "Investigate haunted Alcatraz, confront Zozo" (5 words)
 
