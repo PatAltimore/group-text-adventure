@@ -1,0 +1,286 @@
+{
+  "name": "The Grid",
+  "displayOrder": 14,
+  "description": "The cursor blinks. You shouldn't be here — not this deep in ENCOM's mainframe, not past the third firewall, not poking at memory addresses that haven't been touched since 1982. But the old partition is right there, just a few keystrokes away. You type the command. The screen whites out. Your fingers pass through the keyboard like smoke. The last thing you hear before the world dissolves is a sound like a thousand modems screaming in unison — and then you're standing on glass, bathed in neon light, inside the machine.",
+  "synopsis": "Hack your way through the digital Grid to escape the MCP.",
+  "startRoom": "digitization-bay",
+  "rooms": {
+    "digitization-bay": {
+      "name": "Digitization Bay",
+      "description": "You materialize on a platform of black glass, body buzzing with residual energy from the digitization beam. The air — if you can call it air — tastes of ozone and static. Pale blue circuit lines pulse beneath your feet, running outward in every direction like luminous veins. Your clothes have been replaced by a skin-tight suit traced with glowing lines. A heads-up display flickers at the edge of your vision: UNAUTHORIZED USER DETECTED. You are inside the machine. A data corridor shimmers to the north, streams of light racing through it like traffic on a highway.",
+      "exits": {
+        "north": "data-stream"
+      },
+      "items": [
+        "buffer-exploit"
+      ],
+      "hazards": []
+    },
+    "data-stream": {
+      "name": "Data Stream Corridor",
+      "description": "Walls of pure information surge past on either side — columns of hexadecimal cascading upward, packet headers blooming and collapsing in microsecond flowers. The corridor thrums with bandwidth. You walk a narrow bridge of solid light suspended over a bottomless void where corrupted data tumbles in slow, silent spirals. The bridge forks: north toward a vast arena complex pulsing with crowd noise and neon, south back to where you arrived.",
+      "exits": {
+        "north": "game-grid-hub",
+        "south": "digitization-bay"
+      },
+      "items": [
+        "data-fragment"
+      ],
+      "hazards": [
+        {
+          "description": "Stray data packets streak across the bridge like tracer fire, their trajectories erratic and unpredictable.",
+          "probability": 0.05,
+          "deathText": "A massive data packet — a corrupted system dump the size of a truck — slams into you at light speed. Your resolution scatters across the void in a shower of dying pixels. DERESOLUTION COMPLETE."
+        }
+      ]
+    },
+    "game-grid-hub": {
+      "name": "Game Grid Hub",
+      "description": "A colossal intersection of light and geometry. Four towering pylons anchor the corners of this hexagonal plaza, their surfaces scrolling with match statistics and program rankings. The ground is etched with a massive circuit board pattern that pulses crimson — the Game Grid's heartbeat. Programs in glowing suits hurry past, some bearing scars of deresolution burns. To the west, a circular arena roars with the crack of energy discs. To the east, parallel walls of light mark the entrance to the cycle track. To the north, an energy barrier crackles across the corridor, blocking passage to the security checkpoint beyond. Streams of data flow south.",
+      "solvedDescription": "A colossal intersection of light and geometry. Four towering pylons anchor the corners of this hexagonal plaza, their surfaces scrolling with match statistics and program rankings. The ground pulses with crimson circuit patterns. To the west, the disc arena roars. To the east, light walls mark the cycle track. The energy barrier to the north has collapsed — its field destabilized by the exploit, leaving the corridor to the security checkpoint wide open. The data stream corridor lies to the south.",
+      "exits": {
+        "west": "disc-arena",
+        "east": "light-cycle-track",
+        "south": "data-stream"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "disc-arena": {
+      "name": "Disc Arena",
+      "description": "You stand on a circular platform suspended over a pit of absolute darkness. The crowd — rows upon rows of programs packed into floating grandstands — roars with synthesized voices. Spotlights of pure white energy sweep the arena floor, which is scored with the burn marks of a thousand deresolutions. Shattered pixels litter the edges like broken glass. The remains of defeated programs still flicker faintly before fading to nothing. The only exit leads east, back to the Game Grid Hub.",
+      "exits": {
+        "east": "game-grid-hub"
+      },
+      "items": [
+        "identity-disc"
+      ],
+      "hazards": [
+        {
+          "description": "Rogue combat programs circle the arena's edge, hurling practice discs that ricochet off the walls with lethal precision.",
+          "probability": 0.12,
+          "deathText": "A disc screams out of your blind spot. It catches you across the midsection and your body fractures into a cascade of blue-white cubes, each one winking out before it hits the ground. The crowd cheers. DERESOLUTION COMPLETE."
+        }
+      ]
+    },
+    "light-cycle-track": {
+      "name": "Light Cycle Track",
+      "description": "An infinite black plane stretches in every direction, crisscrossed by the glowing trails of light cycles — walls of solid energy in electric blue, orange, and white. The cycles themselves are barely visible, just streaks of motion trailing walls behind them that persist for seconds before dissolving. The air vibrates with the deep harmonic drone of their engines. Crashed cycles litter the edges of the track, their riders nothing but scattered pixel dust. The exit back to the hub lies to the west.",
+      "exits": {
+        "west": "game-grid-hub"
+      },
+      "items": [
+        "light-baton",
+        "encryption-key"
+      ],
+      "hazards": [
+        {
+          "description": "Light cycles carve across the arena at impossible speed, their energy walls appearing without warning.",
+          "probability": 0.15,
+          "deathText": "You step left to dodge a blue trail and walk straight into an orange wall that wasn't there a nanosecond ago. The energy barrier passes through you like a hot wire through wax. You have time to see your own legs standing behind you before the deresolution takes hold. DERESOLUTION COMPLETE."
+        }
+      ]
+    },
+    "security-checkpoint": {
+      "name": "Security Checkpoint",
+      "description": "A sterile corridor of white light, painfully bright after the neon chaos of the Game Grid. Scanner beams sweep the floor in slow, methodical arcs — red lines that read your code down to the last bit. MCP's emblem is etched into every surface: a rotating red polygon that seems to watch you. A security barrier blocks the passage north, its surface displaying IDENTITY VERIFICATION REQUIRED in pulsing red text. The Game Grid Hub lies back to the south.",
+      "solvedDescription": "A sterile corridor of white light. Scanner beams sweep the floor in lazy, harmless arcs — they've already read your spoofed credentials and found nothing wrong. MCP's emblem still watches from every surface, but the security barrier to the north has retracted into the ceiling, its display reading IDENTITY VERIFIED — AUTHORIZED PROGRAM in steady green. The Memory Sector lies ahead. The Game Grid Hub is back to the south.",
+      "exits": {
+        "south": "game-grid-hub"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "Scanner beams intensify without warning, probing for unauthorized code signatures.",
+          "probability": 0.08,
+          "deathText": "A scanner locks onto your unauthorized signature and floods you with purge light. Every subroutine in your digitized body unravels simultaneously — you don't even have time to scream before you're just a memory address pointing at nothing. DERESOLUTION COMPLETE."
+        }
+      ]
+    },
+    "memory-sector": {
+      "name": "Memory Sector",
+      "description": "Towers of data crystals rise from the floor like a frozen city, each one containing archived programs and files from decades of ENCOM operations. Some crystals glow a healthy blue; others have gone dark — corrupted, forgotten, abandoned. The air hums with the sound of a million sleeping processes. To the east, a corridor leads toward the ominous red glow of the Recognizer Hangar. To the west, a partition wall of encrypted code blocks access to what your HUD identifies as PARTITION 7 — CLASSIFIED — FLYNN. The security checkpoint lies back to the south.",
+      "solvedDescription": "Towers of data crystals rise from the floor like a frozen city, some glowing blue, others dark with corruption. The air hums with sleeping processes. To the east, the Recognizer Hangar glows red. The encrypted partition wall to the west has shattered — the decryption key dissolved its code layer by layer, revealing the hidden entrance to Flynn's Safehouse beyond. The security checkpoint lies back to the south.",
+      "exits": {
+        "east": "recognizer-hangar",
+        "south": "security-checkpoint"
+      },
+      "items": [
+        "bit-companion"
+      ],
+      "hazards": []
+    },
+    "recognizer-hangar": {
+      "name": "Recognizer Hangar",
+      "description": "Massive geometric ships — Recognizers — squat on landing pads like brutalist cathedrals, their hull lights pulsing in slow, threatening rhythms. Each one is a flying prison, built to hunt down rogue programs and deliver them to the Game Grid or worse. Maintenance programs scurry between the landing struts, too focused on their tasks to notice you. The hangar is bathed in deep red light. One crashed Recognizer at the far end has split open, spilling its cargo across the deck. The Memory Sector is back to the west.",
+      "exits": {
+        "west": "memory-sector"
+      },
+      "items": [
+        "io-token"
+      ],
+      "hazards": [
+        {
+          "description": "Recognizer search beams sweep the hangar floor in overlapping patterns, hunting for unauthorized programs.",
+          "probability": 0.10,
+          "deathText": "A search beam locks onto you and a Recognizer lurches to life overhead. Its massive foot descends — a wall of black geometry — and flattens you into a thin smear of dissolving code. DERESOLUTION COMPLETE."
+        }
+      ]
+    },
+    "flynns-safehouse": {
+      "name": "Flynn's Safehouse",
+      "description": "A hidden pocket of the Grid that time forgot. The aesthetics are different here — warmer, older, the circuit lines amber instead of blue. Vintage ENCOM terminals line the walls, their screens displaying code in a style that hasn't been compiled in decades. A cot in the corner, a half-finished game of digital chess, empty energy drink containers. Kevin Flynn lived here once, hiding from the system he created. His presence lingers like a ghost in the machine. A passage leads north toward the base of the I/O Tower. The encrypted partition is back to the east.",
+      "exits": {
+        "east": "memory-sector",
+        "north": "io-tower-base"
+      },
+      "items": [
+        "firewall-bypass",
+        "flynns-journal"
+      ],
+      "hazards": []
+    },
+    "io-tower-base": {
+      "name": "I/O Tower Base",
+      "description": "The tower rises above you like a needle of pure light piercing the digital sky — the tallest structure on the Grid, its beam reaching into the system's highest layers where data meets the real world. The base is a circular chamber of white crystal, humming with the deep resonance of a carrier signal. A massive firewall barrier seals the passage north to the tower portal, its surface crawling with MCP's most sophisticated security protocols. Warning text scrolls endlessly: UNAUTHORIZED ACCESS — PENALTY: IMMEDIATE DERESOLUTION. Flynn's Safehouse lies back to the south.",
+      "solvedDescription": "The I/O Tower rises above you, a needle of pure light piercing the digital sky. The base chamber hums with carrier signal resonance. The massive firewall barrier to the north has been breached — Flynn's bypass tool carved through MCP's protocols like a hot knife, and the passage to the tower portal now stands open, white light pouring through the gap. Flynn's Safehouse lies back to the south.",
+      "exits": {
+        "south": "flynns-safehouse"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "io-tower-portal": {
+      "name": "I/O Tower Portal",
+      "description": "You stand at the apex of the Grid. The I/O beam blazes upward through the center of the chamber — a column of pure white light so bright it bleaches your vision. This is it: the bridge between the digital world and the real one, the port through which data becomes matter. The beam hums with a frequency you can feel in your teeth. All you need to do is step into it. The base chamber is back to the south. There is no other way but through.",
+      "exits": {
+        "south": "io-tower-base"
+      },
+      "items": [],
+      "hazards": []
+    }
+  },
+  "items": {
+    "buffer-exploit": {
+      "name": "Buffer Overflow Exploit",
+      "description": "A compact packet of malicious code you wrote before the digitization beam grabbed you. It survived the transfer, compressed into a glowing red cube that fits in your palm. It's designed to overflow memory buffers and crash security barriers.",
+      "roomText": "A small red cube pulses on the platform edge — a code packet, somehow intact after digitization. Your code. The buffer overflow exploit you were writing when everything went wrong.",
+      "pickupText": "You snatch up the exploit cube. It's warm to the touch, and your HUD identifies it immediately: BUFFER OVERFLOW EXPLOIT v3.7 — CUSTOM BUILD. At least you came armed.",
+      "portable": true
+    },
+    "data-fragment": {
+      "name": "Data Fragment",
+      "description": "A crystalline shard of corrupted system data, its surface flickering with fragments of security logs and vulnerability reports. Deep in its structure, you can see the flaw — a buffer overflow in the Game Grid's energy barrier protocol.",
+      "roomText": "A glittering shard of data tumbles along the bridge, caught in an eddy of corrupted packets. Its surface shimmers with fragments of security code.",
+      "pickupText": "You catch the data fragment mid-tumble. Your HUD parses it instantly: security logs, vulnerability assessments, a buffer overflow in the energy barrier protocol. Someone was sloppy. Someone gave you an opening.",
+      "portable": true
+    },
+    "identity-disc": {
+      "name": "Identity Disc",
+      "description": "A sleek ring of hardened light, edge-sharp and humming with stored data. It contains a complete program identity — enough to fool any scanner into thinking you belong here. The previous owner won't be needing it anymore.",
+      "roomText": "At the arena's edge, half-buried in pixel dust, an identity disc lies intact. Its previous owner has been derezzed, but the disc still glows — the stored identity preserved.",
+      "pickupText": "You lift the identity disc from the dust. It bonds to your arm mount with a magnetic snap, and your HUD flickers as it absorbs the stored identity data. To the system, you now look like an authorized combat program.",
+      "portable": true
+    },
+    "light-baton": {
+      "name": "Light Baton",
+      "description": "A matte black rod the length of your forearm, deceptively light. Squeeze the grip and it generates a light cycle — the fastest vehicle on the Grid. The energy cell is still half-charged.",
+      "roomText": "Near a crashed light cycle, a baton lies undamaged on the ground — its activation strip still pulsing with a faint blue glow.",
+      "pickupText": "You grab the light baton and the energy cell hums to life in your grip. Your HUD projects the vehicle specs: LIGHT CYCLE MK-IV — TOP SPEED: CLASSIFIED. You hope you don't need to find out.",
+      "portable": true
+    },
+    "encryption-key": {
+      "name": "Encryption Key",
+      "description": "A golden polyhedron the size of a walnut, each face etched with rotating cipher algorithms. It's a master decryption key — legacy ENCOM hardware, old enough to predate MCP's current security architecture. Old enough to crack it.",
+      "roomText": "Among the wreckage of a crashed light cycle, something glints gold — a polyhedron wedged in the debris, still spinning with active cipher routines.",
+      "pickupText": "You pry the encryption key from the wreckage. Its cipher faces rotate and align as you touch it, as if it's been waiting for someone with the right clearance. Your HUD reads: MASTER DECRYPTION KEY — ENCOM LEGACY HARDWARE.",
+      "portable": true
+    },
+    "bit-companion": {
+      "name": "Bit",
+      "description": "A tiny geometric program that alternates between a blue polyhedron (YES) and a spiky red shape (NO). It bobs alongside you faithfully, reacting to everything with enthusiastic affirmatives or panicked negatives. It can't do much, but its loyalty is absolute.",
+      "roomText": "A tiny geometric shape bobs between the data crystals — a Bit, shifting between a smooth blue YES form and a spiky red NO form, apparently arguing with itself.",
+      "pickupText": "The Bit zips over to you and orbits your head excitedly, flashing blue-blue-blue — YES YES YES. It seems to have adopted you. It can only say two words, but it says them with tremendous conviction.",
+      "portable": true
+    },
+    "io-token": {
+      "name": "I/O Access Token",
+      "description": "A disc of crystallized light bearing the I/O Tower's access sigil — a pattern of concentric rings that pulse in sequence. With this, a program can request beam access. Without it, the tower is just a pretty light.",
+      "roomText": "Spilled from the crashed Recognizer's cargo hold, an I/O access token lies among scattered data cubes — its concentric ring pattern still pulsing with active authorization codes.",
+      "pickupText": "You grab the I/O token and it seals to your palm like a magnetic badge. Your HUD lights up: I/O TOWER ACCESS — LEVEL 7 CLEARANCE. This is your ticket out of here.",
+      "portable": true
+    },
+    "firewall-bypass": {
+      "name": "Firewall Bypass Tool",
+      "description": "A custom program written by Kevin Flynn himself — elegant, brutal code compressed into a glowing amber disc. It's designed to dismantle MCP's firewall protocols from the inside, layer by layer. Flynn built it as his escape plan. He never got to use it.",
+      "roomText": "On Flynn's workstation, an amber disc rests in a custom dock, its surface inscribed with handwritten code comments: 'BREAK GLASS IN CASE OF EMERGENCY — KF.'",
+      "pickupText": "You lift Flynn's bypass tool from its dock. The amber glow intensifies, and code scrolls across its surface — Flynn's own handwriting, each routine annotated with comments like 'this should work, theoretically' and 'sorry about this, MCP.' He built this to escape. You'll finish what he started.",
+      "portable": true
+    },
+    "flynns-journal": {
+      "name": "Flynn's Digital Journal",
+      "description": "A data tablet containing Kevin Flynn's personal logs from his time trapped on the Grid. Entries range from defiant to desperate, documenting his discovery that the I/O Tower is the only way back to the real world. The last entry reads: 'The bypass is ready. The token is in the Recognizer hangar. If someone finds this — the tower is the way out. Trust the beam.'",
+      "roomText": "A data tablet sits on the cot, its screen still lit after all these cycles. The header reads: PERSONAL LOG — K. FLYNN — CYCLE 1982-PRESENT.",
+      "pickupText": "You pick up Flynn's journal and scroll through the entries. Years of isolation, documented in increasingly erratic handwriting. But the tactical data is solid: tower locations, patrol routes, the firewall's weakness. Flynn mapped everything. He just ran out of time.",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "bypass-energy-barrier": {
+      "room": "game-grid-hub",
+      "description": "An energy barrier crackles across the northern corridor — a wall of shifting red light maintained by the Game Grid's security protocol. Your HUD identifies a buffer overflow vulnerability in the barrier's code, but you'd need the right exploit data to trigger it.",
+      "requiredItem": "data-fragment",
+      "hintText": "The barrier's code is sloppy — the security team patched it in a hurry and left a buffer overflow wide open. If you had a data fragment containing the vulnerability details, you could craft an exploit on the fly.",
+      "solvedText": "You press the data fragment against the barrier's control node. The vulnerability data uploads in a burst — buffer addresses, overflow points, injection vectors. The barrier flickers, stutters, and collapses in a shower of red pixels. Your HUD displays: SECURITY PROTOCOL — STACK OVERFLOW — BARRIER OFFLINE. The corridor to the north lies open.",
+      "isGoal": true,
+      "goalName": "Bypass the Energy Barrier",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "security-checkpoint"
+      }
+    },
+    "spoof-identity": {
+      "room": "security-checkpoint",
+      "description": "A security barrier blocks the northern passage, its surface scrolling IDENTITY VERIFICATION REQUIRED. Scanner beams probe you relentlessly, searching for authorized credentials you don't have. Without a valid program identity, the system will flag you for deresolution.",
+      "requiredItem": "identity-disc",
+      "hintText": "The scanners are looking for an authorized identity disc — the kind every registered program carries. If you had one with valid credentials, you could spoof your way through.",
+      "solvedText": "You mount the identity disc on your arm and step into the scanner beam. It reads the stolen credentials — combat program, Class 3, Grid-authorized. For one agonizing microsecond the beam holds you, cross-referencing... then turns green. The barrier retracts with a hydraulic hiss. IDENTITY VERIFIED — AUTHORIZED PROGRAM. You're in.",
+      "isGoal": true,
+      "goalName": "Spoof the Security Scan",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "memory-sector"
+      }
+    },
+    "decrypt-partition": {
+      "room": "memory-sector",
+      "description": "The western wall is a solid block of encrypted code — layer upon layer of ciphertext protecting whatever lies behind it. Your HUD identifies it as PARTITION 7 — FLYNN — CLASSIFIED. The encryption is old ENCOM legacy architecture, ancient but dense.",
+      "requiredItem": "encryption-key",
+      "hintText": "The encryption is legacy ENCOM — decades old, predating MCP's modern architecture. A master decryption key from the same era could unravel it, if one still exists somewhere on the Grid.",
+      "solvedText": "You press the encryption key against the partition wall. Its cipher faces spin, align, and lock — and the wall begins to dissolve, code peeling away in golden sheets like old wallpaper. Layer by layer, the encryption crumbles until the partition shatters entirely, revealing a hidden chamber bathed in warm amber light. Flynn's Safehouse. He was here all along.",
+      "isGoal": true,
+      "goalName": "Decrypt Flynn's Partition",
+      "action": {
+        "type": "openExit",
+        "direction": "west",
+        "targetRoom": "flynns-safehouse"
+      }
+    },
+    "breach-firewall": {
+      "room": "io-tower-base",
+      "description": "MCP's firewall seals the passage north — a wall of cascading red code, dense and hostile, crawling with intrusion detection subroutines. This is MCP's last line of defense, protecting the I/O beam from unauthorized access. No brute force attack could crack it. You need something surgical.",
+      "requiredItem": "firewall-bypass",
+      "hintText": "This firewall is MCP's masterpiece — military-grade, self-healing, adaptive. But Flynn spent years studying it from the inside. If he built a bypass tool, it would know exactly where to cut.",
+      "solvedText": "You activate Flynn's bypass tool. Amber light erupts from the disc, tendrils of code snaking into the firewall like roots through concrete. The red wall convulses, subroutines screaming as Flynn's code dismantles them from the inside — elegant, methodical, merciless. The firewall shudders, fractures, and explodes into a million fading pixels. The way to the I/O portal stands open. Flynn's voice echoes from the disc one last time: 'End of line, MCP.'",
+      "isGoal": true,
+      "goalName": "Breach the I/O Tower Firewall",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "io-tower-portal"
+      }
+    }
+  }
+}
