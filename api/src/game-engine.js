@@ -29,19 +29,19 @@ export function getGoalAsciiArt() {
  */
 export function getVictoryAsciiArt() {
   return [
-    '     ___________',
-    "    '._==_==_=_.'",
-    '    .-\\:      /-.',
-    '   | (|:.     |) |',
-    "    '-|:.     |-'",
-    '      \\::.    /',
-    "       '::. .'",
-    '         ) (',
-    "       _.' '._",
-    '      |_______|',
+    '         ___________',
+    "        '._==_==_=_.'",
+    '        .-\\:      /-.',
+    '       | (|:. #1  |) |',
+    "        '-|:.     |-'",
+    '          \\::.    /',
+    "           '::. .'",
+    '             ) (',
+    "           _.' '._",
+    '          |_______|',
     '',
-    '   All goals have been achieved!',
-    '  You conquered the adventure!',
+    '      Congratulations!',
+    'You conquered the adventure!',
   ].join('\n');
 }
 
