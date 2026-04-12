@@ -18,6 +18,8 @@ Agent Scribe initialized and ready for work.
 📌 Data: Audited client-side negotiate, confirmed server-side issue (2026-04-01T13:25)  
 📌 Scribe: Logged orchestration + session, merged decisions to decisions.md (2026-04-01T13:25)
 📌 Mouth, Data, Stef: Displaced Items feature complete (2026-04-07T15:48:34Z)
+📌 Scribe: Orchestration for Mouth's Nonary Game World (2026-04-12T21:18) — World created, PR #3 opened, decisions consolidated
+
 
 ## Learnings
 
