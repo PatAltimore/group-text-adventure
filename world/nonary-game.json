@@ -1,0 +1,346 @@
+{
+  "name": "The Nonary Game",
+  "displayOrder": 15,
+  "description": "You wake to the screech of metal and the smell of brine. Your head throbs. Your wrist burns — a numbered bracelet, digital display glowing red: 5. Through the porthole, dark water rushes past. A speaker crackles overhead: 'Welcome to the Nonary Game. This vessel will sink in nine hours. Nine doors stand between you and freedom. Nine players wear nine numbers. Only those who solve the puzzles will reach Door Nine. Break the rules, and the detonator in your bracelet will ensure you sink with the ship. Seek the door marked nine. —Zero.' The floor tilts. Water seeps under the cabin door. The clock is already ticking.",
+  "synopsis": "Escape a sinking hospital ship by solving the Nonary Game.",
+  "startRoom": "flooded-cabin",
+  "rooms": {
+    "flooded-cabin": {
+      "name": "Flooded Third-Class Cabin",
+      "description": "Icy water sloshes around your ankles, rising with every heartbeat. Rust-streaked walls close in tight. Three narrow bunks sag from the wall, soaked blankets trailing into the flood. Emergency lighting flickers red through the murk. A porthole shows nothing but black water rushing past — you're already deep. The cabin door to the north hangs ajar, twisted on broken hinges. A metal locker rattles against the east wall with each shudder of the ship.",
+      "exits": {
+        "north": "c-deck-corridor"
+      },
+      "items": [
+        "zero-note",
+        "numbered-bracelet"
+      ],
+      "hazards": [
+        {
+          "description": "The water climbs steadily, now mid-calf. Debris swirls past your legs. The ship groans like a dying thing.",
+          "probability": 0.15,
+          "deathText": "The wall buckles with a sound like a gunshot. Freezing seawater explodes through the breach, a solid wall of force. It hammers you into the ceiling, crushing ribs, filling lungs. The cabin becomes a tomb in seconds."
+        }
+      ]
+    },
+    "c-deck-corridor": {
+      "name": "C-Deck Corridor",
+      "description": "A dim passageway stretches in both directions, lit by failing emergency strips that pulse red, then black, then red again. The corridor tilts subtly downward to the east — the ship listing. Numbered brass plates mark doors along both walls: Door 3, Door 4, Door 5. Salt-stained hospital gurneys lie overturned, their wheels still spinning lazily. To the south, your flooded cabin gurgles. North leads deeper into the ship. East, a door marked with a digital '7' in glowing numerals. West, an archway to what was once the grand staircase.",
+      "exits": {
+        "north": "hospital-ward",
+        "south": "flooded-cabin",
+        "east": "operating-theatre",
+        "west": "grand-staircase"
+      },
+      "items": [
+        "gurney-wheel"
+      ],
+      "hazards": [
+        {
+          "description": "The lights fail completely for five seconds. In the darkness, something metallic clatters and rolls. Then the red glow returns.",
+          "probability": 0.1,
+          "deathText": "The deck lurches violently. Your feet leave the floor. You slam into the ceiling, then crash down onto the corner of an overturned gurney. Steel punches through your side. You try to scream but your lungs won't fill. The red lights fade to black."
+        }
+      ]
+    },
+    "hospital-ward": {
+      "name": "Hospital Ward",
+      "description": "Rows of iron-frame beds march down both sides of a long chamber, their white sheets yellowed and damp. Medical equipment rusts on rolling carts — IV stands, surgical trays, glass bottles filled with murky liquids. The air reeks of iodine and decay. Painted on the far wall in precise, clinical lettering: 'BRITANNIC HOSPITAL SHIP — WARD C.' A door to the north is sealed with a digital lock showing three blank digits. The corridor lies south.",
+      "solvedDescription": "Rows of hospital beds line the ward, their sheets stained and rotting. Medical equipment rusts beside each bed — testament to the ship's wartime service. The digital lock on the north door now shows '9-9-9' in glowing green numerals. The door has slid open, revealing the boiler room passage beyond.",
+      "exits": {
+        "south": "c-deck-corridor"
+      },
+      "items": [
+        "medical-chart",
+        "scalpel"
+      ],
+      "hazards": [
+        {
+          "description": "Overhead pipes drip condensation that hisses when it hits the floor. The smell of chlorine burns your nostrils.",
+          "probability": 0.08,
+          "deathText": "A pipe ruptures with a shriek. Superheated steam erupts in a scalding column. Your skin blisters and peels. You inhale and your throat cooks from the inside. Mercifully, you pass out before the screaming stops."
+        }
+      ]
+    },
+    "operating-theatre": {
+      "name": "Operating Theatre",
+      "description": "Surgical lights dangle from the ceiling on articulated arms, their glass lenses cracked but still catching the red emergency glow. In the center: a steel operating table, stained dark in ways that suggest rust isn't the only iron oxide present. Cabinets line the walls, doors hanging open, surgical instruments scattered across the floor like chrome bones. A chart on the wall diagrams human anatomy with unsettling precision. The only exit is west to the corridor.",
+      "exits": {
+        "west": "c-deck-corridor"
+      },
+      "items": [
+        "surgical-saw",
+        "anesthetic-bottle"
+      ],
+      "hazards": [
+        {
+          "description": "Scalpels and needles crunch underfoot. One wrong step in the dim light could be costly.",
+          "probability": 0.12,
+          "deathText": "Your heel comes down on a syringe. The needle punches through boot sole, through skin, into bone. Your leg goes numb. You collapse. As consciousness fades, you realize the syringe wasn't empty. Your heart forgets how to beat."
+        }
+      ]
+    },
+    "grand-staircase": {
+      "name": "Grand Staircase",
+      "description": "Once magnificent, now a monument to decay. The sweeping staircase that connected nine decks is buckled and collapsed, its ornate iron railings twisted into abstract sculptures. Brass fixtures still gleam faintly through the grime. Painted panels on the walls depict the Britannic in her glory — white hull, red crosses, lifeboats hanging ready. Water cascades down from somewhere above, creating a deadly waterfall where the stairs once climbed. A passage east returns to the corridor. To the north, a heavy watertight door is sealed shut, its wheel-lock unmoved for decades.",
+      "solvedDescription": "The ruined staircase stretches upward, its grandeur collapsed into twisted metal and splintered wood. Water still cascades down from the damaged decks above. The heavy watertight door to the north stands open, its wheel-lock turned, revealing a passage to the chart room.",
+      "exits": {
+        "east": "c-deck-corridor"
+      },
+      "items": [
+        "brass-fixture"
+      ],
+      "hazards": [
+        {
+          "description": "The cascading water undermines the remaining structure. Girders creak. Bolts pop free and ping off the walls.",
+          "probability": 0.1,
+          "deathText": "A section of staircase tears free above you. Tons of wrought iron and oak come down like a collapsing ceiling. The impact is instant and total. No pain. Just the sudden crushing weight and then nothing."
+        }
+      ]
+    },
+    "boiler-room": {
+      "name": "Boiler Room Six",
+      "description": "Heat slams into you like a fist. Massive boilers loom on either side, their steel bellies cold now but radiating decades of absorbed heat. Pipes web the ceiling in a complex tangle, some still hissing with trapped steam. Coal dust coats every surface in a fine black powder. The floor grates are slick with oil and condensation. A pressure gauge on the wall trembles in the red zone. To the south lies the hospital ward. North, a narrow catwalk crosses to the engine casing.",
+      "exits": {
+        "south": "hospital-ward",
+        "north": "engine-casing"
+      },
+      "items": [
+        "coal-shovel",
+        "pressure-valve"
+      ],
+      "hazards": [
+        {
+          "description": "Steam vents unpredictably from ruptured joints. The pressure gauge needle quivers, ready to redline.",
+          "probability": 0.18,
+          "deathText": "The boiler explodes. You don't hear it — the shockwave ruptures your eardrums first. Flying shrapnel turns you into a silhouette painted in red across the far wall. The flash fire that follows is almost redundant."
+        }
+      ]
+    },
+    "engine-casing": {
+      "name": "Engine Casing",
+      "description": "The heart of the Britannic. Two massive reciprocating engines tower three decks high, their pistons frozen mid-stroke, shafts thicker than tree trunks vanishing into the deck below. The air vibrates with residual energy, as though the engines remember motion. Catwalks crisscross at dizzying heights. A control panel on the east wall is still live, lights blinking amber and red. To the south, the boiler room roars. West leads to the chart room. North, a ladder climbs to the boat deck.",
+      "exits": {
+        "south": "boiler-room",
+        "west": "chart-room",
+        "north": "boat-deck"
+      },
+      "items": [
+        "engineers-key"
+      ],
+      "hazards": [
+        {
+          "description": "The catwalks sway gently. Bolts are missing from the support struts. Far below, dark water reflects the red emergency lights.",
+          "probability": 0.07,
+          "deathText": "Your weight is the final straw. The catwalk section tears free from its moorings. You fall three decks through open air, time enough to understand what's happening. The impact with the flooded engine bay below stops your heart before you can drown."
+        }
+      ]
+    },
+    "chart-room": {
+      "name": "Chart Room and Bridge",
+      "description": "Navigation charts paper the walls — shipping lanes, depth soundings, mine warnings from the Great War. The ship's wheel stands unmanned, brass still polished, frozen at hard starboard. Windows look out onto black water pressing against the glass. Instruments crowd the panels: compass, telegraph, barometer. A ship's log lies open on the chart table, its last entry dated November 21, 1916: 'Mine strike. Taking water. Attempting to reach—' The writing ends in a streak of ink. East lies the engine casing. South, the grand staircase looms.",
+      "solvedDescription": "The bridge of the Britannic, frozen in time. Navigation charts cover the walls, the ship's wheel stands ready, and instruments crowd every surface. The ship's log lies open to its final entry. The sealed hatch in the deck has been unlocked and pulled open, revealing a ladder descending to the chapel below.",
+      "exits": {
+        "east": "engine-casing"
+      },
+      "items": [
+        "navigation-compass",
+        "ship-log"
+      ],
+      "hazards": []
+    },
+    "boat-deck": {
+      "name": "Boat Deck",
+      "description": "You emerge into open air — or what passes for it. The deck is canted at a sickening angle, lifeboats hanging useless from their gantry davits, tangled in rotted canvas and rusted cable. The sea stretches to every horizon, black and empty. Above, stars wheel slowly as the ship lists further. A door in the deck superstructure is marked with a massive '9' painted in red. It's sealed with four digital locks, each requiring a three-digit code. To the south, the ladder descends back to the engine casing.",
+      "solvedDescription": "The boat deck stretches before you, angled steeply toward the sea. Lifeboats hang like dead fruit from their davits. The massive door marked '9' stands open, its four digital locks all showing green. Beyond it: darkness, and the sound of helicopter rotors. Freedom.",
+      "exits": {
+        "south": "engine-casing"
+      },
+      "items": [],
+      "hazards": [
+        {
+          "description": "The ship groans and settles deeper. The angle increases. Loose equipment slides past, clattering toward the rail and then over the edge into the black water below.",
+          "probability": 0.2,
+          "deathText": "The deck lurches past the critical angle. Your feet slip. You scrabble for purchase but the metal is slick with spray. You slide, gathering speed, and then you're airborne. The freezing water hits like concrete. Your bracelet detonates. The last thing you see is red digits: 0:00."
+        }
+      ]
+    },
+    "chapel": {
+      "name": "Ship's Chapel",
+      "description": "A small sanctuary tucked below the waterline, somehow still dry. Wooden pews face a simple altar draped in white linen. Candles have long since burned to stubs. On the wall, a brass plaque: 'HMHS Britannic — In Memory of Those Lost at Sea.' Behind the altar, carved into the bulkhead, nine circles are arranged in a 3x3 grid. Each circle contains a number: 1 through 9. In the center, the number 5 glows faintly. A ladder leads up to the chart room.",
+      "exits": {
+        "north": "chart-room"
+      },
+      "items": [
+        "brass-plaque",
+        "cipher-wheel"
+      ],
+      "hazards": []
+    }
+  },
+  "items": {
+    "zero-note": {
+      "name": "Zero's Note",
+      "description": "A laminated card bearing precise, typed text: 'NONARY GAME RULES. Nine players. Nine hours. Nine doors. Each player wears a numbered bracelet (1-9). Doors open only when the digital root of entering players' numbers equals the door number. Digital root: sum all digits, repeat until single digit remains. Example: 3+5+7=15, 1+5=6. Work together or die alone. Find Door 9. —Zero.'",
+      "roomText": "A laminated card floats in the rising water, bumping against your shin. Waterproof. Intentional.",
+      "pickupText": "You snatch the card from the water. The text is crisp, clinical, terrifying in its precision. Someone planned this. Someone is watching.",
+      "portable": true
+    },
+    "numbered-bracelet": {
+      "name": "Numbered Bracelet",
+      "description": "A heavy steel bracelet locked around your left wrist. A digital display glows red: the number 5. Beneath it, a smaller readout counts down: 8:47:23... 8:47:22... The metal is warm. You can feel electronics humming inside. You try to remove it. It doesn't budge. A tiny LED blinks red beneath the display — charge armed.",
+      "roomText": "Your wrist burns. You look down: a steel bracelet you don't remember putting on. The number 5 glows in crimson. A timer counts down. It's already started.",
+      "pickupText": "You can't pick this up. It's already on you. And it's not coming off.",
+      "portable": false
+    },
+    "gurney-wheel": {
+      "name": "Gurney Wheel",
+      "description": "A rubber wheel from a medical gurney, still on its metal axle. Could be used to wedge something open or as a makeshift tool.",
+      "roomText": "A wheel from an overturned gurney lies in a corner, its rubber still surprisingly intact.",
+      "pickupText": "You wrench the wheel free of its axle. The metal is cold and solid in your hands.",
+      "portable": true
+    },
+    "medical-chart": {
+      "name": "Medical Chart",
+      "description": "A patient chart from the Great War, yellowed and water-damaged. The diagnosis is listed as 'Trauma — Mine Blast.' Below that, in careful handwriting: 'Patient expired 21/11/1916.' At the bottom, someone has written in fresh ink: 'Digital root of 2+1+1+1+1+9+1+6 = 22 = 4.'",
+      "roomText": "A medical chart dangles from a clipboard on the wall, swaying slightly despite the still air.",
+      "pickupText": "You take the chart. The fresh ink disturbs you more than the century-old death record. Someone was here recently. Someone left this for you to find.",
+      "portable": true
+    },
+    "scalpel": {
+      "name": "Surgical Scalpel",
+      "description": "A carbon steel scalpel, blade still sharp enough to catch light. The handle bears the manufacturer's mark: 'Sheffield 1915.'",
+      "roomText": "A scalpel rests on a surgical tray, blade catching the red emergency light like a sliver of frozen fire.",
+      "pickupText": "You pocket the scalpel carefully. It's the sharpest thing you've found. That might matter.",
+      "portable": true
+    },
+    "surgical-saw": {
+      "name": "Surgical Saw",
+      "description": "A bone saw with a curved blade and wooden handle. Teeth are still sharp despite the rust. Used for amputations. Not something you want to think about too carefully.",
+      "roomText": "A surgical saw lies on the floor, its blade reflecting the emergency lights in a serrated grin.",
+      "pickupText": "You pick up the saw. It's heavier than expected, balanced for one purpose only. The weight is somehow reassuring.",
+      "portable": true
+    },
+    "anesthetic-bottle": {
+      "name": "Bottle of Anesthetic",
+      "description": "A glass bottle labeled 'Chloroform — Handle with Care.' Half-full, stopper sealed with wax. The liquid sloshes gently, catching light like pale amber.",
+      "roomText": "A brown bottle sits in a cabinet, its label faded but legible: medical-grade chloroform.",
+      "pickupText": "You take the bottle carefully. The liquid inside is still potent — you can smell the sweet, sickly odor even through the stopper.",
+      "portable": true
+    },
+    "brass-fixture": {
+      "name": "Brass Fixture",
+      "description": "An ornate brass light fixture torn from the wall, its art nouveau curves still elegant beneath the tarnish. Heavy enough to be used as a tool or weapon.",
+      "roomText": "A brass light fixture lies among the wreckage, its metalwork still beautiful despite the corrosion.",
+      "pickupText": "You heft the brass fixture. Solid, weighty, useful. The Britannic's builders made things to last.",
+      "portable": true
+    },
+    "coal-shovel": {
+      "name": "Coal Shovel",
+      "description": "A long-handled shovel, blade blackened from years of feeding coal to the boilers. The edge is worn but still sharp enough to cut.",
+      "roomText": "A coal shovel leans against a boiler, handle worn smooth by thousands of shifts in the heat and dark.",
+      "pickupText": "You grab the shovel. It's perfectly balanced, meant for hours of hard labor. The stokers who wielded these built the ship's speed.",
+      "portable": true
+    },
+    "pressure-valve": {
+      "name": "Pressure Valve Wheel",
+      "description": "A heavy iron wheel valve, about a foot in diameter. Could be used to control pressure... or as a very effective blunt instrument.",
+      "roomText": "A pressure valve wheel has broken free from its housing, lying on the oil-slicked floor grates.",
+      "pickupText": "You lift the valve wheel. It's twenty pounds of solid iron, and the threads are still intact. Might be useful.",
+      "portable": true
+    },
+    "engineers-key": {
+      "name": "Engineer's Master Key",
+      "description": "A large brass key on a steel ring, labeled 'MASTER — ENGINE ROOM ACCESS.' Worn smooth by countless hands. This opened every mechanical space on the ship.",
+      "roomText": "A brass key hangs from a hook near the control panel, its tag reading 'Master — All Engine Spaces.'",
+      "pickupText": "You take the master key. It's warm from the residual engine heat, and heavier than it looks. Authority made metal.",
+      "portable": true
+    },
+    "navigation-compass": {
+      "name": "Navigation Compass",
+      "description": "A brass ship's compass in a wooden case, needle still rotating smoothly. The card shows all 32 points. A tool for finding your way when all landmarks are lost.",
+      "roomText": "A navigation compass sits on the chart table, its needle slowly spinning, searching for magnetic north.",
+      "pickupText": "You pocket the compass. In a ship turned labyrinth, knowing which way is north might save your life.",
+      "portable": true
+    },
+    "ship-log": {
+      "name": "Ship's Log",
+      "description": "The final log of the HMHS Britannic, bound in water-stained leather. The last entry: 'Mine strike portside, boiler room six. Taking water rapidly. Attempting to beach at Kea. God help us.' Below, in fresh ink: '6+9+9+9 = 33 = 6.'",
+      "roomText": "The ship's log lies open on the chart table, final entry still legible after more than a century.",
+      "pickupText": "You close the log carefully and take it. The final words of the Britannic's captain. And someone's recent addition. More clues.",
+      "portable": true
+    },
+    "brass-plaque": {
+      "name": "Memorial Plaque",
+      "description": "A brass plaque commemorating those lost when the Britannic sank. At the bottom, someone has scratched: '1+9+1+6 = 17 = 8.'",
+      "roomText": "A brass memorial plaque is mounted on the chapel wall, recently polished despite the ship's abandonment.",
+      "pickupText": "You remove the plaque carefully. The fresh scratches gleam against the old brass. More numbers. More tests.",
+      "portable": true
+    },
+    "cipher-wheel": {
+      "name": "Cipher Wheel",
+      "description": "A mechanical cipher device, two brass disks rotating against each other with numbers 0-9 repeated around the rim. Used for encoding messages. The inner disk is set to position 9.",
+      "roomText": "A brass cipher wheel sits on the altar, its disks aligned to show the number 9 in every position.",
+      "pickupText": "You take the cipher wheel. The mechanism clicks smoothly as you turn it. Zero's puzzle pieces, scattered through the ship.",
+      "portable": true
+    }
+  },
+  "puzzles": {
+    "unlock-boiler": {
+      "room": "hospital-ward",
+      "description": "A digital lock seals the north door — three blank displays waiting for a three-digit code. Above it, stenciled in fading paint: 'BOILER ROOM SIX — AUTHORIZED PERSONNEL ONLY.'",
+      "requiredItem": "medical-chart",
+      "hintText": "The lock needs a three-digit code. The displays blink expectantly. Somewhere in this ward must be a clue — medical records, patient charts, something with numbers.",
+      "solvedText": "You examine the medical chart's calculation: digital root equals 4. But which three digits? You think about the Nonary Game rules. The date: 21/11/1916. You try 2-1-1. The lock beeps. Wrong. Then you realize: the full sum before digital root: 2+1+1+1+1+9+1+6 = 22. But you need three nines... You try 9-9-9. The lock turns green. The door hisses open on hydraulics, revealing a passage north.",
+      "isGoal": true,
+      "goalName": "Access Boiler Room",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "boiler-room"
+      }
+    },
+    "unlock-chart-room": {
+      "room": "grand-staircase",
+      "description": "A massive watertight door blocks the north passage. Its wheel-lock is frozen with rust and salt. A brass plate reads: 'CHART ROOM — OFFICERS ONLY.'",
+      "requiredItem": "engineers-key",
+      "hintText": "The wheel-lock won't turn — decades of corrosion have seized it solid. You need something to bypass the mechanism entirely, or a key designed for this ship's most critical spaces.",
+      "solvedText": "You insert the engineer's master key into a hidden maintenance port beside the wheel. Hydraulics groan to life. The wheel spins on its own, threads shrieking as they clear themselves of rust. The door swings open with a boom that echoes through the stairwell. North is clear.",
+      "isGoal": true,
+      "goalName": "Reach the Bridge",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "chart-room"
+      }
+    },
+    "unlock-chapel": {
+      "room": "chart-room",
+      "description": "A hatch is set into the deck, circular and heavy, sealed with a combination lock — not digital, but mechanical. Nine tumblers, each numbered 0-9. Currently all set to 0.",
+      "requiredItem": "cipher-wheel",
+      "hintText": "Nine tumblers need nine numbers. The cipher wheel shows nines in every position. Is that the answer, or is it pointing you toward the pattern?",
+      "solvedText": "You study the cipher wheel's alignment: the number 9 appears in every position around the disk. Nine nines? No — that's too simple. Then you notice the inner disk is offset by one position. Starting from 1 and using the digital root pattern... You set the tumblers to 1-2-3-4-5-6-7-8-9. The lock clicks. The hatch unseals with a hiss of equalized pressure. A ladder descends into darkness.",
+      "isGoal": false,
+      "goalName": "Open Chapel Access",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "chapel"
+      }
+    },
+    "unlock-door-nine": {
+      "room": "boat-deck",
+      "description": "Door Nine. Four digital locks arranged in a square, each requiring a three-digit code. Above them, stenciled in red: 'THE FINAL DOOR — FOUR LOCKS, ONE TRUTH.' This is it. This is what Zero wanted you to find.",
+      "requiredItem": "ship-log",
+      "hintText": "Four locks. You've found clues throughout the ship — medical charts, dates, calculations. The ship's log holds the final piece. Digital roots. The date the Britannic sank. The nine numbers of the Nonary Game. Think.",
+      "solvedText": "You open the ship's log to the final entry and the fresh notation: 6+9+9+9 = 33 = 6. The medical chart gave you 9-9-9. The brass plaque: 1+9+1+6 = 8. And your own bracelet: 5. Four codes: 9-9-9, 3-3-3, 1-9-1, and 0-0-5. You enter them in sequence. Each lock turns green. Door Nine groans open. Beyond: a helicopter on the tilting deck, rotors already spinning. You're free. You solved the Nonary Game.",
+      "isGoal": true,
+      "goalName": "Escape Through Door Nine",
+      "action": {
+        "type": "openExit",
+        "direction": "north",
+        "targetRoom": "boat-deck"
+      }
+    }
+  }
+}

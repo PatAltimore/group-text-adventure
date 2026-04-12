@@ -147,6 +147,17 @@
 - **Pattern:** If a world approaches 32K session state, chunking is already implemented. Just deploy. If approaching 10+ chunks, consider offloading to Blob Storage instead.
 - **Key takeaway:** **Azure Table Storage has a 32K character limit per string property.** Large game sessions need chunked storage or alternative persistence.
 
+### 2026-04-12 — Nonary Game World Creation
+
+**Design & World Building:**
+- **Theme blending:** When combining source material (999: Nine Hours, Nine Persons, Nine Doors) with historical setting (HMHS Britannic), look for numerical/thematic connections that reinforce the original work's motifs. Example: Britannic is 882 ft **9** inches long, which perfectly matches 999's "9" numerology.
+- **World scope:** 11 rooms, 15 items, 4 goal puzzles fit cleanly under the 30KB Azure Table Storage world JSON limit while maintaining rich, atmospheric descriptions.
+- **File validation:** Always run `validate-world.js` before committing. Catches missing `displayOrder`, malformed JSON, inconsistent exit graphs, and helps spot portal/puzzle wiring errors early.
+- **Room descriptions:** Use `solvedDescription` for puzzle rooms to show state changes post-solution (e.g., boiler-room shows steam cleared after puzzle unlock). This reinforces puzzle impact on the environment.
+- **Hazard design:** Multiple low-probability hazards (0.05–0.20 per command) create tension without making the world unplayable. Britannic's sinking theme (flooding, steam, structural collapse) drives the narrative forward.
+- **Item storytelling:** Items blending game lore (numbered bracelet, cipher wheel, Zero's note) with historical artifacts (ship's log, navigation compass, WWI medical tools) create a cohesive narrative bridge between 999 and Britannic.
+- **displayOrder sequencing:** New worlds must pick the next available displayOrder number (checked against all existing world files). This ensures consistent ordering in the world selection UI.
+
 
 ### 2026-04-04 — Cross-Team Update: Data's Client Fixes
 
@@ -977,3 +988,49 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 
 **Learning:** When creating puzzle worlds, ALWAYS explicitly set `isGoal: true` and `goalName` on each goal puzzle, and ALWAYS set `portable: true` on items players should be able to pick up. The game engine treats these flags as authoritative — omitting them breaks game mechanics.
 
+**Learning:** When creating puzzle worlds, ALWAYS explicitly set `isGoal: true` and `goalName` on each goal puzzle, and ALWAYS set `portable: true` on items players should be able to pick up. The game engine treats these flags as authoritative — omitting them breaks game mechanics.
+
+### 2026-07-18 — Fix: Respawn Timer Minimum Clamp (15s → 5s)
+
+**Bug:** The host screen "Respawn Timer" dropdown offers 5s and 10s options, but the server clamped the minimum to 15s in two places (`handleStartGame` line 627 and `handleSetDeathTimeout` line 802). Selecting 5s or 10s silently resulted in 15s.
+
+**Fix:** Changed `Math.max(15,` to `Math.max(5,` in both locations in `api/src/functions/gameHub.js`. Updated the test assertion in `tests/game-engine.test.js` from `toBeGreaterThanOrEqual(15)` to `toBeGreaterThanOrEqual(5)`.
+
+**Learning:** When adding UI options, always verify the server-side validation range matches the UI's offered values. The valid deathTimeout range is now 5–60 seconds.
+
+**Branch:** `fix/respawn-timer-clamp` — All 587 tests pass (585 passed, 2 skipped).
+
+
+### 2026-07-18 — Created Nonary Game world (999/Britannic)
+
+**Task:** Create a new world JSON file based on 999: Nine Hours, Nine Persons, Nine Doors (first Zero Escape game) set aboard the HMHS Britannic (sister ship of the Titanic, WWI hospital ship).
+
+**Implementation:**
+- Created `world/nonary-game.json` with 11 interconnected rooms, 15 items, and 4 goal puzzles
+- Theme: Escape-room thriller — players wake trapped on a sinking ship, forced to play Zero's Nonary Game
+- Featured authentic 999 elements: numbered bracelets, digital root puzzles, Door Nine, Zero's rules, 9-hour time limit
+- Britannic historical details: hospital wards, operating theatre, boiler rooms, engine casing, chart room, boat deck, chapel
+- Puzzle progression: hospital ward → boiler room → chart room → chapel → Door Nine
+- Size: 26KB (under 30KB limit)
+- Synopsis: "Escape a sinking hospital ship by solving the Nonary Game" (9 words)
+
+**Lore integration:**
+- Zero as mysterious kidnapper
+- Nonary Game rules (digital root: sum all digits until single digit remains)
+- Player is #5 (numbered bracelet)
+- Multiple hazards: flooding, steam, structural collapse, deck tilting
+- Items blend 999 themes (Zero's note, cipher wheel) with Britannic history (ship's log, navigation compass, medical equipment)
+- Britannic is 882 ft 9 in long — the "9" connection reinforces the game's motif
+
+**World structure patterns:**
+- Room IDs use kebab-case: `flooded-cabin`, `hospital-ward`, `boat-deck`
+- 4 goal puzzles: unlock-boiler, unlock-chart-room, unlock-chapel, unlock-door-nine
+- Puzzle actions: `openExit` (reveals new passages)
+- Each room with puzzles includes `solvedDescription` showing post-puzzle state
+- Hazards use probability (0.05-0.20) with dramatic, visceral death texts matching 999's horror/thriller tone
+
+**Validation:** All tests passing (539 passed, 2 skipped). World validates with zero errors.
+
+**Key files:**
+- World file: `world/nonary-game.json`
+- PR: https://github.com/PatAltimore/group-text-adventure/pull/3

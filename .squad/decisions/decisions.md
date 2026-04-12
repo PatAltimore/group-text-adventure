@@ -1160,7 +1160,59 @@ Added \\\world/hollow-moon.json\\\ — a new adventure world set on a lunar mini
 
 ### Impact
 
-- **Backend:** Modified \\`api/src/functions/gameHub.js\\` (3 message objects + 1 settings block)
-- **Frontend:** Can now read \\`adventureName\\` and \\`gameCode\\` from \\`gameStart\\` and \\`gameInfo\\` messages for banner display
+- **Backend:** Modified `api/src/functions/gameHub.js` (3 message objects + 1 settings block)
+- **Frontend:** Can now read `adventureName` and `gameCode` from `gameStart` and `gameInfo` messages for banner display
 - All 539 tests pass, no regressions
+
+---
+
+## 30. Nonary Game World (Adventure 15)
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-12  
+**Status:** Implemented  
+**PR:** https://github.com/PatAltimore/group-text-adventure/pull/3
+
+### Context
+
+Created a new world JSON file based on the video game **999: Nine Hours, Nine Persons, Nine Doors** (first Zero Escape game) set aboard the **HMHS Britannic**, the sister ship of the Titanic that served as a WWI hospital ship.
+
+### Decision
+
+**Theme:** Combine 999's escape-room thriller mechanics with Britannic's historical setting:
+- Players wake trapped on a sinking hospital ship with numbered bracelets
+- Must solve Zero's Nonary Game puzzles to reach Door Nine before ship sinks
+- 9-hour time limit, digital root puzzles, escape-room style progression
+- Britannic is 882 ft **9** inches long — reinforces the game's numerology motif
+
+**Structure:**
+- **11 rooms:** flooded-cabin (start) → c-deck-corridor → hospital-ward → operating-theatre → grand-staircase → boiler-room → engine-casing → chart-room → boat-deck → chapel → Door Nine
+- **15 items:** Blend 999 lore (Zero's note, numbered bracelet, cipher wheel) with Britannic history (ship's log, navigation compass, medical equipment, surgical tools)
+- **4 goal puzzles:** unlock-boiler (hospital ward), unlock-chart-room (grand staircase), unlock-door-nine (boat deck), plus unlock-chapel (chart room)
+- **Multiple hazards:** Flooding (rising water), steam explosions, structural collapse, deck tilting — probability 0.05-0.20
+
+### Design Principles Applied
+1. **Atmospheric horror/thriller tone** — Rich, visceral prose matching 999's claustrophobic dread
+2. **Environmental storytelling** — Britannic's history (WWI hospital ship, 1916 mine strike) woven into room descriptions
+3. **Puzzle progression** — Digital root calculations, cipher wheels, numbered doors matching 999's mechanics
+4. **Death texts** — Dramatic, immediate, horrifying (drowning, steam scalding, explosions)
+5. **solvedDescription** — Each puzzle room shows updated state after solution
+
+### Technical Constraints Met
+- ✅ File size: 26KB (under 30KB Azure Table Storage limit)
+- ✅ Exit directions: north/south/east/west only (no up/down/in/out)
+- ✅ Portable items: all have `"portable": true`
+- ✅ Goal puzzles: include `"isGoal": true` and `"goalName"` fields
+- ✅ All rooms with puzzles include `solvedDescription`
+- ✅ Valid JSON, passes `validate-world.js` with zero errors
+- ✅ All 539 tests pass (2 skipped)
+- ✅ displayOrder: 15 (next available in sequence)
+
+### Impact
+
+- New file: `world/nonary-game.json` (26KB)
+- Branch: `feature/nonary-game-world`
+- PR #3 opened
+- No existing files modified
+- All 539 tests pass
 
