@@ -811,8 +811,6 @@ function handleTake(session, playerId, cmd) {
   if (item.hazardItem) {
     const playerName = player.name;
     const playerRoom = player.room;
-    // Remove hazard item from room so it can't kill again
-    roomState.items.splice(idx, 1);
     session = killPlayer(session, playerId);
 
     responses.push({
@@ -898,8 +896,6 @@ function handleTakeAll(session, playerId) {
     if (item && item.hazardItem) {
       const playerName = player.name;
       const playerRoom = player.room;
-      const idx = roomState.items.indexOf(itemId);
-      roomState.items.splice(idx, 1);
       session = killPlayer(session, playerId);
 
       responses.push({

@@ -1851,16 +1851,16 @@ describe('Hazard Item System', () => {
     expect(deathMsg.message.deathText).toContain('idol');
   });
 
-  // ── Hazard item removed from room after death ────────────────────────
+  // ── Hazard item remains in room after death ────────────────────────
 
-  test('hazard item is removed from room after death', () => {
+  test('hazard item remains in room after death', () => {
     let session = hazardItemSessionWithPlayer('p1', 'Alice');
     ({ session } = processCommand(session, 'p1', 'go north'));
 
     const { session: afterTake } = processCommand(session, 'p1', 'take cursed idol');
 
-    // Hazard item should be removed from the room (so it doesn't kill others)
-    expect(afterTake.roomStates['trap-room'].items).not.toContain('cursed-idol');
+    // Hazard item should remain in the room so other players can encounter it
+    expect(afterTake.roomStates['trap-room'].items).toContain('cursed-idol');
   });
 
   // ── handleTakeAll triggers death on hazard items ─────────────────────
@@ -1880,8 +1880,8 @@ describe('Hazard Item System', () => {
     expect(ghost).toBeDefined();
     expect(ghost.isDeath).toBe(true);
 
-    // The hazard item that killed the player should be removed from room
-    expect(afterTakeAll.roomStates['trap-room'].items).not.toContain('cursed-idol');
+    // The hazard item that killed the player should remain in room
+    expect(afterTakeAll.roomStates['trap-room'].items).toContain('cursed-idol');
 
     // Death response should include the hazard item's deathText
     const deathMsg = responses.find(
@@ -1905,14 +1905,65 @@ describe('Hazard Item System', () => {
     expect(ghost).toBeDefined();
     expect(ghost.isDeath).toBe(true);
 
-    // Hazard item removed from room
-    expect(afterG.roomStates['trap-room'].items).not.toContain('cursed-idol');
+    // Hazard item remains in room
+    expect(afterG.roomStates['trap-room'].items).toContain('cursed-idol');
 
     // Death response present
     const deathMsg = responses.find(
       r => r.playerId === 'p1' && r.message.type === 'death'
     );
     expect(deathMsg).toBeDefined();
+  });
+
+  // ── Second player encounters same hazard item after first player dies ──
+
+  test('Player B can encounter the same hazard item after Player A dies from it', () => {
+    let session = hazardItemSessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    // Move both to trap room
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    ({ session } = processCommand(session, 'p2', 'go north'));
+
+    // Alice picks up hazard item and dies
+    const { session: afterAlice } = processCommand(session, 'p1', 'take cursed idol');
+    expect(afterAlice.players['p1']).toBeUndefined();
+
+    // Hazard item should still be in the room
+    expect(afterAlice.roomStates['trap-room'].items).toContain('cursed-idol');
+
+    // Bob picks up the same hazard item and also dies
+    const { session: afterBob, responses } = processCommand(afterAlice, 'p2', 'take cursed idol');
+    expect(afterBob.players['p2']).toBeUndefined();
+
+    const bobGhost = afterBob.ghosts?.['Bob'];
+    expect(bobGhost).toBeDefined();
+    expect(bobGhost.isDeath).toBe(true);
+
+    const deathMsg = responses.find(
+      r => r.playerId === 'p2' && r.message.type === 'death'
+    );
+    expect(deathMsg).toBeDefined();
+    expect(deathMsg.message.deathText).toContain('idol');
+  });
+
+  test('Player B dies from hazard item via "get items" after Player A died from it', () => {
+    let session = hazardItemSessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    ({ session } = processCommand(session, 'p2', 'go north'));
+
+    // Alice uses "get items" and dies from hazard
+    const { session: afterAlice } = processCommand(session, 'p1', 'get items');
+    expect(afterAlice.players['p1']).toBeUndefined();
+
+    // Hazard item should still be in the room
+    expect(afterAlice.roomStates['trap-room'].items).toContain('cursed-idol');
+
+    // Bob uses "get items" and also dies from the same hazard
+    const { session: afterBob, responses } = processCommand(afterAlice, 'p2', 'get items');
+    expect(afterBob.players['p2']).toBeUndefined();
+
+    const bobGhost = afterBob.ghosts?.['Bob'];
+    expect(bobGhost).toBeDefined();
+    expect(bobGhost.isDeath).toBe(true);
   });
 
   // ── hazardHintsEnabled controls hazard visibility ────────────────────
@@ -2349,13 +2400,13 @@ describe('Hazard Item Integration (Stef)', () => {
       expect(death.message.deathText).toContain('orb');
     });
 
-    test('hazard item removed from room after pickup', () => {
+    test('hazard item remains in room after pickup', () => {
       let session = hazardItemSessionWithPlayerStef('p1', 'Alice');
       ({ session } = processCommand(session, 'p1', 'go north'));
 
       const { session: after } = processCommand(session, 'p1', 'take death orb');
 
-      expect(after.roomStates['hazard-room'].items).not.toContain('death-orb');
+      expect(after.roomStates['hazard-room'].items).toContain('death-orb');
     });
 
     test('second hazard item also kills on direct pickup', () => {
@@ -2431,8 +2482,8 @@ describe('Hazard Item Integration (Stef)', () => {
       expect(afterDeath.roomStates['hazard-room'].items).toContain('sword');
       expect(afterDeath.roomStates['hazard-room'].items).toContain('potion');
 
-      // Death orb should be removed from room
-      expect(afterDeath.roomStates['hazard-room'].items).not.toContain('death-orb');
+      // Death orb should remain in room for other players
+      expect(afterDeath.roomStates['hazard-room'].items).toContain('death-orb');
 
       // Bob can pick up dropped items
       let session2 = afterDeath;
