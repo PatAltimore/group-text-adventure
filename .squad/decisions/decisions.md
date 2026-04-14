@@ -1216,3 +1216,68 @@ Created a new world JSON file based on the video game **999: Nine Hours, Nine Pe
 - No existing files modified
 - All 539 tests pass
 
+
+
+---
+
+## Puzzle Goal System Audit & Fixes
+
+**Author:** Mouth (Backend Dev)  
+**Date:** 2026-04-11  
+**Status:** COMPLETE — All changes validated and tested
+
+### Problem
+
+Audit of all 15 world JSON files revealed systemic inconsistency in isGoal marking. Out of ~97 total puzzles, only ~47 were marked as goals. Many puzzles that open exits to new areas were incorrectly unmarked.
+
+### Decision
+
+Established goal-marking principle: **A puzzle SHOULD be a goal if it:**
+1. Opens an exit to a new area (openExit) representing significant progression
+2. Represents a major story milestone
+3. Is on the critical path to completing the world
+
+Adopted TRON Grid (100% correct at 4/4 goals) as the model world.
+
+### Changes Applied
+
+Applied 22 puzzle goal fixes across 12 worlds:
+
+| World | Puzzles Updated | Goals Now | Improvement |
+|-------|-----------------|-----------|-------------|
+| hollow-moon | 2 | 8/10 | +25% |
+| true-crime | 1 | 6/7 | +14% |
+| pirate-treasure | 4 | 5/6 | +67% |
+| myst-island | 4 | 8/10 | +40% |
+| paranormal-mysteries | 2 | 5/7 | +29% |
+| egyptian-pyramid | 1 | 4/5 | +20% |
+| mystery-house | 2 | 5/6 | +33% |
+| space-adventure | 2 | 5/6 | +33% |
+| alcatraz-ghosts | 1 | 8/12 | +8% |
+| escape-room | 1 | 4/7 | +14% |
+| mars-adventure | 1 | 4/6 | +17% |
+| nonary-game | 1 | 4/4 | +25% |
+
+**Total: 22 puzzles updated, 12 worlds affected**
+
+### Validation Results
+
+- All 12 modified world files pass validate-world.js
+- Full test suite: 8/8 suites passed, 570 tests passed
+- No other puzzle fields modified
+- All item/room references validated
+
+### Impact
+
+- **Player Experience:** Players now see progression banners throughout all worlds for major puzzle milestones
+- **Pirate Treasure:** Improved from 1 goal → 5 goals (17% → 83%)
+- **Myst Island:** Improved from 40% → 80% goal coverage
+- **Consistency:** All worlds now follow the same goal-marking philosophy
+
+### Implementation Notes
+
+- No changes to game engine or protocol required
+- goalName field is purely for client display (player banners)
+- Goal system already existed; this fix ensures consistent coverage
+- Two-phase approach: audit first, then fix
+
