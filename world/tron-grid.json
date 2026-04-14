@@ -29,8 +29,8 @@
       "hazards": [
         {
           "description": "Stray data packets streak across the bridge like tracer fire, their trajectories erratic and unpredictable.",
-          "probability": 0.05,
-          "deathText": "A massive data packet — a corrupted system dump the size of a truck — slams into you at light speed. Your resolution scatters across the void in a shower of dying pixels. DERESOLUTION COMPLETE."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -58,8 +58,8 @@
       "hazards": [
         {
           "description": "Rogue combat programs circle the arena's edge, hurling practice discs that ricochet off the walls with lethal precision.",
-          "probability": 0.12,
-          "deathText": "A disc screams out of your blind spot. It catches you across the midsection and your body fractures into a cascade of blue-white cubes, each one winking out before it hits the ground. The crowd cheers. DERESOLUTION COMPLETE."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -71,13 +71,14 @@
       },
       "items": [
         "light-baton",
-        "encryption-key"
+        "encryption-key",
+        "light-cycle-baton"
       ],
       "hazards": [
         {
           "description": "Light cycles carve across the arena at impossible speed, their energy walls appearing without warning.",
-          "probability": 0.15,
-          "deathText": "You step left to dodge a blue trail and walk straight into an orange wall that wasn't there a nanosecond ago. The energy barrier passes through you like a hot wire through wax. You have time to see your own legs standing behind you before the deresolution takes hold. DERESOLUTION COMPLETE."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -88,12 +89,14 @@
       "exits": {
         "south": "game-grid-hub"
       },
-      "items": [],
+      "items": [
+        "admin-token"
+      ],
       "hazards": [
         {
           "description": "Scanner beams intensify without warning, probing for unauthorized code signatures.",
-          "probability": 0.08,
-          "deathText": "A scanner locks onto your unauthorized signature and floods you with purge light. Every subroutine in your digitized body unravels simultaneously — you don't even have time to scream before you're just a memory address pointing at nothing. DERESOLUTION COMPLETE."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -117,13 +120,14 @@
         "west": "memory-sector"
       },
       "items": [
-        "io-token"
+        "io-token",
+        "nav-module"
       ],
       "hazards": [
         {
           "description": "Recognizer search beams sweep the hangar floor in overlapping patterns, hunting for unauthorized programs.",
-          "probability": 0.10,
-          "deathText": "A search beam locks onto you and a Recognizer lurches to life overhead. Its massive foot descends — a wall of black geometry — and flattens you into a thin smear of dissolving code. DERESOLUTION COMPLETE."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -169,18 +173,20 @@
       "portable": true
     },
     "data-fragment": {
-      "name": "Data Fragment",
-      "description": "A crystalline shard of corrupted system data, its surface flickering with fragments of security logs and vulnerability reports. Deep in its structure, you can see the flaw — a buffer overflow in the Game Grid's energy barrier protocol.",
-      "roomText": "A glittering shard of data tumbles along the bridge, caught in an eddy of corrupted packets. Its surface shimmers with fragments of security code.",
-      "pickupText": "You catch the data fragment mid-tumble. Your HUD parses it instantly: security logs, vulnerability assessments, a buffer overflow in the energy barrier protocol. Someone was sloppy. Someone gave you an opening.",
-      "portable": true
+      "name": "Corrupted Data Fragment",
+      "description": "A shard of crystallized data, its surface rippling with cascading code. The information it contains flickers between readable and alien.",
+      "roomText": "A shard of crystallized data hovers at the bridge's edge, its surface alive with cascading code, flickering between beautiful patterns and corrupted noise.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You snatch the data fragment from the stream's edge. A massive data packet — a corrupted system dump the size of a building — screams out of the torrent and hits you like a freight train. Your code scatters across the stream in a million glittering fragments."
     },
     "identity-disc": {
       "name": "Identity Disc",
-      "description": "A sleek ring of hardened light, edge-sharp and humming with stored data. It contains a complete program identity — enough to fool any scanner into thinking you belong here. The previous owner won't be needing it anymore.",
-      "roomText": "At the arena's edge, half-buried in pixel dust, an identity disc lies intact. Its previous owner has been derezzed, but the disc still glows — the stored identity preserved.",
-      "pickupText": "You lift the identity disc from the dust. It bonds to your arm mount with a magnetic snap, and your HUD flickers as it absorbs the stored identity data. To the system, you now look like an authorized combat program.",
-      "portable": true
+      "description": "A sleek combat disc with a glowing edge, lighter than it looks. Your reflection in its surface shows a version of you rendered in light and code.",
+      "roomText": "An identity disc lies at the arena's center, its edge glowing a soft white, humming with the memory of a thousand deresolutions.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the identity disc. A rogue combat disc screams out of your blind spot — a streak of orange light that catches you across the midsection. Your code splits. Voxels scatter. The identity disc rolls to a stop beside what's left of your render."
     },
     "light-baton": {
       "name": "Light Baton",
@@ -223,6 +229,30 @@
       "roomText": "A data tablet sits on the cot, its screen still lit after all these cycles. The header reads: PERSONAL LOG — K. FLYNN — CYCLE 1982-PRESENT.",
       "pickupText": "You pick up Flynn's journal and scroll through the entries. Years of isolation, documented in increasingly erratic handwriting. But the tactical data is solid: tower locations, patrol routes, the firewall's weakness. Flynn mapped everything. He just ran out of time.",
       "portable": true
+    },
+    "light-cycle-baton": {
+      "name": "Light Cycle Baton",
+      "description": "A slender baton that pulses with blue energy — a dormant light cycle, compressed into a handle. The power thrums against your palm.",
+      "roomText": "A light cycle baton lies on the track surface, pulsing with dormant blue energy, waiting for a hand to activate its compressed fury.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You grab the baton and step left to dodge a blue energy trail. You walk straight into an orange wall materializing at light speed. The impact is instantaneous — your program derezzes on contact, code scattering across the track like shattered glass."
+    },
+    "admin-token": {
+      "name": "Admin Access Token",
+      "description": "A small hexagonal token pulsing with golden light — admin-level access privileges encoded in its crystalline matrix.",
+      "roomText": "A hexagonal token pulses with golden light near the scanner array, its admin-level access privileges flickering like an invitation.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the token and a scanner locks onto your unauthorized code signature. It floods your system with purge protocols — rewriting your base code, overwriting your identity. The token's golden light is the last thing your fading consciousness processes."
+    },
+    "nav-module": {
+      "name": "Navigation Module",
+      "description": "A compact module trailing fiber-optic tendrils, still cycling through flight coordinates. The routes it charts lead to sectors you've never heard of.",
+      "roomText": "A navigation module dangles from a recognizer's open service panel, trailing fiber-optic tendrils, still cycling through mysterious flight coordinates.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You yank the nav module free. A search beam locks onto the energy signature and a Recognizer lurches to life. It drops from its mount, a wall of dark geometry that fills your vision. The impact is less of a sound and more of an absence — a hole where a program used to be."
     }
   },
   "puzzles": {

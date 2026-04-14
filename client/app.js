@@ -116,9 +116,9 @@
     deathTimeoutGroup: $('#death-timeout-group'),
     deathTimeoutSelect: $('#death-timeout-select'),
 
-    // Lobby hazard multiplier (host-only)
-    hazardMultiplierGroup: $('#hazard-multiplier-group'),
-    hazardMultiplierSelect: $('#hazard-multiplier-select'),
+    // Lobby hazard hints (host-only)
+    hazardHintsGroup: $('#hazard-hints-group'),
+    hazardHintsSelect: $('#hazard-hints-select'),
 
     // Lobby say scope (host-only)
     sayScopeGroup: $('#say-scope-group'),
@@ -514,7 +514,7 @@
         showDeathScreen(msg.deathText, msg.deathTimeout);
         break;
       case 'playerDeath':
-        appendToOutput(createMsg('msg-death-notification', `💀 ${msg.playerName} has been killed by a hazard!`));
+        appendToOutput(createMsg('msg-death-notification', `💀 ${msg.playerName} has died!`));
         break;
       case 'playerRespawn':
         appendToOutput(createMsg('msg-respawn-notification', `${msg.playerName} has respawned.`));
@@ -1169,10 +1169,10 @@
     // happens when the server broadcasts gameStart back to all clients
     els.btnStartGame.addEventListener('click', () => {
       const deathTimeout = els.deathTimeoutSelect ? parseInt(els.deathTimeoutSelect.value, 10) : 30;
-      const hazardMultiplier = els.hazardMultiplierSelect ? parseFloat(els.hazardMultiplierSelect.value) : 1;
       const sayScope = els.sayScopeSelect ? els.sayScopeSelect.value : 'room';
       const hintsEnabled = els.hintsToggle ? els.hintsToggle.value === 'true' : false;
-      sendMessage({ type: 'startGame', deathTimeout, hazardMultiplier, sayScope, hintsEnabled });
+      const hazardHintsEnabled = els.hazardHintsSelect ? els.hazardHintsSelect.value === 'true' : true;
+      sendMessage({ type: 'startGame', deathTimeout, sayScope, hintsEnabled, hazardHintsEnabled });
       els.btnStartGame.disabled = true;
       els.btnStartGame.textContent = 'Starting…';
     });

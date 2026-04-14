@@ -48,13 +48,14 @@
         "north": "observation-deck"
       },
       "items": [
-        "focusing-lens"
+        "focusing-lens",
+        "pressure-gauge"
       ],
       "hazards": [
         {
           "description": "The pipes hiss with escaping steam, and the temperature is rising dangerously.",
-          "probability": 0.08,
-          "deathText": "A pipe ruptures with explosive force. Superheated steam fills the chamber, scalding everything in seconds. The D'ni built well, but even their engineering has limits. You become another cautionary tale about trusting ancient machinery."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -77,13 +78,14 @@
         "west": "stone-dock"
       },
       "items": [
-        "bronze-key"
+        "bronze-key",
+        "pearl-cluster"
       ],
       "hazards": [
         {
           "description": "The tide is coming in rapidly, water levels rising visibly.",
-          "probability": 0.12,
-          "deathText": "The tide surges with unexpected force. Within minutes, the cave is flooded. You try to swim out, but the current is too strong, pulling you deeper into submerged passages. The D'ni knew the tides intimately. You didn't."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -106,12 +108,14 @@
       "exits": {
         "north": "stone-dock"
       },
-      "items": [],
+      "items": [
+        "anemone-orb"
+      ],
       "hazards": [
         {
           "description": "The chamber's integrity field flickers ominously, and cracks spider across the transparent walls.",
-          "probability": 0.1,
-          "deathText": "The field collapses. The ocean rushes in with crushing force. Your last thought is wonder at the technology that held back the sea for so long. The D'ni built to last, but even they couldn't build forever."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -135,13 +139,14 @@
         "south": "underground-reservoir"
       },
       "items": [
-        "adjustment-rod"
+        "adjustment-rod",
+        "crystal-gear"
       ],
       "hazards": [
         {
           "description": "The gears are accelerating unpredictably, their timing becoming chaotic.",
-          "probability": 0.07,
-          "deathText": "A gear tooth shears off with a crack like thunder. The mechanism tears itself apart in a cascade failure. Metal shards become shrapnel. The D'ni designed for eternal operation, but entropy always wins eventually."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -207,11 +212,12 @@
       "roomText": "A bronze key is wedged between two rocks, half-buried in tidal debris."
     },
     "pressure-gauge": {
-      "name": "Pressure Gauge",
-      "description": "A mechanical gauge with a needle and numbered dial, used to measure and regulate water pressure in the D'ni hydraulic systems.",
-      "pickupText": "The gauge's needle bounces as you lift it, responding to ambient pressure changes.",
+      "name": "Ornate Pressure Gauge",
+      "description": "A beautifully crafted brass pressure gauge with a crystal face. The needle trembles between green and red zones, as if deciding.",
+      "roomText": "An ornate brass pressure gauge has come loose from the pipe array, its crystal face intact, needle trembling delicately.",
       "portable": true,
-      "roomText": "A pressure gauge has fallen from its mounting, lying among scattered tools."
+      "hazardItem": true,
+      "deathText": "You pull the gauge free and the pipe it sealed ruptures with explosive force. Superheated steam fills the lighthouse in seconds, cooking the air in your lungs. The gauge's needle swings hard into the red and stays there."
     },
     "resonance-fork": {
       "name": "Resonance Fork",
@@ -247,6 +253,30 @@
       "pickupText": "You roll up the schematic carefully. The climbing routes marked in red should make navigating the upper catwalks safe.",
       "portable": true,
       "roomText": "A detailed gear schematic is pinned to a reading stand, its climbing routes marked in red."
+    },
+    "pearl-cluster": {
+      "name": "Pearl Cluster",
+      "description": "A cluster of lustrous pearls embedded in living rock, their surfaces iridescent with the colors of the deep ocean.",
+      "roomText": "A cluster of pearls clings to the cave wall just above the waterline, their iridescent surfaces glowing like captured moonlight.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pry at the pearls as the tide surges. The water rises with unexpected force — ankle, knee, chest, chin. Within minutes, the cave is submerged. The pearls gleam beneath the surface, patient as they've always been, as the ocean claims another visitor."
+    },
+    "anemone-orb": {
+      "name": "Anemone Orb",
+      "description": "A translucent sphere that contains what appears to be a living sea anemone, its tendrils waving gently in perpetual motion.",
+      "roomText": "A translucent sphere rests in a coral niche, a living anemone swaying inside it, casting delicate dancing shadows.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the orb from its coral cradle and the integrity field flickers, fails. The ocean doesn't rush in — it punches. A wall of black, crushing water obliterates the chamber. The orb implodes in your hand, and the anemone is free at last."
+    },
+    "crystal-gear": {
+      "name": "Crystal Gear",
+      "description": "A gear carved from a single perfect crystal, its teeth precise as a jeweler's work. It catches the light and throws tiny rainbows.",
+      "roomText": "A crystal gear lies among the brass mechanisms, its facets throwing tiny rainbows across the chamber as the machinery turns around it.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pull the crystal gear from the mechanism. The machine screams — gears accelerate wildly, teeth shearing off like shrapnel. A brass tooth catches you across the chest. Then another. The clockwork devours itself and you with it, crystal and bone alike."
     }
   },
   "puzzles": {

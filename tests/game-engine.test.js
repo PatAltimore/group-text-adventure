@@ -1758,7 +1758,9 @@ describe('Hazard Item System', () => {
           description: 'A room with dangerous items.',
           exits: { south: 'safe-room' },
           items: ['cursed-idol', 'gem', 'poison-vial'],
-          hazards: [],
+          hazards: [
+            { description: 'A faint dark aura pulses from the pedestal.', probability: 0, deathText: '' },
+          ],
         },
       },
       items: {
@@ -2352,7 +2354,7 @@ describe('Hazard Item Integration (Stef)', () => {
         r => r.playerId === 'p1' && r.message.type === 'death'
       );
       expect(death).toBeDefined();
-      expect(death.message.deathText).toContain('chalice');
+      expect(death.message.deathText).toContain('liquid');
     });
 
     test('normal gem in same room can still be picked up safely', () => {

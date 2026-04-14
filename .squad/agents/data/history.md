@@ -513,3 +513,12 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Learning:** Trophy wasn't the right metaphor — Pat specifically wanted a ribbon award. The #1 rosette better conveys "first place winner" than a trophy.
 
 - Pat rejected trophy and ribbon designs. Final decision: use same trophy cup art for both goal and victory.
+
+### 2026-04-09 — Hazard System Redesign: Frontend Changes
+- **What changed:** Old probability-based random death system replaced with item-pickup-based death.
+- **Host settings:** Removed "Hazard Danger" dropdown (`hazard-multiplier-select`), added "Hazard Hints" toggle (`hazard-hints-select`) — Show/Hide, defaults to Show.
+- **startGame message:** Now sends `{ type: 'startGame', deathTimeout, sayScope, hintsEnabled, hazardHintsEnabled }` — `hazardMultiplier` removed, `hazardHintsEnabled` added.
+- **Death notification:** `playerDeath` message text changed from "killed by a hazard" to generic "has died" (death is now item-based).
+- **World editor:** Removed probability field from hazard cards (description + deathText remain). Legacy string hazards normalize without probability.
+- **Room rendering:** No change needed — existing code already checks `room.hazards && room.hazards.length`, server controls what's sent.
+- **Files modified:** `client/index.html`, `client/app.js`, `client/editor.js`, `client/editor.css`

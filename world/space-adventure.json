@@ -26,12 +26,14 @@
         "west": "medical-bay",
         "east": "cargo-hold"
       },
-      "items": [],
+      "items": [
+        "plasma-coil"
+      ],
       "hazards": [
         {
           "description": "Exposed conduits above crackle and spit — arcs of blue-white electricity dance between ruptured cable bundles. The hair on your arms stands on end.",
-          "probability": 0.1,
-          "deathText": "A conduit above you arcs without warning. The voltage slams through your suit before you can flinch — every muscle locks, your vision whites out, and then nothing."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -55,13 +57,14 @@
         "east": "main-corridor"
       },
       "items": [
-        "medkit"
+        "medkit",
+        "cryo-vial"
       ],
       "hazards": [
         {
           "description": "Shattered glass blankets the floor in jagged constellations — each step crunches and shifts underfoot.",
-          "probability": 0.05,
-          "deathText": "Your boot finds the wrong shard. Glass punches through the sole and into the artery beneath. You stumble, grab a gurney, miss. The med-bay tiles grow warm and slick beneath you."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -73,13 +76,14 @@
         "west": "main-corridor"
       },
       "items": [
-        "power-cell"
+        "power-cell",
+        "manifest-tablet"
       ],
       "hazards": [
         {
           "description": "Somewhere overhead, a shipping container groans against failing mag-locks. Metal shrieks against metal each time the station shifts.",
-          "probability": 0.15,
-          "deathText": "The mag-locks give. Twenty tons of steel drops from the dark above — no time to look up, no time to run. The sound reaches you before the weight does. Then silence."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -103,13 +107,14 @@
         "west": "crew-quarters"
       },
       "items": [
-        "data-pad"
+        "data-pad",
+        "glowing-sample"
       ],
       "hazards": [
         {
           "description": "An acrid chemical reek hangs in the still air — the ventilation has failed here. Your eyes water with each breath.",
-          "probability": 0.1,
-          "deathText": "The fumes thicken without warning. Your lungs seize, a chemical fire spreading through your chest. You reach for the door but your legs are already gone. The specimen tanks watch, indifferent, as you fall."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -131,12 +136,14 @@
       "exits": {
         "south": "laboratory"
       },
-      "items": [],
+      "items": [
+        "fuel-rod-fragment"
+      ],
       "hazards": [
         {
           "description": "Radiation warnings strobe across every active console. Your suit's dosimeter ticks faster the longer you stand still.",
-          "probability": 0.2,
-          "deathText": "The shielding has degraded more than your instruments showed. Nausea hits first, then a searing heat that has nothing to do with temperature. Your hands shake. Your vision dims at the edges. Your cells are already dying by the time you understand."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -222,6 +229,46 @@
       "pickupText": "You pluck the chip from the deck. It hums against your fingertips, its green light quickening — recognizing the proximity of reactor systems nearby.",
       "portable": true,
       "roomText": "A tiny authorization chip lies wedged between the deck plates, its faint green pulse almost lost in the container shadows."
+    },
+    "plasma-coil": {
+      "name": "Plasma Coil",
+      "description": "A coiled component from the ship's power grid, still faintly warm and humming with residual energy. Blue light pulses along its length.",
+      "roomText": "A plasma coil has shaken loose from the overhead conduit, dangling by its wires, blue energy still pulsing through its spirals.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You grab the plasma coil. A conduit above arcs without warning, completing the circuit through your body. The voltage slams through you — ten thousand volts cooking your nervous system in a blue-white flash. The coil pulses once more and goes dark."
+    },
+    "cryo-vial": {
+      "name": "Cryogenic Vial",
+      "description": "A sealed vial of shimmering blue liquid, cold enough to frost the glass. The label reads \"EXPERIMENTAL — DO NOT OPEN\" in faded print.",
+      "roomText": "A vial of shimmering blue liquid sits undamaged among the broken glass, frost forming on its surface, perfectly intact amid the destruction.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach through the broken glass for the vial. A jagged shard you didn't see finds the gap in your suit glove. Glass punches through the seal, then through skin. The vial falls. Its contents aerosolize on contact with the atmosphere. Your lungs crystallize on the next breath."
+    },
+    "manifest-tablet": {
+      "name": "Cargo Manifest Tablet",
+      "description": "A handheld data tablet with a cracked screen, still cycling through the ship's cargo manifest. Some entries are flagged in red.",
+      "roomText": "A data tablet lies on a cargo crate, its cracked screen still scrolling through manifests — red-flagged entries blinking urgently.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach up to the crate for the tablet. The mag-locks above give way. Twenty tons of steel drops from the darkness — a shipping container in free fall. The tablet's screen cracks under the same force that ends everything else."
+    },
+    "glowing-sample": {
+      "name": "Bioluminescent Sample",
+      "description": "A sealed sample container holding a substance that pulses with soft green bioluminescence. It's beautiful — like capturing a living aurora.",
+      "roomText": "A sample container pulses with soft green bioluminescence on the lab bench, its glow steady and beautiful amid the chemical haze.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You crack the sample container's seal. The bioluminescent substance reacts with the chemical atmosphere — an exothermic cascade that fills the lab with choking, corrosive vapor. Your lungs seize, chemistry turning against biology. The green glow fades as your vision does."
+    },
+    "fuel-rod-fragment": {
+      "name": "Fuel Rod Fragment",
+      "description": "A fragment of spent fuel rod, still warm, encased in a cracked lead sleeve. The blue glow of Cherenkov radiation flickers at its core.",
+      "roomText": "A fuel rod fragment sits in a cracked lead sleeve, its core flickering with the distinctive blue glow of Cherenkov radiation — eerie and strangely beautiful.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the fuel rod fragment. The cracked sleeve crumbles. Without shielding, the radiation pours through you like invisible fire. Your suit's dosimeter screams its final warning. Your cells are already dying as you read it. The blue glow is the last thing you see."
     }
   },
   "puzzles": {

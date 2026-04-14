@@ -13,13 +13,14 @@
         "east": "research-trailer"
       },
       "items": [
-        "emf-detector"
+        "emf-detector",
+        "crimson-feather"
       ],
       "hazards": [
         {
           "description": "A leathery rustle overhead. Shadows shift at the edge of your vision — something with wings circles in the fog.",
-          "probability": 0.08,
-          "deathText": "Red eyes ignite in the darkness. Massive wings crack the air like a sail in a gale. Something ancient descends — talons, shadow, and prophecy. The Mothman’s warning was meant for you."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -45,13 +46,14 @@
         "east": "ufo-landing-site"
       },
       "items": [
-        "sasquatch-hair-sample"
+        "sasquatch-hair-sample",
+        "carved-footprint-cast"
       ],
       "hazards": [
         {
           "description": "Branches snap under enormous weight. The treeline shivers — something far too large moves just beyond sight.",
-          "probability": 0.1,
-          "deathText": "A roar splits the forest — primal, inhuman. Something nine feet tall crashes through the undergrowth, rank with musk and fury. You see it for one terrible second. Massive hands seize you like kindling. The forest swallows your scream."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -65,13 +67,14 @@
       },
       "items": [
         "classified-dossier",
-        "security-badge"
+        "security-badge",
+        "specimen-jar"
       ],
       "hazards": [
         {
           "description": "The air is thick and stale — sealed for decades, sour with decay and chemical residue that burns the back of your throat.",
-          "probability": 0.05,
-          "deathText": "A pocket of toxic gas, trapped for fifty years, finds release. Your lungs seize. The floor tilts. The abandoned lab claims another keeper of its secrets."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -96,13 +99,14 @@
       },
       "items": [
         "radiation-badge",
-        "strange-metal"
+        "strange-metal",
+        "meteorite-fragment"
       ],
       "hazards": [
         {
           "description": "The air vibrates at a frequency that makes your teeth ache and your fillings hum — residual energy pulsing from deep below.",
-          "probability": 0.12,
-          "deathText": "The vibration spikes. Equipment shorts out in a shower of sparks. The air ripples like water — then tears. You glimpse something vast and geometrically impossible before reality folds shut, taking you with it."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -115,13 +119,14 @@
         "north": "roswell-crash"
       },
       "items": [
-        "alien-interface-key"
+        "alien-interface-key",
+        "gravity-sphere"
       ],
       "hazards": [
         {
           "description": "Gravity lurches without warning — crushing pressure one heartbeat, sickening weightlessness the next.",
-          "probability": 0.15,
-          "deathText": "Gravity inverts. You slam into the ceiling with bone-cracking force, hang suspended for one weightless second, then drop. The alien ship registers no disturbance. It was never built for human fragility."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -144,12 +149,14 @@
       "exits": {
         "west": "roswell-crash"
       },
-      "items": [],
+      "items": [
+        "access-badge"
+      ],
       "hazards": [
         {
           "description": "Automated turrets track movement along the perimeter — servo motors whining, laser designators sweeping the dust.",
-          "probability": 0.18,
-          "deathText": "A red dot settles on your chest. The turret doesn’t hesitate, doesn’t question. Three rounds. You never hear the third. Area 51 keeps its secrets."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -174,13 +181,14 @@
         "north": "stonehenge"
       },
       "items": [
-        "dimensional-resonator"
+        "dimensional-resonator",
+        "depth-gauge"
       ],
       "hazards": [
         {
           "description": "The hull groans — a deep, metallic shudder. Rivets weep condensation. The abyss presses in, patient and absolute.",
-          "probability": 0.1,
-          "deathText": "A porthole cracks. A mile of ocean punches through. The implosion is instant — crushing, total. The Triangle claims another."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -192,13 +200,14 @@
         "south": "bermuda-monitoring"
       },
       "items": [
-        "ancient-keystone"
+        "ancient-keystone",
+        "rune-stone"
       ],
       "hazards": [
         {
           "description": "Reality stutters. For a heartbeat, the stones vanish and you glimpse somewhere else — somewhere wrong, somewhere watching.",
-          "probability": 0.2,
-          "deathText": "The barrier ruptures. Through the gap you see what the stones hold back — geometries that shouldn’t exist, a hunger older than planets, vast as galaxies. Then the barrier snaps shut. You are simply gone. Erased from causality."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     }
@@ -301,6 +310,70 @@
       "pickupText": "You lift the keystone. It thrums in your hands like a struck bell. The standing stones pulse once, in unison. The barrier shivers.",
       "portable": true,
       "roomText": "An intricately carved stone rests at the base of the center monolith, warm to the touch, glowing from within."
+    },
+    "crimson-feather": {
+      "name": "Crimson Feather",
+      "description": "A long, iridescent feather of deep crimson, too large for any known bird. It seems to absorb light, leaving shadows where brightness should be.",
+      "roomText": "A crimson feather, impossibly large, drifts against the bridge cables, its iridescent surface shifting between red and black.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pluck the feather from the cables. Red eyes ignite above you — twin furnaces in the darkness. Massive wings crack the air like thunder. The Mothman descends, and its cry is the sound of every bridge that ever fell, every warning that came too late."
+    },
+    "carved-footprint-cast": {
+      "name": "Plaster Footprint Cast",
+      "description": "A plaster cast of an enormous footprint — five-toed, deeply pressed, impossibly fresh. The plaster is still warm.",
+      "roomText": "A plaster footprint cast lies beside a massive impression in the mud, its white surface pristine against the dark earth, still warm to the touch.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the cast and the treeline explodes. A roar splits the forest — primal, inhuman, furious. Something nine feet tall crashes through the undergrowth. It wants the cast back. It doesn't ask politely. The trees close behind you both, and the forest keeps its secrets."
+    },
+    "specimen-jar": {
+      "name": "Specimen Jar",
+      "description": "A sealed glass jar containing something floating in cloudy preservative. It's biological, complex, and definitely not from any textbook.",
+      "roomText": "A sealed specimen jar sits on a dusty shelf, its cloudy contents floating gently — something organic, something wrong, something fascinating.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You crack the seal on the specimen jar. Fifty years of trapped toxic gas rush out in a concentrated plume — chemicals that were illegal before the lab was abandoned. Your lungs fill with poison that tastes of formaldehyde and forgotten atrocities."
+    },
+    "meteorite-fragment": {
+      "name": "Meteorite Fragment",
+      "description": "A chunk of metallic rock that's warm to the touch and faintly magnetic. It pulls toward the center of the landing site like a compass needle.",
+      "roomText": "A meteorite fragment sits at the scorched circle's edge, its metallic surface warm and faintly humming, pulling toward the center like a magnet.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the meteorite and the vibration spikes to a frequency that shatters glass and fillings alike. Equipment shorts out in a shower of sparks. The fragment grows hot — searingly, impossibly hot — as whatever left it here reaches out to reclaim its property."
+    },
+    "gravity-sphere": {
+      "name": "Gravity Sphere",
+      "description": "A smooth sphere of unknown alloy that's heavier than it should be — then lighter — then heavier again. Its weight shifts with your heartbeat.",
+      "roomText": "A smooth metallic sphere rolls gently across the tilting floor, its weight shifting visibly — heavy, then light, then heavy — as gravity fluctuates around it.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You grab the sphere and gravity inverts. You slam into the ceiling with bone-cracking force, then crash back to the floor as the field reverses. Up, down, sideways — the sphere pulls you in every direction, a ragdoll in the grip of physics gone mad."
+    },
+    "access-badge": {
+      "name": "Security Badge",
+      "description": "A laminated security badge with a photo bleached blank by desert sun. The clearance level reads \"COSMIC\" in faded red letters.",
+      "roomText": "A security badge lies in the dust near the perimeter fence, its photo bleached blank but its \"COSMIC\" clearance still legible in faded red.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the badge and a red dot settles on your chest. The turret doesn't hesitate. Three rounds of high-velocity persuasion end the trespassing before your fingers close on the laminated plastic. The badge flutters in the muzzle blast, lands face-down."
+    },
+    "depth-gauge": {
+      "name": "Antique Depth Gauge",
+      "description": "A brass depth gauge from an earlier era of deep-sea exploration. The needle rests at a depth no submarine of that era could have reached.",
+      "roomText": "An antique brass depth gauge has come loose from the instrument panel, its needle frozen at an impossible depth.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pull the depth gauge free and the hull groans in protest. A porthole cracks — one crack, spreading like lightning. Then a mile of ocean punches through. The implosion is instant and total. The gauge reads the correct depth one final time."
+    },
+    "rune-stone": {
+      "name": "Carved Rune Stone",
+      "description": "A palm-sized stone carved with spiraling runes that seem to move when you're not looking directly at them. It's warm. It whispers.",
+      "roomText": "A small carved stone lies at the base of the tallest megalith, its runes spiraling inward, warm to the touch, almost vibrating with trapped purpose.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the rune stone and reality shatters. The barrier between worlds ruptures. Through the gap you see what the stones were built to contain — geometries that don't exist, colors that eat light, a hunger older than matter. The stone burns in your hand as you are unmade."
     }
   },
   "puzzles": {

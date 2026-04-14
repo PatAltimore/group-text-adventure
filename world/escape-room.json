@@ -37,7 +37,8 @@
         "east": "foyer"
       },
       "items": [
-        "silver-fork"
+        "silver-fork",
+        "crystal-goblet"
       ],
       "hazards": [
         {
@@ -67,13 +68,14 @@
       },
       "items": [
         "iron-key",
-        "pantry-note"
+        "pantry-note",
+        "antique-lighter"
       ],
       "hazards": [
         {
           "description": "The gas line hisses faintly — don't strike any sparks near the stove.",
-          "probability": 0.15,
-          "deathText": "Your boot strikes the iron stove grate. A single spark. The gas catches with a sound like the world inhaling — then the kitchen erupts in white heat. The Clockmaker's mansion claims another guest who lingered too long."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -203,6 +205,22 @@
       "pickupText": "You snatch the scrap. Two codes — 3-2-5-8 and the one from the welcome note. Two locks somewhere in this house. The Clockmaker couldn't remember which went where. You'll have to.",
       "roomText": "A scrap of paper, pinned crookedly inside the pantry, flutters in a draft you cannot feel.",
       "portable": true
+    },
+    "crystal-goblet": {
+      "name": "Crystal Goblet",
+      "description": "A heavy crystal goblet, perfectly clear, with a dark residue dried in the bottom. The glass hums faintly when you touch the rim.",
+      "roomText": "A crystal goblet sits at the head of the table, its facets catching the candlelight in dazzling prisms. Dark residue stains the bowl.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the goblet and the candlelight dies. Something exhales in the darkness — a breath that smells of earth and old roses. Cold fingers trace your spine. The house breathes in, and you breathe out for the last time."
+    },
+    "antique-lighter": {
+      "name": "Antique Lighter",
+      "description": "A brass Zippo lighter from another era, engraved with the initials \"E.H.\" Its mechanism still clicks smoothly.",
+      "roomText": "An antique brass lighter sits on the counter near the stove, its polished surface reflecting the kitchen's dim light.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You flick the lighter and a single spark leaps toward the stove. The gas line hisses its last warning. A blue-white flash swallows the kitchen — then the house — then you. The explosion rattles windows three blocks away."
     }
   },
   "puzzles": {

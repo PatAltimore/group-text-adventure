@@ -13,13 +13,14 @@
       },
       "items": [
         "zero-note",
-        "numbered-bracelet"
+        "numbered-bracelet",
+        "pocket-watch"
       ],
       "hazards": [
         {
           "description": "The water climbs steadily, now mid-calf. Debris swirls past your legs. The ship groans like a dying thing.",
-          "probability": 0.15,
-          "deathText": "The wall buckles with a sound like a gunshot. Freezing seawater explodes through the breach, a solid wall of force. It hammers you into the ceiling, crushing ribs, filling lungs. The cabin becomes a tomb in seconds."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -33,13 +34,14 @@
         "west": "grand-staircase"
       },
       "items": [
-        "gurney-wheel"
+        "gurney-wheel",
+        "brass-compass"
       ],
       "hazards": [
         {
           "description": "The lights fail completely for five seconds. In the darkness, something metallic clatters and rolls. Then the red glow returns.",
-          "probability": 0.1,
-          "deathText": "The deck lurches violently. Your feet leave the floor. You slam into the ceiling, then crash down onto the corner of an overturned gurney. Steel punches through your side. You try to scream but your lungs won't fill. The red lights fade to black."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -52,13 +54,14 @@
       },
       "items": [
         "medical-chart",
-        "scalpel"
+        "scalpel",
+        "glass-ampoule"
       ],
       "hazards": [
         {
           "description": "Overhead pipes drip condensation that hisses when it hits the floor. The smell of chlorine burns your nostrils.",
-          "probability": 0.08,
-          "deathText": "A pipe ruptures with a shriek. Superheated steam erupts in a scalding column. Your skin blisters and peels. You inhale and your throat cooks from the inside. Mercifully, you pass out before the screaming stops."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -70,13 +73,14 @@
       },
       "items": [
         "surgical-saw",
-        "anesthetic-bottle"
+        "anesthetic-bottle",
+        "surgical-scissors"
       ],
       "hazards": [
         {
           "description": "Scalpels and needles crunch underfoot. One wrong step in the dim light could be costly.",
-          "probability": 0.12,
-          "deathText": "Your heel comes down on a syringe. The needle punches through boot sole, through skin, into bone. Your leg goes numb. You collapse. As consciousness fades, you realize the syringe wasn't empty. Your heart forgets how to beat."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -88,13 +92,14 @@
         "east": "c-deck-corridor"
       },
       "items": [
-        "brass-fixture"
+        "brass-fixture",
+        "gilded-finial"
       ],
       "hazards": [
         {
           "description": "The cascading water undermines the remaining structure. Girders creak. Bolts pop free and ping off the walls.",
-          "probability": 0.1,
-          "deathText": "A section of staircase tears free above you. Tons of wrought iron and oak come down like a collapsing ceiling. The impact is instant and total. No pain. Just the sudden crushing weight and then nothing."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -107,13 +112,14 @@
       },
       "items": [
         "coal-shovel",
-        "pressure-valve"
+        "pressure-valve",
+        "steam-whistle"
       ],
       "hazards": [
         {
           "description": "Steam vents unpredictably from ruptured joints. The pressure gauge needle quivers, ready to redline.",
-          "probability": 0.18,
-          "deathText": "The boiler explodes. You don't hear it — the shockwave ruptures your eardrums first. Flying shrapnel turns you into a silhouette painted in red across the far wall. The flash fire that follows is almost redundant."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -126,13 +132,14 @@
         "north": "boat-deck"
       },
       "items": [
-        "engineers-key"
+        "engineers-key",
+        "engine-plate"
       ],
       "hazards": [
         {
           "description": "The catwalks sway gently. Bolts are missing from the support struts. Far below, dark water reflects the red emergency lights.",
-          "probability": 0.07,
-          "deathText": "Your weight is the final straw. The catwalk section tears free from its moorings. You fall three decks through open air, time enough to understand what's happening. The impact with the flooded engine bay below stops your heart before you can drown."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -156,12 +163,14 @@
       "exits": {
         "south": "engine-casing"
       },
-      "items": [],
+      "items": [
+        "signal-flare"
+      ],
       "hazards": [
         {
           "description": "The ship groans and settles deeper. The angle increases. Loose equipment slides past, clattering toward the rail and then over the edge into the black water below.",
-          "probability": 0.2,
-          "deathText": "The deck lurches past the critical angle. Your feet slip. You scrabble for purchase but the metal is slick with spray. You slide, gathering speed, and then you're airborne. The freezing water hits like concrete. Your bracelet detonates. The last thing you see is red digits: 0:00."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -283,6 +292,70 @@
       "roomText": "A brass cipher wheel sits on the altar, its disks aligned to show the number 9 in every position.",
       "pickupText": "You take the cipher wheel. The mechanism clicks smoothly as you turn it. Zero's puzzle pieces, scattered through the ship.",
       "portable": true
+    },
+    "pocket-watch": {
+      "name": "Waterproof Pocket Watch",
+      "description": "A gleaming pocket watch sealed against water, its face showing a countdown rather than the time. The hands move backward.",
+      "roomText": "A pocket watch gleams beneath the rising water, its glass face perfectly dry inside, hands ticking backward in a steady countdown.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You plunge your hand into the freezing water for the watch. The wall buckles with a sound like a gunshot. Freezing seawater floods through the breach, filling the cabin in seconds. The watch ticks its countdown to zero as the ocean swallows everything."
+    },
+    "brass-compass": {
+      "name": "Brass Compass",
+      "description": "A heavy brass compass in a wooden case. Its needle spins wildly, as though confused by competing magnetic fields — or by something else.",
+      "roomText": "A brass compass in a wooden case lies against the corridor wall, its needle spinning frantically, as though desperate to point somewhere.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You grab the compass as the deck lurches violently. Your feet leave the floor. You slam into the corridor wall, then the ceiling, then the floor again. The compass needle finally stops spinning. It points straight down — toward the ocean floor where the ship is heading."
+    },
+    "glass-ampoule": {
+      "name": "Sealed Ampoule",
+      "description": "A glass ampoule of deep amber liquid, sealed with wax. The label has faded to nothing, but the liquid glows faintly in low light.",
+      "roomText": "A sealed glass ampoule rolls gently on a metal tray, its amber contents glowing faintly, label long since dissolved.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pocket the ampoule and a pipe overhead ruptures with a shriek. Superheated steam erupts in a blinding white column. The ampoule shatters in your pocket — the amber liquid mixing with the steam, with your screams, with the hiss of the ward's final breath."
+    },
+    "surgical-scissors": {
+      "name": "Silver Surgical Scissors",
+      "description": "A pair of precision surgical scissors in gleaming silver, still sharp after decades. The handles are ergonomically perfect.",
+      "roomText": "A pair of silver surgical scissors gleams on the instrument tray, perfectly aligned, untouched by the chaos that claimed the rest of the theatre.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach across the instrument tray for the scissors. Your heel comes down on a syringe buried in the debris. The needle punches through your boot sole — vintage morphine, enough to stop a horse. Your knees buckle. The scissors clatter from numbing fingers as the theatre dims to black."
+    },
+    "gilded-finial": {
+      "name": "Gilded Stair Finial",
+      "description": "A gold-plated finial from the grand staircase — a mermaid holding a lantern, exquisitely detailed, heavy with the promise of wealth.",
+      "roomText": "A gilded finial has come loose from the banister — a golden mermaid holding a tiny lantern, dangling by a single bolt over the cascading water.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You wrench the finial free. The banister gives way. Above you, a section of staircase tears loose — tons of wrought iron and marble descending in a spiral of destruction. The golden mermaid watches from your hand as the grand staircase collapses."
+    },
+    "steam-whistle": {
+      "name": "Ship's Steam Whistle",
+      "description": "A brass steam whistle, small enough to carry, etched with the ship's name. It's warm to the touch and vibrates faintly.",
+      "roomText": "A small brass steam whistle has fallen from its mount near the main boiler, etched with the ship's name, still vibrating with phantom pressure.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pull the whistle free and the seal it was holding gives way. The boiler explodes. You don't hear it — the shockwave ruptures your eardrums first, then your lungs. The whistle screams one final blast as the engine room becomes a furnace."
+    },
+    "engine-plate": {
+      "name": "Engraved Engine Plate",
+      "description": "A small brass plate engraved with the engine's specifications and builder's mark. A piece of maritime history, easily pocketed.",
+      "roomText": "A brass plate engraved with engine specifications has come loose from the casing, dangling from a single rivet over the catwalk's edge.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lean out to grab the plate. Your weight is the final straw. The catwalk section tears free from its corroded bolts. You and the plate tumble together into the darkness below — the engine's specifications the last words you read."
+    },
+    "signal-flare": {
+      "name": "Distress Flare",
+      "description": "A watertight signal flare in a bright orange canister. The activation instructions are still legible. Hope in a tube.",
+      "roomText": "A bright orange signal flare has rolled against the railing, its canister still sealed, activation instructions visible — a lifeline, waiting to be claimed.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lunge for the flare as the deck lurches past the critical angle. Your feet slip on the wet steel. You slide across the tilting deck, fingers scrabbling for purchase. The railing catches you for one moment — then the ship rolls, and the dark Atlantic opens its mouth."
     }
   },
   "puzzles": {

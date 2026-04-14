@@ -213,8 +213,8 @@ app.generic('gameHubMessage', {
         return await handleSetDeathTimeout(serviceClient, connectionId, data, context);
       }
 
-      if (messageType === 'setHazardMultiplier') {
-        return await handleSetHazardMultiplier(serviceClient, connectionId, data, context);
+      if (messageType === 'setHazardHints') {
+        return await handleSetHazardHints(serviceClient, connectionId, data, context);
       }
 
       if (messageType === 'setSayScope') {
@@ -628,11 +628,9 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
       session.deathTimeout = timeout;
     }
 
-    // Apply hazard multiplier if provided by host
-    if (data.hazardMultiplier) {
-      const valid = [0.5, 1, 2];
-      const mult = parseFloat(data.hazardMultiplier);
-      session.hazardMultiplier = valid.includes(mult) ? mult : 1;
+    // Apply hazard hints setting if provided by host
+    if (data.hazardHintsEnabled !== undefined) {
+      session.hazardHintsEnabled = data.hazardHintsEnabled === true || data.hazardHintsEnabled === 'true';
     }
 
     // Apply say scope if provided by host
@@ -661,7 +659,7 @@ async function handleStartGame(serviceClient, connectionId, data, context) {
             type: 'gameStart',
             room: view,
             deathTimeout: session.deathTimeout || 30,
-            hazardMultiplier: session.hazardMultiplier || 1,
+            hazardHintsEnabled: session.hazardHintsEnabled !== false,
             sayScope: session.sayScope || 'room',
             hintsEnabled: session.hintsEnabled !== false,
             adventureName: session.world?.name || '',
@@ -811,9 +809,9 @@ async function handleSetDeathTimeout(serviceClient, connectionId, data, context)
   return { body: '', status: 200 };
 }
 
-// ── Handler: Set Hazard Multiplier ──────────────────────────────────────
+// ── Handler: Set Hazard Hints ──────────────────────────────────────
 
-async function handleSetHazardMultiplier(serviceClient, connectionId, data, context) {
+async function handleSetHazardHints(serviceClient, connectionId, data, context) {
   const found = await findPlayerByConnectionId(connectionId);
   if (!found) {
     await sendToConnection(serviceClient, connectionId, {
@@ -836,7 +834,7 @@ async function handleSetHazardMultiplier(serviceClient, connectionId, data, cont
   if (session.hostPlayerId !== playerId) {
     await sendToConnection(serviceClient, connectionId, {
       type: 'error',
-      text: 'Only the host can set the hazard danger level.',
+      text: 'Only the host can toggle hazard hints.',
     });
     return { body: '', status: 200 };
   }
@@ -844,29 +842,17 @@ async function handleSetHazardMultiplier(serviceClient, connectionId, data, cont
   if (session.started) {
     await sendToConnection(serviceClient, connectionId, {
       type: 'error',
-      text: 'Cannot change hazard danger level after the game has started.',
+      text: 'Cannot change hazard hints after the game has started.',
     });
     return { body: '', status: 200 };
   }
 
-  const valid = [0.5, 1, 2];
-  const multiplier = parseFloat(data.multiplier);
-  
-  if (!valid.includes(multiplier)) {
-    await sendToConnection(serviceClient, connectionId, {
-      type: 'error',
-      text: 'Invalid hazard multiplier. Use 0.5 (Low), 1 (Medium), or 2 (High).',
-    });
-    return { body: '', status: 200 };
-  }
-
-  session.hazardMultiplier = multiplier;
+  session.hazardHintsEnabled = !!data.value;
   await saveGameState(gameId, session);
 
-  const levelText = multiplier === 0.5 ? 'Low' : multiplier === 2 ? 'High' : 'Medium';
   await sendToConnection(serviceClient, connectionId, {
     type: 'message',
-    text: `Hazard danger set to ${levelText}.`,
+    text: `Hazard hints ${session.hazardHintsEnabled ? 'enabled' : 'disabled'}.`,
   });
 
   return { body: '', status: 200 };

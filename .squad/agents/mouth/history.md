@@ -1034,3 +1034,18 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 **Key files:**
 - World file: `world/nonary-game.json`
 - PR: https://github.com/PatAltimore/group-text-adventure/pull/3
+
+### 2026-04-10 — Hazard System Redesign: Probability Death → Item-Pickup Death
+
+- **Removed probability-based death entirely.** `checkHazards()` function and post-command hazard check deleted from `game-engine.js`. Players no longer die randomly when entering rooms.
+- **New mechanic: hazard items.** Items with `hazardItem: true` kill the player on pickup via `handleTake()`. Death uses existing `killPlayer()` flow — same ghost creation, inventory drop, respawn timer.
+- **`handleTakeAll()` skips hazard items.** Only deliberate `take <item>` triggers death. `get items` / `g` won't auto-kill.
+- **`hazardHintsEnabled` replaces `hazardMultiplier`.** Boolean session setting (default `true`). When false, `getPlayerView()` omits the `hazards` array entirely. When true, hazard descriptions serve as hint text.
+- **gameHub.js:** `setHazardMultiplier` handler replaced with `setHazardHints` (host-only, pre-game-only). Broadcast includes `hazardHintsEnabled` instead of `hazardMultiplier`.
+- **All 15 world files transformed.** 90 new hazard items added across all worlds. Each room hazard maps to one tempting-looking item. Hazard `probability` set to 0, `deathText` cleared. Hazard `description` retained as hint text.
+- **All 567 tests pass** (1 skipped). Two test fixtures updated: added hazard hint text to test world, fixed assertion matching actual deathText content.
+
+**Key files:**
+- `api/src/game-engine.js` — handleTake hazardItem check, handleTakeAll skip, getPlayerView hazardHintsEnabled
+- `api/src/functions/gameHub.js` — setHazardHints handler, hazardHintsEnabled in broadcast
+- `world/*.json` — all 15 world files with new hazard items
