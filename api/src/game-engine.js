@@ -239,7 +239,7 @@ export function createGameSession(world) {
     goalsCompleted: 0,
     totalGoals,
     deathTimeout: 30,
-    hazardHintsEnabled: true,
+    hazardHintsEnabled: false,
     sayScope: 'room',
     hintsEnabled: true,
     createdAt: new Date().toISOString(),

@@ -1171,7 +1171,7 @@
       const deathTimeout = els.deathTimeoutSelect ? parseInt(els.deathTimeoutSelect.value, 10) : 30;
       const sayScope = els.sayScopeSelect ? els.sayScopeSelect.value : 'room';
       const hintsEnabled = els.hintsToggle ? els.hintsToggle.value === 'true' : false;
-      const hazardHintsEnabled = els.hazardHintsSelect ? els.hazardHintsSelect.value === 'true' : true;
+      const hazardHintsEnabled = els.hazardHintsSelect ? els.hazardHintsSelect.value === 'true' : false;
       sendMessage({ type: 'startGame', deathTimeout, sayScope, hintsEnabled, hazardHintsEnabled });
       els.btnStartGame.disabled = true;
       els.btnStartGame.textContent = 'Starting…';

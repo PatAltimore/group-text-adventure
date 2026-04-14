@@ -1988,9 +1988,9 @@ describe('Hazard Item System', () => {
     expect(!view.hazards || view.hazards.length === 0).toBe(true);
   });
 
-  test('hazardHintsEnabled defaults to true', () => {
+  test('hazardHintsEnabled defaults to false', () => {
     const session = hazardItemSession();
-    expect(session.hazardHintsEnabled).toBe(true);
+    expect(session.hazardHintsEnabled).toBe(false);
   });
 
   // ── Death from hazard item creates proper ghost ──────────────────────
@@ -2446,9 +2446,9 @@ describe('Hazard Item Integration (Stef)', () => {
       expect(session.deathTimeout).toBe(30);
     });
 
-    test('hazardHintsEnabled defaults to true', () => {
+    test('hazardHintsEnabled defaults to false', () => {
       const session = hazardItemSessionStef();
-      expect(session.hazardHintsEnabled).toBe(true);
+      expect(session.hazardHintsEnabled).toBe(false);
     });
 
     test('no hazardMultiplier on session (removed)', () => {
