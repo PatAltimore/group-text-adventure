@@ -343,3 +343,40 @@
   - Placed in room-b, replaced old room-level hazard object
 - **Test results**: 300 passing, 12 failing (expected — engine changes not yet implemented by Mouth), 1 skipped
 - **Key patterns**: Tests use `GameEngine.killPlayer` / `GameEngine.respawnPlayer` with conditional `test.skip` for graceful handling when functions don't exist yet
+
+### 2026-04-14 — Hazard System Redesign — Test Suite Refactoring Completed
+
+**Task:** Finalize test suite for hazard system redesign (probability-based death → item-pickup death).
+
+**Changes Made:**
+1. **Test Removal:** Deleted ~908 lines of probability-based hazard tests from /tests/game-engine.test.js:
+   - Random death on room entry tests (checkHazards)
+   - hazardMultiplier setting/broadcast tests
+   - hazardMultiplier slider/UI change tests
+   - Probability scaling tests (0.5x, 1x, 2x)
+
+2. **Test Addition:** Added ~419 lines of new hazard item tests:
+   - hazardItem: true flag handling in handleTake()
+   - Player death on hazard item pickup
+   - Item removal from room after pickup
+   - handleTakeAll() skipping hazard items
+   - setHazardHints handler and hazardHintsEnabled session property
+   - Hazard hint visibility toggling (true/false)
+   - Multiple hazard items in same room
+
+3. **Test Fixture Update:** Added cursed-gem hazard item to /tests/fixtures/test-world.json:
+   - hazardItem: true, tempting name, dramatic deathText
+   - Placed in main test room for basic coverage
+
+4. **Assertion Updates:** Fixed assertions to match new death mechanics:
+   - Death responses use same format (type: 'death', deathText, deathTimeout)
+   - Ghost creation and inventory drop still work the same way
+   - Respawn mechanics unchanged
+
+**Files Modified:**
+- /tests/game-engine.test.js — Hazard test refactoring (~908 lines removed, ~419 lines added)
+- /tests/fixtures/test-world.json — Added cursed-gem hazard item
+
+**Test Status:** All 567 tests pass (1 skipped). Zero regressions from new mechanics.
+
+**Integration:** Coordinated with Mouth (Backend) and Data (Frontend). All three agents' code integrated into feature/hazard-item-death. PR #4 ready for review.

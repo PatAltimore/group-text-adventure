@@ -2,6 +2,60 @@
 
 ## Active Decisions
 
+### Hazard System Redesign — Probability → Item-Pickup Death
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-10
+
+#### What
+
+Completely replaced the probability-based random death system with a deterministic item-pickup death mechanic. Players now die only when they deliberately pick up a hazard item — no more random deaths on room entry.
+
+#### Key Decisions
+
+1. **`hazardItem: true` on items** — New boolean field. When a player runs `take <item>` on a hazardItem, they die instantly via `killPlayer()`. The item is removed from the room (one-shot trap). Death response format is identical to the old system (`type: 'death'`, `deathText`, `deathTimeout`).
+
+2. **`handleTakeAll()` skips hazard items** — `get items` / `g` will never auto-kill. Only deliberate `take <specific-item>` triggers the trap. This prevents frustrating mass-death scenarios.
+
+3. **`hazardHintsEnabled` replaces `hazardMultiplier`** — Boolean session setting (default `true`). Controls whether `getPlayerView()` includes the `hazards` hint text array. The old multiplier concept (0.5x/1x/2x probability scaling) is removed since probability-based death no longer exists.
+
+4. **Room hazards remain as hint text** — The `hazards` array in room definitions still exists with `description` fields, but `probability` is set to 0. These descriptions serve as environmental clues that something dangerous is nearby.
+
+5. **90 hazard items across 15 worlds** — Each hazard maps to one alluring-looking item with tempting name/roomText and dramatic deathText. Items are designed to look interesting, not obviously lethal.
+
+#### Impact
+
+- **Modified:** `api/src/game-engine.js`, `api/src/functions/gameHub.js`, all 15 `world/*.json` files, 2 test fixtures
+- **Removed:** `checkHazards()` export, `hazardMultiplier` session property, `setHazardMultiplier` handler
+- **Added:** `hazardHintsEnabled` session property, `setHazardHints` handler, 90 hazard items in world files
+- **Frontend impact:** Data (Frontend Dev) updates UI to replace hazard multiplier control with hazard hints toggle. The `hazardMultiplier` field is no longer sent in `gameStart` messages; `hazardHintsEnabled` is sent instead. The `setHazardMultiplier` message type is replaced with `setHazardHints` (payload: `{ value: true/false }`).
+- All 567 tests pass
+
+### Hazard System Frontend Redesign
+
+**By:** Data (Frontend Dev)  
+**Date:** 2026-04-09
+
+#### What
+
+Updated the frontend to support the hazard system redesign — probability-based random death replaced with item-pickup-based death.
+
+#### Key Changes
+
+1. **Host settings:** Replaced "Hazard Danger" (Low/Medium/High multiplier) with "Hazard Hints" (Show/Hide toggle). Defaults to Show. Hiding hints makes the game harder by removing hazard warning text from rooms.
+
+2. **startGame protocol:** Message payload changed from `{ deathTimeout, hazardMultiplier, sayScope, hintsEnabled }` to `{ deathTimeout, sayScope, hintsEnabled, hazardHintsEnabled }`. Backend accepts `hazardHintsEnabled` (boolean, default true).
+
+3. **Death notification:** `playerDeath` message text is now generic ("has died") since death can come from hazardous items, not just room hazards.
+
+4. **World editor:** Probability input removed from hazard cards. Hazards still have description and deathText — probability is no longer relevant.
+
+#### Impact
+
+- Modified: `client/index.html`, `client/app.js`, `client/editor.js`, `client/editor.css`
+- All 567 tests pass
+- Backend reads `hazardHintsEnabled` from `startGame` message and omits hazard descriptions from room views when disabled.
+
 ### Azure Deployment Architecture
 
 **By:** Mouth (Backend Dev)  

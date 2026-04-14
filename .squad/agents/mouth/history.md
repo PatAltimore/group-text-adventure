@@ -788,6 +788,18 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 1. `api/src/game-engine.js` — Replaced trophy art (lines 11-24) with box-drawing trophy featuring center star (★). Replaced victory banner (lines 30-41) with double-line box-drawing border.
 2. No escaping needed — Unicode characters work directly in single-quoted JS strings.
 
+### 2026-04-14 — Hazard System Redesign Completed — Team Coordination
+
+**Session coordination with Data & Stef:**
+- **Mouth (Backend):** Engine refactoring completed. Removed `checkHazards()` and probability-based death. Added `hazardItem` support in `handleTake()`. Updated all 15 world files with ~90 hazard items. Session setting changed from `hazardMultiplier` to `hazardHintsEnabled`. All 567 tests pass.
+- **Data (Frontend):** UI updated. Hazard Danger dropdown replaced with Hazard Hints toggle. `startGame` message payload now includes `hazardHintsEnabled` instead of `hazardMultiplier`. Death notifications updated to generic text.
+- **Stef (Test Dev):** Test suite refactored. Removed ~908 lines of old probability-based tests. Added ~419 lines of new hazard item tests. Test world updated with cursed-gem hazard item.
+
+**Integration status:** All three agents' code integrated into feature/hazard-item-death branch. PR #4 created. All 567 tests pass. Ready for code review and merge.
+
+**Documentation:** Decisions documented in `.squad/decisions.md`. Orchestration logs created for all three agents. Session logged at `.squad/log/2026-04-14T163513Z-hazard-redesign.md`.
+
+
 **Testing:** All 541 tests pass (539 passed, 2 skipped). Deployed successfully to Azure.
 
 **Pattern observed:** Unicode box-drawing characters are superior to ASCII art for symmetric designs because they're specifically engineered to connect seamlessly and render identically across all monospace fonts. Always prefer ┌─┐│└┘ over ___/'\ for borders and containers.
