@@ -13,13 +13,14 @@
         "east": "hidden-passage"
       },
       "items": [
-        "torch"
+        "torch",
+        "scarab-pendant"
       ],
       "hazards": [
         {
           "description": "Fine sand trickles from cracks overhead. Somewhere deep in the stone, something groans and shifts.",
-          "probability": 0.05,
-          "deathText": "A massive limestone block wrenches free from the ceiling and hammers down. The sound is swallowed instantly by silence. The pyramid reclaims another soul."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -32,12 +33,14 @@
         "west": "offering-hall",
         "east": "sphinx-chamber"
       },
-      "items": [],
+      "items": [
+        "jade-figurine"
+      ],
       "hazards": [
         {
           "description": "Tiny holes line the walls at ankle height — dart traps, ancient but possibly still armed. The mechanisms gleam with oil that never dried.",
-          "probability": 0.1,
-          "deathText": "A click beneath your foot. A volley of darts erupts from the wall in a hiss of bronze. The ancient venom still works — your legs buckle, your torch drops, and the painted gods watch with flat, indifferent eyes as you fall."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -63,13 +66,14 @@
       },
       "items": [
         "canopic-jar",
-        "golden-ankh"
+        "golden-ankh",
+        "incense-censer"
       ],
       "hazards": [
         {
           "description": "The air here is thick and stale, pressing against your lungs like wet cloth. Your torch flame shrinks to a blue whisper.",
-          "probability": 0.08,
-          "deathText": "Three thousand years of sealed decay have poisoned this air. Your torch gutters. Your vision narrows. You sink to your knees on the cold stone, gasping at nothing, and the offerings watch your final breath with painted eyes."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -92,13 +96,14 @@
         "south": "hidden-passage"
       },
       "items": [
-        "pharaohs-mask"
+        "pharaohs-mask",
+        "jeweled-ankh"
       ],
       "hazards": [
         {
           "description": "Pressure plates cover the floor in an unbroken mosaic. Each step could be your last — the mechanisms are still tensed to strike.",
-          "probability": 0.15,
-          "deathText": "Your foot finds the wrong hieroglyph. Stone screams against stone. Bronze blades scissor from the walls in a blur. The trap room claims another visitor. Your bones will join the rest."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -109,12 +114,14 @@
       "exits": {
         "south": "grand-corridor"
       },
-      "items": [],
+      "items": [
+        "canopic-jar"
+      ],
       "hazards": [
         {
           "description": "A faint green mist clings to the floor, curling around the sarcophagi like searching fingers. The pharaoh's curse, given form.",
-          "probability": 0.1,
-          "deathText": "The green mist rises — ankle, waist, throat. It constricts. The pharaoh's curse squeezes the air from your lungs in a long, thin wheeze. Your scream dies unborn in chambers no living ears will ever find."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -125,12 +132,14 @@
         "south": "offering-hall",
         "east": "star-chamber"
       },
-      "items": [],
+      "items": [
+        "golden-lotus"
+      ],
       "hazards": [
         {
           "description": "A single cracked pillar supports the ceiling. The weight of a million limestone blocks presses down. The crack is wider than it was a moment ago.",
-          "probability": 0.12,
-          "deathText": "The pillar surrenders. The ceiling descends with the slow inevitability of a closing fist, and a million tons of limestone entomb you alongside the gold. The treasure room becomes your sarcophagus. The pharaoh always keeps what is his."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -188,11 +197,12 @@
       "roomText": "A golden ankh gleams on the altar, its turquoise inlay vivid against the dark stone."
     },
     "canopic-jar": {
-      "name": "Canopic Jar",
-      "description": "A limestone jar capped with the snarling jackal head of Duamutef, guardian of the stomach. Sealed tight. Something shifts inside when you tilt it — wet, heavy, patient.",
-      "pickupText": "You take the jar. Its contents settle with a thick, visceral sound. Best not to think about what's inside.",
+      "name": "Alabaster Canopic Jar",
+      "description": "A beautifully carved canopic jar of white alabaster, its lid shaped like a jackal's head. Something shifts inside when you tilt it.",
+      "roomText": "An alabaster canopic jar stands upright near the sarcophagus, its jackal-head lid perfectly intact, untouched by the green mist that curls around its base.",
       "portable": true,
-      "roomText": "One canopic jar stands apart from its brothers, its jackal-headed lid sitting slightly askew."
+      "hazardItem": true,
+      "deathText": "You lift the jar's lid and the green mist surges upward, pouring from the jar like a living thing. It rises — ankle, waist, throat. It constricts. Ancient preservative gases, concentrated for millennia, fill your lungs with the taste of eternity. You become another relic of the tomb."
     },
     "pharaohs-mask": {
       "name": "Pharaoh's Death Mask",
@@ -221,6 +231,46 @@
       "pickupText": "You lift the Scepter of Ra from its compartment. Golden light floods the chamber, and for a moment you cast no shadow. You hold the authority of a god.",
       "portable": true,
       "roomText": "The Scepter of Ra burns with golden light in a hidden compartment in the floor, impossible to ignore."
+    },
+    "scarab-pendant": {
+      "name": "Golden Scarab Pendant",
+      "description": "A heavy gold pendant shaped like a scarab beetle, its wings inlaid with lapis lazuli. It feels warm, as though sunlight is trapped inside.",
+      "roomText": "A golden scarab pendant lies half-buried in the sand that trickles from above, glinting like a trapped sunrise.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You brush sand from the scarab and the ceiling groans. A massive limestone block wrenches free and descends with the slow inevitability of a closing tomb. There is no time to run. Three thousand years of patience, and the pyramid claims another offering."
+    },
+    "jade-figurine": {
+      "name": "Jade Cat Figurine",
+      "description": "A small jade figurine of a seated cat, its emerald eyes eerily lifelike. Bastet, perhaps, watching over the dead.",
+      "roomText": "A jade figurine of a cat sits in a small alcove between the dart holes, its emerald eyes watching the corridor with serene indifference.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach into the alcove for the figurine. A click beneath your hand. A volley of darts erupts from the walls — bronze needles black with three-thousand-year-old poison. They find flesh before you find the floor."
+    },
+    "incense-censer": {
+      "name": "Golden Censer",
+      "description": "An ornate golden censer on a fine chain, its bowl still holding crumbled incense that smells faintly of myrrh and something sweeter.",
+      "roomText": "A golden censer dangles from a hook near the altar, its chain still bright, a faint scent of ancient myrrh drifting from its bowl.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the censer and the last of the ancient incense crumbles to dust. Three thousand years of sealed decay release their poison in a single breath. Your lungs fill with air that was old when Rome was young. You cannot cough. You cannot breathe. You join the offerings."
+    },
+    "jeweled-ankh": {
+      "name": "Jeweled Ankh",
+      "description": "An ankh cross of polished obsidian, its loop set with a single ruby that pulses like a heartbeat in certain light.",
+      "roomText": "A jeweled ankh rests on a raised tile in the center of the room, its ruby heart pulsing faintly in the torchlight.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the ankh from its tile. Stone screams against stone. The walls lurch inward with grinding, mechanical fury — ancient gears awakened by the missing weight. The ceiling descends. The ankh's ruby pulses once more, the last light you'll ever see."
+    },
+    "golden-lotus": {
+      "name": "Golden Lotus Flower",
+      "description": "A lotus blossom wrought in pure gold, each petal paper-thin and impossibly detailed. Dewdrops of crystal cling to its petals.",
+      "roomText": "A golden lotus flower sits atop a pile of lesser treasures, its crystal dewdrops scattering tiny rainbows across the chamber walls.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pluck the golden lotus from its perch. Something shifts. The cracked pillar groans, surrenders. The ceiling descends with the slow inevitability of geological time, a million limestone blocks reclaiming their rest. The lotus gleams in your hand as the darkness closes in."
     }
   },
   "puzzles": {

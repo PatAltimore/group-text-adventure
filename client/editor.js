@@ -627,7 +627,7 @@
     // Normalize legacy string hazards to objects
     for (let i = 0; i < room.hazards.length; i++) {
       if (typeof room.hazards[i] === 'string') {
-        room.hazards[i] = { description: room.hazards[i], probability: 0.3, deathText: '' };
+        room.hazards[i] = { description: room.hazards[i], deathText: '' };
       }
     }
 
@@ -646,19 +646,6 @@
       descInput.addEventListener('input', () => { hazard.description = descInput.value; });
       card.appendChild(descLabel);
       card.appendChild(descInput);
-
-      // Probability
-      const probLabel = document.createElement('label');
-      probLabel.textContent = 'Probability';
-      const probInput = document.createElement('input');
-      probInput.type = 'number';
-      probInput.min = '0';
-      probInput.max = '1';
-      probInput.step = '0.05';
-      probInput.value = hazard.probability != null ? hazard.probability : 0.3;
-      probInput.addEventListener('input', () => { hazard.probability = parseFloat(probInput.value) || 0; });
-      card.appendChild(probLabel);
-      card.appendChild(probInput);
 
       // Death text
       const deathLabel = document.createElement('label');
@@ -709,7 +696,6 @@
     if (!selectedRoomId || !world.rooms[selectedRoomId]) return;
     world.rooms[selectedRoomId].hazards.push({
       description: 'New hazard',
-      probability: 0.3,
       deathText: '',
     });
     renderHazardsList(world.rooms[selectedRoomId]);

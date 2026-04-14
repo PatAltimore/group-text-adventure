@@ -37,12 +37,14 @@
         "east": "rover-station",
         "north": "cydonia-plateau"
       },
-      "items": [],
+      "items": [
+        "glass-sphere"
+      ],
       "hazards": [
         {
           "description": "A wall of ochre dust is building on the western horizon — a Martian dust storm approaching fast.",
-          "probability": 0.1,
-          "deathText": "The dust storm hits with terrifying speed. Visibility drops to zero. Fine particles infiltrate your suit seals, clog your air filters, and short your electronics. Your last transmission is static. The storm buries you in minutes, another feature of the Martian landscape."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -65,64 +67,66 @@
         "south": "rover-station"
       },
       "items": [
-        "data-drive"
+        "data-drive",
+        "solar-prism"
       ],
       "hazards": [
         {
           "description": "The ridge is exposed to unfiltered solar radiation — your suit's dosimeter is climbing steadily.",
-          "probability": 0.06,
-          "deathText": "A sudden solar particle event floods the ridge with lethal radiation. Your suit's shielding was designed for background levels, not this. The dosimeter screams. By the time you reach cover, the damage is done. You collapse on the ridge, another monument to Mars's hostility."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
     "cydonia-plateau": {
       "name": "Cydonia Plateau",
       "description": "The terrain rises onto a broad mesa of layered sedimentary rock — ancient lake beds, compressed over billions of years. Your instruments are going haywire. Magnetic anomalies spike in patterns too regular to be natural. The ground here feels different — harder, almost resonant beneath your boots, as though something vast lies just below the surface. To the east, an enormous formation rises from the plateau, casting a shadow that looks disturbingly like a human face. The dust plains are south.",
-      "solvedDescription": "The terrain rises onto a mesa of layered sedimentary rock — ancient lake beds compressed over billions of years. Instruments go haywire. Magnetic anomalies spike in patterns too regular to be natural. The ground feels harder, almost resonant. The emergency oxygen tank stabilized your suit's micro-fractures. To the east, an enormous formation casts a shadow that looks like a human face. The dust plains are south.",
+      "solvedDescription": "The broad mesa hums with magnetic anomalies. Your suit seals hold firm now, patched and pressure-tested. The ground resonates beneath your boots. To the east, the Face on Mars rises from the plateau. The dust plains are south.",
       "exits": {
         "south": "dust-plains",
         "east": "face-of-mars"
       },
-      "items": [],
+      "items": [
+        "carved-stone-face"
+      ],
       "hazards": [
         {
           "description": "The atmosphere here is dangerously thin — your suit's pressure seals are straining against the near-vacuum.",
-          "probability": 0.08,
-          "deathText": "A micro-fracture spreads across your helmet's visor with a sound like cracking ice. The pressure differential does the rest. The thin Martian atmosphere rushes in — carbon dioxide at six millibars. Your last conscious thought is how quiet it is. Mars claims another explorer in perfect silence."
+          "probability": 0,
+          "deathText": ""
         }
-      ],
-      "solvedDescription": "The broad mesa hums with magnetic anomalies. Your suit seals hold firm now, patched and pressure-tested. The ground resonates beneath your boots. To the east, the Face on Mars rises from the plateau. The dust plains are south."
+      ]
     },
     "face-of-mars": {
       "name": "The Face on Mars",
       "description": "It is not a trick of light and shadow. Up close, the formation is unmistakably carved — a colossal humanoid face two kilometers long, half-buried in red dust. The features are weathered by a billion years of wind, but the symmetry is deliberate. The eyes are deep-set hollows, the mouth a dark cavity large enough to walk into, though it's choked with rockfall and compacted iron oxide. At the base, partially exposed by recent seismic activity, you can see what looks like fitted stonework beneath the natural rock. Your hands are shaking. The Cydonia plateau is west.",
-      "solvedDescription": "Unmistakably carved — a colossal face two kilometers long. Weathered but deliberate symmetry. Fitted stonework beneath. The mouth has been cleared, revealing a carved passage descending into the Face. Ancient air rushes out. Cydonia plateau west.",
+      "solvedDescription": "The colossal carved face looms above, unmistakably deliberate. The mouth — once choked with rockfall — has been cleared, revealing a passage north into the carved throat. Fitted stonework gleams beneath the weathered exterior. The Cydonia plateau is west.",
       "exits": {
         "west": "cydonia-plateau"
       },
       "items": [
         "alien-tablet"
       ],
-      "hazards": [],
-      "solvedDescription": "The colossal carved face looms above, unmistakably deliberate. The mouth — once choked with rockfall — has been cleared, revealing a passage north into the carved throat. Fitted stonework gleams beneath the weathered exterior. The Cydonia plateau is west."
+      "hazards": []
     },
     "face-entrance": {
       "name": "The Mouth of the Face",
       "description": "You stand inside the mouth of the Face on Mars. The carved stone throat descends at a steep angle into absolute darkness. The walls are smooth — too smooth for wind erosion. Geometric patterns are etched into the stone, spiraling inward like a language written in architecture. Your headlamp catches flecks of crystalline mineral embedded in the walls, and they glitter like frozen starlight. The air here — impossibly — reads slightly warmer on your sensors. Some geothermal source, deep below. The carved face exterior is south. A steep passage descends to the east into the buried structure.",
-      "solvedDescription": "Inside the mouth of the Face. Carved throat descends steeply. Smooth walls etched with spiraling patterns. Crystalline minerals glitter. Warmer air from below. Grappling line secured. Descent safe. Carved face south. Passage descends east.",
+      "solvedDescription": "Inside the mouth of the Face on Mars. Geometric patterns spiral inward, crystalline minerals glittering. The air reads warm from geothermal energy below. The descent has been secured with anchoring bolts. The carved face exterior is south. A steep passage descends east.",
       "exits": {
         "south": "face-of-mars",
         "east": "buried-corridor"
       },
-      "items": [],
+      "items": [
+        "crystal-matrix"
+      ],
       "hazards": [
         {
           "description": "Radiation levels spike erratically in this enclosed space — the stone emits intermittent gamma bursts.",
-          "probability": 0.07,
-          "deathText": "A massive gamma burst erupts from the crystalline deposits in the walls. Your suit absorbs the first wave, but the second overwhelms every safeguard. The inside of your visor flashes white. When it fades, so do you — another ghost in the throat of an ancient god."
+          "probability": 0,
+          "deathText": ""
         }
-      ],
-      "solvedDescription": "Inside the mouth of the Face on Mars. Geometric patterns spiral inward, crystalline minerals glittering. The air reads warm from geothermal energy below. The descent has been secured with anchoring bolts. The carved face exterior is south. A steep passage descends east."
+      ]
     },
     "buried-corridor": {
       "name": "The Buried Corridor",
@@ -131,68 +135,72 @@
         "west": "face-entrance",
         "north": "artifact-chamber"
       },
-      "items": [],
+      "items": [
+        "martian-fossil"
+      ],
       "hazards": [
         {
           "description": "The floor is riddled with fractures — sections of ancient stone could give way into the darkness below at any moment.",
-          "probability": 0.12,
-          "deathText": "The stone beneath your boots gives a sickening crack. Before you can react, the floor collapses into a chasm that swallows you whole. You fall through layers of ancient architecture, your headlamp spinning wildly in the dark. The impact comes after an eternity of falling. The buried city keeps its secrets."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
     "artifact-chamber": {
       "name": "The Artifact Chamber",
       "description": "A vast hexagonal chamber, its ceiling lost in shadow above the reach of your headlamp. Six alcoves are cut into the walls, each containing objects that defy immediate classification — crystalline polyhedra, metallic spheres with flowing surface patterns, and what appears to be a preserved botanical specimen sealed in transparent resin. A central plinth holds a pedestal with a crystal-shaped indentation. The walls are covered in dense inscriptions — the same script you saw in the corridor, but more complex, more detailed. Everything is covered in a fine layer of red dust that has filtered down over millennia. The corridor is south. A passage to the east leads toward a massive triangular structure visible through a gap in the wall.",
-      "solvedDescription": "Hexagonal chamber. Six alcoves with alien objects. UV scanner revealed the crystal key — now extracted. Dense inscriptions cover walls. Red dust everywhere. Corridor south. Passage east to pyramid.",
+      "solvedDescription": "The hexagonal chamber hums with catalogued artifacts. The central plinth’s wall panel has revealed the crystal key. Dense inscriptions cover every surface. The corridor is south. A passage east leads toward the pyramid.",
       "exits": {
         "south": "buried-corridor",
         "east": "pyramid-chamber"
       },
-      "items": [],
+      "items": [
+        "resonance-crystal"
+      ],
       "hazards": [
         {
           "description": "A low harmonic vibration pulses through the chamber — ancient defense systems detecting your presence.",
-          "probability": 0.12,
-          "deathText": "The harmonic shifts to a piercing frequency. The crystalline objects in the alcoves begin to resonate violently. A focused beam of energy erupts from the central plinth, sweeping the chamber like a searchlight. It finds you. The ancient defense system was built to last, and after a billion years, it still works perfectly."
+          "probability": 0,
+          "deathText": ""
         }
-      ],
-      "solvedDescription": "The hexagonal chamber hums with catalogued artifacts. The central plinth’s wall panel has revealed the crystal key. Dense inscriptions cover every surface. The corridor is south. A passage east leads toward the pyramid."
+      ]
     },
     "pyramid-chamber": {
       "name": "The Pyramid Interior",
       "description": "You stand inside a structure that satellite imagery once dismissed as a natural mesa. It is anything but natural. The interior of the Pyramid is a single enormous space, its walls angling inward to meet at a point far above. Every surface is covered in metallic panels etched with circuit-like patterns that pulse with faint residual energy. At the center, a massive crystalline column rises from floor to apex, cloudy with age but still faintly luminous. Conduits run from the column to nodes in the walls — this was a machine. A power station. Perhaps a beacon. The artifact chamber is west. To the north, a sealed doorway bears a crystal-shaped lock mechanism.",
-      "solvedDescription": "Inside the Pyramid. Enormous space, walls angling upward. Metallic panels pulse with energy. Crystalline column rises to apex. This was a machine. Artifact chamber west. North doorway unlocked — crystal key activated it. Amber light spills from Nexus Core beyond.",
+      "solvedDescription": "The Pyramid interior soars above, metallic panels pulsing with awakened energy. The crystalline column glows brighter, conduits humming. The artifact chamber is west. The sealed doorway north stands open, revealing the Nexus Core.",
       "exits": {
         "west": "artifact-chamber"
       },
       "items": [
-        "energy-core"
+        "energy-core",
+        "circuit-fragment"
       ],
       "hazards": [
         {
           "description": "The metallic panels crackle with residual energy — ancient circuits discharging unpredictably.",
-          "probability": 0.1,
-          "deathText": "A cascade of electrical discharge arcs from the crystalline column through the conduit network. You become the path of least resistance. The current locks your muscles rigid inside your suit. The smell of ozone and melting polymer is the last thing you register before the ancient machine claims its final tribute of power."
+          "probability": 0,
+          "deathText": ""
         }
-      ],
-      "solvedDescription": "The Pyramid interior soars above, metallic panels pulsing with awakened energy. The crystalline column glows brighter, conduits humming. The artifact chamber is west. The sealed doorway north stands open, revealing the Nexus Core."
+      ]
     },
     "nexus-core": {
       "name": "The Nexus Core",
       "description": "The sealed door opens into a chamber that stops your heart. A spherical room, perfectly smooth, its walls a mosaic of interlocking crystalline tiles that glow with soft amber light. At the center, suspended in what can only be described as a field of visible energy, floats a complex mechanism — rings within rings, rotating slowly, each inscribed with the alien script. Holographic projections flicker around it: star maps, planetary diagrams, biological schematics. This is no ruin. This machine is dormant, not dead. It is waiting. A socket in the base of the mechanism is empty — shaped to receive a power source. The pyramid interior is south.",
-      "solvedDescription": "Spherical room, crystalline tiles glowing amber. Complex mechanism floats — rings within rings. Energy core placed. Nexus blazes — holograms exploding outward. Star maps, schematics, alien faces. Data crystal materializes — the Martian Codex. Complete civilization record. They built this for whoever came next. Pyramid south.",
+      "solvedDescription": "The spherical chamber blazes with amber light. The mechanism spins with purpose, holographic projections stabilized — star maps, planetary diagrams, and the complete Martian codex. The Nexus is fully active. The pyramid interior is south.",
       "exits": {
         "south": "pyramid-chamber"
       },
-      "items": [],
+      "items": [
+        "nexus-shard"
+      ],
       "hazards": [
         {
           "description": "The Nexus energy field fluctuates unpredictably — proximity to the mechanism risks molecular disruption.",
-          "probability": 0.1,
-          "deathText": "The energy field surrounding the Nexus mechanism surges without warning. Your suit's systems go haywire as the field passes through you. Every molecule in your body vibrates at a frequency it was never meant to reach. The disruption is instantaneous and total. The Nexus returns to its dormant rotation, indifferent to the atoms it just scattered."
+          "probability": 0,
+          "deathText": ""
         }
-      ],
-      "solvedDescription": "The spherical chamber blazes with amber light. The mechanism spins with purpose, holographic projections stabilized — star maps, planetary diagrams, and the complete Martian codex. The Nexus is fully active. The pyramid interior is south."
+      ]
     }
   },
   "items": {
@@ -258,6 +266,70 @@
       "pickupText": "You take the Martian Codex. The holographic projections fade as the crystal leaves the Nexus field, but the data within is preserved. You hold the memory of a civilization in your hands. Humanity is not alone. We never were.",
       "portable": true,
       "roomText": "A holographic data crystal floats above the Nexus mechanism, pulsing with amber light — the complete record of an ancient Martian civilization."
+    },
+    "glass-sphere": {
+      "name": "Martian Glass Sphere",
+      "description": "A sphere of natural glass formed by ancient lightning striking Martian sand. Inside, swirling ochre dust is frozen mid-motion.",
+      "roomText": "A sphere of amber glass sits half-buried in the red dust, its interior swirling with frozen ochre patterns — a moment of ancient lightning, preserved.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You kneel to dig out the sphere. The dust storm hits with terrifying speed. Visibility drops to zero. Your suit's seals scream under the abrasive bombardment. The glass sphere is the last thing you feel — smooth and warm — as the storm buries you in red."
+    },
+    "solar-prism": {
+      "name": "Solar Prism",
+      "description": "A naturally formed crystal that refracts Martian sunlight into a spectrum of colors impossible on Earth. It pulses with trapped photons.",
+      "roomText": "A crystalline prism juts from the ridge face, splitting the thin Martian sunlight into a breathtaking spray of alien colors.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pry the prism loose and your visor depolarizes at exactly the wrong moment. A sudden solar particle event floods the ridge with lethal radiation. The prism refracts the killing light into beautiful colors as your suit's dosimeter flatlines."
+    },
+    "carved-stone-face": {
+      "name": "Carved Stone Face",
+      "description": "A palm-sized stone carved with features that are almost human but not quite. The expression shifts depending on the angle — now smiling, now screaming.",
+      "roomText": "A small carved stone lies near the formation's base, its features almost human — a miniature echo of the great face above.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the stone face and your suit's pressure seals strain. A micro-fracture spreads across your helmet visor with a sound like cracking ice. The thin atmosphere of Mars rushes in. The carved face watches with its ambiguous expression as the plateau claims you."
+    },
+    "crystal-matrix": {
+      "name": "Crystal Matrix",
+      "description": "A lattice of intergrown crystals that hums with stored energy. Touching it sends tingles up your arm — not unpleasant, but insistent.",
+      "roomText": "A crystal matrix formation protrudes from the wall, humming softly, its facets pulsing with an inner light that seems almost purposeful.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You break the crystal matrix free. The crystalline deposits in the walls erupt in a massive gamma burst — ancient defense systems answering the theft. Your suit's radiation shielding is tissue paper against the onslaught. The crystals sing a brief, bright requiem."
+    },
+    "martian-fossil": {
+      "name": "Martian Fossil",
+      "description": "An unmistakable fossil — something spiral and delicate, preserved in iron-rich stone. Evidence of ancient Martian life, in your hands.",
+      "roomText": "A spiral fossil emerges from the fractured floor, its delicate whorls unmistakably organic — proof of ancient life, waiting to be claimed.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pry the fossil from the cracked stone. The floor fractures further, a web of cracks racing outward. Before you can step back, the stone beneath your boots gives a sickening crack and you plunge into the darkness below, the fossil still clutched to your chest."
+    },
+    "resonance-crystal": {
+      "name": "Resonance Crystal",
+      "description": "A long, slender crystal that produces a haunting tone when touched. The sound is beautiful — almost like singing, almost like words.",
+      "roomText": "A slender crystal rises from a pedestal, producing a hauntingly beautiful tone that seems to respond to your presence.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the resonance crystal. The harmonic shifts to a piercing frequency. Ancient defense systems awaken, and the crystalline walls amplify the sound into a weapon. The vibration tears through your suit, your bones, your thoughts. The crystal sings on, indifferent."
+    },
+    "circuit-fragment": {
+      "name": "Ancient Circuit Fragment",
+      "description": "A fragment of impossibly advanced circuitry — metallic traces on crystalline substrate, still faintly warm, still faintly alive.",
+      "roomText": "A fragment of alien circuitry lies among the metallic panels, its traces still glowing with residual energy, still warm to the touch.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pull the circuit fragment free. The metallic panels erupt in a cascade of electrical discharge. Ancient circuits, disturbed from their million-year sleep, discharge their fury through your suit. Lightning dances between the walls and you are the shortest path to ground."
+    },
+    "nexus-shard": {
+      "name": "Nexus Shard",
+      "description": "A shard of the Nexus mechanism itself — it throbs with energy that makes your suit's instruments go haywire. Beautiful and terrifying.",
+      "roomText": "A shard of the Nexus mechanism has broken free, floating in the energy field, pulsing with power that makes your suit's instruments dance.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach into the energy field for the shard. The Nexus mechanism surges in response — a coronal discharge of power that was ancient when Mars had oceans. Energy cascades through your suit in a white-hot instant. The shard pulses once, satisfied, and the field settles."
     }
   },
   "puzzles": {

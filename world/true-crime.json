@@ -50,13 +50,14 @@
         "west": "crime-scene-study"
       },
       "items": [
-        "embezzlement-ledger"
+        "embezzlement-ledger",
+        "vintage-bottle"
       ],
       "hazards": [
         {
           "description": "A rat darts across your foot in the darkness. You stumble backward into a wine rack, and bottles cascade down like glass rain.",
-          "probability": 0.06,
-          "deathText": "The heavy oak rack topples onto you. Hundreds of bottles shatter, and the rack pins you beneath its weight. The last thing you see is red wine pooling around you, indistinguishable from blood. They find you the next morning. Case closed — on you."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -90,12 +91,14 @@
         "north": "precinct-office",
         "east": "rusty-anchor-bar"
       },
-      "items": [],
+      "items": [
+        "leather-wallet"
+      ],
       "hazards": [
         {
           "description": "Footsteps echo behind you — heavy, deliberate. Someone doesn't want you asking questions in this neighborhood.",
-          "probability": 0.08,
-          "deathText": "You turn too late. A blunt impact at the base of your skull, and the wet pavement rushes up to meet your face. Your badge clatters into a puddle. The rain keeps falling. Another unsolved case in Blackwater."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -106,13 +109,14 @@
         "west": "back-alley"
       },
       "items": [
-        "bartender-statement"
+        "bartender-statement",
+        "engraved-flask"
       ],
       "hazards": [
         {
           "description": "Dominic Crane spots you from his booth. His eyes narrow, and he reaches inside his coat. You can't tell if he's going for a flask or something worse.",
-          "probability": 0.07,
-          "deathText": "It wasn't a flask. The gunshot is deafening in the small bar. Dominic stands over you, shaking, muttering about how you were going to pin it on him like everyone else. Sal dials 911 too late. The case dies with its detective."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -135,12 +139,14 @@
       "exits": {
         "west": "parking-garage"
       },
-      "items": [],
+      "items": [
+        "shipping-manifest"
+      ],
       "hazards": [
         {
           "description": "Two of Webb's dockworkers block the doorway, arms crossed. They don't appreciate detectives poking around the boss's private office.",
-          "probability": 0.12,
-          "deathText": "Webb's men are thorough and professional. They work you over with the mechanical efficiency of longshoremen who've done this before. Your body turns up floating in the harbor three days later. The department calls it an accident. Nobody believes it. Nobody investigates."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -224,6 +230,38 @@
       "pickupText": "You close the case file. The truth is ugly but complete. Helena Crane and Dominic Crane — conspiracy to commit murder. Time to make the arrest.",
       "portable": true,
       "roomText": "The complete case file sits on the counter, every piece of evidence cross-referenced and annotated in Dr. Vasquez's precise hand."
+    },
+    "vintage-bottle": {
+      "name": "Vintage Wine Bottle",
+      "description": "A bottle of 1961 Château Margaux, its label barely legible but unmistakable to a collector. Worth a small fortune if genuine.",
+      "roomText": "A single bottle stands apart from the rack — a 1961 vintage, its label faded but distinguished, practically glowing with value.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the vintage bottle. Your elbow catches the wine rack. The heavy oak frame topples — hundreds of bottles shattering in a cascade of glass and decades of fermented regret. The rack pins you in a pool of red that isn't all wine."
+    },
+    "leather-wallet": {
+      "name": "Leather Wallet",
+      "description": "A quality leather wallet lying in the gutter, slightly damp. A driver's license and several bills are visible through the card window.",
+      "roomText": "A leather wallet lies in the gutter, slightly open, a driver's license and the edge of several bills visible through its card window.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You bend for the wallet. Heavy footsteps close the distance behind you. You turn too late. A blunt impact at the base of your skull drops you to the wet asphalt. The alley has seen this before. The alley keeps its silence."
+    },
+    "engraved-flask": {
+      "name": "Engraved Hip Flask",
+      "description": "A silver hip flask engraved with a ship's anchor and the initials \"D.C.\" The cap is loose and it smells of expensive bourbon.",
+      "roomText": "A silver hip flask sits on a recently vacated booth table, engraved with an anchor and monogrammed initials, a splash of bourbon still visible inside.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the flask and Dominic Crane's hand appears from inside his jacket — but it isn't holding a drink. The gunshot is deafening in the small bar. The flask skitters across the table, trailing bourbon and blood. Nobody saw nothing."
+    },
+    "shipping-manifest": {
+      "name": "Shipping Manifest",
+      "description": "A leather folio containing shipping manifests with dates, weights, and destinations — evidence that could crack the case wide open.",
+      "roomText": "A leather folio lies on the desk, shipping manifests visible inside — dates, weights, port names. The kind of evidence that gets people promoted. Or buried.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the manifest and Webb's dockworkers step forward from the doorway. They're thorough and professional. They work you over with the calm efficiency of men who've done this before. The manifest scatters as the warehouse goes dark."
     }
   },
   "puzzles": {

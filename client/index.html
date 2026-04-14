@@ -131,16 +131,15 @@
             <p class="setting-help">How long a player stays dead before respawning in the same room.</p>
           </div>
 
-          <div id="hazard-multiplier-group" class="setting-group">
+          <div id="hazard-hints-group" class="setting-group">
             <div class="setting-row">
-              <label for="hazard-multiplier-select" class="setting-label">☠️ Hazard Danger</label>
-              <select id="hazard-multiplier-select" class="setting-select" aria-label="Hazard danger level">
-                <option value="0.5">Low</option>
-                <option value="1" selected>Medium</option>
-                <option value="2">High</option>
+              <label for="hazard-hints-select" class="setting-label">⚠️ Hazard Hints</label>
+              <select id="hazard-hints-select" class="setting-select" aria-label="Hazard hints visibility">
+                <option value="true">Show</option>
+                <option value="false" selected>Hide</option>
               </select>
             </div>
-            <p class="setting-help">Adjusts hazard lethality. Low = safer, High = deadlier. Medium uses the world default.</p>
+            <p class="setting-help">When enabled, rooms display warning text about potential dangers. Hide for a harder experience.</p>
           </div>
 
           <div id="say-scope-group" class="setting-group">
@@ -158,8 +157,8 @@
             <div class="setting-row">
               <label for="hints-toggle" class="setting-label">🔍 Puzzle Hints</label>
               <select id="hints-toggle" class="setting-select" aria-label="Puzzle hints toggle">
-                <option value="true">Enabled</option>
-                <option value="false" selected>Disabled</option>
+                <option value="true">Show</option>
+                <option value="false" selected>Hide</option>
               </select>
             </div>
             <p class="setting-help">When enabled, puzzle rooms show a hint about what item is needed to solve the puzzle.</p>
@@ -225,7 +224,7 @@
     </header>
 
     <div id="game-output" class="game-output" role="log" aria-live="polite" aria-label="Game output">
-      <div class="msg msg-system">Welcome! Type commands to play. Try <strong>look</strong> to see around you.</div>
+      <div class="msg msg-system">Welcome! Type commands to play. Try <strong>look</strong> to see around you. Avoid hazardous items! Picking up hazardous items results in death.</div>
     </div>
 
     <form id="command-form" class="command-bar" autocomplete="off" aria-label="Command input">

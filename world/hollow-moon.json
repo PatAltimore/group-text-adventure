@@ -97,13 +97,14 @@
         "west": "ore-processing"
       },
       "items": [
-        "ore-sample"
+        "ore-sample",
+        "moon-geode"
       ],
       "hazards": [
         {
           "description": "Cracks radiate from the bore shaft and fine dust sifts from the ceiling with each vibration. The rock here is under enormous stress.",
-          "probability": 0.08,
-          "deathText": "A deep crack splits the ceiling. Lunar rock cascades down in slow-motion freefall, silent in the vacuum. Your suit integrity alarm shrieks once before a slab of regolith pins you to the floor."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -114,12 +115,14 @@
       "exits": {
         "south": "drill-site"
       },
-      "items": [],
+      "items": [
+        "phosphor-crystal"
+      ],
       "hazards": [
         {
           "description": "Total darkness engulfs the tunnel beyond your suit lights. Without proper illumination, a single misstep could send you into an unseen crevasse.",
-          "probability": 0.1,
-          "deathText": "Your boot finds empty air where floor should be. You pitch forward into absolute darkness. The fall is short but the landing is not — your helmet cracks against stone and the suit breach alarm screams briefly before silence reclaims the tunnel."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -143,13 +146,14 @@
         "west": "hollow-cavern"
       },
       "items": [
-        "alien-tablet"
+        "alien-tablet",
+        "tuning-sphere"
       ],
       "hazards": [
         {
           "description": "The resonant frequency intensifies without warning, vibrating through your bones and blurring your vision.",
-          "probability": 0.08,
-          "deathText": "The vibration hits a harmonic your body cannot withstand. Your vision dissolves into static, suit readings spike and flatline in the same instant. The chamber continues its ancient hum, indifferent."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -161,13 +165,14 @@
         "south": "resonance-chamber"
       },
       "items": [
-        "power-cell"
+        "power-cell",
+        "prismatic-shard"
       ],
       "hazards": [
         {
           "description": "An invisible radiation source pulses from the crystalline columns. Your suit dosimeter creeps upward with each passing moment.",
-          "probability": 0.12,
-          "deathText": "The radiation accumulates faster than your suit can shield. Nausea hits first, then trembling. You collapse between the glowing columns as your cells break down, the alien light pulsing on, indifferent."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -179,13 +184,14 @@
         "south": "alien-antechamber"
       },
       "items": [
-        "star-map"
+        "star-map",
+        "power-cell"
       ],
       "hazards": [
         {
           "description": "Consoles flicker to life unpredictably, discharging arcs of energy across the chamber floor.",
-          "probability": 0.1,
-          "deathText": "An arc of blue-white energy lances from a console to your suit. Every system overloads simultaneously. The alien technology powers down as though nothing happened, leaving your suit dark and still."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -195,12 +201,14 @@
       "exits": {
         "south": "control-room"
       },
-      "items": [],
+      "items": [
+        "zero-g-orb"
+      ],
       "hazards": [
         {
           "description": "The gravitational field at the moon's center fluctuates unpredictably, alternating between crushing force and weightlessness.",
-          "probability": 0.05,
-          "deathText": "The gravitational field spikes. Your body is pulled in every direction simultaneously, forces exceeding what human physiology can withstand. You have a fraction of a second to appreciate the engineering before it tears you apart."
+          "probability": 0,
+          "deathText": ""
         }
       ],
       "solvedDescription": "The chamber pulses with decoded patterns, holographic projections looping endlessly. The crystalline heart’s origin is understood. The control room is south."
@@ -286,10 +294,11 @@
     },
     "power-cell": {
       "name": "Alien Power Cell",
-      "description": "A cylindrical object that fits in both hands, its surface warm and faintly vibrating. Blue-white light pulses from hairline seams in its casing.",
-      "roomText": "A cylindrical device pulses with blue-white light in a charging cradle between two columns.",
-      "pickupText": "You ease the power cell from its cradle. It hums warmly in your hands, and the columns dim slightly.",
-      "portable": true
+      "description": "A smooth, warm cylinder that pulses with blue light. It fits perfectly in your hand, as though designed for a human grip.",
+      "roomText": "A cylindrical power cell pulses with blue light in a half-open console, its smooth surface humming with contained energy.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pull the power cell free. Every console in the room erupts simultaneously — arcs of blue-white energy lance between them in a web of lethal current. Your suit becomes a conductor. The discharge stops your heart before the pain reaches your brain."
     },
     "star-map": {
       "name": "Stellar Navigation Disc",
@@ -304,6 +313,46 @@
       "roomText": "A holographic projection fills the air above the crystalline heart — the moon's construction, replaying in an endless loop of light and memory.",
       "pickupText": "You reach into the projection and something solid materializes — a recording crystal containing the entire history of this place.",
       "portable": true
+    },
+    "moon-geode": {
+      "name": "Lunar Geode",
+      "description": "A cracked moon rock revealing a stunning interior of crystallized minerals — amethyst and silver formations that shouldn't exist on the Moon.",
+      "roomText": "A cracked geode sits near the bore shaft, its interior blazing with amethyst and silver crystals that catch your helmet lights.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pry the geode from the unstable wall. Cracks radiate outward from the gap. A deep fissure splits the ceiling and lunar rock cascades down in a silent, devastating avalanche. Your suit crumples like foil under the weight of a world."
+    },
+    "phosphor-crystal": {
+      "name": "Phosphor Crystal",
+      "description": "A crystal that emits a steady blue-white glow without any apparent power source. It feels warm through your gloves.",
+      "roomText": "A faintly glowing crystal protrudes from the tunnel wall, casting a blue-white light that pushes back the absolute darkness.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You twist the crystal free and its light flickers, dies. Total darkness. Your boot finds empty air where floor should be. You pitch forward into a shaft so deep your suit's altimeter spins. The impact, when it comes, is a distant formality."
+    },
+    "tuning-sphere": {
+      "name": "Harmonic Sphere",
+      "description": "A perfect metallic sphere that vibrates gently in your hands. When held close, it produces a tone just at the edge of hearing — beautiful, hypnotic.",
+      "roomText": "A small metallic sphere hovers inches above a pedestal, vibrating with a tone that you feel more than hear.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pluck the sphere from its hover. The resonant frequency spikes, finding harmonics your body cannot withstand. Your vision blurs. Your bones vibrate apart at the molecular level. The sphere sings your requiem in frequencies no human was meant to hear."
+    },
+    "prismatic-shard": {
+      "name": "Prismatic Shard",
+      "description": "A slender crystalline shard that splits light into colors you've never seen — colors that don't have names, that shouldn't exist.",
+      "roomText": "A prismatic shard juts from a crystalline column, refracting your suit lights into a spectrum of impossible, nameless colors.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You snap the shard free. The crystalline columns pulse angrily, flooding the chamber with radiation your suit was never designed to handle. Your dosimeter screams, then melts. The shard is beautiful in your hand as your cells unravel."
+    },
+    "zero-g-orb": {
+      "name": "Floating Orb",
+      "description": "A perfectly smooth obsidian orb that floats at chest height, rotating slowly. It trails a faint aurora of golden particles.",
+      "roomText": "A black orb floats at the chamber's center, rotating slowly, trailing wisps of golden light like a miniature planet with its own aurora.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You close your hands around the orb. The gravitational field spikes catastrophically. Your body is pulled in every direction simultaneously — stretched, compressed, twisted by tidal forces that dwarf anything in nature. The orb floats serenely in the space where you used to be."
     }
   },
   "puzzles": {

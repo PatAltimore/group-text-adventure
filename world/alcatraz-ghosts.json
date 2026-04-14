@@ -25,12 +25,14 @@
         "west": "warden-office",
         "south": "dock"
       },
-      "items": [],
+      "items": [
+        "frost-locket"
+      ],
       "hazards": [
         {
           "description": "The temperature drops suddenly — your breath mists white in the air. A shadow moves across the bulletproof glass, though nothing stands behind it.",
-          "probability": 0.12,
-          "deathText": "The cold intensifies until frost crystallizes on your skin. The shadow in the glass steps forward, through the barrier, reaching for you. Your heart stops — not from fear, but from the absolute zero cold that floods your chest. They find your body the next morning, frozen from the inside out."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -80,12 +82,14 @@
         "west": "entry-hall",
         "south": "utility-tunnel"
       },
-      "items": [],
+      "items": [
+        "wardens-whistle"
+      ],
       "hazards": [
         {
           "description": "Footsteps echo from empty cells. A voice whispers your name — but nobody knows your name. Not here. Not yet.",
-          "probability": 0.15,
-          "deathText": "The whispering grows louder, multiplying, a chorus of the damned speaking in unison. Cell doors slam in sequence, a mechanical wave rolling toward you. The final door catches your skull between steel and stone. The last thing you hear is laughter — hundreds of voices, laughing."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -96,12 +100,14 @@
       "exits": {
         "south": "broadway"
       },
-      "items": [],
+      "items": [
+        "prisoners-mirror"
+      ],
       "hazards": [
         {
           "description": "Something watches from inside Cell 14D. Not moving. Not breathing. Just watching with eyes you can't quite see but absolutely feel.",
-          "probability": 0.2,
-          "deathText": "You look into Cell 14D. The darkness looks back. It doesn't rush out — it pulls you in. Your crew finds your body in the morning, curled in the corner of 14D, hands wrapped around your own throat, face frozen in an expression of absolute terror. The cell door is closed from the inside."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -157,13 +163,14 @@
         "west": "hospital"
       },
       "items": [
-        "full-spectrum-camera"
+        "full-spectrum-camera",
+        "brass-valve-handle"
       ],
       "hazards": [
         {
           "description": "The pipes groan and shriek with phantom steam. Shadows move between them, humanoid shapes that don't match any light source.",
-          "probability": 0.18,
-          "deathText": "A steam pipe explodes — but there's been no steam pressure in Alcatraz since 1963. Superheated vapor fills the tunnel. Your screams echo through the pipes, joining the chorus of voices that have always lived down here."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -310,6 +317,38 @@
       "pickupText": "You read the verification instructions. The protocol is clear: document everything with the full-spectrum camera.",
       "roomText": "A note about verification procedure lies among the equipment.",
       "portable": true
+    },
+    "frost-locket": {
+      "name": "Frost-Kissed Locket",
+      "description": "A delicate silver locket rimmed with actual frost. Inside, a tiny photograph is obscured by ice crystals that never melt.",
+      "roomText": "A silver locket lies on the floor, rimmed with frost that refuses to melt, catching the dim light like a tiny star.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "Your fingers close around the locket and the cold intensifies until frost crystallizes on your skin. Your blood slows, thickens, stops. The shadow wraps around you like a burial shroud, and the warmth drains from your body in a single, shuddering exhale."
+    },
+    "wardens-whistle": {
+      "name": "Warden's Whistle",
+      "description": "A tarnished brass whistle on a frayed lanyard. It feels heavier than it should, and when you hold it to your ear, you hear faint breathing.",
+      "roomText": "A brass whistle on a frayed lanyard hangs from an empty cell bar, swaying gently though the air is still.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the whistle to your lips. The whispering grows louder, multiplying, a chorus of the damned pressing against the walls of reality. They pour through the whistle like a funnel — cold, furious, starving — and the last thing you hear is your own name, screamed by a hundred dead throats."
+    },
+    "prisoners-mirror": {
+      "name": "Pocket Mirror",
+      "description": "A small hand mirror in a tarnished brass frame. Your reflection seems to move a fraction of a second behind you.",
+      "roomText": "A small pocket mirror lies face-down on the corridor floor outside Cell 14D, its brass frame dull but unbroken.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the mirror and look into it. The darkness of Cell 14D looks back. It doesn't blink. It doesn't breathe. But it reaches — cold fingers of shadow threading through the glass, through your eyes, into the warm spaces behind them. Your reflection smiles. You don't."
+    },
+    "brass-valve-handle": {
+      "name": "Brass Valve Handle",
+      "description": "A polished brass valve handle, still bright despite decades underground. It hums faintly with phantom pressure.",
+      "roomText": "A polished brass valve handle lies wedged between two pipes, gleaming impossibly bright in the tunnel gloom.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You wrench the valve handle free. A steam pipe explodes — but there's been no steam pressure in decades. Ghost-heat sears your skin, phantom pressure crushes your chest. The shadows between the pipes close around you like fingers, and the screaming of phantom steam drowns out your own."
     }
   },
   "puzzles": {

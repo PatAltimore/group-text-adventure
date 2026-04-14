@@ -12,13 +12,14 @@
         "north": "overgrown-courtyard"
       },
       "items": [
-        "machete"
+        "machete",
+        "jaguar-fang"
       ],
       "hazards": [
         {
           "description": "Something large moves through the undergrowth, keeping pace with you — a flash of spotted gold between the leaves.",
-          "probability": 0.05,
-          "deathText": "The jaguar strikes from the shadows — a blur of muscle and obsidian claws. The jungle takes back what it is owed. Your screams are swallowed by the canopy."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -31,12 +32,14 @@
         "east": "serpent-shrine",
         "west": "rope-bridge"
       },
-      "items": [],
+      "items": [
+        "jade-idol"
+      ],
       "hazards": [
         {
           "description": "Loose stones shift underfoot — the ancient courtyard is riddled with sinkholes hidden beneath the moss.",
-          "probability": 0.06,
-          "deathText": "The ground gives way beneath you. You plunge into a limestone sinkhole, crashing through layers of root and rubble into an underground river. The current drags you into darkness. The courtyard seals itself above, as if you were never here."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -47,12 +50,14 @@
       "exits": {
         "east": "overgrown-courtyard"
       },
-      "items": [],
+      "items": [
+        "feathered-talisman"
+      ],
       "hazards": [
         {
           "description": "The bridge groans and sways violently in the wind. Rotten planks crack beneath your weight.",
-          "probability": 0.1,
-          "deathText": "A plank gives way beneath your boot. You grab for the rope but it snaps in your hand. The gorge swallows you whole — a long, spiraling fall into the river of stone below."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -87,13 +92,14 @@
         "south": "serpent-shrine"
       },
       "items": [
-        "jade-medallion"
+        "jade-medallion",
+        "serpent-egg"
       ],
       "hazards": [
         {
           "description": "Venomous snakes carpet the floor, hissing and striking at the air as you move through the chamber.",
-          "probability": 0.15,
-          "deathText": "A bushmaster strikes your ankle — then another, and another. The venom works fast. Your vision blurs, your heart hammers, and you collapse into the writhing mass. The serpents coil over you like a living shroud."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -105,12 +111,14 @@
         "south": "overgrown-courtyard",
         "east": "collapsed-gallery"
       },
-      "items": [],
+      "items": [
+        "obsidian-eye"
+      ],
       "hazards": [
         {
           "description": "The stone jaguar statues seem to shift when you're not looking directly at them — their obsidian eyes track your movements.",
-          "probability": 0.07,
-          "deathText": "You hear stone grinding behind you. The jaguar statue lunges — impossibly alive, impossibly fast. Stone jaws close around you with the force of a collapsing temple. The guardians of the Jaguar God do not forgive trespassers."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -122,13 +130,14 @@
       },
       "items": [
         "torch",
-        "rope-coil"
+        "rope-coil",
+        "turquoise-mask"
       ],
       "hazards": [
         {
           "description": "Chunks of limestone shift and grind overhead — the gallery ceiling is deeply unstable.",
-          "probability": 0.08,
-          "deathText": "A section of ceiling gives way with a thunderous crack. Tons of limestone crash down, burying you beneath the rubble of a civilization that died a thousand years ago."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -140,12 +149,14 @@
         "south": "temple-entrance",
         "north": "sacrificial-chamber"
       },
-      "items": [],
+      "items": [
+        "glyph-tile"
+      ],
       "hazards": [
         {
           "description": "Tiny holes line the floor tiles — blow-dart traps triggered by weight, ancient but potentially still lethal.",
-          "probability": 0.1,
-          "deathText": "A soft click beneath your boot. A poison dart buries itself in your neck — curare, still potent after a millennium. Your muscles lock, your lungs freeze. You die standing, another statue in the Hall of Glyphs."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -168,13 +179,14 @@
         "south": "hall-of-glyphs"
       },
       "items": [
-        "golden-idol"
+        "golden-idol",
+        "bloodstone-chalice"
       ],
       "hazards": [
         {
           "description": "A faint mist rises from the blood channels — some ancient chemical reaction still produces toxic fumes.",
-          "probability": 0.12,
-          "deathText": "The toxic mist thickens without warning, filling the chamber in seconds. You choke, your vision goes red, and you collapse across the sacrificial altar. A fitting end — the temple claims one more offering."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -185,12 +197,14 @@
       "exits": {
         "south": "sacrificial-chamber"
       },
-      "items": [],
+      "items": [
+        "emerald-necklace"
+      ],
       "hazards": [
         {
           "description": "The ceiling is rigged with a counterweight mechanism — disturbing the wrong treasure could bring it all crashing down.",
-          "probability": 0.07,
-          "deathText": "You brush against a tripwire hidden among the treasures. The ceiling mechanism triggers with a grinding roar, and massive stone blocks descend. The vault becomes your golden tomb — sealed forever with the treasures of the jaguar god."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     }
@@ -258,6 +272,78 @@
       "pickupText": "You lift the Golden Jaguar from its ancient resting place. The emerald eyes blaze with green fire. You hold a legend in your hands.",
       "portable": true,
       "roomText": "The Golden Jaguar gleams in the opened compartment, its emerald eyes blazing with ancient power."
+    },
+    "jaguar-fang": {
+      "name": "Jaguar Fang Pendant",
+      "description": "A large canine tooth set in a crude gold bezel, strung on a leather cord. The tooth is warm and faintly yellow, like old ivory.",
+      "roomText": "A pendant of gold and tooth hangs from a low branch, its leather cord swaying gently — as though recently dropped.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the pendant and the undergrowth explodes. The jaguar strikes from the shadows — a blur of muscle and obsidian rosettes. Its jaws close on your throat before your hand closes on the fang. The jungle swallows your cry."
+    },
+    "jade-idol": {
+      "name": "Jade Monkey Idol",
+      "description": "A small jade idol carved in the likeness of a howler monkey, its expression frozen in a mischievous grin. It's heavier than it looks.",
+      "roomText": "A jade idol peeks from between the flagstones where the courtyard has buckled — a grinning monkey face, half-swallowed by moss.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You crouch to dig the idol free and the ground gives way beneath you. The ancient courtyard crumbles into a limestone sinkhole. You plunge into the darkness below, the jade monkey grinning in your hand all the way down."
+    },
+    "feathered-talisman": {
+      "name": "Quetzal Feather Talisman",
+      "description": "A small wooden disc threaded with brilliant green and red feathers. The colors are impossibly vivid, as though the feathers still live.",
+      "roomText": "A talisman of brilliant feathers twists on a cord tied to the bridge rope, its green and red plumage startling against the grey mist.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lean out to untie the talisman. A plank gives way beneath your shifted weight. You grab for the rope but it snaps in your hand — rotten through. The gorge swallows you in silence. The talisman follows, feathers fluttering, a bright streak against the grey."
+    },
+    "serpent-egg": {
+      "name": "Opalescent Egg",
+      "description": "A smooth, warm egg the size of your fist, its shell swirling with pearlescent blues and greens. Something inside shifts when you hold it.",
+      "roomText": "A large opalescent egg sits in a hollow among the stones, its pearlescent surface shimmering with blues and greens, untouched by the serpents that slither around it.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach through the carpet of snakes for the egg. A bushmaster strikes your wrist — then another hits your ankle, and another. The egg is warm and beautiful in your trembling hand as the venom races through your veins like liquid fire."
+    },
+    "obsidian-eye": {
+      "name": "Obsidian Eye",
+      "description": "A polished sphere of volcanic glass, perfectly round, that seems to absorb light rather than reflect it. It feels alive in your palm.",
+      "roomText": "One of the jaguar statues is missing an eye — but the obsidian sphere lies at its feet, as though recently fallen, gleaming darkly.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the obsidian eye and hear stone grinding behind you. The jaguar statue lunges forward on ancient mechanisms, stone jaws snapping shut with the force of a hydraulic press. The eye watches from your crushed hand, impassive and eternal."
+    },
+    "turquoise-mask": {
+      "name": "Turquoise Death Mask",
+      "description": "A ceremonial mask of carved turquoise and jade, its expression serene and beautiful. Golden wire traces the eyes and lips.",
+      "roomText": "A turquoise mask lies among the rubble, its serene jade face gazing upward, golden wire tracing features both beautiful and unsettling.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the mask and the ceiling shifts. A section gives way with a thunderous crack, dislodging tons of limestone. The mask's serene expression is the last thing you see as the gallery buries you in stone and darkness."
+    },
+    "glyph-tile": {
+      "name": "Carved Glyph Tile",
+      "description": "A removable floor tile carved with an intricate Mayan glyph that seems to shift and rearrange when viewed from different angles.",
+      "roomText": "One floor tile is raised slightly above the others, its carved glyph more intricate and deeper-cut, as though meant to be noticed — or taken.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pry the tile free. A soft click. A poison dart buries itself in your neck before you can flinch — ancient curare, still potent after centuries. Your muscles lock, your lungs freeze. You die kneeling, the glyph tile clutched in rigid fingers."
+    },
+    "bloodstone-chalice": {
+      "name": "Bloodstone Chalice",
+      "description": "A chalice carved from a single piece of deep red bloodstone, its rim stained darker still. It feels heavier on one side, as though something unseen fills it.",
+      "roomText": "A chalice of deep red bloodstone sits at the altar's edge, catching the faint light and seeming to glow from within.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the chalice and the blood channels hiss. Toxic mist billows from the ancient stone, filling the chamber in seconds. It tastes of copper and centuries. Your vision dims as the mist claims you for the altar's endless collection."
+    },
+    "emerald-necklace": {
+      "name": "Emerald Necklace",
+      "description": "A necklace of faceted emeralds set in gold filigree, each stone flawless and deeply green. It seems to glow with its own inner light.",
+      "roomText": "An emerald necklace drapes across a golden platter, its stones catching the light with an inner fire that seems almost alive.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the necklace and feel the tripwire snap against your wrist. The counterweight mechanism triggers with a grinding roar. The ceiling descends, stone teeth interlocking with mechanical precision. The emeralds blaze green in the narrowing darkness."
     }
   },
   "puzzles": {

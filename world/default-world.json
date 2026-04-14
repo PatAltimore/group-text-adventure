@@ -25,12 +25,14 @@
         "east": "library",
         "west": "kitchen"
       },
-      "items": [],
+      "items": [
+        "silk-bundle"
+      ],
       "hazards": [
         {
           "description": "Cobwebs thick as curtains choke the corners. They tremble faintly, though there is no breeze.",
-          "probability": 0.1,
-          "deathText": "You brush past the cobwebs and something massive drops onto your shoulders — legs thick as fingers wrapping your throat. Fangs punch through skin. The venom is ice-cold, and mercifully fast."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -42,13 +44,14 @@
         "west": "entrance"
       },
       "items": [
-        "silver-coin"
+        "silver-coin",
+        "mosaic-shard"
       ],
       "hazards": [
         {
           "description": "The mosaic tiles are glazed with a thin film of water — every step threatens to betray you.",
-          "probability": 0.05,
-          "deathText": "Your heel skids on the slick tiles. You pitch sideways, arms flailing, and slam through the crumbled fountain rim. Stone meets skull with a sound like a hammer on wet clay."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -73,7 +76,8 @@
       },
       "items": [
         "rusty-key",
-        "stale-bread"
+        "stale-bread",
+        "nibbled-cheese"
       ],
       "hazards": [
         {
@@ -90,12 +94,14 @@
       "exits": {
         "south": "library"
       },
-      "items": [],
+      "items": [
+        "wind-chime"
+      ],
       "hazards": [
         {
           "description": "The wind screams through the arrow slits, shoving at you with invisible hands. The steps are barely a shoulder wide.",
-          "probability": 0.08,
-          "deathText": "A gust hammers through the stairwell like a fist. Your boot finds nothing but air. The spiral swallows you — stone battering shoulder, hip, skull — and then the falling stops."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -106,13 +112,14 @@
         "south": "kitchen"
       },
       "items": [
-        "golden-key"
+        "golden-key",
+        "iron-ring"
       ],
       "hazards": [
         {
           "description": "Rough-hewn beams jut from the ceiling at cruel, irregular angles. One wrong step, one careless glance upward.",
-          "probability": 0.05,
-          "deathText": "You straighten too fast. A jagged beam catches your temple with the sound of a splitting gourd. Light flares white behind your eyes, then collapses to a point, then nothing at all."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -214,6 +221,46 @@
       "roomText": "Beside the spring, a single herb grows luminous and green, its glow steady as a candle flame despite the breeze.",
       "pickupText": "You pluck the healing herb with care. Its glow intensifies at your touch, and the air fills with a scent like rain on warm stone.",
       "portable": true
+    },
+    "silk-bundle": {
+      "name": "Silk Bundle",
+      "description": "A tightly wound bundle of pale silk threads, almost luminous in the dim light.",
+      "roomText": "A pale bundle of silk threads clings to the web-choked corner, almost glowing.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "As you reach for the silk bundle, the cobwebs come alive. Thousands of tiny spiders pour from the threads, swarming over your hands and face. A massive spider drops onto your shoulders — legs thick as fingers wrapping your throat. Fangs punch through skin. The venom is ice-cold, and mercifully fast."
+    },
+    "mosaic-shard": {
+      "name": "Mosaic Shard",
+      "description": "A fragment of iridescent mosaic tile, its colors shifting like oil on water. It must have been part of something magnificent.",
+      "roomText": "A shard of mosaic tile catches the light near the fountain's edge, its surface shimmering with impossible colors.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You crouch to pry the mosaic shard free. Your heel skids on the slick tiles. You pitch sideways, arms flailing, and slam through the crumbled fountain rim. Stone meets skull with a sound like a hammer on wet clay."
+    },
+    "nibbled-cheese": {
+      "name": "Aged Cheese Wheel",
+      "description": "A surprisingly intact wheel of hard cheese, its rind dark and cracked. Tooth marks ring the edges — small, frantic, desperate.",
+      "roomText": "A wheel of ancient cheese sits on the counter, its rind strangely intact despite the ages. Tiny claw marks score its surface.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the cheese and a tide of rats erupts from beneath the shelves — hundreds, thousands, a living carpet of matted fur and needle teeth. They swarm up your arms, biting and tearing, driven mad by centuries of hunger. Your screams are lost in the chittering."
+    },
+    "wind-chime": {
+      "name": "Silver Wind Chime",
+      "description": "A delicate wind chime of tarnished silver bells, singing softly in the draft. Each note is crystalline and strangely mournful.",
+      "roomText": "A silver wind chime dangles from an arrow slit, its bells singing a faint, mournful melody in the updraft.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lean out to unhook the wind chime. A gust hammers through the stairwell like a fist. Your boot finds nothing but air. The spiral swallows you — stone battering shoulder, hip, skull — and then the falling stops."
+    },
+    "iron-ring": {
+      "name": "Engraved Iron Ring",
+      "description": "A thick iron ring inscribed with tiny runes that seem to writhe when you look away. It radiates a faint warmth despite the dungeon cold.",
+      "roomText": "Something glints on a rough-hewn beam overhead — an iron ring, dangling from a nail, its surface etched with tiny runes.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach up for the iron ring and straighten too fast. A jagged beam catches your temple with the sound of a splitting gourd. Light flares white behind your eyes, then collapses to a point, then nothing at all."
     }
   },
   "puzzles": {

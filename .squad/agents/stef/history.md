@@ -316,3 +316,99 @@
   - Test patterns from existing tests: ESM imports, validateWorld() returns `{valid, errors, warnings}` not array, loadWorld from JSON.parse(readFileSync)
   - Warnings: 4 puzzle rooms missing solvedDescription (optional but recommended), 7 rooms puzzle-gated (unreachable without items), 4 one-way exits
   - Total: 445 tests (all passing)
+
+### Hazard System Redesign Tests (Session 3)
+- **Task**: Update `tests/game-engine.test.js` to reflect hazard system redesign from probability-based random death to player-initiated hazard items
+- **Old system removed**:
+  - `checkHazards(session, playerId)` — ran after every gameplay command, random probability death
+  - `hazardMultiplier` session setting — scaled probability
+  - Room-level `hazards[]` arrays with `{ description, probability, deathText }` objects
+  - `Math.random()` mocking for death probability tests
+- **New system tested**:
+  - Items with `hazardItem: true` + `deathText` — picking up kills player deterministically
+  - `take all` / `get items` / `g` skips hazard items
+  - `hazardHintsEnabled` session setting (default: true) controls visibility
+  - Death creates ghost with `isDeath: true`, drops inventory to room floor
+  - Other players get death notification
+  - `deathTimeout` defaults to 30
+- **Changes made to `game-engine.test.js`**:
+  - Removed `checkHazards` from imports (no longer exported)
+  - Updated Look/View tests — removed old hazard assertions from `getPlayerView`
+  - Updated Start Game tests — removed `hazards` field assertion
+  - Section 21: Replaced old "Hazard Death System" with new "Hazard Item System" (~300 lines)
+  - Section 23: Replaced old "Hazard Death System (Stef)" with new "Hazard Item Integration (Stef)" (~250 lines)
+  - Sections 24-25: Removed old "Hazard check on every gameplay command" and "hazard multiplier" tests entirely
+- **Changes made to `test-world.json`**:
+  - Added `cursed-gem` hazard item with `hazardItem: true` and `deathText`
+  - Placed in room-b, replaced old room-level hazard object
+- **Test results**: 300 passing, 12 failing (expected — engine changes not yet implemented by Mouth), 1 skipped
+- **Key patterns**: Tests use `GameEngine.killPlayer` / `GameEngine.respawnPlayer` with conditional `test.skip` for graceful handling when functions don't exist yet
+
+### 2026-04-14 — Hazard System Redesign — Test Suite Refactoring Completed
+
+**Task:** Finalize test suite for hazard system redesign (probability-based death → item-pickup death).
+
+**Changes Made:**
+1. **Test Removal:** Deleted ~908 lines of probability-based hazard tests from /tests/game-engine.test.js:
+   - Random death on room entry tests (checkHazards)
+   - hazardMultiplier setting/broadcast tests
+   - hazardMultiplier slider/UI change tests
+   - Probability scaling tests (0.5x, 1x, 2x)
+
+2. **Test Addition:** Added ~419 lines of new hazard item tests:
+   - hazardItem: true flag handling in handleTake()
+   - Player death on hazard item pickup
+   - Item removal from room after pickup
+   - handleTakeAll() skipping hazard items
+   - setHazardHints handler and hazardHintsEnabled session property
+   - Hazard hint visibility toggling (true/false)
+   - Multiple hazard items in same room
+
+3. **Test Fixture Update:** Added cursed-gem hazard item to /tests/fixtures/test-world.json:
+   - hazardItem: true, tempting name, dramatic deathText
+   - Placed in main test room for basic coverage
+
+4. **Assertion Updates:** Fixed assertions to match new death mechanics:
+   - Death responses use same format (type: 'death', deathText, deathTimeout)
+   - Ghost creation and inventory drop still work the same way
+   - Respawn mechanics unchanged
+
+**Files Modified:**
+- /tests/game-engine.test.js — Hazard test refactoring (~908 lines removed, ~419 lines added)
+- /tests/fixtures/test-world.json — Added cursed-gem hazard item
+
+**Test Status:** All 567 tests pass (1 skipped). Zero regressions from new mechanics.
+
+**Integration:** Coordinated with Mouth (Backend) and Data (Frontend). All three agents' code integrated into feature/hazard-item-death. PR #4 ready for review.
+
+- **2026-04-10 — Updated handleTakeAll tests for hazard item death behavior**
+  - Updated 2 tests in `/tests/game-engine.test.js` (Hazard Death System block):
+    1. `take all skips hazard items` → renamed to `take all triggers death from hazard item` — now verifies player DIES on "get items" when room contains hazard items. Checks: player removed from session, death ghost created with `isDeath: true`, hazard item removed from room, death response contains deathText matching "idol"
+    2. `"g" shortcut skips hazard items` → renamed to `"g" shortcut triggers death from hazard item` — same death verification for the "g" shortcut: player dead, ghost created, hazard item removed, death response present
+  - Behavior change: `handleTakeAll()` no longer skips hazard items. It now processes ALL items including hazard ones, triggering `killPlayer()` on the first hazard item encountered (same as individual `take`). Previous decisions.md said "handleTakeAll() skips hazard items" — this is now outdated.
+  - Both tests pass immediately — Mouth's engine changes were already in place
+  - Total: 567 tests pass, 0 failures
+
+- **2026-04-14 — Test Expectations Updated for handleTakeAll() Hazard Item Behavior**
+   - Updated 2 test cases in /tests/game-engine.test.js to reflect new handleTakeAll() behavior:
+     1. Test: "take all skips hazard items" → Updated expectation: player now dies when picking up hazard items via "take all"
+     2. Test: "g shortcut skips hazard items" → Updated expectation: player now dies when picking up hazard items via "g"
+   - Both tests verified that hazard items trigger instant death (type: 'death' response) instead of being skipped
+   - Death response format validated: includes deathText and deathTimeout
+   - **All 567 tests pass** — hazard item death mechanics fully validated
+   - **Files modified:** 	ests/game-engine.test.js (2 test expectations updated)
+   - **Related:** Mouth simultaneously fixed handleTakeAll() logic in api/src/game-engine.js and cleaned up test fixtures (removed numbered-bracelet from nonary-game.json)
+
+- **2026-04-14 — Test Suite: Hazard Persistence Implementation**
+  - **Fixed 5 existing tests** that assumed hazard items were permanently removed on pickup:
+    1. Death response validation — verified deathText and deathTimeout in responses
+    2. Ghost creation — confirmed ghost spawned with isDeath: true on hazard pickup
+    3. Item persistence — confirmed hazard items remain in room after death (splice() calls removed)
+    4. Multiplayer collision — verified multiple players can encounter same hazard item
+    5. Respawn scenarios — confirmed respawned player sees persistent hazard in room
+  - **Added 2 new multiplayer tests:**
+    1. Two players in room with hazard item — first player dies, item persists, second player can see and interact with it
+    2. Death + respawn cycle — player dies to hazard, respawns in same room, hazard item still present and dangerous
+  - **Test Status:** All 569 tests passing (up from 567)
+  - **Files Modified:** /tests/game-engine.test.js
+  - **Related Decision:** Hazard items now persist across multiple deaths, enabling consistent danger environments and strategic multiplayer coordination.

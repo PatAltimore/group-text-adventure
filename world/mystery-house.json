@@ -14,13 +14,14 @@
         "west": "parlor"
       },
       "items": [
-        "brass-candlestick"
+        "brass-candlestick",
+        "crystal-pendant"
       ],
       "hazards": [
         {
           "description": "The chandelier sways above you. Its chain groans — a low, metallic sound like a throat clearing before bad news.",
-          "probability": 0.08,
-          "deathText": "The chain snaps with a scream of rusted metal. Crystal and iron crash down in a shower of shattered light. Your last thought is how beautiful the fragments look, spinning across the marble."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -34,13 +35,14 @@
       },
       "items": [
         "ancient-journal",
-        "silver-key"
+        "silver-key",
+        "leather-journal"
       ],
       "hazards": [
         {
           "description": "The books whisper when you are not looking directly at them. Layered voices in forgotten languages, just below the threshold of understanding.",
-          "probability": 0.1,
-          "deathText": "The whispers crescendo into screams. Books launch from shelves like startled ravens. Pages slice skin like razors. The library devours you, adding your voice to its eternal chorus."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -53,13 +55,14 @@
       },
       "items": [
         "music-box",
-        "family-photo"
+        "family-photo",
+        "ivory-key"
       ],
       "hazards": [
         {
           "description": "The piano keys press down on their own, one by one, picking out a discordant melody that crawls under your skin.",
-          "probability": 0.09,
-          "deathText": "The piano erupts into a frenzied symphony, keys hammering with impossible force. The sound bores into your skull like a hot wire. Your ears bleed. Your thoughts shatter. You collapse, and the music plays on over your body."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -71,12 +74,14 @@
         "north": "kitchen",
         "east": "conservatory"
       },
-      "items": [],
+      "items": [
+        "silver-place-setting"
+      ],
       "hazards": [
         {
           "description": "The temperature plunges. Your breath mists. The candles flicker to life on their own, and for an instant you see a thirteenth place setting that was not there before.",
-          "probability": 0.11,
-          "deathText": "The thirteenth guest manifests — a woman in Victorian dress, hollow-eyed, her throat a dark smile from ear to ear. She beckons you to sit. You cannot refuse. The wine smells of bitter almonds. You drink anyway."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -90,13 +95,14 @@
       },
       "items": [
         "rusted-cleaver",
-        "brass-key"
+        "brass-key",
+        "butchers-cleaver"
       ],
       "hazards": [
         {
           "description": "Something drips from the ceiling. Too dark and viscous to be water. It smells of copper.",
-          "probability": 0.12,
-          "deathText": "The dripping becomes a deluge. Dark blood cascades from the ceiling, filling the room with nauseating speed. You slip, fall, drown in the accumulated sins of the house. Your body is never found."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -120,13 +126,14 @@
         "east": "kitchen"
       },
       "items": [
-        "iron-key"
+        "iron-key",
+        "frozen-locket"
       ],
       "hazards": [
         {
           "description": "The door drifts on its hinges, each swing narrower than the last. The bolt rattles softly, eager.",
-          "probability": 0.15,
-          "deathText": "The door slams shut. The bolt slides home with a final, mechanical click. You hammer on steel until your hands are raw and bloody. No one hears you. No one ever hears. In the dark, the cold returns — a deep, unnatural cold. Your body will wait decades for the next curious soul."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -138,13 +145,14 @@
       },
       "items": [
         "ritual-dagger",
-        "amulet-of-binding"
+        "amulet-of-binding",
+        "pentagram-amulet"
       ],
       "hazards": [
         {
           "description": "The symbols on the walls pulse with a sickly light. Children’s voices drift from nowhere — nursery rhymes, sung backwards, in perfect unison.",
-          "probability": 0.13,
-          "deathText": "The pentagram erupts with black flame. Shadows coalesce into small forms — the Blackwood children, faces twisted, eyes hollow. They were made eternal through agony. They want you to join them. The ritual takes only moments. The screaming lasts forever."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -156,13 +164,14 @@
         "north": "conservatory"
       },
       "items": [
-        "heart-of-the-house"
+        "heart-of-the-house",
+        "orchid-bloom"
       ],
       "hazards": [
         {
           "description": "The vines shift and writhe, slowly encircling your ankles like patient predators.",
-          "probability": 0.14,
-          "deathText": "The carnivorous plants strike as one. Vines coil around your limbs, wrenching you down. Thorns puncture skin. The flytraps close over your face, wet and warm. The garden feeds. It is always hungry."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     },
@@ -172,13 +181,14 @@
       "solvedDescription": "Stone steps descend into a vast cellar carved from living rock. The cold is immediate but receding now. Wine racks stretch into darkness, bottles furred with dust. Most are shattered. The floor is sticky with ancient spills. Chains hang slack from the walls. The wooden coffin rests against the far wall, lid thrown back, its occupant reduced to grey ash. Words carved into stone: 'REST ETERNAL, BARTHOLOMEW BLACKWOOD.' The curse is broken. Above, through the open door, fresh air stirs.",
       "exits": {},
       "items": [
-        "consecrated-stake"
+        "consecrated-stake",
+        "velvet-ring-box"
       ],
       "hazards": [
         {
           "description": "A wet, raspy breathing echoes from the coffin. Something inside is dreaming, and dreams are stirring.",
-          "probability": 0.16,
-          "deathText": "Bartholomew Blackwood rises from his coffin — patriarch of the damned, the warlock who traded his family’s souls for immortality. His touch is ice. His eyes are cinders. He drinks deep. Your body joins the others in the dark, one more servant in his eternal court."
+          "probability": 0,
+          "deathText": ""
         }
       ]
     }
@@ -274,6 +284,78 @@
       "pickupText": "You dig up the Heart of the House. It pulses like a living organ, warm and nauseating in your hands. The children’s weeping grows louder, desperate, pleading.",
       "portable": true,
       "roomText": "Something glows beneath the willow tree's roots — a crystal that pulses like a beating heart."
+    },
+    "crystal-pendant": {
+      "name": "Crystal Pendant",
+      "description": "A teardrop of cut crystal on a fine chain, refracting the light into tiny rainbows. It spins slowly of its own accord.",
+      "roomText": "A crystal pendant dangles from the chandelier's lowest tier, spinning slowly, casting tiny rainbows across the dusty floor.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach up for the crystal pendant. The chandelier chain groans, then snaps with a scream of rusted metal. Crystal and iron descend in a glittering avalanche. The pendant is the last piece to fall, landing gently on the ruin it created."
+    },
+    "leather-journal": {
+      "name": "Leather-Bound Journal",
+      "description": "A slim journal bound in butter-soft leather, its pages covered in elegant but frantic handwriting. The final entry is unfinished.",
+      "roomText": "A leather-bound journal lies open on the reading table, its pages ruffling in a breeze that doesn't exist, handwriting visible in elegant loops.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the journal and the whispers crescendo into screams. Books launch from shelves like missiles. Pages whirl in a cyclone of paper and binding. The journal opens to its final entry as the library buries you: \"It knows when you read—\""
+    },
+    "ivory-key": {
+      "name": "Ivory Piano Key",
+      "description": "A single piano key of real ivory, pried loose but still warm. Press it and you hear the faintest echo of a melody — haunting, familiar, wrong.",
+      "roomText": "A single ivory key lies on the piano's music rest, separated from the keyboard, gleaming white against the dark wood.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You press the ivory key between your fingers. The piano erupts into a frenzied symphony, keys hammering without hands, wires snapping like whips. The music builds to an impossible crescendo. Your ears bleed. Your heart tries to match the rhythm and fails. The last note hangs in the silence after."
+    },
+    "silver-place-setting": {
+      "name": "Silver Place Setting",
+      "description": "A complete silver place setting — knife, fork, spoon, and charger — all monogrammed with a \"B\" in flowing script. The silver is warm.",
+      "roomText": "At the head of the table, a complete silver place setting gleams as though freshly polished, monogrammed with an elegant \"B.\"",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the silver and the thirteenth guest manifests — a woman in Victorian dress, her face a void of shadow. She smiles with teeth that aren't teeth. Cold hands close around your wrists. \"You've taken my seat,\" she whispers, and the candles die."
+    },
+    "butchers-cleaver": {
+      "name": "Antique Cleaver",
+      "description": "A heavy cleaver with a bone handle, its blade still mirror-bright despite the dark stains that won't wash away.",
+      "roomText": "A bone-handled cleaver rests on the butcher's block, its blade inexplicably clean and bright in the gore-stained kitchen.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the cleaver and the ceiling opens. Dark blood cascades from above in a torrent — gallons, impossible gallons, hot and reeking of copper. It fills the kitchen to the ceiling in seconds. The cleaver slips from your fingers as the darkness rises over your head."
+    },
+    "frozen-locket": {
+      "name": "Frost-Encased Locket",
+      "description": "A heart-shaped locket sealed in a shell of ice that never melts. Through the frost, you can just make out a photograph inside.",
+      "roomText": "A heart-shaped locket lies on the frozen floor, encased in ice that catches the light like a diamond, a photograph barely visible inside.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You pick up the locket and the meat locker door slams shut behind you. The bolt slides home with a final, mechanical click. The cold deepens, beyond freezing, beyond feeling. The locket's ice creeps up your fingers, your wrists, your arms. The photograph inside smiles at you as the frost reaches your heart."
+    },
+    "pentagram-amulet": {
+      "name": "Obsidian Amulet",
+      "description": "An amulet of polished obsidian carved with a symbol you don't recognize but somehow understand. It pulls at something behind your sternum.",
+      "roomText": "An obsidian amulet lies at the center of the chalk circle, its carved symbol catching the pulsing light from the walls.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You lift the amulet and the pentagram erupts with black flame. Shadows coalesce into forms with too many limbs, too many mouths. Children's voices rise in a chant that was old when language was young. The amulet burns against your chest as the shadows pour into the space where your soul was."
+    },
+    "orchid-bloom": {
+      "name": "Midnight Orchid",
+      "description": "A black orchid with petals of deepest purple, impossibly beautiful and impossibly alive in this dead house. Its perfume is intoxicating.",
+      "roomText": "A single black orchid blooms impossibly among the carnivorous plants, its petals a deep, velvety purple, filling the air with a sweet, heavy perfume.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You reach for the orchid and the greenhouse strikes. Vines coil around your wrists, your ankles, your throat — thorns sinking deep, drinking deep. The orchid watches with its dark, beautiful face as the carnivorous garden feeds. Your scream becomes fertilizer."
+    },
+    "velvet-ring-box": {
+      "name": "Velvet Ring Box",
+      "description": "A small box of wine-dark velvet, hinged with tiny gold clasps. Something inside shifts with a dry, papery sound.",
+      "roomText": "A small velvet ring box sits on the edge of the coffin, its gold clasps winking in the candlelight, as though placed there as an offering.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You open the ring box and the coffin lid crashes open. Bartholomew Blackwood rises — patriarch of the house, dead two centuries and hungry every moment. His hand closes on your wrist with impossible strength. The ring box falls. Inside, a wedding band. He's been waiting for someone to say yes."
     }
   },
   "puzzles": {

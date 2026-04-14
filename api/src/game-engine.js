@@ -239,7 +239,7 @@ export function createGameSession(world) {
     goalsCompleted: 0,
     totalGoals,
     deathTimeout: 30,
-    hazardMultiplier: 1.0,
+    hazardHintsEnabled: false,
     sayScope: 'room',
     hintsEnabled: true,
     createdAt: new Date().toISOString(),
@@ -558,11 +558,15 @@ export function getPlayerView(session, playerId) {
     exits: Object.keys(roomState.exits),
     items,
     players: otherPlayers,
-    hazards: (room.hazards || []).map((h) =>
-      typeof h === 'string' ? h : h.description
-    ),
     ghosts: getGhostsInRoom(session, player.room),
   };
+
+  // Only include hazard hints if hazardHintsEnabled is not explicitly false
+  if (session.hazardHintsEnabled !== false) {
+    view.hazards = (room.hazards || []).map((h) =>
+      typeof h === 'string' ? h : h.description
+    );
+  }
 
   if (hintText) {
     view.hintText = hintText;
@@ -577,70 +581,6 @@ export function getPlayerView(session, playerId) {
   }
 
   return view;
-}
-
-/**
- * Check room hazards for a player and potentially kill them.
- * @param {object} session - Current game session.
- * @param {string} playerId - Player to check hazards for.
- * @returns {{ session: object, responses: Array<{ playerId: string, message: object }> }}
- */
-export function checkHazards(session, playerId) {
-  const player = session.players[playerId];
-  const responses = [];
-  if (!player) return { session, responses };
-
-  // Skip if already dead
-  if (session.ghosts?.[player.name]?.isDeath) return { session, responses };
-
-  const room = session.world.rooms[player.room];
-  const hazards = room.hazards || [];
-
-  for (const hazard of hazards) {
-    const h = typeof hazard === 'string'
-      ? { description: hazard, probability: 0, deathText: '' }
-      : hazard;
-    const adjustedProbability = Math.min(1, h.probability * (session.hazardMultiplier || 1));
-    if (adjustedProbability > 0 && Math.random() < adjustedProbability) {
-      const playerName = player.name;
-      const playerRoom = player.room;
-      session = killPlayer(session, playerId);
-
-      responses.push({
-        playerId,
-        message: {
-          type: 'death',
-          deathText: h.deathText,
-          deathTimeout: session.deathTimeout || 30,
-        },
-      });
-
-      for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-        if (otherPlayer.room === playerRoom) {
-          responses.push({
-            playerId: otherId,
-            message: {
-              type: 'playerEvent',
-              event: 'died',
-              playerName,
-              text: `${playerName} has died! ${h.deathText}`,
-            },
-          });
-          responses.push({
-            playerId: otherId,
-            message: {
-              type: 'ghostEvent',
-              text: `${playerName}'s ghost appears.`,
-            },
-          });
-        }
-      }
-
-      return { session, responses };
-    }
-  }
-
-  return { session, responses };
 }
 
 /**
@@ -710,14 +650,6 @@ export function processCommand(session, playerId, commandText) {
           },
         ],
       };
-  }
-
-  // After any gameplay command, check hazards in the player's current room
-  const playerAfter = result.session.players[playerId];
-  if (playerAfter && !result.session.ghosts?.[playerAfter.name]?.isDeath) {
-    const hazardResult = checkHazards(result.session, playerId);
-    result.session = hazardResult.session;
-    result.responses = [...result.responses, ...hazardResult.responses];
   }
 
   return result;
@@ -875,6 +807,46 @@ function handleTake(session, playerId, cmd) {
     return { session, responses };
   }
 
+  // Hazard item — picking it up kills the player
+  if (item.hazardItem) {
+    const playerName = player.name;
+    const playerRoom = player.room;
+    session = killPlayer(session, playerId);
+
+    responses.push({
+      playerId,
+      message: {
+        type: 'death',
+        deathText: item.deathText,
+        deathTimeout: session.deathTimeout || 30,
+      },
+    });
+
+    // Notify other players in the room
+    for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+      if (otherPlayer.room === playerRoom) {
+        responses.push({
+          playerId: otherId,
+          message: {
+            type: 'playerEvent',
+            event: 'died',
+            playerName,
+            text: `${playerName} has died! ${item.deathText}`,
+          },
+        });
+        responses.push({
+          playerId: otherId,
+          message: {
+            type: 'ghostEvent',
+            text: `${playerName}'s ghost appears.`,
+          },
+        });
+      }
+    }
+
+    return { session, responses };
+  }
+
   // Move item from room to player inventory
   roomState.items.splice(idx, 1);
   player.inventory.push(itemId);
@@ -918,10 +890,50 @@ function handleTakeAll(session, playerId) {
 
   const pickedUpNames = [];
   for (const itemId of portableItems) {
+    const item = session.world.items[itemId];
+
+    // Hazard item — picking it up kills the player
+    if (item && item.hazardItem) {
+      const playerName = player.name;
+      const playerRoom = player.room;
+      session = killPlayer(session, playerId);
+
+      responses.push({
+        playerId,
+        message: {
+          type: 'death',
+          deathText: item.deathText,
+          deathTimeout: session.deathTimeout || 30,
+        },
+      });
+
+      for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+        if (otherPlayer.room === playerRoom) {
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'playerEvent',
+              event: 'died',
+              playerName,
+              text: `${playerName} has died! ${item.deathText}`,
+            },
+          });
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'ghostEvent',
+              text: `${playerName}'s ghost appears.`,
+            },
+          });
+        }
+      }
+
+      return { session, responses };
+    }
+
     const idx = roomState.items.indexOf(itemId);
     roomState.items.splice(idx, 1);
     player.inventory.push(itemId);
-    const item = session.world.items[itemId];
     pickedUpNames.push(item ? item.name : itemId);
   }
 
@@ -1365,16 +1377,18 @@ function handleYell(session, playerId, cmd) {
 function handleHelp(session, playerId) {
   const helpText = [
     '── HELP ─────────────────',
+    'Shortcuts in parentheses',
     '',
     '▸ MOVEMENT',
     '  GO <dir>    Move (n/s/e/w)',
-    '  LOOK        Look around',
+    '  LOOK        Look around (l)',
     '  EXAMINE <x> Inspect an item',
-    '  MAP         Show visited rooms',
+    '  MAP         Show visited rooms (m)',
     '',
     '▸ ITEMS',
     '  TAKE <x>    Pick up an item',
     '  GET ITEMS   Pick up all items (g)',
+    '              including hazardous items',
     '  DROP <x>    Drop an item',
     '  USE <x>     Use an item',
     '  USE <x> ON <y>  Use on target',
@@ -1382,11 +1396,11 @@ function handleHelp(session, playerId) {
     '  INVENTORY   Your items (i)',
     '',
     '▸ COMMUNICATION',
-    '  SAY <msg>   Talk (same room)',
-    '  YELL <msg>  Shout (nearby hear)',
+    '  SAY <msg>   Talk in the same room',
+    '  YELL <msg>  Shout to nearby players',
     '',
     '▸ GAME',
-    '  HELP        Show this message',
+    '  HELP        Show this message (h)',
     '',
     'Type help anytime.',
     '─────────────────────────',

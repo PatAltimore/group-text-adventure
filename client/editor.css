@@ -635,8 +635,7 @@ body {
   color: var(--text-dim);
 }
 
-.hazard-card input[type="text"],
-.hazard-card input[type="number"] {
+.hazard-card input[type="text"] {
   padding: 6px 8px;
   font-size: 12px;
   font-family: var(--font-mono);
@@ -649,8 +648,6 @@ body {
 }
 
 .hazard-card input:focus { border-color: var(--accent); }
-
-.hazard-card input[type="number"] { width: 100px; }
 
 .hazard-remove-btn { margin-top: 4px; align-self: flex-end; }
 

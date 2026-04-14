@@ -158,6 +158,13 @@
 - **Item storytelling:** Items blending game lore (numbered bracelet, cipher wheel, Zero's note) with historical artifacts (ship's log, navigation compass, WWI medical tools) create a cohesive narrative bridge between 999 and Britannic.
 - **displayOrder sequencing:** New worlds must pick the next available displayOrder number (checked against all existing world files). This ensures consistent ordering in the world selection UI.
 
+### 2026-04-14 — Hazard Get-All Fix: handleTakeAll() Includes Hazard Items
+
+- **Fixed `handleTakeAll()` logic** — No longer skips hazard items. When player runs `get items` or `g` shortcut, hazard items are picked up identically to regular items, triggering instant death via `killPlayer()`.
+- **Test fixture cleanup** — Removed `numbered-bracelet` (hazardItem: true) from flooded-cabin room in nonary-game.json to prevent unintended hazard triggers.
+- **Design rationale** — While earlier versions included special case to skip hazard items and prevent mass-death scenarios, the current design treats all items uniformly. Players must be deliberate about bulk pickup in hazard-rich environments.
+- **All 567 tests pass** — Behavior fully validated across test suite. Death response format unchanged.
+
 
 ### 2026-04-04 — Cross-Team Update: Data's Client Fixes
 
@@ -788,6 +795,27 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 1. `api/src/game-engine.js` — Replaced trophy art (lines 11-24) with box-drawing trophy featuring center star (★). Replaced victory banner (lines 30-41) with double-line box-drawing border.
 2. No escaping needed — Unicode characters work directly in single-quoted JS strings.
 
+### 2026-04-14 — Hazard System Redesign Completed — Team Coordination
+
+**Session coordination with Data & Stef:**
+- **Mouth (Backend):** Engine refactoring completed. Removed `checkHazards()` and probability-based death. Added `hazardItem` support in `handleTake()`. Updated all 15 world files with ~90 hazard items. Session setting changed from `hazardMultiplier` to `hazardHintsEnabled`. All 567 tests pass.
+- **Data (Frontend):** UI updated. Hazard Danger dropdown replaced with Hazard Hints toggle. `startGame` message payload now includes `hazardHintsEnabled` instead of `hazardMultiplier`. Death notifications updated to generic text.
+- **Stef (Test Dev):** Test suite refactored. Removed ~908 lines of old probability-based tests. Added ~419 lines of new hazard item tests. Test world updated with cursed-gem hazard item.
+
+### 2026-04-14 — Bug Fixes: handleTakeAll Hazard Death + nonary-game bracelet
+
+1. **handleTakeAll now triggers hazard death:** Removed the `!item.hazardItem` filter from `handleTakeAll()`. The pickup loop now checks each item — if it's a hazard item, it triggers the full death sequence (killPlayer, death response, broadcast) and returns immediately. Normal items picked up before the hazard item in the loop are dropped when the player dies/respawns. This reverses the prior decision that "get items" should skip hazard items.
+
+2. **Removed numbered-bracelet from flooded-cabin room items:** The bracelet is `portable: false` and represents something the player is already wearing (per world intro text). Having it in the room's items array made it appear as a visible room item, which was confusing. Item definition kept in the items section for description references.
+
+- **Files changed:** `api/src/game-engine.js` (handleTakeAll), `world/nonary-game.json` (flooded-cabin items)
+- **Validation:** nonary-game.json passes `validateWorld()`. All 567 tests pass (8 suites).
+
+**Integration status:** All three agents' code integrated into feature/hazard-item-death branch. PR #4 created. All 567 tests pass. Ready for code review and merge.
+
+**Documentation:** Decisions documented in `.squad/decisions.md`. Orchestration logs created for all three agents. Session logged at `.squad/log/2026-04-14T163513Z-hazard-redesign.md`.
+
+
 **Testing:** All 541 tests pass (539 passed, 2 skipped). Deployed successfully to Azure.
 
 **Pattern observed:** Unicode box-drawing characters are superior to ASCII art for symmetric designs because they're specifically engineered to connect seamlessly and render identically across all monospace fonts. Always prefer ┌─┐│└┘ over ___/'\ for borders and containers.
@@ -1034,3 +1062,26 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 **Key files:**
 - World file: `world/nonary-game.json`
 - PR: https://github.com/PatAltimore/group-text-adventure/pull/3
+
+### 2026-04-10 — Hazard System Redesign: Probability Death → Item-Pickup Death
+
+- **Removed probability-based death entirely.** `checkHazards()` function and post-command hazard check deleted from `game-engine.js`. Players no longer die randomly when entering rooms.
+- **New mechanic: hazard items.** Items with `hazardItem: true` kill the player on pickup via `handleTake()`. Death uses existing `killPlayer()` flow — same ghost creation, inventory drop, respawn timer.
+- **`handleTakeAll()` skips hazard items.** Only deliberate `take <item>` triggers death. `get items` / `g` won't auto-kill.
+- **`hazardHintsEnabled` replaces `hazardMultiplier`.** Boolean session setting (default `true`). When false, `getPlayerView()` omits the `hazards` array entirely. When true, hazard descriptions serve as hint text.
+- **gameHub.js:** `setHazardMultiplier` handler replaced with `setHazardHints` (host-only, pre-game-only). Broadcast includes `hazardHintsEnabled` instead of `hazardMultiplier`.
+- **All 15 world files transformed.** 90 new hazard items added across all worlds. Each room hazard maps to one tempting-looking item. Hazard `probability` set to 0, `deathText` cleared. Hazard `description` retained as hint text.
+- **All 567 tests pass** (1 skipped). Two test fixtures updated: added hazard hint text to test world, fixed assertion matching actual deathText content.
+
+**Key files:**
+- `api/src/game-engine.js` — handleTake hazardItem check, handleTakeAll skip, getPlayerView hazardHintsEnabled
+- `api/src/functions/gameHub.js` — setHazardHints handler, hazardHintsEnabled in broadcast
+- `world/*.json` — all 15 world files with new hazard items
+
+### 2026-04-14 — Hazard Persistence: Items Remain After Death
+
+- **Removed 2 splice() calls** from handleTake() and handleTakeAll() in pi/src/game-engine.js. Hazard items no longer permanently deleted from rooms when picked up.
+- **Behavior change:** When a player dies to a hazard item, the item remains in the room for other players to encounter or the same player to re-encounter after respawn. Creates persistent threat environment without instant-death lockout.
+- **Impact:** Rooms with hazards now maintain their danger consistently across multiple deaths. Strategic depth: players must learn hazard locations, can coordinate avoidance with multiplayer teammates.
+- **Tests:** All 569 tests passing. Multiplayer scenarios verified working correctly.
+- **Related decisions:** Completes hazard redesign pattern (probability → item-pickup → persistence).

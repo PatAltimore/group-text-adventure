@@ -11,10 +11,10 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 ## Features
 
 - **1–20 Multiplayer** — Host and join games via URL or QR code; use Web Share API or clipboard to invite
-- **Multiple Worlds** — Choose from 13 pre-built adventures spanning fantasy, sci-fi, horror, mystery, and more — or create your own
-- **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Danger (Low/Medium/High), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
+- **Multiple Worlds** — Choose from 15 pre-built adventures spanning fantasy, sci-fi, horror, mystery, and more — or create your own
+- **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Hints (Show/Hide), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
 - **Real-Time Sync** — All actions broadcast instantly via Web PubSub
-- **Hazard System** — Rooms can contain hazards with variable death probability; defeated players respawn after timer expires
+- **Hazard System** — Rooms contain dangerous items that kill on pickup; hazard hints can be shown or hidden via lobby settings; defeated players respawn after timer expires
 - **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can pick them up with the "get" command
 - **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
 - **Puzzle Rooms** — 🧩 Emoji prefix marks puzzle rooms; optional hints show required items
@@ -40,16 +40,16 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 | Command | Syntax | Example |
 |---------|--------|---------|
 | **Go** | `go <direction>` or shortcut `<n/s/e/w>` | `go north` or `n` |
-| **Look** | `look` or `look <item>` | `look` or `look torch` |
+| **Look** | `look`,  `look <item>`, or `l` | `look` or `look torch` |
 | **Examine** | `examine <item>` | `examine torch` |
-| **Get** | `get <item>` or `get items` or `g` | `get torch` or `get items` or `g` |
+| **Get** | `get <item>` or `get items` - Get all items including hazardous items. | `get torch` or `get items` or `g` |
 | **Drop** | `drop <item>` | `drop torch` |
 | **Inventory** | `inventory` or `i` | `i` |
 | **Use** | `use <item>` | `use key` |
 | **Give** | `give <item> to <player>` | `give key to Alice` |
 | **Say** | `say <message>` | `say Help me with the puzzle!` |
-| **Map** | `map` | `map` |
-| **Help** | `help` | `help` |
+| **Map** | `map` | `map`  or `m` |
+| **Help** | `help` | `help` or `h` |
 
 ### Partial Name Matching
 
@@ -66,7 +66,7 @@ All item commands support **partial/fuzzy name matching**, so you don't need to 
 ### Quick Start
 
 1. **Host a Game** — Enter your name and select a world
-2. **Configure Lobby** — Adjust Respawn Timer, Hazard Danger, Say Scope, and Puzzle Hints (optional)
+2. **Configure Lobby** — Adjust Respawn Timer, Hazard Hints, Say Scope, and Puzzle Hints (optional)
 3. **Create Game** — Click "Host New Game"
 4. **Share the Link** — Click the Share button to invite friends via Web Share API or clipboard
 5. **Start When Ready** — Once everyone joins, click "Start Game"
@@ -118,7 +118,7 @@ The game runs on Azure serverless infrastructure:
 
 ## The Worlds
 
-Choose from thirteen pre-built adventures, each with unique themes, puzzles, and challenges:
+Choose from fifteen pre-built adventures, each with unique themes, puzzles, and challenges:
 
 ### 🏰 The Forgotten Castle
 - **Theme:** Medieval fantasy castle exploration
@@ -185,6 +185,16 @@ Choose from thirteen pre-built adventures, each with unique themes, puzzles, and
 - **Highlights:** Hard sci-fi, ancient alien structures, hollow interior discovery
 - **File:** `hollow-moon.json`
 
+### 💠 The Grid
+- **Theme:** Tron-inspired digital world — a hacker sucked into ENCOM's mainframe
+- **Highlights:** Light cycle arena, identity disc combat, MCP exploits, I/O port escape
+- **File:** `tron-grid.json`
+
+### 🚢 HMHS Britannic
+- **Theme:** Nonary Game aboard a sinking ocean liner
+- **Highlights:** Numbered door puzzles, digital root mechanics, rising water, escape under pressure
+- **File:** `nonary-game.json`
+
 ### World Format
 
 Worlds are defined as JSON files in `world/` with the following structure:
@@ -208,7 +218,9 @@ Worlds are defined as JSON files in `world/` with the following structure:
       "name": "Item Name",
       "description": "Item description",
       "pickupText": "Message when picked up",
-      "portable": true
+      "portable": true,
+      "hazardItem": false,
+      "deathText": "Message when hazard item kills player"
     }
   },
   "puzzles": {
@@ -243,7 +255,7 @@ Worlds are defined as JSON files in `world/` with the following structure:
 npm test
 ```
 
-Tests use Jest with ESM support. Currently **539 tests passing** across 6 test suites. Test files are in `tests/`.
+Tests use Jest with ESM support. Currently **567 tests passing** across 8 test suites. Test files are in `tests/`.
 
 ### Client
 
@@ -290,7 +302,7 @@ chmod +x deploy/deploy.sh
 
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
-| `AppName` / `--app-name` | Yes | — | Base name for resources (3–12 alphanumeric, starts with letter) |
+| `AppName` / `--app-name` | Yes | — | Base name for resources (3-12 alphanumeric, starts with letter) |
 | `Location` / `--location` | No | `westus2` | Azure region |
 | `ResourceGroup` / `--resource-group` | No | `rg-text-adventure` | Resource group name |
 
@@ -350,7 +362,7 @@ group-text-adventure/
 │   │       ├── health.js       # Health check endpoint
 │   │       └── worlds.js       # World list API
 │   └── package.json            # API dependencies
-├── world/                      # Game world definitions (13 worlds)
+├── world/                      # Game world definitions (15 worlds)
 │   ├── default-world.json      # "The Forgotten Castle"
 │   ├── escape-room.json        # "The Clockmaker's Mansion"
 │   ├── space-adventure.json    # "The Derelict Station"
@@ -363,7 +375,9 @@ group-text-adventure/
 │   ├── paranormal-mysteries.json # "Paranormal Mysteries"
 │   ├── myst-island.json        # "The Forgotten Mechanica"
 │   ├── alcatraz-ghosts.json    # "Alcatraz: The Zozo Investigation"
-│   └── hollow-moon.json        # "Hollow Moon"
+│   ├── hollow-moon.json        # "Hollow Moon"
+│   ├── tron-grid.json          # "The Grid"
+│   └── nonary-game.json        # "HMHS Britannic"
 ├── tests/                      # Test suite (Jest)
 ├── deploy/                     # Azure deployment scripts
 │   ├── deploy.ps1              # PowerShell deployment (Windows)

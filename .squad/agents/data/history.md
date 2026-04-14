@@ -421,7 +421,29 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Files modified:** `client/app.js`, `client/style.css`
 - **Pattern consistency:** Followed existing message rendering patterns, color palette (gold/amber for achievements), and DOM manipulation approach
 
+### 2026-04-14 — Hazard System Redesign — Frontend Integration
 
+**Task:** Update frontend UI to support hazard system redesign (probability-based death → item-pickup death).
+
+**Changes Made:**
+1. **Host Settings UI:** Replaced "Hazard Danger" dropdown (Low/Medium/High multiplier) with "Hazard Hints" toggle (Show/Hide). Default is Show. Controls whether hazard warning text appears in room descriptions.
+2. **startGame Protocol:** Updated message payload structure:
+   - **Old:** `{ deathTimeout, hazardMultiplier, sayScope, hintsEnabled }`
+   - **New:** `{ deathTimeout, sayScope, hintsEnabled, hazardHintsEnabled }`
+   - Backend now sends `hazardHintsEnabled` (boolean) instead of `hazardMultiplier`
+3. **setHazardHints Handler:** Added new message handler to receive hazard hint visibility setting from host. Replaces old `setHazardMultiplier` handler.
+4. **Death Notification Text:** Updated `playerDeath` message to use generic "has died" text (supports both room hazard and item pickup deaths).
+5. **World Editor Cleanup:** Removed probability input field from hazard card UI in editor. Hazards still show description and deathText, but probability is no longer relevant (always 0 in backend).
+
+**Files Modified:**
+- `client/index.html` — Hazard Hints toggle control
+- `client/app.js` — startGame message parsing, setHazardHints handler wiring
+- `client/editor.js` — Probability input removal from hazard cards
+- `client/editor.css` — Style adjustments for new toggle control
+
+**Test Status:** All 567 tests pass. No breaking changes to game flow.
+
+**Integration:** Coordinated with Mouth (Backend) and Stef (Tests). All three agents' changes integrated into feature/hazard-item-death. PR #4 ready for review.
 
 ### 2026-04-06 — UI: Share/QR Buttons, Host New Game, Message Rendering
 
@@ -513,3 +535,12 @@ ativeItems (displaced absent/false) and displacedItems (displaced: true)
 - **Learning:** Trophy wasn't the right metaphor — Pat specifically wanted a ribbon award. The #1 rosette better conveys "first place winner" than a trophy.
 
 - Pat rejected trophy and ribbon designs. Final decision: use same trophy cup art for both goal and victory.
+
+### 2026-04-09 — Hazard System Redesign: Frontend Changes
+- **What changed:** Old probability-based random death system replaced with item-pickup-based death.
+- **Host settings:** Removed "Hazard Danger" dropdown (`hazard-multiplier-select`), added "Hazard Hints" toggle (`hazard-hints-select`) — Show/Hide, defaults to Show.
+- **startGame message:** Now sends `{ type: 'startGame', deathTimeout, sayScope, hintsEnabled, hazardHintsEnabled }` — `hazardMultiplier` removed, `hazardHintsEnabled` added.
+- **Death notification:** `playerDeath` message text changed from "killed by a hazard" to generic "has died" (death is now item-based).
+- **World editor:** Removed probability field from hazard cards (description + deathText remain). Legacy string hazards normalize without probability.
+- **Room rendering:** No change needed — existing code already checks `room.hazards && room.hazards.length`, server controls what's sent.
+- **Files modified:** `client/index.html`, `client/app.js`, `client/editor.js`, `client/editor.css`
