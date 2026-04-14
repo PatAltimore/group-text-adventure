@@ -73,7 +73,7 @@
       "items": [
         "surgical-saw",
         "anesthetic-bottle",
-        "surgical-scissors"
+        "dissection-shears"
       ],
       "hazards": [
         {
@@ -316,13 +316,13 @@
       "hazardItem": true,
       "deathText": "You pocket the ampoule and a pipe overhead ruptures with a shriek. Superheated steam erupts in a blinding white column. The ampoule shatters in your pocket — the amber liquid mixing with the steam, with your screams, with the hiss of the ward's final breath."
     },
-    "surgical-scissors": {
-      "name": "Silver Surgical Scissors",
-      "description": "A pair of precision surgical scissors in gleaming silver, still sharp after decades. The handles are ergonomically perfect.",
-      "roomText": "A pair of silver surgical scissors gleams on the instrument tray, perfectly aligned, untouched by the chaos that claimed the rest of the theatre.",
+    "dissection-shears": {
+      "name": "Gleaming Dissection Shears",
+      "description": "A pair of precision dissection shears in gleaming silver, still sharp after decades. The handles are ergonomically perfect.",
+      "roomText": "A pair of gleaming dissection shears rests on the instrument tray, perfectly aligned, untouched by the chaos that claimed the rest of the theatre.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You reach across the instrument tray for the scissors. Your heel comes down on a syringe buried in the debris. The needle punches through your boot sole — vintage morphine, enough to stop a horse. Your knees buckle. The scissors clatter from numbing fingers as the theatre dims to black."
+      "deathText": "You reach across the instrument tray for the shears. Your heel comes down on a syringe buried in the debris. The needle punches through your boot sole — vintage morphine, enough to stop a horse. Your knees buckle. The shears clatter from numbing fingers as the theatre dims to black."
     },
     "gilded-finial": {
       "name": "Gilded Stair Finial",

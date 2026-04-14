@@ -14,7 +14,7 @@
       },
       "items": [
         "torch",
-        "scarab-pendant"
+        "lapis-serpent-brooch"
       ],
       "hazards": [
         {
@@ -67,7 +67,7 @@
       "items": [
         "canopic-jar",
         "golden-ankh",
-        "incense-censer"
+        "embalming-thurible"
       ],
       "hazards": [
         {
@@ -97,7 +97,7 @@
       },
       "items": [
         "pharaohs-mask",
-        "jeweled-ankh"
+        "obsidian-crux"
       ],
       "hazards": [
         {
@@ -133,7 +133,7 @@
         "east": "star-chamber"
       },
       "items": [
-        "golden-lotus"
+        "alabaster-chalice"
       ],
       "hazards": [
         {
@@ -232,13 +232,13 @@
       "portable": true,
       "roomText": "The Scepter of Ra burns with golden light in a hidden compartment in the floor, impossible to ignore."
     },
-    "scarab-pendant": {
-      "name": "Golden Scarab Pendant",
-      "description": "A heavy gold pendant shaped like a scarab beetle, its wings inlaid with lapis lazuli. It feels warm, as though sunlight is trapped inside.",
-      "roomText": "A golden scarab pendant lies half-buried in the sand that trickles from above, glinting like a trapped sunrise.",
+    "lapis-serpent-brooch": {
+      "name": "Lapis Serpent Brooch",
+      "description": "A heavy brooch shaped like a coiled serpent, its scales inlaid with lapis lazuli. It feels warm, as though sunlight is trapped inside.",
+      "roomText": "A serpent brooch lies half-buried in the sand that trickles from above, its lapis lazuli scales glinting like a trapped sunrise.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You brush sand from the scarab and the ceiling groans. A massive limestone block wrenches free and descends with the slow inevitability of a closing tomb. There is no time to run. Three thousand years of patience, and the pyramid claims another offering."
+      "deathText": "You brush sand from the brooch and the ceiling groans. A massive limestone block wrenches free and descends with the slow inevitability of a closing tomb. There is no time to run. Three thousand years of patience, and the pyramid claims another offering."
     },
     "jade-figurine": {
       "name": "Jade Cat Figurine",
@@ -248,29 +248,29 @@
       "hazardItem": true,
       "deathText": "You reach into the alcove for the figurine. A click beneath your hand. A volley of darts erupts from the walls — bronze needles black with three-thousand-year-old poison. They find flesh before you find the floor."
     },
-    "incense-censer": {
-      "name": "Golden Censer",
-      "description": "An ornate golden censer on a fine chain, its bowl still holding crumbled incense that smells faintly of myrrh and something sweeter.",
-      "roomText": "A golden censer dangles from a hook near the altar, its chain still bright, a faint scent of ancient myrrh drifting from its bowl.",
+    "embalming-thurible": {
+      "name": "Embalming Thurible",
+      "description": "An ornate bronze thurible on a fine chain, its bowl still holding crumbled incense that smells faintly of myrrh and something sweeter.",
+      "roomText": "A bronze thurible dangles from a hook near the altar, its chain still bright, a faint scent of ancient myrrh drifting from its bowl.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You lift the censer and the last of the ancient incense crumbles to dust. Three thousand years of sealed decay release their poison in a single breath. Your lungs fill with air that was old when Rome was young. You cannot cough. You cannot breathe. You join the offerings."
+      "deathText": "You lift the thurible and the last of the ancient incense crumbles to dust. Three thousand years of sealed decay release their poison in a single breath. Your lungs fill with air that was old when Rome was young. You cannot cough. You cannot breathe. You join the offerings."
     },
-    "jeweled-ankh": {
-      "name": "Jeweled Ankh",
-      "description": "An ankh cross of polished obsidian, its loop set with a single ruby that pulses like a heartbeat in certain light.",
-      "roomText": "A jeweled ankh rests on a raised tile in the center of the room, its ruby heart pulsing faintly in the torchlight.",
+    "obsidian-crux": {
+      "name": "Obsidian Crux",
+      "description": "A cross of polished obsidian, its loop set with a single ruby that pulses like a heartbeat in certain light.",
+      "roomText": "An obsidian crux rests on a raised tile in the center of the room, its ruby heart pulsing faintly in the torchlight.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You lift the ankh from its tile. Stone screams against stone. The walls lurch inward with grinding, mechanical fury — ancient gears awakened by the missing weight. The ceiling descends. The ankh's ruby pulses once more, the last light you'll ever see."
+      "deathText": "You lift the crux from its tile. Stone screams against stone. The walls lurch inward with grinding, mechanical fury — ancient gears awakened by the missing weight. The ceiling descends. The crux's ruby pulses once more, the last light you'll ever see."
     },
-    "golden-lotus": {
-      "name": "Golden Lotus Flower",
-      "description": "A lotus blossom wrought in pure gold, each petal paper-thin and impossibly detailed. Dewdrops of crystal cling to its petals.",
-      "roomText": "A golden lotus flower sits atop a pile of lesser treasures, its crystal dewdrops scattering tiny rainbows across the chamber walls.",
+    "alabaster-chalice": {
+      "name": "Alabaster Chalice",
+      "description": "A chalice carved from translucent alabaster, each curve impossibly smooth. Dewdrops of crystal cling to its rim.",
+      "roomText": "An alabaster chalice sits atop a pile of lesser treasures, its crystal dewdrops scattering tiny rainbows across the chamber walls.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You pluck the golden lotus from its perch. Something shifts. The cracked pillar groans, surrenders. The ceiling descends with the slow inevitability of geological time, a million limestone blocks reclaiming their rest. The lotus gleams in your hand as the darkness closes in."
+      "deathText": "You pluck the chalice from its perch. Something shifts. The cracked pillar groans, surrenders. The ceiling descends with the slow inevitability of geological time, a million limestone blocks reclaiming their rest. The chalice gleams in your hand as the darkness closes in."
     }
   },
   "puzzles": {

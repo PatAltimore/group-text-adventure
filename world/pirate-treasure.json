@@ -14,7 +14,7 @@
       },
       "items": [
         "torn-map",
-        "barnacle-compass"
+        "corroded-sextant"
       ],
       "hazards": [
         {
@@ -161,7 +161,7 @@
         "north": "underground-river"
       },
       "items": [
-        "ruby-idol"
+        "jeweled-serpent-totem"
       ],
       "hazards": [
         {
@@ -240,13 +240,13 @@
       "roomText": "In the skeleton's lap, a jade idol rests — ancient, alien, its emerald eyes burning with their own cold light.",
       "portable": true
     },
-    "barnacle-compass": {
-      "name": "Barnacle-Encrusted Compass",
-      "description": "A brass compass crusted with barnacles but still functional. Its needle doesn't point north — it points inland, toward something.",
-      "roomText": "A brass compass lies in the tidal debris, barnacle-crusted but gleaming, its needle pointing stubbornly inland rather than north.",
+    "corroded-sextant": {
+      "name": "Salt-Corroded Sextant",
+      "description": "A brass sextant crusted with salt deposits but still functional. Its mirrors are clouded, reflecting warped images of the sky.",
+      "roomText": "A brass sextant lies in the tidal debris, salt-corroded but gleaming, its mirrors reflecting warped fragments of sky.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You crouch for the compass as the tide surges. A rogue wave crashes over the coral barrier — a wall of green water that hammers you into the wreckage. The compass spins wildly in the foam as the undertow drags you out to sea."
+      "deathText": "You crouch for the sextant as the tide surges. A rogue wave crashes over the coral barrier — a wall of green water that hammers you into the wreckage. The sextant spins wildly in the foam as the undertow drags you out to sea."
     },
     "golden-locket": {
       "name": "Golden Locket",
@@ -288,13 +288,13 @@
       "hazardItem": true,
       "deathText": "You reach for the pearl as a roar echoes from the darkness upstream. The river swells, a flash flood from the mountain above filling the cave in seconds. The pearl glows serenely beneath the churning water as the current pins you against the cave wall."
     },
-    "ruby-idol": {
-      "name": "Ruby-Eyed Idol",
-      "description": "A small stone idol with eyes of deep red ruby. The craftsmanship is extraordinary — each scale, each claw, rendered in microscopic detail.",
-      "roomText": "A stone idol with glittering ruby eyes sits in an alcove in the wall, its craftsmanship exquisite, its gaze following you down the corridor.",
+    "jeweled-serpent-totem": {
+      "name": "Jeweled Serpent Totem",
+      "description": "A small stone totem of a coiled serpent with eyes of deep red ruby. The craftsmanship is extraordinary — each scale, each fang, rendered in microscopic detail.",
+      "roomText": "A stone serpent totem with glittering ruby eyes sits in an alcove in the wall, its craftsmanship exquisite, its gaze following you down the corridor.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You lift the idol from its alcove. A soft click beneath your fingers. A hiss from the wall. Poison darts — curare-tipped, ancient, lethal — pepper your body before you can blink. The ruby eyes watch impassively as you crumple."
+      "deathText": "You lift the totem from its alcove. A soft click beneath your fingers. A hiss from the wall. Poison darts — curare-tipped, ancient, lethal — pepper your body before you can blink. The ruby eyes watch impassively as you crumple."
     }
   },
   "puzzles": {
