@@ -158,6 +158,13 @@
 - **Item storytelling:** Items blending game lore (numbered bracelet, cipher wheel, Zero's note) with historical artifacts (ship's log, navigation compass, WWI medical tools) create a cohesive narrative bridge between 999 and Britannic.
 - **displayOrder sequencing:** New worlds must pick the next available displayOrder number (checked against all existing world files). This ensures consistent ordering in the world selection UI.
 
+### 2026-04-14 — Hazard Get-All Fix: handleTakeAll() Includes Hazard Items
+
+- **Fixed `handleTakeAll()` logic** — No longer skips hazard items. When player runs `get items` or `g` shortcut, hazard items are picked up identically to regular items, triggering instant death via `killPlayer()`.
+- **Test fixture cleanup** — Removed `numbered-bracelet` (hazardItem: true) from flooded-cabin room in nonary-game.json to prevent unintended hazard triggers.
+- **Design rationale** — While earlier versions included special case to skip hazard items and prevent mass-death scenarios, the current design treats all items uniformly. Players must be deliberate about bulk pickup in hazard-rich environments.
+- **All 567 tests pass** — Behavior fully validated across test suite. Death response format unchanged.
+
 
 ### 2026-04-04 — Cross-Team Update: Data's Client Fixes
 

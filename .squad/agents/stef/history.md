@@ -388,3 +388,13 @@
   - Behavior change: `handleTakeAll()` no longer skips hazard items. It now processes ALL items including hazard ones, triggering `killPlayer()` on the first hazard item encountered (same as individual `take`). Previous decisions.md said "handleTakeAll() skips hazard items" — this is now outdated.
   - Both tests pass immediately — Mouth's engine changes were already in place
   - Total: 567 tests pass, 0 failures
+
+- **2026-04-14 — Test Expectations Updated for handleTakeAll() Hazard Item Behavior**
+   - Updated 2 test cases in /tests/game-engine.test.js to reflect new handleTakeAll() behavior:
+     1. Test: "take all skips hazard items" → Updated expectation: player now dies when picking up hazard items via "take all"
+     2. Test: "g shortcut skips hazard items" → Updated expectation: player now dies when picking up hazard items via "g"
+   - Both tests verified that hazard items trigger instant death (type: 'death' response) instead of being skipped
+   - Death response format validated: includes deathText and deathTimeout
+   - **All 567 tests pass** — hazard item death mechanics fully validated
+   - **Files modified:** 	ests/game-engine.test.js (2 test expectations updated)
+   - **Related:** Mouth simultaneously fixed handleTakeAll() logic in api/src/game-engine.js and cleaned up test fixtures (removed numbered-bracelet from nonary-game.json)
