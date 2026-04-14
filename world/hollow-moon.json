@@ -185,7 +185,8 @@
       },
       "items": [
         "star-map",
-        "power-cell"
+        "power-cell",
+        "overloaded-conduit-node"
       ],
       "hazards": [
         {
@@ -296,9 +297,16 @@
       "name": "Alien Power Cell",
       "description": "A smooth, warm cylinder that pulses with blue light. It fits perfectly in your hand, as though designed for a human grip.",
       "roomText": "A cylindrical power cell pulses with blue light in a half-open console, its smooth surface humming with contained energy.",
+      "pickupText": "You pull the power cell free. It hums warmly in your grip, blue light pulsing in rhythm with the alien consoles around you. Whatever this technology is, this cell is its lifeblood.",
+      "portable": true
+    },
+    "overloaded-conduit-node": {
+      "name": "Overloaded Conduit Node",
+      "description": "A crystalline junction box trailing severed filaments, arcing with blue-white sparks. The alien circuitry inside is visibly overloaded, pulsing faster and faster.",
+      "roomText": "A crystalline junction box has come loose from the console array, trailing severed filaments that arc with blue-white sparks, its alien circuitry pulsing dangerously fast.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You pull the power cell free. Every console in the room erupts simultaneously — arcs of blue-white energy lance between them in a web of lethal current. Your suit becomes a conductor. The discharge stops your heart before the pain reaches your brain."
+      "deathText": "You pull the conduit node free. Every console in the room erupts simultaneously — arcs of blue-white energy lance between them in a web of lethal current. Your suit becomes a conductor. The discharge stops your heart before the pain reaches your brain."
     },
     "star-map": {
       "name": "Stellar Navigation Disc",

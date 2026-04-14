@@ -36,7 +36,7 @@
       "items": [
         "ancient-journal",
         "silver-key",
-        "leather-journal"
+        "whispering-grimoire"
       ],
       "hazards": [
         {
@@ -56,7 +56,7 @@
       "items": [
         "music-box",
         "family-photo",
-        "ivory-key"
+        "cursed-piano-hammer"
       ],
       "hazards": [
         {
@@ -96,7 +96,7 @@
       "items": [
         "rusted-cleaver",
         "brass-key",
-        "butchers-cleaver"
+        "cursed-carving-blade"
       ],
       "hazards": [
         {
@@ -146,7 +146,7 @@
       "items": [
         "ritual-dagger",
         "amulet-of-binding",
-        "pentagram-amulet"
+        "obsidian-pentacle"
       ],
       "hazards": [
         {
@@ -293,21 +293,21 @@
       "hazardItem": true,
       "deathText": "You reach up for the crystal pendant. The chandelier chain groans, then snaps with a scream of rusted metal. Crystal and iron descend in a glittering avalanche. The pendant is the last piece to fall, landing gently on the ruin it created."
     },
-    "leather-journal": {
-      "name": "Leather-Bound Journal",
-      "description": "A slim journal bound in butter-soft leather, its pages covered in elegant but frantic handwriting. The final entry is unfinished.",
-      "roomText": "A leather-bound journal lies open on the reading table, its pages ruffling in a breeze that doesn't exist, handwriting visible in elegant loops.",
+    "whispering-grimoire": {
+      "name": "Whispering Grimoire",
+      "description": "A slim tome bound in butter-soft leather, its pages covered in elegant but frantic handwriting. The text shifts when you look away, rearranging into symbols that weren't there before.",
+      "roomText": "A leather-bound grimoire lies open on the reading table, its pages ruffling in a breeze that doesn't exist, arcane symbols visible in elegant loops.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You pick up the journal and the whispers crescendo into screams. Books launch from shelves like missiles. Pages whirl in a cyclone of paper and binding. The journal opens to its final entry as the library buries you: \"It knows when you read—\""
+      "deathText": "You pick up the grimoire and the whispers crescendo into screams. Books launch from shelves like missiles. Pages whirl in a cyclone of paper and binding. The grimoire opens to its final page as the library buries you: \"It knows when you read—\""
     },
-    "ivory-key": {
-      "name": "Ivory Piano Key",
-      "description": "A single piano key of real ivory, pried loose but still warm. Press it and you hear the faintest echo of a melody — haunting, familiar, wrong.",
-      "roomText": "A single ivory key lies on the piano's music rest, separated from the keyboard, gleaming white against the dark wood.",
+    "cursed-piano-hammer": {
+      "name": "Cursed Piano Hammer",
+      "description": "A single piano hammer of polished wood and felt, pried loose from the mechanism. It vibrates faintly in your hand, as if still resonating with a note played long ago.",
+      "roomText": "A single piano hammer lies on the music rest, separated from the mechanism, its felt head pristine against the dark wood.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You press the ivory key between your fingers. The piano erupts into a frenzied symphony, keys hammering without hands, wires snapping like whips. The music builds to an impossible crescendo. Your ears bleed. Your heart tries to match the rhythm and fails. The last note hangs in the silence after."
+      "deathText": "You press the hammer between your fingers. The piano erupts into a frenzied symphony, hammers pounding without hands, wires snapping like whips. The music builds to an impossible crescendo. Your ears bleed. Your heart tries to match the rhythm and fails. The last note hangs in the silence after."
     },
     "silver-place-setting": {
       "name": "Silver Place Setting",
@@ -317,13 +317,13 @@
       "hazardItem": true,
       "deathText": "You reach for the silver and the thirteenth guest manifests — a woman in Victorian dress, her face a void of shadow. She smiles with teeth that aren't teeth. Cold hands close around your wrists. \"You've taken my seat,\" she whispers, and the candles die."
     },
-    "butchers-cleaver": {
-      "name": "Antique Cleaver",
-      "description": "A heavy cleaver with a bone handle, its blade still mirror-bright despite the dark stains that won't wash away.",
-      "roomText": "A bone-handled cleaver rests on the butcher's block, its blade inexplicably clean and bright in the gore-stained kitchen.",
+    "cursed-carving-blade": {
+      "name": "Cursed Carving Blade",
+      "description": "A heavy blade with a bone handle, its edge still mirror-bright despite the dark stains that won't wash away.",
+      "roomText": "A bone-handled blade rests on the butcher's block, its edge inexplicably clean and bright in the gore-stained kitchen.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You lift the cleaver and the ceiling opens. Dark blood cascades from above in a torrent — gallons, impossible gallons, hot and reeking of copper. It fills the kitchen to the ceiling in seconds. The cleaver slips from your fingers as the darkness rises over your head."
+      "deathText": "You lift the blade and the ceiling opens. Dark blood cascades from above in a torrent — gallons, impossible gallons, hot and reeking of copper. It fills the kitchen to the ceiling in seconds. The blade slips from your fingers as the darkness rises over your head."
     },
     "frozen-locket": {
       "name": "Frost-Encased Locket",
@@ -333,13 +333,13 @@
       "hazardItem": true,
       "deathText": "You pick up the locket and the meat locker door slams shut behind you. The bolt slides home with a final, mechanical click. The cold deepens, beyond freezing, beyond feeling. The locket's ice creeps up your fingers, your wrists, your arms. The photograph inside smiles at you as the frost reaches your heart."
     },
-    "pentagram-amulet": {
-      "name": "Obsidian Amulet",
-      "description": "An amulet of polished obsidian carved with a symbol you don't recognize but somehow understand. It pulls at something behind your sternum.",
-      "roomText": "An obsidian amulet lies at the center of the chalk circle, its carved symbol catching the pulsing light from the walls.",
+    "obsidian-pentacle": {
+      "name": "Obsidian Pentacle",
+      "description": "A disc of polished obsidian carved with a five-pointed symbol you don't recognize but somehow understand. It pulls at something behind your sternum.",
+      "roomText": "An obsidian pentacle lies at the center of the chalk circle, its carved symbol catching the pulsing light from the walls.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You lift the amulet and the pentagram erupts with black flame. Shadows coalesce into forms with too many limbs, too many mouths. Children's voices rise in a chant that was old when language was young. The amulet burns against your chest as the shadows pour into the space where your soul was."
+      "deathText": "You lift the pentacle and the pentagram erupts with black flame. Shadows coalesce into forms with too many limbs, too many mouths. Children's voices rise in a chant that was old when language was young. The pentacle burns against your chest as the shadows pour into the space where your soul was."
     },
     "orchid-bloom": {
       "name": "Midnight Orchid",

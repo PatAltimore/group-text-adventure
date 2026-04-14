@@ -100,7 +100,7 @@
       "items": [
         "radiation-badge",
         "strange-metal",
-        "meteorite-fragment"
+        "scorched-orbital-debris"
       ],
       "hazards": [
         {
@@ -150,7 +150,7 @@
         "west": "roswell-crash"
       },
       "items": [
-        "access-badge"
+        "classified-clearance-tag"
       ],
       "hazards": [
         {
@@ -335,13 +335,13 @@
       "hazardItem": true,
       "deathText": "You crack the seal on the specimen jar. Fifty years of trapped toxic gas rush out in a concentrated plume — chemicals that were illegal before the lab was abandoned. Your lungs fill with poison that tastes of formaldehyde and forgotten atrocities."
     },
-    "meteorite-fragment": {
-      "name": "Meteorite Fragment",
+    "scorched-orbital-debris": {
+      "name": "Scorched Orbital Debris",
       "description": "A chunk of metallic rock that's warm to the touch and faintly magnetic. It pulls toward the center of the landing site like a compass needle.",
-      "roomText": "A meteorite fragment sits at the scorched circle's edge, its metallic surface warm and faintly humming, pulling toward the center like a magnet.",
+      "roomText": "A piece of scorched orbital debris sits at the circle's edge, its metallic surface warm and faintly humming, pulling toward the center like a magnet.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You pick up the meteorite and the vibration spikes to a frequency that shatters glass and fillings alike. Equipment shorts out in a shower of sparks. The fragment grows hot — searingly, impossibly hot — as whatever left it here reaches out to reclaim its property."
+      "deathText": "You pick up the debris and the vibration spikes to a frequency that shatters glass and fillings alike. Equipment shorts out in a shower of sparks. The debris grows hot — searingly, impossibly hot — as whatever left it here reaches out to reclaim its property."
     },
     "gravity-sphere": {
       "name": "Gravity Sphere",
@@ -351,13 +351,13 @@
       "hazardItem": true,
       "deathText": "You grab the sphere and gravity inverts. You slam into the ceiling with bone-cracking force, then crash back to the floor as the field reverses. Up, down, sideways — the sphere pulls you in every direction, a ragdoll in the grip of physics gone mad."
     },
-    "access-badge": {
-      "name": "Security Badge",
-      "description": "A laminated security badge with a photo bleached blank by desert sun. The clearance level reads \"COSMIC\" in faded red letters.",
-      "roomText": "A security badge lies in the dust near the perimeter fence, its photo bleached blank but its \"COSMIC\" clearance still legible in faded red.",
+    "classified-clearance-tag": {
+      "name": "Classified Clearance Tag",
+      "description": "A laminated clearance tag with a photo bleached blank by desert sun. The classification reads \"COSMIC\" in faded red letters.",
+      "roomText": "A clearance tag lies in the dust near the perimeter fence, its photo bleached blank but its \"COSMIC\" classification still legible in faded red.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You reach for the badge and a red dot settles on your chest. The turret doesn't hesitate. Three rounds of high-velocity persuasion end the trespassing before your fingers close on the laminated plastic. The badge flutters in the muzzle blast, lands face-down."
+      "deathText": "You reach for the tag and a red dot settles on your chest. The turret doesn't hesitate. Three rounds of high-velocity persuasion end the trespassing before your fingers close on the laminated plastic. The tag flutters in the muzzle blast, lands face-down."
     },
     "depth-gauge": {
       "name": "Antique Depth Gauge",

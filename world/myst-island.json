@@ -49,7 +49,8 @@
       },
       "items": [
         "focusing-lens",
-        "pressure-gauge"
+        "pressure-gauge",
+        "hissing-steam-valve"
       ],
       "hazards": [
         {
@@ -215,9 +216,16 @@
       "name": "Ornate Pressure Gauge",
       "description": "A beautifully crafted brass pressure gauge with a crystal face. The needle trembles between green and red zones, as if deciding.",
       "roomText": "An ornate brass pressure gauge has come loose from the pipe array, its crystal face intact, needle trembling delicately.",
+      "pickupText": "You lift the gauge carefully from the pipe array. The needle steadies, settling into the green zone. The crystal face is warm to the touch — still functional after all this time.",
+      "portable": true
+    },
+    "hissing-steam-valve": {
+      "name": "Hissing Steam Valve",
+      "description": "A loose copper valve handle, still connected to the pipe by a thread. Steam whistles through the gap, hot and urgent. Turning it might seal the leak — or make it worse.",
+      "roomText": "A copper valve handle juts from a cracked pipe, steam hissing through the gap in sharp bursts, the metal glowing faintly with trapped heat.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You pull the gauge free and the pipe it sealed ruptures with explosive force. Superheated steam fills the lighthouse in seconds, cooking the air in your lungs. The gauge's needle swings hard into the red and stays there."
+      "deathText": "You wrench the valve free and the pipe ruptures with explosive force. Superheated steam fills the lighthouse in seconds, cooking the air in your lungs. The valve handle clatters to the floor, spinning in the white-hot mist."
     },
     "resonance-fork": {
       "name": "Resonance Fork",

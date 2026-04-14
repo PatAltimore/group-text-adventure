@@ -24,7 +24,8 @@
         "south": "digitization-bay"
       },
       "items": [
-        "data-fragment"
+        "data-fragment",
+        "glitching-power-surge"
       ],
       "hazards": [
         {
@@ -53,7 +54,8 @@
         "east": "game-grid-hub"
       },
       "items": [
-        "identity-disc"
+        "identity-disc",
+        "cracked-arena-visor"
       ],
       "hazards": [
         {
@@ -72,7 +74,7 @@
       "items": [
         "light-baton",
         "encryption-key",
-        "light-cycle-baton"
+        "overclocked-power-rod"
       ],
       "hazards": [
         {
@@ -90,7 +92,7 @@
         "south": "game-grid-hub"
       },
       "items": [
-        "admin-token"
+        "mcp-enforcement-badge"
       ],
       "hazards": [
         {
@@ -176,17 +178,31 @@
       "name": "Corrupted Data Fragment",
       "description": "A shard of crystallized data, its surface rippling with cascading code. The information it contains flickers between readable and alien.",
       "roomText": "A shard of crystallized data hovers at the bridge's edge, its surface alive with cascading code, flickering between beautiful patterns and corrupted noise.",
+      "pickupText": "You carefully extract the data fragment from the stream's edge. Code cascades across your HUD as the fragment syncs — vulnerability data, buffer addresses, exploit vectors. Exactly what you need.",
+      "portable": true
+    },
+    "glitching-power-surge": {
+      "name": "Glitching Power Surge",
+      "description": "A roiling sphere of unstable energy, crackling with arcs of white-hot code. It pulses like a heartbeat, each beat brighter and more erratic than the last.",
+      "roomText": "A sphere of volatile energy hovers at the stream's edge, arcs of white-hot code crackling across its surface, each pulse brighter and more unstable than the last.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You snatch the data fragment from the stream's edge. A massive data packet — a corrupted system dump the size of a building — screams out of the torrent and hits you like a freight train. Your code scatters across the stream in a million glittering fragments."
+      "deathText": "You reach for the power surge and raw energy detonates through your code. Every subroutine overloads simultaneously — a cascading failure that rewrites your base functions into garbage data. Your render dissolves into static, scattered across the data stream like interference on a dead channel."
     },
     "identity-disc": {
       "name": "Identity Disc",
       "description": "A sleek combat disc with a glowing edge, lighter than it looks. Your reflection in its surface shows a version of you rendered in light and code.",
       "roomText": "An identity disc lies at the arena's center, its edge glowing a soft white, humming with the memory of a thousand deresolutions.",
+      "pickupText": "You lift the identity disc from the arena floor. It hums as it interfaces with your code — borrowed credentials flooding your HUD. For all the Grid knows, you're now an authorized combat program.",
+      "portable": true
+    },
+    "cracked-arena-visor": {
+      "name": "Cracked Arena Visor",
+      "description": "A sleek combat visor, its lens webbed with fractures that glow faint orange. The heads-up display still flickers with targeting data from a fight that ended badly.",
+      "roomText": "A cracked combat visor lies near the arena's edge, its fractured lens still flickering with targeting data, orange light pulsing through the damage.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You reach for the identity disc. A rogue combat disc screams out of your blind spot — a streak of orange light that catches you across the midsection. Your code splits. Voxels scatter. The identity disc rolls to a stop beside what's left of your render."
+      "deathText": "You slide the visor over your eyes and the cracked display floods your vision with corrupted targeting data. Your HUD screams conflicting warnings. Blinded by static, you never see the rogue combat disc — a streak of orange light that finds its mark before you can tear the visor away."
     },
     "light-baton": {
       "name": "Light Baton",
@@ -230,21 +246,21 @@
       "pickupText": "You pick up Flynn's journal and scroll through the entries. Years of isolation, documented in increasingly erratic handwriting. But the tactical data is solid: tower locations, patrol routes, the firewall's weakness. Flynn mapped everything. He just ran out of time.",
       "portable": true
     },
-    "light-cycle-baton": {
-      "name": "Light Cycle Baton",
-      "description": "A slender baton that pulses with blue energy — a dormant light cycle, compressed into a handle. The power thrums against your palm.",
-      "roomText": "A light cycle baton lies on the track surface, pulsing with dormant blue energy, waiting for a hand to activate its compressed fury.",
+    "overclocked-power-rod": {
+      "name": "Overclocked Power Rod",
+      "description": "A slender rod that pulses with unstable blue energy — overclocked beyond safe limits, its core vibrating with barely contained force.",
+      "roomText": "An overclocked power rod lies on the track surface, pulsing with erratic blue energy, its core vibrating dangerously as if about to blow.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You grab the baton and step left to dodge a blue energy trail. You walk straight into an orange wall materializing at light speed. The impact is instantaneous — your program derezzes on contact, code scattering across the track like shattered glass."
+      "deathText": "You grab the rod and step left to dodge a blue energy trail. You walk straight into an orange wall materializing at light speed. The impact is instantaneous — your program derezzes on contact, code scattering across the track like shattered glass."
     },
-    "admin-token": {
-      "name": "Admin Access Token",
-      "description": "A small hexagonal token pulsing with golden light — admin-level access privileges encoded in its crystalline matrix.",
-      "roomText": "A hexagonal token pulses with golden light near the scanner array, its admin-level access privileges flickering like an invitation.",
+    "mcp-enforcement-badge": {
+      "name": "MCP Enforcement Badge",
+      "description": "A hexagonal badge pulsing with crimson light — MCP enforcement credentials encoded in its crystalline matrix. It marks the bearer as one of the Master Control Program's own.",
+      "roomText": "A hexagonal badge pulses with crimson light near the scanner array, its MCP enforcement credentials flickering like an invitation.",
       "portable": true,
       "hazardItem": true,
-      "deathText": "You reach for the token and a scanner locks onto your unauthorized code signature. It floods your system with purge protocols — rewriting your base code, overwriting your identity. The token's golden light is the last thing your fading consciousness processes."
+      "deathText": "You reach for the badge and a scanner locks onto your unauthorized code signature. It floods your system with purge protocols — rewriting your base code, overwriting your identity. The badge's crimson light is the last thing your fading consciousness processes."
     },
     "nav-module": {
       "name": "Navigation Module",
