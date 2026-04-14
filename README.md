@@ -40,16 +40,16 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 | Command | Syntax | Example |
 |---------|--------|---------|
 | **Go** | `go <direction>` or shortcut `<n/s/e/w>` | `go north` or `n` |
-| **Look** | `look` or `look <item>` | `look` or `look torch` |
+| **Look** | `look`,  `look <item>`, or `l` | `look` or `look torch` |
 | **Examine** | `examine <item>` | `examine torch` |
-| **Get** | `get <item>` or `get items` or `g` | `get torch` or `get items` or `g` |
+| **Get** | `get <item>` or `get items` - Get all items including hazardous items. | `get torch` or `get items` or `g` |
 | **Drop** | `drop <item>` | `drop torch` |
 | **Inventory** | `inventory` or `i` | `i` |
 | **Use** | `use <item>` | `use key` |
 | **Give** | `give <item> to <player>` | `give key to Alice` |
 | **Say** | `say <message>` | `say Help me with the puzzle!` |
-| **Map** | `map` | `map` |
-| **Help** | `help` | `help` |
+| **Map** | `map` | `map`  or `m` |
+| **Help** | `help` | `help` or `h` |
 
 ### Partial Name Matching
 
@@ -290,7 +290,7 @@ chmod +x deploy/deploy.sh
 
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
-| `AppName` / `--app-name` | Yes | — | Base name for resources (3–12 alphanumeric, starts with letter) |
+| `AppName` / `--app-name` | Yes | — | Base name for resources (3-12 alphanumeric, starts with letter) |
 | `Location` / `--location` | No | `westus2` | Azure region |
 | `ResourceGroup` / `--resource-group` | No | `rg-text-adventure` | Resource group name |
 
