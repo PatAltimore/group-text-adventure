@@ -737,6 +737,135 @@ These bugs could have been caught by comprehensive automated tests. The test sui
 - **Reference:** `/tests/shadows-over-blackwater.test.js` (21 tests)
 - **Template:** Use `describe()` blocks for logical grouping, load world once for all tests
 
+### World Creation Best Practices — Shadows Over Blackwater
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-11
+
+#### What
+
+Established critical best practices for world JSON file creation following bugs Pat reported in existing worlds.
+
+#### Key Decisions
+
+1. **Multiple Goals Must Be Explicitly Declared** — Every puzzle that represents a player goal MUST have `isGoal: true` and `goalName`. The game engine uses `isGoal` as an authoritative flag to track progress and display goals.
+
+2. **Portable Items Must Be Flagged** — Every item players should be able to pick up MUST have `portable: true`. Items that are scenery/fixtures should have `portable: false` or omit the field (defaults to false).
+
+3. **File Size Limit** — Azure Table Storage has a 30KB entity size limit. Keep world files under this limit by using concise but atmospheric descriptions and avoiding redundant text.
+
+4. **Validation Before Deployment** — Always run validation before committing world files using `validate-world.js`. Zero errors required.
+
+#### Rationale
+
+Pat reported:
+- "Only showing 1 goal but there are multiple puzzle rooms" → puzzles missing `isGoal: true`
+- "Couldn't pick up the Ivory Letter Opener" → item missing `portable: true`
+
+These represent data integrity issues in world files that compound when new worlds are created without proper validation.
+
+#### Impact
+
+- **Future world files** must follow these practices
+- **Reference:** `world/shadows-over-blackwater.json` as template (14 rooms, 17 portable items, 4 goals, 28.98KB)
+- **Template:** Use `validate-world.js` before committing
+- All 570 tests pass
+
+### Hazard Item Inconsistency Audit
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-14
+
+#### What
+
+Comprehensive audit of all 15 world JSON files revealed **18 hazard item inconsistencies** across 7 worlds affecting gameplay progression and safety.
+
+#### Key Findings
+
+**Blocking Issues (4):** Puzzle-required items marked as `hazardItem: true`, making puzzles unsolvable:
+- tron-grid.json: "Corrupted Data Fragment" and "Identity Disc" block puzzle progression
+- hollow-moon.json: "Alien Power Cell" blocks late-game power-up
+- myst-island.json: "Ornate Pressure Gauge" blocks tidal cave progression
+
+**Same-Room Name Collisions (7):** Hazard and safe items in same room with confusing similar names:
+- tron-grid.json: "Light Cycle Baton" (hazard) vs "Light Baton" (safe) — nearly identical
+- mystery-house.json: Multiple journal, cleaver, amulet collisions
+- egyptian-pyramid.json: Golden item naming conflicts
+- nonary-game.json: Surgical item naming conflicts
+- paranormal-mysteries.json: Fragment naming collision
+
+**Cross-Room Collisions (7+):** Duplicate hazard names across different worlds creating player confusion.
+
+#### Impact
+
+- 4 puzzles with unsolvable states due to hazard item design flaw
+- High risk of player deaths due to name confusion
+- Affects 3 worlds (tron-grid, mystery-house, egyptian-pyramid) most severely
+
+#### Status
+
+Audit completed. Findings documented for fix phase.
+
+### Hazard Item Inconsistency Fixes
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-14
+
+#### What
+
+Fixed all 18 hazard item inconsistencies identified in the audit across 7 world JSON files.
+
+#### Changes Applied
+
+**Blocking Fixes (4):** Removed `hazardItem: true` and `deathText` from puzzle-required items, added `pickupText`, created new hazard items in affected rooms:
+- tron-grid.json: data-fragment → safe, glitching-power-surge (new hazard)
+- tron-grid.json: identity-disc → safe, cracked-arena-visor (new hazard)
+- hollow-moon.json: power-cell → safe, overloaded-conduit-node (new hazard)
+- myst-island.json: pressure-gauge → safe, hissing-steam-valve (new hazard)
+
+**Same-Room Renames (7):** Hazard items renamed to avoid keyword overlaps with safe items in same room
+- "Light Cycle Baton" → "Overclocked Power Rod"
+- "Leather-Bound Journal" → "Whispering Grimoire"
+- "Antique Cleaver" → "Cursed Carving Blade"
+- "Obsidian Amulet" → "Obsidian Pentacle"
+- "Golden Censer" → "Embalming Thurible"
+- "Silver Surgical Scissors" → "Gleaming Dissection Shears"
+- "Meteorite Fragment" → "Scorched Orbital Debris"
+
+**Cross-Room Renames (8):** Hazard items renamed to use entirely different root words, preventing cross-room confusion
+- "Admin Access Token" → "MCP Enforcement Badge"
+- "Security Badge" → "Classified Clearance Tag"
+- "Golden Scarab Pendant" → "Lapis Serpent Brooch"
+- "Jeweled Ankh" → "Obsidian Crux"
+- "Golden Lotus Flower" → "Alabaster Chalice"
+- "Ivory Piano Key" → "Cursed Piano Hammer"
+- "Barnacle-Encrusted Compass" → "Salt-Corroded Sextant"
+- "Ruby-Eyed Idol" → "Jeweled Serpent Totem"
+
+#### Design Principles
+
+1. Only hazard items modified — no safe items, puzzle items, or game logic changed
+2. New hazard names avoid all keyword overlap with nearby safe items
+3. Thematic consistency maintained for each world
+4. New hazard items remain tempting/valuable-sounding to preserve "looks good but kills you" design
+
+#### Verification
+
+- All 8 modified world files pass `validate-world.js`
+- All 570 tests pass
+- No changes to game engine, puzzle logic, or room connectivity
+- Feature branch: `feature/hazard-item-death` committed and pushed
+
+#### Impact
+
+- Tron Grid world is now fully solvable
+- Hollow Moon world progression unblocked
+- Myst Island world progression unblocked
+- Mystery House world is now safe to navigate
+- Egyptian Pyramid world naming hazards eliminated
+- Nonary Game and Paranormal Mysteries worlds secured against name confusion
+- Pirate Treasure world naming hazards eliminated
+
 ## Governance
 
 - All meaningful changes require team consensus

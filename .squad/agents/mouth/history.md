@@ -46,6 +46,24 @@
 
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
+### 2026-04-11 — Goal System Audit (All 15 Worlds)
+
+- **Goal system mechanics:** `totalGoals` computed at session start from `isGoal === true` puzzles (game-engine.js:232). `goalComplete` broadcasts ASCII art to all players. `victoryComplete` fires when `goalsCompleted === totalGoals`.
+- **Systemic inconsistency:** `isGoal` marking is inconsistent across worlds. TRON Grid is 100% (model world), Pirate Treasure is 17% (only 1 goal for 6 puzzles). Many openExit puzzles on critical paths are unmarked.
+- **Pat's bug confirmed:** hollow-moon `unlock-cargo-bay` has `isGoal: false` but opens the entire mid-game section. Must be changed to true.
+- **Critical find:** true-crime `solve-the-murder` (the FINAL puzzle) is missing `isGoal` entirely.
+- **Guiding principle:** openExit puzzles on the critical path should be goals. removeHazard and intermediate addItem puzzles are utility (non-goals).
+- **Audit report:** Written to `.squad/decisions/inbox/mouth-goal-audit.md` with per-world tables, priority tiers (🔴/🟡/🟢), and specific recommendations.
+- **Key files:** All 15 world JSONs in `world/`, goal logic in `api/src/game-engine.js` lines 232, 1076-1097.
+
+### 2026-04-11 — Goal Fixes Applied (22 puzzles across 12 worlds)
+
+- **Applied all fixes** from the audit report: 22 puzzles updated with `isGoal: true` and descriptive `goalName` values across 12 world files.
+- **Biggest improvement:** Pirate Treasure went from 1/6 goals (17%) to 5/6 (83%). Players now get progression banners throughout the adventure.
+- **Two puzzles already correct:** true-crime `solve-the-murder` and `establish-probable-cause` were already properly marked — no changes needed.
+- **Validation:** All 12 files pass `validate-world.js`. Full test suite: 8/8 suites, 569/569 tests passed.
+- **Decision file:** `.squad/decisions/inbox/mouth-goal-fixes.md` with full change table.
+
 ### 2026-04-04 — Cross-Team: Data's Share Button + QR Overlay
 
 **From Data (Frontend Dev):**
@@ -1085,3 +1103,45 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 - **Impact:** Rooms with hazards now maintain their danger consistently across multiple deaths. Strategic depth: players must learn hazard locations, can coordinate avoidance with multiplayer teammates.
 - **Tests:** All 569 tests passing. Multiplayer scenarios verified working correctly.
 - **Related decisions:** Completes hazard redesign pattern (probability → item-pickup → persistence).
+
+### 2026-04-14 — Hazard Item Audit: World File Inconsistencies
+
+- **Audit scope:** All 15 world JSON files checked for hazard item vs puzzle/naming conflicts.
+- **4 blocking issues found:** Puzzles in `tron-grid.json` (2: `data-fragment`, `identity-disc`), `hollow-moon.json` (1: `power-cell`), and `myst-island.json` (1: `pressure-gauge`) have `requiredItem` pointing to a hazard item. Since hazard items kill on pickup and never enter inventory, these puzzles are unsolvable.
+- **7 same-room naming collisions:** Hazard and safe items in the same room with overlapping names (worst: tron-grid's "Light Cycle Baton" vs "Light Baton" in the same room). Players will likely grab the wrong one.
+- **Cross-room naming issues:** paranormal-mysteries has hazard "Security Badge" and safe "Level 4 Security Badge" (near-identical names). egyptian-pyramid has multiple "golden"/"scarab"/"ankh" overlaps. mystery-house has hazard "Ivory Piano Key" near three safe keys.
+- **Key learning:** When adding hazard items to worlds, always cross-reference against `puzzles[].requiredItem` values AND check for name similarity with items in the same room.
+- **Findings filed:** `.squad/decisions/inbox/mouth-hazard-audit-findings.md`
+
+### 2026-04-14 — Hazard Item Inconsistency Fixes (18 changes across 7 worlds)
+
+**Task:** Fix all hazard item inconsistencies found in the audit — 4 blocking puzzle issues, 7 same-room name collisions, 5 cross-room name collisions.
+
+**Category 1 — Blocking puzzle fixes (4):** Removed `hazardItem: true` and `deathText` from puzzle-required items, made them normal pickups with `pickupText`. Created new replacement hazard items in the same rooms:
+- `tron-grid.json`: `data-fragment` → normal item; added `glitching-power-surge` hazard to data-stream
+- `tron-grid.json`: `identity-disc` → normal item; added `cracked-arena-visor` hazard to disc-arena
+- `hollow-moon.json`: `power-cell` → normal item; added `overloaded-conduit-node` hazard to control-room
+- `myst-island.json`: `pressure-gauge` → normal item; added `hissing-steam-valve` hazard to lighthouse-interior
+
+**Category 2 — Same-room name collision renames (7):** Renamed hazard items to avoid keyword overlap with safe items in the same room:
+- `tron-grid.json`: "Light Cycle Baton" → "Overclocked Power Rod" (`overclocked-power-rod`)
+- `mystery-house.json`: "Leather-Bound Journal" → "Whispering Grimoire" (`whispering-grimoire`)
+- `mystery-house.json`: "Antique Cleaver" → "Cursed Carving Blade" (`cursed-carving-blade`)
+- `mystery-house.json`: "Obsidian Amulet" → "Obsidian Pentacle" (`obsidian-pentacle`)
+- `egyptian-pyramid.json`: "Golden Censer" → "Embalming Thurible" (`embalming-thurible`)
+- `nonary-game.json`: "Silver Surgical Scissors" → "Gleaming Dissection Shears" (`dissection-shears`)
+- `paranormal-mysteries.json`: "Meteorite Fragment" → "Scorched Orbital Debris" (`scorched-orbital-debris`)
+
+**Category 3 — Cross-room name collision renames (7):** Renamed hazard items to reduce confusion:
+- `tron-grid.json`: "Admin Access Token" → "MCP Enforcement Badge" (`mcp-enforcement-badge`)
+- `paranormal-mysteries.json`: "Security Badge" → "Classified Clearance Tag" (`classified-clearance-tag`)
+- `egyptian-pyramid.json`: "Golden Scarab Pendant" → "Lapis Serpent Brooch" (`lapis-serpent-brooch`)
+- `egyptian-pyramid.json`: "Jeweled Ankh" → "Obsidian Crux" (`obsidian-crux`)
+- `egyptian-pyramid.json`: "Golden Lotus Flower" → "Alabaster Chalice" (`alabaster-chalice`)
+- `mystery-house.json`: "Ivory Piano Key" → "Cursed Piano Hammer" (`cursed-piano-hammer`)
+- `pirate-treasure.json`: "Barnacle-Encrusted Compass" → "Salt-Corroded Sextant" (`corroded-sextant`)
+- `pirate-treasure.json`: "Ruby-Eyed Idol" → "Jeweled Serpent Totem" (`jeweled-serpent-totem`)
+
+**Validation:** All 8 modified world files pass `validate-world.js`. All 569 tests pass (1 skipped).
+
+**Key learning:** When creating hazard items, always verify the item ID is NOT referenced by any puzzle's `requiredItem`, and always verify the item name doesn't share key words with other items in the same room or semantically similar items elsewhere in the world.

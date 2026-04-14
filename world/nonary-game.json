@@ -392,8 +392,8 @@
       "requiredItem": "cipher-wheel",
       "hintText": "Nine tumblers need nine numbers. The cipher wheel shows nines in every position. Is that the answer, or is it pointing you toward the pattern?",
       "solvedText": "You study the cipher wheel's alignment: the number 9 appears in every position around the disk. Nine nines? No — that's too simple. Then you notice the inner disk is offset by one position. Starting from 1 and using the digital root pattern... You set the tumblers to 1-2-3-4-5-6-7-8-9. The lock clicks. The hatch unseals with a hiss of equalized pressure. A ladder descends into darkness.",
-      "isGoal": false,
-      "goalName": "Open Chapel Access",
+      "isGoal": true,
+      "goalName": "Access the Chapel",
       "action": {
         "type": "openExit",
         "direction": "south",

@@ -271,6 +271,8 @@
       "requiredItem": "forensic-report",
       "hintText": "Dr. Vasquez's report identifies designer fibers exclusive to Helena Crane's preferred boutique. If the matching garment exists, it would be in her private quarters — the master bedroom, east of the foyer.",
       "solvedText": "You cross-reference the fiber analysis with the boutique's records on your phone. A match — the fibers come from a crimson silk robe sold exclusively to Helena Crane. You push past the crime scene tape and force the locked east door. The master bedroom opens before you, thick with jasmine perfume and hidden truths.",
+      "isGoal": true,
+      "goalName": "Trace the Evidence Trail",
       "action": {
         "type": "openExit",
         "direction": "east",

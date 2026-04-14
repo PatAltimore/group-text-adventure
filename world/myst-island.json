@@ -308,6 +308,8 @@
       "requiredItem": "pressure-gauge",
       "hintText": "The pressure gauge shows optimal drainage conditions. Turn the valve when the gauge reads zero to avoid catastrophic flooding.",
       "solvedText": "Using the pressure gauge to time it perfectly, you spin the valve wheel. Water gurgles and rushes through hidden channels. The flooded passage drains, revealing stairs leading down to the underground reservoir.",
+      "isGoal": true,
+      "goalName": "Drain the Tidal Cave",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -320,6 +322,8 @@
       "requiredItem": "bronze-key",
       "hintText": "The key must be inserted and rotated in the pattern shown by the wave decorations — mimicking the tides.",
       "solvedText": "You insert the bronze key and rotate it in a flowing pattern. Mechanisms click and whir behind the door. With a hiss of equalized pressure, it swings open, revealing the crystal chamber beyond.",
+      "isGoal": true,
+      "goalName": "Unlock the Crystal Chamber",
       "action": {
         "type": "openExit",
         "direction": "east",
@@ -346,6 +350,8 @@
       "requiredItem": "ancient-journal",
       "hintText": "The journal contains a diagram showing the correct switch sequence based on tide levels and energy flow.",
       "solvedText": "Following the journal's schematic, you activate the switches in sequence: blue, green, amber, red, white. Water rushes through the pipes with increasing pressure. Somewhere above, machinery grinds to life. A previously hidden passage opens in the northern wall.",
+      "isGoal": true,
+      "goalName": "Access the Gear Chamber",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -382,6 +388,8 @@
       "requiredItem": "gear-schematic",
       "hintText": "The schematic shows safe climbing routes through the catwalks. Follow the paths marked in red.",
       "solvedText": "Following the red-marked routes on the gear schematic, you navigate the catwalks with confidence. Each turn and handhold is exactly where the diagram shows. You reach the control platform safely.",
+      "isGoal": true,
+      "goalName": "Reach the Control Platform",
       "action": {
         "type": "openExit",
         "direction": "north",

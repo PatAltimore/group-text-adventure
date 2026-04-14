@@ -383,6 +383,8 @@
       "requiredItem": "alien-artifact",
       "hintText": "The archway’s symbols mirror the artifact’s facets — crystal and stone, shaped to fit together.",
       "solvedText": "You press the artifact into the depression. Symbols flare — white, blue, violet. Space buckles. The archway shimmers and its view shifts: no longer rock, but the interior of an alien vessel. The path west is open.",
+      "isGoal": true,
+      "goalName": "Unlock the Alien Archway",
       "action": {
         "type": "openExit",
         "direction": "west",
@@ -427,7 +429,9 @@
         "type": "openExit",
         "direction": "south",
         "targetRoom": "underground-chamber"
-      }
+      },
+      "isGoal": true,
+      "goalName": "Open the Specimen Vault"
     },
     "stabilize-bermuda-station": {
       "room": "bermuda-monitoring",

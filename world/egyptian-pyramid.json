@@ -334,6 +334,8 @@
       "requiredItem": "eye-of-horus",
       "hintText": "The slot is shaped like an eye. The Eye of Horus grants true sight — it might reveal what the stars are hiding.",
       "solvedText": "You press the Eye of Horus into the slot. The obsidian drinks the starlight, then erupts — projecting a web of constellations across the floor in lines of cold fire. Where the beams converge, a hidden compartment splits open in the obsidian, revealing the Scepter of Ra — golden, radiant, humming with the authority of a god.",
+      "isGoal": true,
+      "goalName": "Reveal the Scepter of Ra",
       "action": {
         "type": "addItem",
         "room": "star-chamber",

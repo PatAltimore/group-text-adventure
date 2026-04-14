@@ -254,6 +254,8 @@
       "requiredItem": "welcome-note",
       "hintText": "The combination lock needs four digits. Have you checked the back of everything you've picked up?",
       "solvedText": "4-7-1-9. The tumblers fall with four satisfying clicks. The velvet rope slithers to the marble floor, and the grand staircase yawns open to the north — dusty, dark, and waiting.",
+      "isGoal": true,
+      "goalName": "Unlock the Second Floor",
       "action": {
         "type": "openExit",
         "direction": "north",
