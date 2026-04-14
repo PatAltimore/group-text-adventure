@@ -365,6 +365,8 @@
       "requiredItem": "silver-key",
       "hintText": "The silver padlock is engraved with delicate roses — the same motif you’ve seen on certain keepsakes throughout this house. Someone clearly valued this symbol.",
       "solvedText": "The silver key turns smoothly in the padlock. The lock falls open with a musical click. The door swings wide, revealing stairs descending to a greenhouse passage. Warm air rises from below, carrying the scent of earth and growing things. Strange, for such a dead house.",
+      "isGoal": true,
+      "goalName": "Open the Greenhouse",
       "action": {
         "type": "openExit",
         "direction": "south",
@@ -395,7 +397,9 @@
         "type": "openExit",
         "direction": "north",
         "targetRoom": "hidden-study"
-      }
+      },
+      "isGoal": true,
+      "goalName": "Reveal the Hidden Study"
     },
     "pacify-conservatory": {
       "room": "conservatory",

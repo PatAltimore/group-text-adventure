@@ -456,8 +456,8 @@
       "requiredItem": "spirit-box",
       "hintText": "Sometimes the dead know things the living don't. Ask the spirits how to access the lighthouse.",
       "solvedText": "You activate the spirit box in the pharmacy. Static washes over you, then words emerge: 'CLIMB' ... 'PUSH' ... 'HATCH' ... 'UNLOCKED.' The spirits are guiding you. You climb the ladder and push — the hatch swings open easily, never truly locked. The lighthouse keeper's quarters await above.",
-      "isGoal": false,
-      "goalName": "",
+      "isGoal": true,
+      "goalName": "Access the Lighthouse",
       "action": {
         "type": "openExit",
         "direction": "north",

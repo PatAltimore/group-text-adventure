@@ -278,6 +278,8 @@
       "requiredItem": "welding-tool",
       "hintText": "The panel is marked 'ELECTRICAL FAULT'. The wiring is burnt through — you need something that can fuse metal to bridge the gap.",
       "solvedText": "You press the welding tool's tip to the ruptured wiring. Sparks shower the deck as plasma bridges the gap, and the panel chirps green. The bulkhead groans, unseals, and grinds open to reveal the crew quarters to the north. Stale air rolls out to meet you.",
+      "isGoal": true,
+      "goalName": "Access the Crew Quarters",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -290,6 +292,8 @@
       "requiredItem": "circuit-board",
       "hintText": "The cargo terminal has an empty circuit slot. A matching board — maybe from a maintenance area — could bring the mag-locks back online.",
       "solvedText": "You slot the circuit board into the terminal. The screen sputters to life: 'MAG-LOCK OVERRIDE: ENGAGED.' Above you, the groaning stops. The container locks down with a deep, solid CLUNK that echoes through the hold. Something small clatters to the deck from between the containers — an authorization chip, shaken loose after months wedged in the gap.",
+      "isGoal": true,
+      "goalName": "Secure the Auth Chip",
       "action": {
         "type": "addItem",
         "room": "cargo-hold",

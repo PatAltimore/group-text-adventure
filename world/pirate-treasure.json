@@ -304,6 +304,8 @@
       "requiredItem": "torn-map",
       "hintText": "The map fragment shows a path south to a hidden cove. Study the coastline — the entrance is concealed behind the coral outcrops.",
       "solvedText": "You hold the map against the horizon, lining up the drawn coastline with the real one. There — between the two tallest coral spires, a gap you'd never see without knowing where to look. A narrow channel of calm water leads south to a crescent of white sand. The hidden cove, exactly where Blackwood marked it. You wade through the channel, map held high, and emerge onto pristine sand untouched by any foot in centuries.",
+      "isGoal": true,
+      "goalName": "Discover the Hidden Cove",
       "action": {
         "type": "openExit",
         "direction": "south",
@@ -316,6 +318,8 @@
       "requiredItem": "captains-journal",
       "hintText": "Blackwood's journal describes a hidden lever behind one of the cannons that clears the blocked eastern passage. Check the fort's cannon emplacements.",
       "solvedText": "You count the cannons along the battlements — one, two, three. Behind the third, half-hidden by vines, a rusted iron lever juts from the wall. You heave it down with both hands. Gears grind somewhere deep in the stone. The rubble in the east wall shudders, then slides aside on ancient counterweights, revealing a narrow staircase spiraling upward to the lookout tower. Blackwood's engineering — brutal, effective, and still working after three hundred years.",
+      "isGoal": true,
+      "goalName": "Reach the Lookout Tower",
       "action": {
         "type": "openExit",
         "direction": "east",
@@ -340,6 +344,8 @@
       "requiredItem": "rusty-shovel",
       "hintText": "The skeleton is pointing at something. The captain's journal mentioned digging 'where the dead man points.' Look at the ground beneath the skeleton's outstretched hand.",
       "solvedText": "You drive the shovel into the mud beneath the skeleton's pointing hand. It hits something solid two feet down — not rock. Metal. You dig furiously, black mud flying, until your fingers close around cold iron. A key. An ornate, skull-shaped key, wrapped in oilcloth that has somehow resisted three centuries of swamp water. The vault key. Blackwood buried it here, marked it with a dead man's finger, and trusted that only someone smart enough to read his journal would find it.",
+      "isGoal": true,
+      "goalName": "Unearth the Vault Key",
       "action": {
         "type": "addItem",
         "room": "mangrove-swamp",
@@ -352,6 +358,8 @@
       "requiredItem": "oil-lantern",
       "hintText": "The darkness inside is absolute. You need a reliable light source — something that can burn for hours and survive the damp cave air.",
       "solvedText": "You strike the lantern's flint. Once, twice — on the third strike, the wick catches, and golden light floods the cave entrance. The shadows retreat, revealing a passage descending into the hillside, its walls glistening with moisture. The carved skull above seems to shift expression in the flickering light — from warning to invitation. You raise the lantern high and step into the mountain's throat. The darkness gives way, grudgingly, one step at a time.",
+      "isGoal": true,
+      "goalName": "Illuminate the Skull Cave",
       "action": {
         "type": "openExit",
         "direction": "south",

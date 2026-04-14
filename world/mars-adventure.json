@@ -377,6 +377,8 @@
       "requiredItem": "uv-scanner",
       "hintText": "So many alien objects, but only one fits the plinth. A UV scanner could reveal fluorescence patterns that match the indentation.",
       "solvedText": "You sweep the UV scanner across the alcoves. Most objects show faint mineral fluorescence, but one — a multifaceted crystal hidden behind a metallic sphere — blazes with intense ultraviolet luminescence. The fluorescence pattern exactly matches the indentation in the plinth. You reach behind the sphere and extract the crystal key.",
+      "isGoal": true,
+      "goalName": "Discover the Crystal Key",
       "action": {
         "type": "addItem",
         "room": "artifact-chamber",

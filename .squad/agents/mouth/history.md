@@ -46,6 +46,24 @@
 
 <!-- Append new learnings below. Each entry is something lasting about the project. -->
 
+### 2026-04-11 — Goal System Audit (All 15 Worlds)
+
+- **Goal system mechanics:** `totalGoals` computed at session start from `isGoal === true` puzzles (game-engine.js:232). `goalComplete` broadcasts ASCII art to all players. `victoryComplete` fires when `goalsCompleted === totalGoals`.
+- **Systemic inconsistency:** `isGoal` marking is inconsistent across worlds. TRON Grid is 100% (model world), Pirate Treasure is 17% (only 1 goal for 6 puzzles). Many openExit puzzles on critical paths are unmarked.
+- **Pat's bug confirmed:** hollow-moon `unlock-cargo-bay` has `isGoal: false` but opens the entire mid-game section. Must be changed to true.
+- **Critical find:** true-crime `solve-the-murder` (the FINAL puzzle) is missing `isGoal` entirely.
+- **Guiding principle:** openExit puzzles on the critical path should be goals. removeHazard and intermediate addItem puzzles are utility (non-goals).
+- **Audit report:** Written to `.squad/decisions/inbox/mouth-goal-audit.md` with per-world tables, priority tiers (🔴/🟡/🟢), and specific recommendations.
+- **Key files:** All 15 world JSONs in `world/`, goal logic in `api/src/game-engine.js` lines 232, 1076-1097.
+
+### 2026-04-11 — Goal Fixes Applied (22 puzzles across 12 worlds)
+
+- **Applied all fixes** from the audit report: 22 puzzles updated with `isGoal: true` and descriptive `goalName` values across 12 world files.
+- **Biggest improvement:** Pirate Treasure went from 1/6 goals (17%) to 5/6 (83%). Players now get progression banners throughout the adventure.
+- **Two puzzles already correct:** true-crime `solve-the-murder` and `establish-probable-cause` were already properly marked — no changes needed.
+- **Validation:** All 12 files pass `validate-world.js`. Full test suite: 8/8 suites, 569/569 tests passed.
+- **Decision file:** `.squad/decisions/inbox/mouth-goal-fixes.md` with full change table.
+
 ### 2026-04-04 — Cross-Team: Data's Share Button + QR Overlay
 
 **From Data (Frontend Dev):**

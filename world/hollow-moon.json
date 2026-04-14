@@ -370,8 +370,8 @@
       "requiredItem": "access-card",
       "hintText": "The card reader expects a valid security badge. Standard colony credentials should work.",
       "solvedText": "You swipe the access card through the reader. It beeps twice, flashes green, and the security door hisses open, revealing the cavernous cargo bay beyond.",
-      "isGoal": false,
-      "goalName": "",
+      "isGoal": true,
+      "goalName": "Access the Cargo Bay",
       "action": {
         "type": "openExit",
         "direction": "west",
@@ -468,8 +468,8 @@
       "requiredItem": "crystal-key",
       "hintText": "The hexagonal indentations in the doorframe suggest a key of matching geometry. Something crystalline, perhaps, found deeper in these structures.",
       "solvedText": "You press the crystal key into the largest hexagonal indentation. It sinks flush and light races along the geometric patterns in the frame. The energy field flickers, thins, and dissolves. The circular doorway stands open, revealing a vast chamber beyond. Ancient air — impossibly fresh — flows past you.",
-      "isGoal": false,
-      "goalName": "",
+      "isGoal": true,
+      "goalName": "Unseal the Alien Gateway",
       "action": {
         "type": "openExit",
         "direction": "north",
