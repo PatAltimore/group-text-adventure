@@ -316,3 +316,30 @@
   - Test patterns from existing tests: ESM imports, validateWorld() returns `{valid, errors, warnings}` not array, loadWorld from JSON.parse(readFileSync)
   - Warnings: 4 puzzle rooms missing solvedDescription (optional but recommended), 7 rooms puzzle-gated (unreachable without items), 4 one-way exits
   - Total: 445 tests (all passing)
+
+### Hazard System Redesign Tests (Session 3)
+- **Task**: Update `tests/game-engine.test.js` to reflect hazard system redesign from probability-based random death to player-initiated hazard items
+- **Old system removed**:
+  - `checkHazards(session, playerId)` — ran after every gameplay command, random probability death
+  - `hazardMultiplier` session setting — scaled probability
+  - Room-level `hazards[]` arrays with `{ description, probability, deathText }` objects
+  - `Math.random()` mocking for death probability tests
+- **New system tested**:
+  - Items with `hazardItem: true` + `deathText` — picking up kills player deterministically
+  - `take all` / `get items` / `g` skips hazard items
+  - `hazardHintsEnabled` session setting (default: true) controls visibility
+  - Death creates ghost with `isDeath: true`, drops inventory to room floor
+  - Other players get death notification
+  - `deathTimeout` defaults to 30
+- **Changes made to `game-engine.test.js`**:
+  - Removed `checkHazards` from imports (no longer exported)
+  - Updated Look/View tests — removed old hazard assertions from `getPlayerView`
+  - Updated Start Game tests — removed `hazards` field assertion
+  - Section 21: Replaced old "Hazard Death System" with new "Hazard Item System" (~300 lines)
+  - Section 23: Replaced old "Hazard Death System (Stef)" with new "Hazard Item Integration (Stef)" (~250 lines)
+  - Sections 24-25: Removed old "Hazard check on every gameplay command" and "hazard multiplier" tests entirely
+- **Changes made to `test-world.json`**:
+  - Added `cursed-gem` hazard item with `hazardItem: true` and `deathText`
+  - Placed in room-b, replaced old room-level hazard object
+- **Test results**: 300 passing, 12 failing (expected — engine changes not yet implemented by Mouth), 1 skipped
+- **Key patterns**: Tests use `GameEngine.killPlayer` / `GameEngine.respawnPlayer` with conditional `test.skip` for graceful handling when functions don't exist yet

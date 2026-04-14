@@ -13,8 +13,8 @@
       "name": "Room B",
       "description": "A locked room.",
       "exits": { "south": "room-a" },
-      "items": [],
-      "hazards": [{ "description": "A cold draft chills you.", "probability": 0, "deathText": "" }]
+      "items": ["cursed-gem"],
+      "hazards": []
     },
     "room-c": {
       "name": "Room C",
@@ -87,6 +87,15 @@
       "roomText": "A pile of golden treasure glitters in the corner.",
       "pickupText": "You grab the treasure!",
       "portable": true
+    },
+    "cursed-gem": {
+      "name": "Cursed Gem",
+      "description": "A glowing red gem that pulses with dark energy.",
+      "roomText": "A crimson gem pulses ominously on a pedestal.",
+      "pickupText": "You reach for the gem...",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "The gem sears your hand, and dark energy consumes you!"
     }
   },
   "puzzles": {
