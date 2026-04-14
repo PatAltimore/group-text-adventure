@@ -398,3 +398,17 @@
    - **All 567 tests pass** — hazard item death mechanics fully validated
    - **Files modified:** 	ests/game-engine.test.js (2 test expectations updated)
    - **Related:** Mouth simultaneously fixed handleTakeAll() logic in api/src/game-engine.js and cleaned up test fixtures (removed numbered-bracelet from nonary-game.json)
+
+- **2026-04-14 — Test Suite: Hazard Persistence Implementation**
+  - **Fixed 5 existing tests** that assumed hazard items were permanently removed on pickup:
+    1. Death response validation — verified deathText and deathTimeout in responses
+    2. Ghost creation — confirmed ghost spawned with isDeath: true on hazard pickup
+    3. Item persistence — confirmed hazard items remain in room after death (splice() calls removed)
+    4. Multiplayer collision — verified multiple players can encounter same hazard item
+    5. Respawn scenarios — confirmed respawned player sees persistent hazard in room
+  - **Added 2 new multiplayer tests:**
+    1. Two players in room with hazard item — first player dies, item persists, second player can see and interact with it
+    2. Death + respawn cycle — player dies to hazard, respawns in same room, hazard item still present and dangerous
+  - **Test Status:** All 569 tests passing (up from 567)
+  - **Files Modified:** /tests/game-engine.test.js
+  - **Related Decision:** Hazard items now persist across multiple deaths, enabling consistent danger environments and strategic multiplayer coordination.

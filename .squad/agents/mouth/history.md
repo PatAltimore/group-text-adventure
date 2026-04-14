@@ -1077,3 +1077,11 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 - `api/src/game-engine.js` — handleTake hazardItem check, handleTakeAll skip, getPlayerView hazardHintsEnabled
 - `api/src/functions/gameHub.js` — setHazardHints handler, hazardHintsEnabled in broadcast
 - `world/*.json` — all 15 world files with new hazard items
+
+### 2026-04-14 — Hazard Persistence: Items Remain After Death
+
+- **Removed 2 splice() calls** from handleTake() and handleTakeAll() in pi/src/game-engine.js. Hazard items no longer permanently deleted from rooms when picked up.
+- **Behavior change:** When a player dies to a hazard item, the item remains in the room for other players to encounter or the same player to re-encounter after respawn. Creates persistent threat environment without instant-death lockout.
+- **Impact:** Rooms with hazards now maintain their danger consistently across multiple deaths. Strategic depth: players must learn hazard locations, can coordinate avoidance with multiplayer teammates.
+- **Tests:** All 569 tests passing. Multiplayer scenarios verified working correctly.
+- **Related decisions:** Completes hazard redesign pattern (probability → item-pickup → persistence).

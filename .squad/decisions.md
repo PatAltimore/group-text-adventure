@@ -683,6 +683,60 @@ Implemented client-side rendering for the goal achievement system, handling two 
 - No breaking changes; new messages are additive
 - Vanilla JS/CSS, no dependencies, follows existing patterns
 
+### handleTakeAll Now Triggers Hazard Death
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-14  
+**Status:** Completed
+
+#### What
+
+Reversed the prior decision that `handleTakeAll()` skips hazard items. "get items" / "take all" / "g" now attempts to pick up ALL portable items including hazard items. When a hazard item is encountered during the loop, it triggers the full death sequence (same as `handleTake` for individual items) and returns immediately.
+
+#### Rationale
+
+Pat's direction: hazard items should be dangerous regardless of whether the player uses `take <item>` or `take all`. The prior skip behavior created an inconsistency where knowledgeable players could safely use "take all" to avoid traps.
+
+#### Impact
+
+- **Backend:** `handleTakeAll()` in `game-engine.js` modified. No new exports or API changes.
+- **Frontend:** No changes needed — death responses use the same format.
+- **Tests:** Stef added comprehensive tests for `handleTakeAll` encountering hazard items (569 total tests passing).
+
+### Comprehensive World File Testing Standards
+
+**By:** Stef (Tester)  
+**Date:** 2026-04-07  
+**Status:** Template Established
+
+#### What
+
+Created and established comprehensive test suite for world files, using "Shadows Over Blackwater" as a template. World files should have comprehensive test coverage including:
+
+1. **Basic validation** — validateWorld() passes with no errors
+2. **Multiple goals** — At least 3 puzzles marked as goals (isGoal: true), each with goalName
+3. **Item portability** — All puzzle-required items have portable: true, commonly portable items (keys, documents, badges, etc.) are portable
+4. **Puzzle solvability** — All requiredItem references exist, puzzle rooms exist, actions reference valid rooms/directions, all puzzles have hint/solved text
+5. **Room quality** — Puzzle rooms should have solvedDescription (warning if missing), all rooms have required fields (name, description, exits), startRoom is valid
+6. **Item placement** — Items in room.items arrays exist in items section, all items have name/description/roomText and boolean portable field
+7. **Room connectivity** — Rooms are reachable via BFS from startRoom (accounting for puzzle-gating), exits are mostly bidirectional except puzzle-gated paths
+8. **File constraints** — World file under 30KB, metadata present (name, description, synopsis, displayOrder)
+
+#### Rationale
+
+Pat reported two bugs with new worlds:
+- "Only showing 1 goal but there are multiple puzzle rooms" — needed multiple isGoal: true
+- "Couldn't pick up Ivory Letter Opener" — item was missing portable: true
+
+These bugs could have been caught by comprehensive automated tests. The test suite created for Shadows Over Blackwater (21 tests, all passing) serves as a template for future world files.
+
+#### Impact
+
+- **Future world files** should follow this testing standard
+- **Existing world files** should be audited for these patterns
+- **Reference:** `/tests/shadows-over-blackwater.test.js` (21 tests)
+- **Template:** Use `describe()` blocks for logical grouping, load world once for all tests
+
 ## Governance
 
 - All meaningful changes require team consensus
