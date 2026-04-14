@@ -879,7 +879,7 @@ function handleTakeAll(session, playerId) {
 
   const portableItems = roomState.items.filter((itemId) => {
     const item = session.world.items[itemId];
-    return item && item.portable && !item.hazardItem;
+    return item && item.portable;
   });
 
   if (portableItems.length === 0) {
@@ -892,10 +892,52 @@ function handleTakeAll(session, playerId) {
 
   const pickedUpNames = [];
   for (const itemId of portableItems) {
+    const item = session.world.items[itemId];
+
+    // Hazard item — picking it up kills the player
+    if (item && item.hazardItem) {
+      const playerName = player.name;
+      const playerRoom = player.room;
+      const idx = roomState.items.indexOf(itemId);
+      roomState.items.splice(idx, 1);
+      session = killPlayer(session, playerId);
+
+      responses.push({
+        playerId,
+        message: {
+          type: 'death',
+          deathText: item.deathText,
+          deathTimeout: session.deathTimeout || 30,
+        },
+      });
+
+      for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+        if (otherPlayer.room === playerRoom) {
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'playerEvent',
+              event: 'died',
+              playerName,
+              text: `${playerName} has died! ${item.deathText}`,
+            },
+          });
+          responses.push({
+            playerId: otherId,
+            message: {
+              type: 'ghostEvent',
+              text: `${playerName}'s ghost appears.`,
+            },
+          });
+        }
+      }
+
+      return { session, responses };
+    }
+
     const idx = roomState.items.indexOf(itemId);
     roomState.items.splice(idx, 1);
     player.inventory.push(itemId);
-    const item = session.world.items[itemId];
     pickedUpNames.push(item ? item.name : itemId);
   }
 

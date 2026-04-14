@@ -795,6 +795,15 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 - **Data (Frontend):** UI updated. Hazard Danger dropdown replaced with Hazard Hints toggle. `startGame` message payload now includes `hazardHintsEnabled` instead of `hazardMultiplier`. Death notifications updated to generic text.
 - **Stef (Test Dev):** Test suite refactored. Removed ~908 lines of old probability-based tests. Added ~419 lines of new hazard item tests. Test world updated with cursed-gem hazard item.
 
+### 2026-04-14 — Bug Fixes: handleTakeAll Hazard Death + nonary-game bracelet
+
+1. **handleTakeAll now triggers hazard death:** Removed the `!item.hazardItem` filter from `handleTakeAll()`. The pickup loop now checks each item — if it's a hazard item, it triggers the full death sequence (killPlayer, death response, broadcast) and returns immediately. Normal items picked up before the hazard item in the loop are dropped when the player dies/respawns. This reverses the prior decision that "get items" should skip hazard items.
+
+2. **Removed numbered-bracelet from flooded-cabin room items:** The bracelet is `portable: false` and represents something the player is already wearing (per world intro text). Having it in the room's items array made it appear as a visible room item, which was confusing. Item definition kept in the items section for description references.
+
+- **Files changed:** `api/src/game-engine.js` (handleTakeAll), `world/nonary-game.json` (flooded-cabin items)
+- **Validation:** nonary-game.json passes `validateWorld()`. All 567 tests pass (8 suites).
+
 **Integration status:** All three agents' code integrated into feature/hazard-item-death branch. PR #4 created. All 567 tests pass. Ready for code review and merge.
 
 **Documentation:** Decisions documented in `.squad/decisions.md`. Orchestration logs created for all three agents. Session logged at `.squad/log/2026-04-14T163513Z-hazard-redesign.md`.

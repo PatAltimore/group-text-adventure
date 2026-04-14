@@ -1863,40 +1863,56 @@ describe('Hazard Item System', () => {
     expect(afterTake.roomStates['trap-room'].items).not.toContain('cursed-idol');
   });
 
-  // ── handleTakeAll skips hazard items ─────────────────────────────────
+  // ── handleTakeAll triggers death on hazard items ─────────────────────
 
-  test('take all skips hazard items', () => {
+  test('take all triggers death from hazard item', () => {
     let session = hazardItemSessionWithPlayer('p1', 'Alice');
     ({ session } = processCommand(session, 'p1', 'go north'));
 
     // Room has: cursed-idol (hazard), gem (normal), poison-vial (hazard)
     const { session: afterTakeAll, responses } = processCommand(session, 'p1', 'get items');
 
-    // Player should still be alive
-    expect(afterTakeAll.players['p1']).toBeDefined();
+    // Player should be DEAD (killed by hazard item during take-all)
+    expect(afterTakeAll.players['p1']).toBeUndefined();
 
-    // Normal item should be picked up
-    expect(afterTakeAll.players['p1'].inventory).toContain('gem');
+    // Death ghost should exist
+    const ghost = afterTakeAll.ghosts?.['Alice'];
+    expect(ghost).toBeDefined();
+    expect(ghost.isDeath).toBe(true);
 
-    // Hazard items should remain in the room
-    expect(afterTakeAll.roomStates['trap-room'].items).toContain('cursed-idol');
-    expect(afterTakeAll.roomStates['trap-room'].items).toContain('poison-vial');
+    // The hazard item that killed the player should be removed from room
+    expect(afterTakeAll.roomStates['trap-room'].items).not.toContain('cursed-idol');
 
-    // Hazard items should NOT be in inventory
-    expect(afterTakeAll.players['p1'].inventory).not.toContain('cursed-idol');
-    expect(afterTakeAll.players['p1'].inventory).not.toContain('poison-vial');
+    // Death response should include the hazard item's deathText
+    const deathMsg = responses.find(
+      r => r.playerId === 'p1' && r.message.type === 'death'
+    );
+    expect(deathMsg).toBeDefined();
+    expect(deathMsg.message.deathText).toContain('idol');
   });
 
-  test('"g" shortcut skips hazard items', () => {
+  test('"g" shortcut triggers death from hazard item', () => {
     let session = hazardItemSessionWithPlayer('p1', 'Alice');
     ({ session } = processCommand(session, 'p1', 'go north'));
 
-    const { session: afterG } = processCommand(session, 'p1', 'g');
+    const { session: afterG, responses } = processCommand(session, 'p1', 'g');
 
-    expect(afterG.players['p1']).toBeDefined();
-    expect(afterG.players['p1'].inventory).toContain('gem');
-    expect(afterG.players['p1'].inventory).not.toContain('cursed-idol');
-    expect(afterG.roomStates['trap-room'].items).toContain('cursed-idol');
+    // Player should be DEAD
+    expect(afterG.players['p1']).toBeUndefined();
+
+    // Death ghost should exist
+    const ghost = afterG.ghosts?.['Alice'];
+    expect(ghost).toBeDefined();
+    expect(ghost.isDeath).toBe(true);
+
+    // Hazard item removed from room
+    expect(afterG.roomStates['trap-room'].items).not.toContain('cursed-idol');
+
+    // Death response present
+    const deathMsg = responses.find(
+      r => r.playerId === 'p1' && r.message.type === 'death'
+    );
+    expect(deathMsg).toBeDefined();
   });
 
   // ── hazardHintsEnabled controls hazard visibility ────────────────────

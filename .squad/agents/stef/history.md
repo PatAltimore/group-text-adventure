@@ -380,3 +380,11 @@
 **Test Status:** All 567 tests pass (1 skipped). Zero regressions from new mechanics.
 
 **Integration:** Coordinated with Mouth (Backend) and Data (Frontend). All three agents' code integrated into feature/hazard-item-death. PR #4 ready for review.
+
+- **2026-04-10 — Updated handleTakeAll tests for hazard item death behavior**
+  - Updated 2 tests in `/tests/game-engine.test.js` (Hazard Death System block):
+    1. `take all skips hazard items` → renamed to `take all triggers death from hazard item` — now verifies player DIES on "get items" when room contains hazard items. Checks: player removed from session, death ghost created with `isDeath: true`, hazard item removed from room, death response contains deathText matching "idol"
+    2. `"g" shortcut skips hazard items` → renamed to `"g" shortcut triggers death from hazard item` — same death verification for the "g" shortcut: player dead, ghost created, hazard item removed, death response present
+  - Behavior change: `handleTakeAll()` no longer skips hazard items. It now processes ALL items including hazard ones, triggering `killPlayer()` on the first hazard item encountered (same as individual `take`). Previous decisions.md said "handleTakeAll() skips hazard items" — this is now outdated.
+  - Both tests pass immediately — Mouth's engine changes were already in place
+  - Total: 567 tests pass, 0 failures
