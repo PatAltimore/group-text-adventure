@@ -39,7 +39,7 @@
     },
     "bigfoot-forest": {
       "name": "Pacific Northwest Territory",
-      "description": "Old-growth evergreens blot out the sky beneath the Cascade Mountains. Bigfoot country. Parallel scratches score the tree trunks eight feet up — too high for a bear, too deep for claws you recognize. Trampled underbrush traces a path deeper into the woods. Rhythmic wood-knocking echoes from somewhere ahead, then stops. Your equipment registers infrasound — frequencies below hearing that settle in your gut like dread. The research trailer is south. Tire tracks west lead to an abandoned facility. East, the canopy opens onto a clearing.",
+      "description": "Old-growth evergreens blot out the sky beneath the Cascade Mountains. Bigfoot country. Parallel scratches score the tree trunks eight feet up — far beyond any known animal's reach, gouged impossibly deep. Trampled underbrush traces a path deeper into the woods. Rhythmic wood-knocking echoes from somewhere ahead, then stops. Your equipment registers infrasound — frequencies below hearing that settle in your gut like dread. The research trailer is south. Tire tracks west lead to an abandoned facility. East, the canopy opens onto a clearing.",
       "exits": {
         "south": "research-trailer",
         "west": "abandoned-lab",

@@ -49,7 +49,7 @@
     },
     "disc-arena": {
       "name": "Disc Arena",
-      "description": "You stand on a circular platform suspended over a pit of absolute darkness. The crowd — rows upon rows of programs packed into floating grandstands — roars with synthesized voices. Spotlights of pure white energy sweep the arena floor, which is scored with the burn marks of a thousand deresolutions. Shattered pixels litter the edges like broken glass. The remains of defeated programs still flicker faintly before fading to nothing. The only exit leads east, back to the Game Grid Hub.",
+      "description": "You stand on a circular platform suspended over a pit of absolute darkness. The crowd — rows upon rows of programs packed into floating grandstands — roars with synthesized voices. Spotlights of pure white energy sweep the arena floor, which is scored with the burn marks of countless battles. Shattered pixels litter the edges like broken glass. The remains of defeated programs still flicker faintly before fading to nothing. The only exit leads east, back to the Game Grid Hub.",
       "exits": {
         "east": "game-grid-hub"
       },

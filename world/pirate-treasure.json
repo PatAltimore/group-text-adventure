@@ -26,7 +26,7 @@
     },
     "tidal-cove": {
       "name": "The Hidden Cove",
-      "description": "A crescent of white sand cupped between sheer volcanic cliffs, invisible from the main beach. The water here is impossibly clear — you can see coins glinting on the sandy bottom, scattered like stars. A longboat lies overturned above the tideline, its hull crusted with barnacles but still sound. Carved into the cliff face, barely visible beneath curtains of hanging moss, are crude symbols: skulls, crossed bones, and an arrow pointing deeper into the rock. A rusted iron lantern hangs from a spike driven into the stone, its glass cracked but intact.",
+      "description": "A crescent of white sand cupped between sheer volcanic cliffs, invisible from the main beach. The water here is impossibly clear — you can see coins glinting on the sandy bottom, scattered like stars. A longboat lies overturned above the tideline, its hull crusted with barnacles but still sound. Carved into the cliff face, barely visible beneath curtains of hanging moss, are crude symbols: skulls, crossed bones, and an arrow pointing deeper into the rock.",
       "exits": {
         "north": "shipwreck-beach"
       },
@@ -76,7 +76,7 @@
     },
     "captain-quarters": {
       "name": "Captain's Quarters",
-      "description": "The upper chamber of the fort, open to the sky where the roof collapsed long ago. A mahogany desk — scarred with knife marks and burn rings — dominates the room. Charts are pinned to the walls with corroded daggers, their ink faded to ghosts. A hammock sways in the breeze, strung between pillars that no longer hold anything up. Through the broken windows, you can see the entire island: the beach to the west, the swamp to the south, and rising above the jungle canopy to the east, the unmistakable silhouette of Skull Mountain. A leather-bound journal lies open on the desk, its pages yellowed but legible. The courtyard is south.",
+      "description": "The upper chamber of the fort, open to the sky where the roof collapsed long ago. A mahogany desk — scarred with knife marks and burn rings — dominates the room. Charts are pinned to the walls with corroded daggers, their ink faded to ghosts. A hammock sways in the breeze, strung between pillars that no longer hold anything up. Through the broken windows, you can see the entire island: the beach to the west, the swamp to the south, and rising above the jungle canopy to the east, the unmistakable silhouette of Skull Mountain. The courtyard is south.",
       "exits": {
         "south": "ruined-fort"
       },
@@ -87,7 +87,7 @@
     },
     "lookout-tower": {
       "name": "The Lookout Tower",
-      "description": "You emerge through the cleared rubble onto a narrow platform high above the fort. The view steals your breath — emerald jungle rolling to white surf, the volcanic peak of Skull Mountain black against the sky, and far below, the treacherous mangrove swamp where the island's secrets sink and vanish. A rusted telescope bolted to the railing still turns, though its lenses are fogged with salt. Scratched into the stone floor is a crude diagram: a shovel, an X, and the words 'DIG WHERE THE DEAD MAN POINTS.' Below the carving, someone has wedged a shovel into a crack in the masonry, handle up, waiting for the next fool brave enough to follow a dead pirate's instructions.",
+      "description": "You emerge through the cleared rubble onto a narrow platform high above the fort. The view steals your breath — emerald jungle rolling to white surf, the volcanic peak of Skull Mountain black against the sky, and far below, the treacherous mangrove swamp where the island's secrets sink and vanish. A rusted telescope bolted to the railing still turns, though its lenses are fogged with salt. Scratched into the stone floor is a crude diagram: a shovel, an X, and the words 'DIG WHERE THE DEAD MAN POINTS.'",
       "exits": {
         "west": "ruined-fort"
       },

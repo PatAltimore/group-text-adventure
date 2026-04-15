@@ -99,7 +99,7 @@
     },
     "face-of-mars": {
       "name": "The Face on Mars",
-      "description": "It is not a trick of light and shadow. Up close, the formation is unmistakably carved — a colossal humanoid face two kilometers long, half-buried in red dust. The features are weathered by a billion years of wind, but the symmetry is deliberate. The eyes are deep-set hollows, the mouth a dark cavity large enough to walk into, though it's choked with rockfall and compacted iron oxide. At the base, partially exposed by recent seismic activity, you can see what looks like fitted stonework beneath the natural rock. Your hands are shaking. The Cydonia plateau is west.",
+      "description": "It is not a trick of light and shadow. Up close, the formation is unmistakably carved — a colossal humanoid face two kilometers long, half-buried in red dust. The features are weathered by a billion years of wind, but the symmetry is deliberate. The eyes are deep-set hollows, the mouth a dark cavity large enough to walk into, though it's choked with rockfall and compacted iron oxide. At the base, partially exposed by geological shifts, you can see what looks like fitted stonework beneath the natural rock. Your hands are shaking. The Cydonia plateau is west.",
       "solvedDescription": "The colossal carved face looms above, unmistakably deliberate. The mouth — once choked with rockfall — has been cleared, revealing a passage north into the carved throat. Fitted stonework gleams beneath the weathered exterior. The Cydonia plateau is west.",
       "exits": {
         "west": "cydonia-plateau"

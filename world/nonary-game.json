@@ -144,8 +144,8 @@
     },
     "chart-room": {
       "name": "Chart Room and Bridge",
-      "description": "Navigation charts paper the walls — shipping lanes, depth soundings, mine warnings from the Great War. The ship's wheel stands unmanned, brass still polished, frozen at hard starboard. Windows look out onto black water pressing against the glass. Instruments crowd the panels: compass, telegraph, barometer. A ship's log lies open on the chart table, its last entry dated November 21, 1916: 'Mine strike. Taking water. Attempting to reach—' The writing ends in a streak of ink. East lies the engine casing. South, the grand staircase looms.",
-      "solvedDescription": "The bridge of the Britannic, frozen in time. Navigation charts cover the walls, the ship's wheel stands ready, and instruments crowd every surface. The ship's log lies open to its final entry. The sealed hatch in the deck has been unlocked and pulled open, revealing a ladder descending to the chapel below.",
+      "description": "Navigation charts paper the walls — shipping lanes, depth soundings, mine warnings from the Great War. The ship's wheel stands unmanned, brass still polished, frozen at hard starboard. Windows look out onto black water pressing against the glass. Instruments crowd the panels: sextant, telegraph, barometer. East lies the engine casing. South, the grand staircase looms.",
+      "solvedDescription": "The bridge of the Britannic, frozen in time. Navigation charts cover the walls, the ship's wheel stands ready, and instruments crowd every surface. The sealed hatch in the deck has been unlocked and pulled open, revealing a ladder descending to the chapel below.",
       "exits": {
         "east": "engine-casing"
       },
