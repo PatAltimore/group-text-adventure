@@ -1170,3 +1170,12 @@ Player experience now much better: Pirate Treasure goes from zero feedback until
 - **Help text updated** with new command entry.
 - **All 581 tests pass.** Stef adding dedicated tests separately.
 - **Decision:** `.squad/decisions/inbox/mouth-get-dropped.md`
+
+### 2026-04-15 — Remove Duplicate Item Text from Room Descriptions
+
+- **Problem:** `getPlayerView()` returns room `description` AND each item's `roomText` separately. When a room description also contained text describing an item that has roomText, the player saw that item described twice.
+- **Fix:** Edited 16 duplications across 7 world files (jungle-adventure, mars-adventure, mystery-house, nonary-game, paranormal-mysteries, pirate-treasure, tron-grid). For each case, removed or rephrased the item-specific sentence from the room `description` (and `solvedDescription` where the same duplication existed) while preserving atmospheric tone and navigation text.
+- **Approach:** Description-only edits — no roomText, item, puzzle, exit, or mechanic changes. Room IDs and game logic untouched.
+- **Validation:** All 7 world files pass `validate-world.js`. All 590 tests pass.
+- **Commit:** `e2b8140` on `feature/hazard-item-death`
+- **Decision:** `.squad/decisions/inbox/mouth-item-duplication.md`

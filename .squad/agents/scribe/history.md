@@ -19,7 +19,9 @@ Agent Scribe initialized and ready for work.
 📌 Scribe: Logged orchestration + session, merged decisions to decisions.md (2026-04-01T13:25)
 📌 Mouth, Data, Stef: Displaced Items feature complete (2026-04-07T15:48:34Z)
 📌 Scribe: Orchestration for Mouth's Nonary Game World (2026-04-12T21:18) — World created, PR #3 opened, decisions consolidated
-
+📌 Mouth: Completed goal system audit & fixes (2026-04-11) — 22 puzzles across 12 worlds now properly marked with `isGoal`
+📌 Mouth: Fixed 16 duplicate item text instances across 7 world files (2026-04-15T16:39) — Removed item-specific prose from room descriptions to prevent double-rendering in getPlayerView()
+📌 Scribe: Processed orchestration log, session log, and merged Mouth's item-duplication decision (2026-04-15T16:39)
 
 ## Learnings
 
@@ -28,3 +30,4 @@ Agent Scribe initialized and ready for work.
 - Session log recorded: Negotiate & Join UX fixes
 - Decisions merged and deduplicated (inbox → decisions.md)
 - Cross-agent history updated with coordination notes
+- Item duplication pattern: `getPlayerView()` returns room description AND item roomText separately → need to avoid duplicate prose in descriptions
