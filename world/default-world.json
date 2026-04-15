@@ -270,6 +270,8 @@
       "requiredItem": "rusty-key",
       "hintText": "The lock is massive and orange with rust, but the keyhole is clear — someone oiled it, once. A key of the same era might still turn it.",
       "solvedText": "You slide the rusty key into the lock. For a moment nothing happens — then you twist harder and metal shrieks against metal. The bolt surrenders. The door groans open, exhaling a breath of cold, foul air from the darkness beyond.",
+      "isGoal": true,
+      "goalName": "Unlock the Dungeon",
       "action": {
         "type": "openExit",
         "direction": "north",

@@ -358,8 +358,8 @@
       "requiredItem": "armory-key",
       "hintText": "The armory key should fit this lock. Look for it in the warden's office.",
       "solvedText": "You slide the armory key into the lock. It turns with a heavy click, frost crystals crackling off the metal. The armory door swings open, revealing the weapons room beyond.",
-      "isGoal": false,
-      "goalName": "",
+      "isGoal": true,
+      "goalName": "Unlock the Armory",
       "action": {
         "type": "openExit",
         "direction": "north",
@@ -386,8 +386,8 @@
       "requiredItem": "bolt-cutters",
       "hintText": "Heavy-duty bolt cutters would make short work of this padlock.",
       "solvedText": "You position the bolt cutters around the padlock hasp. The jaws bite through steel with a sharp crack that echoes across the empty yard. The tool shed is open.",
-      "isGoal": false,
-      "goalName": "",
+      "isGoal": true,
+      "goalName": "Break into the Tool Shed",
       "action": {
         "type": "openExit",
         "direction": "north",

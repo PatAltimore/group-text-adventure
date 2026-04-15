@@ -1281,3 +1281,48 @@ Applied 22 puzzle goal fixes across 12 worlds:
 - Goal system already existed; this fix ensures consistent coverage
 - Two-phase approach: audit first, then fix
 
+---
+
+## 31. Remove Duplicate Item Text from Room Descriptions
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-04-15  
+**Status:** Implemented
+
+### Decision
+
+Fixed 16 instances across 7 world files where room `description` fields contained item-specific text that duplicated each item's `roomText` field. The game engine's `getPlayerView()` renders both the room description and each item's roomText, so players were seeing items described twice.
+
+### Approach
+
+- **Description-only edits** — removed or rephrased the duplicated item text from room `description` (and `solvedDescription` where the same duplication existed)
+- **No roomText changes** — the item's roomText is the canonical display text for that item
+- **No mechanic changes** — room IDs, item IDs, puzzle IDs, exits, and game logic are all unchanged
+- **Atmospheric preservation** — rewritten descriptions maintain the room's tone and all non-item prose
+
+### Files Changed
+
+| World File | Rooms | Duplications Fixed |
+|---|---|---|
+| jungle-adventure.json | watchtower, serpent-shrine (desc + solvedDesc), snake-pit, collapsed-gallery, mechanism-chamber, sacrificial-chamber (desc + solvedDesc) | 7 (+ 2 solvedDesc) |
+| mars-adventure.json | face-of-mars | 1 (rephrased) |
+| mystery-house.json | parlor | 1 |
+| nonary-game.json | chart-room | 2 (compass→sextant, ship's log removed) |
+| paranormal-mysteries.json | bigfoot-forest | 1 (rephrased) |
+| pirate-treasure.json | tidal-cove, captain-quarters, lookout-tower | 3 |
+| tron-grid.json | disc-arena | 1 (rephrased) |
+
+### Notable Decisions
+
+1. **nonary-game chart-room:** Changed instrument list from "compass, telegraph, barometer" to "sextant, telegraph, barometer" to avoid overlapping with the navigation-compass item's roomText. Sextant fits the Britannic bridge setting.
+
+2. **Subtle overlaps (mars, paranormal, tron):** Where the duplication was a shared phrase rather than a full sentence, rephrased the description side rather than removing it, to preserve atmosphere.
+
+3. **solvedDescription fixes:** serpent-shrine and sacrificial-chamber both had the same item text in their solvedDescription. Fixed those too since the task rule says to fix solvedDescription when it contains the same duplication.
+
+### Validation
+
+- All 7 world files pass `validate-world.js`
+- All 590 tests pass
+- Commit: 88486cf
+

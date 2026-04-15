@@ -376,6 +376,8 @@
       "requiredItem": "star-chart",
       "hintText": "The constellations on the star chart correspond to gear positions. Align your movement to the stellar pattern.",
       "solvedText": "Holding the star chart up to the gear mechanism, you see it — each constellation matches a gear position. Following the stellar pattern, you step through the synchronized pauses. The passage to the archive opens before you.",
+      "isGoal": true,
+      "goalName": "Access the Archive Chamber",
       "action": {
         "type": "openExit",
         "direction": "west",
