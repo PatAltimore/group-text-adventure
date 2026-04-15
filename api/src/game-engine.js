@@ -616,6 +616,9 @@ export function processCommand(session, playerId, commandText) {
     case 'takeall':
       result = handleTakeAll(session, playerId);
       break;
+    case 'takedropped':
+      result = handleTakeDropped(session, playerId);
+      break;
     case 'drop':
       result = handleDrop(session, playerId, cmd);
       break;
@@ -948,6 +951,59 @@ function handleTakeAll(session, playerId) {
       responses.push({
         playerId: otherId,
         message: { type: 'message', text: `${player.name} picked up everything on the ground.` },
+      });
+    }
+  }
+
+  return { session, responses };
+}
+
+function handleTakeDropped(session, playerId) {
+  const player = session.players[playerId];
+  const roomState = session.roomStates[player.room];
+  const responses = [];
+
+  // World-defined items for this room (items that belong here originally)
+  const worldRoomItems = session.world.rooms[player.room].items || [];
+
+  // Displaced items: in the room now but NOT in the world's original room items
+  const droppedItems = roomState.items.filter((itemId) => {
+    if (worldRoomItems.includes(itemId)) return false;
+    const item = session.world.items[itemId];
+    if (!item) return false;
+    if (!item.portable) return false;
+    if (item.hazardItem) return false;
+    return true;
+  });
+
+  if (droppedItems.length === 0) {
+    responses.push({
+      playerId,
+      message: { type: 'message', text: 'There are no dropped items here to pick up.' },
+    });
+    return { session, responses };
+  }
+
+  const pickedUpNames = [];
+  for (const itemId of droppedItems) {
+    const item = session.world.items[itemId];
+    const idx = roomState.items.indexOf(itemId);
+    roomState.items.splice(idx, 1);
+    player.inventory.push(itemId);
+    pickedUpNames.push(item ? item.name : itemId);
+  }
+
+  const itemList = pickedUpNames.join(', ');
+  responses.push({
+    playerId,
+    message: { type: 'message', text: `You picked up dropped items: ${itemList}.` },
+  });
+
+  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+    if (otherId !== playerId && otherPlayer.room === player.room) {
+      responses.push({
+        playerId: otherId,
+        message: { type: 'message', text: `${player.name} picked up dropped items from the ground.` },
       });
     }
   }
@@ -1389,6 +1445,8 @@ function handleHelp(session, playerId) {
     '  TAKE <x>    Pick up an item',
     '  GET ITEMS   Pick up all items (g)',
     '              including hazardous items',
+    '  GET DROPPED Pick up dropped items (d)',
+    '              skips hazardous items',
     '  DROP <x>    Drop an item',
     '  USE <x>     Use an item',
     '  USE <x> ON <y>  Use on target',

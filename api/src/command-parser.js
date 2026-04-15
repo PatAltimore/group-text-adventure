@@ -7,7 +7,7 @@ const DIRECTION_ALIASES = {
   e: 'east',  east: 'east',
   w: 'west',  west: 'west',
   u: 'up',    up: 'up',
-  d: 'down',  down: 'down',
+  down: 'down',
 };
 
 const TAKE_VERBS = new Set(['take', 'get', 'grab', 'pick']);
@@ -39,6 +39,11 @@ export function parseCommand(text) {
     return { verb: 'takeall', raw };
   }
 
+  // "d" standalone → pick up only dropped/displaced items
+  if (verb === 'd' && words.length === 1) {
+    return { verb: 'takedropped', raw };
+  }
+
   // Direct direction shorthand: "n", "north", etc.
   if (DIRECTION_ALIASES[verb] && words.length === 1) {
     return { verb: 'go', noun: DIRECTION_ALIASES[verb], raw };
@@ -61,6 +66,10 @@ export function parseCommand(text) {
     // "get items" / "take items" / "get all" / "take all" → pick up everything
     if (noun === 'items' || noun === 'all') {
       return { verb: 'takeall', raw };
+    }
+    // "get dropped" / "take dropped" / "grab dropped" etc. → pick up only dropped items
+    if (noun === 'dropped' || noun === 'dropped items') {
+      return { verb: 'takedropped', raw };
     }
     return { verb: 'take', noun: noun || undefined, raw };
   }

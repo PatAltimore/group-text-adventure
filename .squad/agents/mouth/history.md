@@ -1145,3 +1145,28 @@ Applied wisdom.md interactive fiction guidance to all 6 existing world files. Sk
 **Validation:** All 8 modified world files pass `validate-world.js`. All 569 tests pass (1 skipped).
 
 **Key learning:** When creating hazard items, always verify the item ID is NOT referenced by any puzzle's `requiredItem`, and always verify the item name doesn't share key words with other items in the same room or semantically similar items elsewhere in the world.
+Audited all 15 world JSON files for puzzle isGoal flag consistency. Found 22 puzzles missing goal marks across 12 worlds:
+- Pirate Treasure was the worst: only 1/6 puzzles marked as goal (17% ratio)
+- Hollow Moon had unlock-cargo-bay (gateway to mid-game) unmarked
+- Myst Island had 4/10 goals despite multiple major progression gates
+
+**Key Learning:** Goal system works as intended; issue was inconsistent flagging by world authors. Established principle: mark isGoal=true for:
+1. Puzzles opening exits to new areas (major progression)
+2. Major story milestones
+3. Critical path puzzles
+
+Adopted TRON Grid (100% correct at 4/4 goals) as model world.
+
+**Applied fixes:** 22 puzzles across 12 worlds, all with descriptive goalName fields. Validation: all world files pass, 570 tests pass. Improved global coverage from 53% → 79% (51/97 → 63/80 goals).
+
+Player experience now much better: Pirate Treasure goes from zero feedback until final vault → 5 progression banners. Myst Island goes from 40% → 80% goal coverage.
+
+### 2026-04-14 — "Get Dropped" Command (Safe Item Recovery)
+
+- **New command: `takedropped`** — Picks up only displaced/dropped items in a room (items NOT in the world's original room definition). Skips hazard items and non-portable items.
+- **Command parser:** Added "get dropped", "take dropped", "grab dropped", "get dropped items", "take dropped items" → `{ verb: 'takedropped' }`. Added "d" as standalone shortcut.
+- **Direction alias change:** Removed `d: 'down'` from DIRECTION_ALIASES. No worlds use vertical exits; `down: 'down'` kept for full-word input.
+- **Game engine:** `handleTakeDropped()` filters `roomState.items` against `session.world.rooms[roomId].items` to find displaced items, skips hazardItem/non-portable, picks up rest.
+- **Help text updated** with new command entry.
+- **All 581 tests pass.** Stef adding dedicated tests separately.
+- **Decision:** `.squad/decisions/inbox/mouth-get-dropped.md`
