@@ -230,6 +230,8 @@
       "requiredItem": "silver-fork",
       "hintText": "A musical note marks this door. Something nearby resonates with a pure, clear tone — strike it against something solid.",
       "solvedText": "You strike the silver fork against the door frame. A single, perfect note rings out — and the painted symbol blazes blue for one heartbeat. The lock surrenders with a whisper. The door swings south into darkness, and the music room breathes its first fresh air in years.",
+      "isGoal": true,
+      "goalName": "Open the Music Room",
       "action": {
         "type": "openExit",
         "direction": "south",
@@ -242,6 +244,8 @@
       "requiredItem": "sheet-music",
       "hintText": "The hatch is blocked from the other side. No amount of force will move it — but the Clockmaker's mechanisms respond to music, not strength.",
       "solvedText": "You press the sheet music against the hatch and hum The Clockmaker's Lullaby. The melody seeps through the cracks like smoke. On the other side, gears engage — a heavy clockwork mechanism groans to life, dragging the obstruction aside. The hatch swings open north, releasing a rush of warm, copper-scented air from the kitchen beyond.",
+      "isGoal": true,
+      "goalName": "Open the Kitchen",
       "action": {
         "type": "openExit",
         "direction": "north",
