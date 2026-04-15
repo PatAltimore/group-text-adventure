@@ -197,6 +197,59 @@ describe('Command Parser', () => {
     });
   });
 
+  // ── Get Dropped Commands ────────────────────────────────────────────
+
+  describe('get dropped commands', () => {
+    test.each([
+      ['get dropped',       'takedropped'],
+      ['take dropped',      'takedropped'],
+      ['grab dropped',      'takedropped'],
+      ['get dropped items', 'takedropped'],
+      ['take dropped items','takedropped'],
+    ])('parses "%s" → %s', (input, expectedVerb) => {
+      const result = parseCommand(input);
+      expect(result.verb).toBe(expectedVerb);
+    });
+
+    test('"d" standalone maps to takedropped', () => {
+      const result = parseCommand('d');
+      expect(result.verb).toBe('takedropped');
+    });
+
+    test('"d" is takedropped, not go down', () => {
+      const result = parseCommand('d');
+      expect(result.verb).not.toBe('go');
+      expect(result.verb).toBe('takedropped');
+    });
+
+    test('"down" full word still maps to go down', () => {
+      const result = parseCommand('down');
+      expect(result.verb).toBe('go');
+      expect(result.noun).toBe('down');
+    });
+
+    test('"go down" still works as movement', () => {
+      const result = parseCommand('go down');
+      expect(result.verb).toBe('go');
+      expect(result.noun).toBe('down');
+    });
+
+    test('case insensitive: "GET DROPPED" → takedropped', () => {
+      const result = parseCommand('GET DROPPED');
+      expect(result.verb).toBe('takedropped');
+    });
+
+    test('case insensitive: "D" → takedropped', () => {
+      const result = parseCommand('D');
+      expect(result.verb).toBe('takedropped');
+    });
+
+    test('preserves raw text for "get dropped"', () => {
+      const result = parseCommand('get dropped');
+      expect(result.raw).toBe('get dropped');
+    });
+  });
+
   // ── Edge Cases ─────────────────────────────────────────────────────
 
   describe('edge cases', () => {

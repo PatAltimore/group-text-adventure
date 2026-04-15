@@ -4974,3 +4974,272 @@ describe('Fuzzy look/examine matching', () => {
     expect(msg.message.text).toContain('crimson cover');
   });
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// Get Dropped Items (Stef)
+// ════════════════════════════════════════════════════════════════════════
+
+describe('Get dropped items (Stef)', () => {
+  // Helper: world with original items, a hazard item, and a non-portable item
+  function droppedWorld() {
+    return loadWorld({
+      name: 'Dropped Items Test World',
+      startRoom: 'room-a',
+      rooms: {
+        'room-a': {
+          name: 'Room A',
+          description: 'A room with a torch on the wall.',
+          exits: { north: 'room-b' },
+          items: ['torch'],
+          hazards: [],
+        },
+        'room-b': {
+          name: 'Room B',
+          description: 'A room with a sword.',
+          exits: { south: 'room-a' },
+          items: ['sword'],
+          hazards: [],
+        },
+      },
+      items: {
+        torch: {
+          name: 'Torch',
+          description: 'A burning torch.',
+          roomText: 'A torch flickers on the wall.',
+          pickupText: 'You take the torch.',
+          portable: true,
+        },
+        sword: {
+          name: 'Sword',
+          description: 'A sharp blade.',
+          roomText: 'A sword lies here.',
+          pickupText: 'You grab the sword.',
+          portable: true,
+        },
+        coin: {
+          name: 'Gold Coin',
+          description: 'A shiny coin.',
+          roomText: 'A coin glints on the floor.',
+          pickupText: 'You pocket the coin.',
+          portable: true,
+        },
+        gem: {
+          name: 'Ruby Gem',
+          description: 'A sparkling red gem.',
+          roomText: 'A gem sparkles enticingly.',
+          pickupText: 'You reach for the gem...',
+          portable: true,
+          hazardItem: true,
+          deathText: 'The gem explodes in your hand!',
+        },
+        statue: {
+          name: 'Stone Statue',
+          description: 'A heavy stone statue.',
+          roomText: 'A stone statue stands here.',
+          portable: false,
+        },
+        potion: {
+          name: 'Healing Potion',
+          description: 'A bubbling potion.',
+          roomText: 'A potion rests on a shelf.',
+          pickupText: 'You take the potion.',
+          portable: true,
+        },
+      },
+      puzzles: {},
+    });
+  }
+
+  function droppedSession() {
+    return createGameSession(droppedWorld());
+  }
+
+  function droppedSessionWithPlayer(id = 'p1', name = 'Alice') {
+    const session = droppedSession();
+    return addPlayer(session, id, name);
+  }
+
+  function droppedSessionWithPlayers(...players) {
+    let session = droppedSession();
+    for (const [id, name] of players) {
+      session = addPlayer(session, id, name);
+    }
+    return session;
+  }
+
+  // 1. Picks up dropped items only
+  test('picks up dropped items only, not original room items', () => {
+    let session = droppedSessionWithPlayer('p1', 'Alice');
+    // Manually place displaced items in room-a (sword and coin don't belong here)
+    session.roomStates['room-a'].items.push('sword', 'coin');
+
+    const { session: after, responses } = processCommand(session, 'p1', 'get dropped');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    // Should have picked up sword and coin (displaced) but NOT torch (original)
+    expect(after.players['p1'].inventory).toContain('sword');
+    expect(after.players['p1'].inventory).toContain('coin');
+    expect(after.players['p1'].inventory).not.toContain('torch');
+
+    // Torch stays in the room
+    expect(after.roomStates['room-a'].items).toContain('torch');
+    // Picked-up items removed from room
+    expect(after.roomStates['room-a'].items).not.toContain('sword');
+    expect(after.roomStates['room-a'].items).not.toContain('coin');
+
+    // Response mentions what was picked up
+    expect(msg.message.text).toContain('Sword');
+    expect(msg.message.text).toContain('Gold Coin');
+  });
+
+  // 2. No dropped items message
+  test('says "no dropped items" when room has only original items', () => {
+    const session = droppedSessionWithPlayer('p1', 'Alice');
+    // room-a starts with torch (original). No displaced items.
+
+    const { responses } = processCommand(session, 'p1', 'get dropped');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    expect(msg.message.text).toMatch(/no dropped items/i);
+  });
+
+  // 3. Skips hazard items
+  test('skips hazard items — only safe dropped items picked up', () => {
+    let session = droppedSessionWithPlayer('p1', 'Alice');
+    // Drop a safe item and a hazard item into room-a (both displaced)
+    session.roomStates['room-a'].items.push('coin', 'gem');
+
+    const { session: after, responses } = processCommand(session, 'p1', 'get dropped');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    // Coin picked up, gem left behind
+    expect(after.players['p1'].inventory).toContain('coin');
+    expect(after.players['p1'].inventory).not.toContain('gem');
+    expect(after.roomStates['room-a'].items).toContain('gem');
+
+    expect(msg.message.text).toContain('Gold Coin');
+  });
+
+  // 4. Skips non-portable items
+  test('skips non-portable dropped items', () => {
+    let session = droppedSessionWithPlayer('p1', 'Alice');
+    // Place a non-portable item (displaced) in room-a
+    session.roomStates['room-a'].items.push('statue');
+
+    const { responses } = processCommand(session, 'p1', 'get dropped');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    // Statue not picked up — no dropped items message
+    expect(msg.message.text).toMatch(/no dropped items/i);
+    expect(session.roomStates['room-a'].items).toContain('statue');
+  });
+
+  // 5. Empty room
+  test('says "no dropped items" when room has no items at all', () => {
+    let session = droppedSessionWithPlayer('p1', 'Alice');
+    // Clear all items from room-a
+    session.roomStates['room-a'].items = [];
+
+    const { responses } = processCommand(session, 'p1', 'get dropped');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    expect(msg.message.text).toMatch(/no dropped items/i);
+  });
+
+  // 6. Picks up items after death
+  test('player recovers items after death using "get dropped"', () => {
+    let session = droppedSessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    // Alice picks up torch from room-a
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    expect(session.players['p1'].inventory).toContain('torch');
+
+    // Alice moves to room-b, picks up sword
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    ({ session } = processCommand(session, 'p1', 'take sword'));
+    expect(session.players['p1'].inventory).toContain('sword');
+    expect(session.players['p1'].inventory).toContain('torch');
+
+    // Alice dies — items drop in room-b
+    session = killPlayer(session, 'p1');
+    expect(session.roomStates['room-b'].items).toContain('torch');
+    expect(session.roomStates['room-b'].items).toContain('sword');
+
+    // Alice respawns in room-b
+    session = respawnPlayer(session, 'Alice', 'p1-respawn');
+    expect(session.players['p1-respawn'].inventory).toEqual([]);
+
+    // Alice uses "get dropped" — should pick up torch (displaced from room-a) but sword is native to room-b
+    const { session: after, responses } = processCommand(session, 'p1-respawn', 'get dropped');
+    const msg = responses.find(r => r.playerId === 'p1-respawn');
+
+    // Torch is displaced in room-b (it belongs to room-a)
+    expect(after.players['p1-respawn'].inventory).toContain('torch');
+    // Sword is native to room-b, so it's NOT picked up by "get dropped"
+    expect(after.players['p1-respawn'].inventory).not.toContain('sword');
+    expect(msg.message.text).toContain('Torch');
+  });
+
+  // 7. Picks up items after disconnect
+  test('player recovers items after disconnect using "get dropped"', () => {
+    let session = droppedSessionWithPlayers(['p1', 'Alice'], ['p2', 'Bob']);
+    // Alice picks up torch
+    ({ session } = processCommand(session, 'p1', 'take torch'));
+    // Alice moves to room-b
+    ({ session } = processCommand(session, 'p1', 'go north'));
+    expect(session.players['p1'].room).toBe('room-b');
+
+    // Alice disconnects — torch drops in room-b
+    session = disconnectPlayer(session, 'p1');
+    expect(session.roomStates['room-b'].items).toContain('torch');
+
+    // Alice reconnects
+    session = reconnectPlayer(session, 'Alice', 'p1-new');
+    expect(session.players['p1-new'].inventory).toEqual([]);
+    expect(session.players['p1-new'].room).toBe('room-b');
+
+    // "get dropped" recovers torch (displaced in room-b)
+    const { session: after, responses } = processCommand(session, 'p1-new', 'get dropped');
+    const msg = responses.find(r => r.playerId === 'p1-new');
+
+    expect(after.players['p1-new'].inventory).toContain('torch');
+    expect(msg.message.text).toContain('Torch');
+  });
+
+  // 8. Multiple dropped items — all get picked up, message lists them all
+  test('picks up multiple dropped items and lists them all', () => {
+    let session = droppedSessionWithPlayer('p1', 'Alice');
+    // Place three displaced items in room-a
+    session.roomStates['room-a'].items.push('sword', 'coin', 'potion');
+
+    const { session: after, responses } = processCommand(session, 'p1', 'd');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    expect(after.players['p1'].inventory).toContain('sword');
+    expect(after.players['p1'].inventory).toContain('coin');
+    expect(after.players['p1'].inventory).toContain('potion');
+
+    // Message should list all items
+    expect(msg.message.text).toContain('Sword');
+    expect(msg.message.text).toContain('Gold Coin');
+    expect(msg.message.text).toContain('Healing Potion');
+
+    // All removed from room
+    expect(after.roomStates['room-a'].items).not.toContain('sword');
+    expect(after.roomStates['room-a'].items).not.toContain('coin');
+    expect(after.roomStates['room-a'].items).not.toContain('potion');
+  });
+
+  // 9. Doesn't pick up original room items
+  test('does not pick up items that are part of the world definition', () => {
+    const session = droppedSessionWithPlayer('p1', 'Alice');
+    // room-a has torch as original item. No displaced items.
+
+    const { session: after, responses } = processCommand(session, 'p1', 'take dropped');
+    const msg = responses.find(r => r.playerId === 'p1');
+
+    // Torch stays — it's an original room item
+    expect(after.players['p1'].inventory).not.toContain('torch');
+    expect(after.roomStates['room-a'].items).toContain('torch');
+    expect(msg.message.text).toMatch(/no dropped items/i);
+  });
+});

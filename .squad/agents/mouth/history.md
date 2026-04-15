@@ -1160,3 +1160,13 @@ Adopted TRON Grid (100% correct at 4/4 goals) as model world.
 **Applied fixes:** 22 puzzles across 12 worlds, all with descriptive goalName fields. Validation: all world files pass, 570 tests pass. Improved global coverage from 53% → 79% (51/97 → 63/80 goals).
 
 Player experience now much better: Pirate Treasure goes from zero feedback until final vault → 5 progression banners. Myst Island goes from 40% → 80% goal coverage.
+
+### 2026-04-14 — "Get Dropped" Command (Safe Item Recovery)
+
+- **New command: `takedropped`** — Picks up only displaced/dropped items in a room (items NOT in the world's original room definition). Skips hazard items and non-portable items.
+- **Command parser:** Added "get dropped", "take dropped", "grab dropped", "get dropped items", "take dropped items" → `{ verb: 'takedropped' }`. Added "d" as standalone shortcut.
+- **Direction alias change:** Removed `d: 'down'` from DIRECTION_ALIASES. No worlds use vertical exits; `down: 'down'` kept for full-word input.
+- **Game engine:** `handleTakeDropped()` filters `roomState.items` against `session.world.rooms[roomId].items` to find displaced items, skips hazardItem/non-portable, picks up rest.
+- **Help text updated** with new command entry.
+- **All 581 tests pass.** Stef adding dedicated tests separately.
+- **Decision:** `.squad/decisions/inbox/mouth-get-dropped.md`

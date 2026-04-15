@@ -412,3 +412,20 @@
   - **Test Status:** All 569 tests passing (up from 567)
   - **Files Modified:** /tests/game-engine.test.js
   - **Related Decision:** Hazard items now persist across multiple deaths, enabling consistent danger environments and strategic multiplayer coordination.
+
+- **2026-04-10 — "Get dropped" command tests (17 new tests, all passing)**
+  - Files: `/tests/command-parser.test.js` (8 new tests), `/tests/game-engine.test.js` (9 new tests)
+  - **Parser tests:** "get dropped", "take dropped", "grab dropped", "get dropped items", "take dropped items" → `takedropped`; "d" standalone → `takedropped` (not `go down`); "down" full word still → `go down`; case insensitivity; raw text preservation
+  - **Engine tests:** New `describe('Get dropped items (Stef)')` block with custom world fixture including hazard, non-portable, and portable items
+  - Test coverage:
+    1. Picks up displaced items only, leaves originals
+    2. "No dropped items" message when only originals present
+    3. Skips hazard items (safety)
+    4. Skips non-portable items
+    5. Empty room → "no dropped items"
+    6. Full death → respawn → "get dropped" recovery flow
+    7. Full disconnect → reconnect → "get dropped" recovery flow
+    8. Multiple dropped items all picked up, message lists them all
+    9. Original room items never picked up by "get dropped"
+  - **Test Status:** All 380 tests passing in parser + engine suites (1 pre-existing skip)
+  - **Implementation status:** Mouth's implementation already committed — parser handles "dropped"/"dropped items" nouns + "d" shortcut; engine has `handleTakeDropped` filtering by world room items, skipping hazards and non-portables
