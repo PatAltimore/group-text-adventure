@@ -7,7 +7,7 @@
   "rooms": {
     "jungle-trail": {
       "name": "Jungle Trail",
-      "description": "A narrow trail hacked through walls of green. Massive ceiba trees tower overhead, their roots writhing across the path like petrified serpents. Howler monkeys scream in the canopy. The air is thick as soup — humid, buzzing with insects, heavy with the smell of rotting vegetation and orchid blooms. Machete marks on the trees grow older as you press forward. Through gaps in the foliage to the north, you glimpse weathered stone — the ruins of Xib'alq'a. A rusted machete leans against a moss-covered boulder.",
+      "description": "A narrow trail hacked through walls of green. Massive ceiba trees tower overhead, their roots writhing across the path like petrified serpents. Howler monkeys scream in the canopy. The air is thick as soup — humid, buzzing with insects, heavy with the smell of rotting vegetation and orchid blooms. Machete marks on the trees grow older as you press forward. Through gaps in the foliage to the north, you glimpse weathered stone — the ruins of Xib'alq'a.",
       "exits": {
         "north": "overgrown-courtyard"
       },
@@ -63,7 +63,7 @@
     },
     "watchtower": {
       "name": "The Watchtower",
-      "description": "A crumbling Mayan watchtower perched on the gorge's edge, offering a breathtaking view of the jungle canopy stretching to the horizon like a green ocean. Vines have claimed most of the structure, but the upper platform is still intact. A stone shelf holds the remains of a lookout's post — obsidian signal mirrors, crumbled provisions, and a rolled animal-hide map showing the temple's interior passages and chambers. The rope bridge sways to the east.",
+      "description": "A crumbling Mayan watchtower perched on the gorge's edge, offering a breathtaking view of the jungle canopy stretching to the horizon like a green ocean. Vines have claimed most of the structure, but the upper platform is still intact. A stone shelf holds the remains of a lookout's post — obsidian signal mirrors and crumbled provisions. The rope bridge sways to the east.",
       "exits": {
         "east": "rope-bridge"
       },
@@ -74,8 +74,8 @@
     },
     "serpent-shrine": {
       "name": "The Serpent Shrine",
-      "description": "A circular shrine dedicated to Kukulkan, the feathered serpent god. Colossal stone serpents coil around the columns, their bodies covered in jade mosaic scales that still catch the light. An altar at the center is stained dark with ancient offerings. The air is thick with a lingering scent of copal incense — impossible after all these centuries, yet unmistakable. An obsidian sacrificial knife rests on the altar, its edge still wickedly sharp. To the north, stone steps descend into darkness — you hear a dry, slithering sound from below. The courtyard lies to the west.",
-      "solvedDescription": "A circular shrine dedicated to Kukulkan, the feathered serpent god. Colossal stone serpents coil around the columns, their bodies covered in jade mosaic scales that still catch the light. An altar at the center is stained dark with ancient offerings. The air is thick with a lingering scent of copal incense — impossible after all these centuries, yet unmistakable. An obsidian sacrificial knife rests on the altar, its edge still wickedly sharp. To the north, stone steps descend into darkness — but the pitch-pine torch's resin smoke has driven the serpents into cracks and crevices, the pit falling silent and safe to traverse. The courtyard lies to the west.",
+      "description": "A circular shrine dedicated to Kukulkan, the feathered serpent god. Colossal stone serpents coil around the columns, their bodies covered in jade mosaic scales that still catch the light. An altar at the center is stained dark with ancient offerings. The air is thick with a lingering scent of copal incense — impossible after all these centuries, yet unmistakable. To the north, stone steps descend into darkness — you hear a dry, slithering sound from below. The courtyard lies to the west.",
+      "solvedDescription": "A circular shrine dedicated to Kukulkan, the feathered serpent god. Colossal stone serpents coil around the columns, their bodies covered in jade mosaic scales that still catch the light. An altar at the center is stained dark with ancient offerings. The air is thick with a lingering scent of copal incense — impossible after all these centuries, yet unmistakable. To the north, stone steps descend into darkness — but the pitch-pine torch's resin smoke has driven the serpents into cracks and crevices, the pit falling silent and safe to traverse. The courtyard lies to the west.",
       "exits": {
         "west": "overgrown-courtyard",
         "north": "snake-pit"
@@ -87,7 +87,7 @@
     },
     "snake-pit": {
       "name": "The Snake Pit",
-      "description": "A sunken chamber writhing with serpents. Hundreds of them — fer-de-lances, bushmasters, coral snakes — coiled over ancient bones and shattered pottery. The floor is barely visible beneath their bodies. The hissing is deafening, a constant dry whisper that fills the chamber like white noise. In the far corner, half-buried in shed snakeskins, something glints green — a jade medallion carved with the face of the jaguar god. The steps back up to the shrine are to the south.",
+      "description": "A sunken chamber writhing with serpents. Hundreds of them — fer-de-lances, bushmasters, coral snakes — coiled over ancient bones and shattered pottery. The floor is barely visible beneath their bodies. The hissing is deafening, a constant dry whisper that fills the chamber like white noise. The steps back up to the shrine are to the south.",
       "exits": {
         "south": "serpent-shrine"
       },
@@ -124,7 +124,7 @@
     },
     "collapsed-gallery": {
       "name": "The Collapsed Gallery",
-      "description": "A once-grand gallery of carved stone panels, now half-buried in rubble from a collapsed ceiling. Shafts of green-filtered light pierce through gaps above, illuminating clouds of dust and flitting butterflies. Fragments of murals show Mayan warriors, astronomers, and a recurring image — a priest descending into a pit of fire carrying a torch. Among the rubble, you spot a coil of agave-fiber rope, still strong despite its age, and a pitch-pine torch wrapped in resin-soaked cloth. The temple entrance is back to the west.",
+      "description": "A once-grand gallery of carved stone panels, now half-buried in rubble from a collapsed ceiling. Shafts of green-filtered light pierce through gaps above, illuminating clouds of dust and flitting butterflies. Fragments of murals show Mayan warriors, astronomers, and a recurring image — a priest descending into a pit of fire carrying a torch. The temple entrance is back to the west.",
       "exits": {
         "west": "temple-entrance"
       },
@@ -162,7 +162,7 @@
     },
     "mechanism-chamber": {
       "name": "The Mechanism Chamber",
-      "description": "A marvel of ancient engineering. Massive stone gears interlock across the walls, connected by wooden axles and counterweights of carved granite. This is the mechanical heart of the temple — the system that controls its doors, traps, and hidden passages. Most of the mechanisms have seized with age, but one assembly still turns freely, its gears polished smooth by centuries of use. On a pedestal at the center, a jade skull gleams with an eerie inner light — its eye sockets set with mirrors of polished pyrite. The hall of glyphs is back to the west.",
+      "description": "A marvel of ancient engineering. Massive stone gears interlock across the walls, connected by wooden axles and counterweights of carved granite. This is the mechanical heart of the temple — the system that controls its doors, traps, and hidden passages. Most of the mechanisms have seized with age, but one assembly still turns freely, its gears polished smooth by centuries of use. The hall of glyphs is back to the west.",
       "exits": {
         "west": "hall-of-glyphs"
       },
@@ -173,8 +173,8 @@
     },
     "sacrificial-chamber": {
       "name": "The Sacrificial Chamber",
-      "description": "A blood-red chamber dominated by a massive stone altar stained black with the residue of a thousand ancient sacrifices. Channels carved into the stone once directed blood into collection basins shaped like snarling jaguar heads. The walls are painted with scenes of ritual sacrifice — priests in jaguar pelts, obsidian blades raised to the sky, hearts offered to the gods. A small golden idol sits on a shelf behind the altar — beautiful but somehow wrong, too light, a decoy. To the north, an enormous stone door is carved with a death's-head motif. A skull-shaped depression sits at its center. The hall of glyphs lies to the south.",
-      "solvedDescription": "A blood-red chamber dominated by a massive stone altar stained black with the residue of a thousand ancient sacrifices. Channels carved into the stone once directed blood into collection basins shaped like snarling jaguar heads. The walls are painted with scenes of ritual sacrifice — priests in jaguar pelts, obsidian blades raised to the sky, hearts offered to the gods. A small golden idol sits on a shelf behind the altar — beautiful but somehow wrong, too light, a decoy. To the north, the enormous stone door carved with a death's-head motif stands open — the jade skull having been placed in its depression, its pyrite eyes projecting twin beams onto hidden sensors, unlocking the vault door and revealing golden light beyond. The hall of glyphs lies to the south.",
+      "description": "A blood-red chamber dominated by a massive stone altar stained black with the residue of a thousand ancient sacrifices. Channels carved into the stone once directed blood into collection basins shaped like snarling jaguar heads. The walls are painted with scenes of ritual sacrifice — priests in jaguar pelts, obsidian blades raised to the sky, hearts offered to the gods. To the north, an enormous stone door is carved with a death's-head motif. A skull-shaped depression sits at its center. The hall of glyphs lies to the south.",
+      "solvedDescription": "A blood-red chamber dominated by a massive stone altar stained black with the residue of a thousand ancient sacrifices. Channels carved into the stone once directed blood into collection basins shaped like snarling jaguar heads. The walls are painted with scenes of ritual sacrifice — priests in jaguar pelts, obsidian blades raised to the sky, hearts offered to the gods. To the north, the enormous stone door carved with a death's-head motif stands open — the jade skull having been placed in its depression, its pyrite eyes projecting twin beams onto hidden sensors, unlocking the vault door and revealing golden light beyond. The hall of glyphs lies to the south.",
       "exits": {
         "south": "hall-of-glyphs"
       },
