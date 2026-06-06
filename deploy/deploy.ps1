@@ -231,17 +231,28 @@ try {
 
     # -- 5. Function App ------------------------------------------------
     Write-Step "Creating Function App '$functionAppName' (Consumption plan)..."
-    az functionapp create `
-        --name $functionAppName `
-        --resource-group $ResourceGroup `
-        --storage-account $storageName `
-        --consumption-plan-location $Location `
-        --runtime node `
-        --runtime-version 20 `
-        --functions-version 4 `
-        --os-type Linux `
-        --only-show-errors 2>$null | Out-Null
-    Assert-AzSuccess "Failed to create Function App '$functionAppName'"
+    $existingFuncApp = $null
+    try {
+        $existingFuncApp = az functionapp show --name $functionAppName --resource-group $ResourceGroup --query "name" --output tsv 2>&1
+        if ($LASTEXITCODE -ne 0) { $existingFuncApp = $null }
+    } catch {
+        $existingFuncApp = $null
+    }
+    if ($existingFuncApp) {
+        Write-Done "Function App '$functionAppName' already exists - reusing."
+    } else {
+        az functionapp create `
+            --name $functionAppName `
+            --resource-group $ResourceGroup `
+            --storage-account $storageName `
+            --consumption-plan-location $Location `
+            --runtime node `
+            --runtime-version 20 `
+            --functions-version 4 `
+            --os-type Linux `
+            --only-show-errors | Out-Null
+        Assert-AzSuccess "Failed to create Function App '$functionAppName'"
+    }
 
     # Wait for Function App to be fully provisioned (Linux Consumption can
     # return from 'create' before the deployment endpoint is ready)
