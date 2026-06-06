@@ -1326,3 +1326,103 @@ Fixed 16 instances across 7 world files where room `description` fields containe
 - All 590 tests pass
 - Commit: 88486cf
 
+---
+
+## 32. Microsoft Escape Room World Design
+
+**By:** Mouth (Backend Dev)  
+**Date:** 2026-06-06  
+**Status:** Implemented
+
+### What
+
+Created `world/microsoft-escape-room.json` — a time-travel escape room adventure through Microsoft's history from 1975 to 2025.
+
+### Design Decisions
+
+#### 1. Time Travel Narrative Structure
+
+**Choice:** Players travel backward through time from 2025 → 1975, then access a temporal core to "stabilize the timeline" and escape.
+
+**Rationale:**
+- Creates natural progression from familiar (modern Azure/AI) to historical (Altair 8800)
+- Allows for "backward compatible" tech jokes (Azure key card opens 1995 door)
+- Temporal core provides satisfying collection-quest finale (gather artifacts from each era)
+
+#### 2. Era Selection (7 Key Periods)
+
+**Eras chosen:**
+- **2025:** Modern Microsoft (Azure, AI, cloud-first)
+- **2020:** AI research lab + Azure datacenter
+- **2001:** Xbox launch + DirectX gaming revolution
+- **1995:** Windows 95 launch party
+- **1985:** MS-DOS development floor
+- **1975:** The garage where it began
+
+**Rationale:**
+- Each era represents a major inflection point in Microsoft's history
+- Provides clear visual/atmospheric distinctions between rooms
+- Allows for diverse item types (paper tape → floppy disks → cloud tokens)
+
+#### 3. Hazard Item Design
+
+**Four hazard items:**
+- `neural-network-schematic`: Triggers AI lab security system (2020 era)
+- `assembly-code-printout`: Causes CRT static discharge (1985 era)
+- `toxic-coolant-canister`: Vapor leak from datacenter (2020 era)
+- `suspicious-clippy-disk`: Virus-infected Clippy collectible (1995 era)
+
+**Rationale:**
+- Each hazard is era-appropriate (neural nets in AI lab, CRT static in 1985, coolant in datacenter)
+- Names are tempting: "schematic" sounds useful, "coolant canister" sounds valuable, "Clippy collectible" sounds nostalgic
+- Death text ties to the specific hazard mechanism (not generic)
+
+#### 4. Goal Marking (4 of 6 Puzzles)
+
+**Marked as goals:**
+1. `unlock-1995-door` — Opens major time period (critical path)
+2. `open-dev-floor` — Opens next era backward (critical path)
+3. `open-temporal-core` — Reveals the endgame room (critical path)
+4. `activate-temporal-console` — Final victory puzzle (critical path)
+
+**NOT marked as goals:**
+- `remove-datacenter-hazard` — Utility puzzle (hazard removal)
+- `defuse-dev-floor-hazard` — Utility puzzle (hazard removal)
+
+**Rationale:**
+- Follows established principle: openExit puzzles on critical path = goals
+- removeHazard puzzles are safety/convenience, not progression
+- 4 goals out of 6 puzzles = 67% goal ratio (within normal range: 60-83% per audit data)
+
+#### 5. "Backward Compatible" Puzzle Mechanic
+
+**The Azure key card opens a 1995-era door.**
+
+**Rationale:**
+- Clever tech joke: Azure's actual "backward compatibility" with legacy systems
+- Solves potential softlock: players in 2025 era need to access 1995 without complex item chains
+- Reinforces time-travel theme: modern tech works in the past (because time is broken)
+
+#### 6. Temporal Console Collection Quest
+
+**Requires 7 artifacts representing each era to unlock final exit.**
+
+**Rationale:**
+- Creates satisfying collection quest across all rooms
+- Rewards thorough exploration
+- Provides clear win condition
+- Mirrors escape room convention: collect X keys to escape
+
+### Impact
+
+- **New file:** `world/microsoft-escape-room.json`
+- **Validation:** Passes `validate-world.js` (only expected warnings for empty transitional rooms)
+- **Playable:** 10 rooms, 20 items, 6 puzzles, 4 goals, 4 hazard items
+- **No code changes needed:** Uses existing game engine mechanics
+
+### Next Steps (Future Improvements)
+
+- Playtesting to verify puzzle difficulty
+- Consider adding more intermediate puzzles if progression feels too linear
+- Could expand 2010s era (Satya Nadella pivot, cloud transformation) if 10 rooms feels sparse
+

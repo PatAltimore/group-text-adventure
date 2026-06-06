@@ -1179,3 +1179,13 @@ Player experience now much better: Pirate Treasure goes from zero feedback until
 - **Validation:** All 7 world files pass `validate-world.js`. All 590 tests pass.
 - **Commit:** `e2b8140` on `feature/hazard-item-death`
 - **Decision:** `.squad/decisions/inbox/mouth-item-duplication.md`
+
+### 2026-06-06 — Microsoft Escape Room World Created
+
+- **New world:** `world/microsoft-escape-room.json` (displayOrder: 15) — Time-travel escape room through Microsoft's history (1975-2025).
+- **Design approach:** Created cohesive narrative across 10 rooms spanning Microsoft eras: garage origins (1975), MS-DOS era (1985), Windows 95 launch (1995), Xbox launch (2001), Azure datacenter (2020), AI lab (2020), archives hallway, temporal core, and freedom exit.
+- **Items & hazards:** 20 items total including 3 hazard items with thematic death text (neural-network-schematic → AI security trap, assembly-code-printout → CRT static discharge, toxic-coolant-canister → vapor release, suspicious-clippy-disk → virus). Hazard items designed to look tempting/collectible, not obviously dangerous.
+- **Puzzles:** 6 puzzles total with 3 marked `isGoal: true` (unlock-1995-door, open-dev-floor, open-temporal-core, activate-temporal-console) following established goal-marking principles. Two utility puzzles remove hazards (datacenter cooling, CRT static). Final puzzle requires collecting artifacts from each era to stabilize timeline.
+- **Validation:** Passes `validate-world.js` with only expected warnings (empty transitional hallway + victory room).
+- **Narrative coherence:** Time-travel mechanic creates natural progression through Microsoft history. Azure key card is "backward compatible" allowing it to unlock 1995-era door (tech joke + puzzle solution). Temporal console requires 7 artifacts representing each era.
+- **Key files:** `world/microsoft-escape-room.json`
