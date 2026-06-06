@@ -1,0 +1,351 @@
+{
+  "name": "The Microsoft Time Trap",
+  "displayOrder": 15,
+  "description": "You wake up on a cold linoleum floor, fluorescent lights buzzing overhead. A security badge dangles from your neck, the date printed on it: '1975-2025-PRESENT-ERROR.' The walls flicker, digital screens showing Microsoft logos from different eras overlapping like ghosts. A speaker crackles to life: 'Welcome to the Time Trap. You've been selected for our ultimate beta test. Find the artifacts from each era of Microsoft's history. Fix the temporal anomaly. Or remain trapped in this loop forever. Good luck. -The System.' A countdown timer on the wall reads: 59:59... 59:58...",
+  "synopsis": "Travel through Microsoft's history to escape the time loop.",
+  "startRoom": "lobby-2025",
+  "rooms": {
+    "lobby-2025": {
+      "name": "Modern Microsoft Lobby (2025)",
+      "description": "Glass and chrome stretch in every direction. Massive touchscreens display the Azure logo in pulsing blue. A receptionist desk stands empty, dual monitors frozen on a login screen. To the north, frosted glass doors lead to what looks like a cloud datacenter. To the west, a hallway marked 'Archives' disappears into shadow. An elevator to the east stands open, its panel showing floors labeled with years instead of numbers. On the wall, a poster reads: 'Cloud First, AI First, Mobile First.' A strange shimmer distorts the air around the elevator — time itself feels unstable here.",
+      "exits": {
+        "north": "datacenter-2020",
+        "west": "archives"
+      },
+      "items": [
+        "security-badge",
+        "azure-key-card"
+      ],
+      "hazards": []
+    },
+    "datacenter-2020": {
+      "name": "Azure Datacenter (2020)",
+      "description": "Server racks tower like steel monuments, their LEDs blinking in hypnotic patterns. The air is cold and dry, preserved at exactly 68 degrees. Fiber optic cables snake across the floor like digital veins. A workstation in the corner displays a terminal prompt: 'az login required.' On a whiteboard, someone has drawn a diagram of Kubernetes pods with a note: 'The cloud is just someone else's computer.' A door to the east leads to what looks like an AI lab. The lobby is south.",
+      "exits": {
+        "south": "lobby-2025",
+        "east": "ai-lab-2020"
+      },
+      "items": [
+        "azure-portal-token",
+        "toxic-coolant-canister"
+      ],
+      "hazards": [
+        {
+          "description": "Warning signs flash on the servers: 'COOLING SYSTEM CRITICAL.' The temperature feels wrong.",
+          "probability": 0,
+          "deathText": ""
+        }
+      ]
+    },
+    "ai-lab-2020": {
+      "name": "AI Research Lab (2020)",
+      "description": "Whiteboards covered in neural network diagrams and GPT architecture sketches. A massive monitor shows code for transformer models, the cursor blinking mid-line as if someone just stepped away. In the corner, a friendly-looking chatbot avatar stares from a screen, speech bubble frozen: 'I can help you with...' A filing cabinet labeled 'Project Documentation' stands against the wall. The datacenter is west.",
+      "exits": {
+        "west": "datacenter-2020"
+      },
+      "items": [
+        "chatbot-plugin",
+        "neural-network-schematic"
+      ],
+      "hazards": []
+    },
+    "archives": {
+      "name": "The Archives Hallway",
+      "description": "A liminal space between eras. Fluorescent lights flicker, half of them dead. Filing cabinets line both walls, each labeled with a year. The air smells of paper and ozone. To the south, frosted glass doors are etched with 'Xbox Division - 2001.' To the west, a heavy door marked '1995' is sealed with a combination lock — four buttons arranged in a diamond pattern, each showing a Windows logo from different eras. The modern lobby is east.",
+      "solvedDescription": "A liminal space between eras. Fluorescent lights flicker, half of them dead. Filing cabinets line both walls, each labeled with a year. The air smells of paper and ozone. To the south, frosted glass doors are etched with 'Xbox Division - 2001.' To the west, the heavy door marked '1995' now stands open — the Windows logo sequence having unlocked it — revealing the Windows 95 launch party beyond. The modern lobby is east.",
+      "exits": {
+        "south": "xbox-room-2001",
+        "east": "lobby-2025"
+      },
+      "items": [],
+      "hazards": []
+    },
+    "xbox-room-2001": {
+      "name": "Xbox Launch Room (2001)",
+      "description": "The year gaming changed. A massive original Xbox sits on a pedestal under glass, 'The Duke' controller beside it. Posters line the walls: Halo, Project Gotham Racing, Fusion Frenzy. A TV in the corner loops the Master Chief trailer on mute. Development kits clutter a workbench — DirectX documentation scattered among energy drink cans. A locked cabinet labeled 'Launch Day Prototype' requires a security code. The archives hallway is north.",
+      "exits": {
+        "north": "archives"
+      },
+      "items": [
+        "master-chief-helmet",
+        "directx-manual"
+      ],
+      "hazards": []
+    },
+    "windows95-room": {
+      "name": "Windows 95 Launch Party (1995)",
+      "description": "Pure 90s chaos frozen in time. A stage at the far end, banners proclaiming 'START ME UP' hanging from the ceiling. Boxes of Windows 95 retail packages are stacked everywhere, the colorful Windows logo practically glowing. A computer setup runs the legendary flying windows screensaver. Balloons sag from the ceiling. On a table, someone left a box of 3.5-inch floppy disks and a handwritten note. A door to the south, labeled 'Development Floor,' requires a keycard swipe. The archives hallway is east.",
+      "solvedDescription": "Pure 90s chaos frozen in time. A stage at the far end, banners proclaiming 'START ME UP' hanging from the ceiling. Boxes of Windows 95 retail packages are stacked everywhere, the colorful Windows logo practically glowing. A computer setup runs the legendary flying windows screensaver. Balloons sag from the ceiling. On a table, someone left a box of 3.5-inch floppy disks and a handwritten note. The door to the south, once requiring a keycard, now stands open — the Azure key card having granted access despite the temporal mismatch — revealing the development floor beyond. The archives hallway is east.",
+      "exits": {
+        "east": "archives"
+      },
+      "items": [
+        "floppy-disk-set",
+        "launch-party-note",
+        "suspicious-clippy-disk"
+      ],
+      "hazards": []
+    },
+    "dev-floor-1985": {
+      "name": "Development Floor (1985)",
+      "description": "The early days. Beige desks with CRT monitors, each one massive and humming with static. MS-DOS commands scroll green-on-black. A poster on the wall shows Bill Gates and Paul Allen, impossibly young. Printouts of assembly code are tacked to cubicle walls. Someone's desk has a half-eaten sandwich and a Rubik's Cube. A locked filing cabinet labeled 'Source Code' stands in the corner, its combination lock waiting. A door west leads further back in time. The Windows 95 room is north.",
+      "exits": {
+        "north": "windows95-room",
+        "west": "garage-1975"
+      },
+      "items": [
+        "ms-dos-manual",
+        "assembly-code-printout"
+      ],
+      "hazards": [
+        {
+          "description": "The CRT monitors hum at a frequency that makes your teeth ache. Static electricity snaps in the air.",
+          "probability": 0,
+          "deathText": ""
+        }
+      ]
+    },
+    "garage-1975": {
+      "name": "The Garage (1975)",
+      "description": "Where it all began. A cramped space smelling of oil and soldering flux. An Altair 8800 sits on a workbench, its front panel switches and lights looking more like art than technology. Paper tape coils across the floor. A chalkboard on the wall shows BASIC interpreter code in cramped handwriting. A poster reads: 'A computer on every desk and in every home.' Through a dirty window, you can see it's night. A strange portal of shimmering light pulses in the corner — unstable, wrong. The development floor is east.",
+      "exits": {
+        "east": "dev-floor-1985"
+      },
+      "items": [
+        "altair-toggle-switch",
+        "basic-interpreter-tape",
+        "founders-photograph"
+      ],
+      "hazards": []
+    },
+    "secret-server-room": {
+      "name": "The Temporal Core",
+      "description": "Reality feels thin here. Servers from every era of computing line the walls — from mainframes to blade servers to quantum prototypes. In the center, a massive console displays a countdown: 'TEMPORAL STABILIZATION REQUIRED. INSERT ARTIFACTS FROM EACH ERA.' Seven slots glow on the console, each labeled with a year: 1975, 1985, 1995, 2001, 2010, 2020, 2025. Once all seven artifacts are inserted, a final door will open. The way back to the AI lab is west.",
+      "exits": {
+        "west": "ai-lab-2020"
+      },
+      "items": [
+        "temporal-console"
+      ],
+      "hazards": []
+    },
+    "freedom-room": {
+      "name": "The Exit",
+      "description": "White walls, white floor, white ceiling. A simple door stands in the center, no lock, no handle. It simply reads: 'THANK YOU FOR PARTICIPATING IN OUR BETA TEST.' As you approach, it swings open on its own, revealing bright daylight beyond — the real world, stable time, freedom. You made it.",
+      "exits": {},
+      "items": [],
+      "hazards": []
+    }
+  },
+  "items": {
+    "security-badge": {
+      "name": "Security Badge",
+      "description": "A laminated ID card with your photo — except it's not quite your face, more like a glitched version. The date reads '1975-2025-PRESENT-ERROR' and the clearance level is 'TEMPORAL TESTER.' On the back, a magnetic stripe and a handwritten note: 'The cloud unlocks the archives.'",
+      "pickupText": "You grab the security badge. The date on it makes no sense. Neither does your photo. What beta test is this?",
+      "roomText": "A security badge lies on the reception desk, its lamination catching the light.",
+      "portable": true
+    },
+    "azure-key-card": {
+      "name": "Azure Key Card",
+      "description": "A sleek blue key card embossed with the Azure cloud logo. It hums faintly, as if powered by something beyond simple RFID. The back is etched: 'Backward compatible with all legacy systems.'",
+      "pickupText": "The Azure key card feels warm in your hand, almost alive. Technology from the future, somehow compatible with the past.",
+      "roomText": "An Azure key card sits beside a monitor, glowing faintly blue.",
+      "portable": true
+    },
+    "azure-portal-token": {
+      "name": "Azure Portal Token",
+      "description": "A small USB device with a digital display showing: 'Bearer Token: ey...2025'. The kind of authentication key that grants access to cloud resources. A sticky note attached reads: 'This proves you understand the cloud. Guard it well.'",
+      "pickupText": "You pocket the Azure portal token. It feels like proof of expertise — a key to modern infrastructure.",
+      "roomText": "A USB token labeled 'Azure Portal Access' sits next to the terminal.",
+      "portable": true
+    },
+    "chatbot-plugin": {
+      "name": "Chatbot Plugin Module",
+      "description": "A small circuit board with a chip labeled 'GPT-Plugin-Auth.' Represents the cutting edge of AI integration. A note taped to it: 'The future is conversational. The future is intelligent. The future is now.'",
+      "pickupText": "You take the chatbot plugin module. It represents years of AI research compressed into silicon and code.",
+      "roomText": "A circuit board labeled 'Plugin System' rests on the desk.",
+      "portable": true
+    },
+    "neural-network-schematic": {
+      "name": "Neural Network Schematic",
+      "description": "A folded poster showing the architecture of a transformer model — attention heads, embeddings, layers stacked like a digital brain. It's beautiful in its complexity.",
+      "pickupText": "You carefully fold the neural network schematic. This could be valuable.",
+      "roomText": "A large schematic is pinned to the wall, showing neural network architecture.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "As you pull the schematic from the wall, a hidden tripwire snaps. A security system activates — laser grids, gas vents, the works. The AI lab was a trap. Your last thought: 'Should have read the warning label.'"
+    },
+    "master-chief-helmet": {
+      "name": "Master Chief Helmet",
+      "description": "A replica of the iconic MJOLNIR helmet, green and gold visor. Surprisingly heavy. Inside, a label: 'Finish the Fight. - Bungie, 2001.' It smells like convention floors and energy drinks.",
+      "pickupText": "You lift the Master Chief helmet. It's heavier than expected — authentic, even if it's a replica.",
+      "roomText": "A Master Chief helmet sits on display, visor gleaming under the lights.",
+      "portable": true
+    },
+    "directx-manual": {
+      "name": "DirectX Developer Manual",
+      "description": "A thick technical manual, spiral-bound, dog-eared to hell. Coffee stains on every third page. Chapter 5: 'Hardware-Accelerated Graphics Pipeline.' Handwritten notes in the margins: 'This changes everything.'",
+      "pickupText": "You grab the DirectX manual. Decades of gaming technology, documented page by page.",
+      "roomText": "A worn DirectX manual lies open on the workbench.",
+      "portable": true
+    },
+    "floppy-disk-set": {
+      "name": "Windows 95 Install Disks",
+      "description": "A boxed set of thirteen 3.5-inch floppy disks, each labeled 'Disk 1 of 13' through 'Disk 13 of 13.' The box art shows the classic Windows logo and the text 'Start Me Up.' Nostalgia in physical form.",
+      "pickupText": "You pick up the floppy disk set. Thirteen disks to install an entire operating system. Simpler times.",
+      "roomText": "A pristine boxed set of Windows 95 installation floppies sits on the table.",
+      "portable": true
+    },
+    "launch-party-note": {
+      "name": "Launch Party Note",
+      "description": "A sticky note in rushed handwriting: 'The Azure card works on ALL doors — even the 95 dev floor. Time is weird here. -A Friend'",
+      "pickupText": "You read the note. Someone else was here before you, leaving breadcrumbs.",
+      "roomText": "A yellow sticky note is attached to a balloon string.",
+      "portable": true
+    },
+    "ms-dos-manual": {
+      "name": "MS-DOS Manual",
+      "description": "Spiral-bound documentation, pages yellowed with age. Chapter titles: 'DIR', 'COPY', 'FORMAT /S'. The language of an entire generation of programmers. On the cover: 'Version 3.3'",
+      "pickupText": "You take the MS-DOS manual. Command-line history, preserved in paper.",
+      "roomText": "An MS-DOS manual sits on a desk, its pages worn from use.",
+      "portable": true
+    },
+    "assembly-code-printout": {
+      "name": "Assembly Code Printout",
+      "description": "Continuous-feed paper, perforated edges still attached. Line after line of x86 assembly instructions. At the bottom, a comment: '; This is how you talk to the machine directly.'",
+      "pickupText": "You grab the assembly printout. Machine code, the lowest level before raw electrons.",
+      "roomText": "A printout of assembly code is tacked to a cubicle wall.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "The moment you pull the assembly code from the wall, the CRT monitors around you surge. Electricity arcs through the air. The static discharge was building all along, and you just triggered it. The 1980s claim another victim."
+    },
+    "altair-toggle-switch": {
+      "name": "Altair Toggle Switch",
+      "description": "A small metal toggle switch, carefully removed from the front panel of an Altair 8800. This switch once programmed machines one bit at a time. Pure, unfiltered computing history.",
+      "pickupText": "You pocket the Altair switch. This is where personal computing was born.",
+      "roomText": "A toggle switch from the Altair's front panel lies on the workbench.",
+      "portable": true
+    },
+    "basic-interpreter-tape": {
+      "name": "BASIC Interpreter Tape",
+      "description": "A coil of paper tape, holes punched in precise patterns. This tape contains Altair BASIC — the first product of a little company called Microsoft. Each hole is a bit of history.",
+      "pickupText": "You carefully wind up the paper tape. The source code that started it all.",
+      "roomText": "A coil of paper tape labeled 'BASIC' sits beside the Altair.",
+      "portable": true
+    },
+    "founders-photograph": {
+      "name": "Founders Photograph",
+      "description": "A black-and-white photo in a cheap frame. Two young men in a cluttered garage, grinning at the camera. On the back, handwritten: 'Bill & Paul, 1975. We're going to change the world.'",
+      "pickupText": "You take the photograph. Ambition captured on film.",
+      "roomText": "A framed photograph sits on the workbench, faces barely visible in the dim light.",
+      "portable": true
+    },
+    "temporal-console": {
+      "name": "Temporal Stabilization Console",
+      "description": "A massive control panel that looks like it was assembled from parts spanning fifty years. Seven slots glow with different colors, each awaiting an artifact from a different era. A display reads: 'TIMELINE INTEGRITY: CRITICAL. REPAIR PROTOCOL ACTIVE.'",
+      "pickupText": "You examine the console. It's not just technology — it's the key to escaping this temporal anomaly.",
+      "roomText": "The temporal console dominates the center of the room, waiting to be activated.",
+      "portable": false
+    },
+    "toxic-coolant-canister": {
+      "name": "Coolant Canister",
+      "description": "A pressurized container labeled 'DATACENTER COOLANT - DO NOT OPEN.' The metal is cold to the touch, frost forming on the exterior. It looks valuable — liquid cooling for servers is expensive. But something about the warning label feels urgent.",
+      "pickupText": "You grab the canister. The moment it leaves its housing, the seal breaks. Toxic vapor floods the room — chemical coolant never meant for human lungs. You collapse before you can even drop it.",
+      "roomText": "A shiny metal canister sits in a maintenance bracket, warning labels barely visible.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You grab the canister. The moment it leaves its housing, the seal breaks. Toxic vapor floods the room — chemical coolant never meant for human lungs. You collapse before you can even drop it."
+    },
+    "suspicious-clippy-disk": {
+      "name": "Clippy Collectible Disk",
+      "description": "A limited-edition floppy disk with Clippy's cheerful face on the label: 'It looks like you're trying to escape! Let me help!' The disk is labeled 'ASSISTANT.EXE' and looks like a rare piece of Microsoft Office memorabilia. Surely it's valuable?",
+      "pickupText": "You grab the Clippy disk and pop it into a nearby drive out of curiosity. It boots immediately. 'It looks like you're dying!' Clippy chirps. The disk contains a virus — outdated but lethal in this temporal loop. The screen goes dark. So does everything else.",
+      "roomText": "A colorful floppy disk with Clippy's smiling face sits on a desk.",
+      "portable": true,
+      "hazardItem": true,
+      "deathText": "You grab the Clippy disk and pop it into a nearby drive out of curiosity. It boots immediately. 'It looks like you're dying!' Clippy chirps. The disk contains a virus — outdated but lethal in this temporal loop. The screen goes dark. So does everything else."
+    }
+  },
+  "puzzles": {
+    "unlock-1995-door": {
+      "room": "archives",
+      "description": "The door marked '1995' is sealed with a combination lock showing four Windows logos from different eras: Windows 3.1, Windows 95, Windows XP, Windows 7. You need to press them in chronological order.",
+      "requiredItem": "launch-party-note",
+      "hintText": "The sticky note mentions the Azure card working on all doors. Maybe technology transcends time in this place?",
+      "solvedText": "You study the Windows logos on the lock, then press them in order: 3.1, 95, XP, 7. The lock clicks open. The door to 1995 swings wide, revealing the chaos of the Windows 95 launch party beyond.",
+      "isGoal": true,
+      "goalName": "Unlock the 1995 Archive",
+      "action": {
+        "type": "openExit",
+        "direction": "west",
+        "targetRoom": "windows95-room"
+      }
+    },
+    "open-dev-floor": {
+      "room": "windows95-room",
+      "description": "The door to the development floor requires a keycard swipe. The reader is old — mid-90s technology at best. But maybe something from the future would work?",
+      "requiredItem": "azure-key-card",
+      "hintText": "The Azure key card is labeled 'backward compatible with all legacy systems.' That's not just marketing speak in this place.",
+      "solvedText": "You swipe the Azure key card through the reader. For a moment, nothing happens — then the reader glows blue, accepts the impossible authentication, and the door unlocks with a satisfying click. Time bends, but technology persists.",
+      "isGoal": true,
+      "goalName": "Access the Development Floor",
+      "action": {
+        "type": "openExit",
+        "direction": "south",
+        "targetRoom": "dev-floor-1985"
+      }
+    },
+    "open-temporal-core": {
+      "room": "ai-lab-2020",
+      "description": "Behind the filing cabinet, you notice a seam in the wall — a hidden door. It won't budge. A small terminal beside it prompts: 'AUTHENTICATION REQUIRED: Bearer Token from Azure Portal.'",
+      "requiredItem": "azure-portal-token",
+      "hintText": "The token represents cloud authentication. Modern security for a modern problem.",
+      "solvedText": "You insert the Azure portal token into the terminal. The screen flashes green: 'AUTHENTICATED. WELCOME TO THE TEMPORAL CORE.' The hidden door slides open with a hydraulic hiss, revealing the server room beyond — the heart of the anomaly.",
+      "isGoal": true,
+      "goalName": "Discover the Temporal Core",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "secret-server-room"
+      }
+    },
+    "activate-temporal-console": {
+      "room": "secret-server-room",
+      "description": "The temporal console awaits seven artifacts — one from each era of Microsoft's history. Insert them all, and the timeline will stabilize. The slots are labeled: 1975 (Garage Era), 1985 (MS-DOS Era), 1995 (Windows Era), 2001 (Xbox Era), 2010 (Cloud Era), 2020 (AI Era), 2025 (Modern Era).",
+      "requiredItem": "founders-photograph",
+      "hintText": "You need artifacts representing each era: the Altair switch or BASIC tape (1975), the MS-DOS manual (1985), the floppy disk set (1995), the Master Chief helmet or DirectX manual (2001), the Azure portal token (2010), the chatbot plugin (2020), the security badge (2025). Collect them all.",
+      "solvedText": "You insert the final artifact into the console. The slots glow in sequence — 1975, 1985, 1995, 2001, 2010, 2020, 2025 — each light pulsing as the timeline stabilizes. The countdown stops. The console displays: 'TEMPORAL INTEGRITY RESTORED. BETA TEST COMPLETE. EXIT UNLOCKED.' A door appears in the eastern wall, shimmering into existence, leading to freedom.",
+      "isGoal": true,
+      "goalName": "Stabilize the Timeline",
+      "action": {
+        "type": "openExit",
+        "direction": "east",
+        "targetRoom": "freedom-room"
+      }
+    },
+    "remove-datacenter-hazard": {
+      "room": "datacenter-2020",
+      "description": "The server cooling system is failing. Temperature warnings flash across every screen. If you can find the Azure portal token, you can run a command to restart the cooling subsystem.",
+      "requiredItem": "azure-portal-token",
+      "hintText": "'az vm restart --resource-group COOLING --name HVAC-01' — that's what the command would look like.",
+      "solvedText": "You authenticate with the Azure portal token and run the cooling restart command. The servers hum contentedly as cold air floods back in. Crisis averted. The warning signs dim.",
+      "action": {
+        "type": "removeHazard",
+        "room": "datacenter-2020",
+        "hazard": "Warning signs flash on the servers: 'COOLING SYSTEM CRITICAL.' The temperature feels wrong."
+      }
+    },
+    "defuse-dev-floor-hazard": {
+      "room": "dev-floor-1985",
+      "description": "The CRT monitors are building up a dangerous static charge. If you can ground them with something conductive from an earlier era, you can discharge the buildup safely.",
+      "requiredItem": "altair-toggle-switch",
+      "hintText": "Metal conducts electricity. The Altair switch is metal. Sometimes old solutions work on old problems.",
+      "solvedText": "You carefully touch the metal toggle switch to the CRT monitor casings. A sharp crack of static discharges through the switch, grounding out safely. The air stops humming. The monitors settle. You can breathe again.",
+      "action": {
+        "type": "removeHazard",
+        "room": "dev-floor-1985",
+        "hazard": "The CRT monitors hum at a frequency that makes your teeth ache. Static electricity snaps in the air."
+      }
+    }
+  }
+}
