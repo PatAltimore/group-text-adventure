@@ -2,7 +2,7 @@
 // All state is passed in and returned; functions are side-effect free.
 
 import { parseCommand } from './command-parser.js';
-import { validateWorld } from '../world/validate-world.js';
+import { validateWorld } from '../../world/validate-world.js';
 
 /**
  * Get ASCII art for a goal completion
