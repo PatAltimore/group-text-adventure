@@ -138,7 +138,8 @@
         "east": "area-51-entrance"
       },
       "items": [
-        "extraterrestrial-communicator"
+        "extraterrestrial-communicator",
+        "perimeter-access-card"
       ],
       "hazards": []
     },
@@ -254,6 +255,13 @@
       "pickupText": "You pocket the badge. The biometric strip pulses warm against your thigh, as if recognizing a new owner.",
       "portable": true,
       "roomText": "A faded security badge dangles from a hook beside the vault door, its biometric strip glowing faintly."
+    },
+    "perimeter-access-card": {
+      "name": "Perimeter Access Card",
+      "description": "A second government credential, newer than the lab badge but issued to the same operative — the embossed lettering reads ‘R. WEBB — PERIMETER, COSMIC CLEARANCE.’ The magnetic stripe is worn but intact.",
+      "pickupText": "You brush the sand away and pocket the card. R. Webb again — the same name from the lab. Whoever they were, their clearance reached everywhere.",
+      "portable": true,
+      "roomText": "A weathered access card lies half-buried among the crash-site crates, its lettering — ‘R. WEBB — PERIMETER’ — still legible."
     },
     "alien-artifact": {
       "name": "Alien Artifact",
@@ -408,9 +416,9 @@
     "bypass-area-51-gate": {
       "room": "area-51-entrance",
       "description": "The gate is sealed by a biometric scanner requiring Level 4 clearance or higher. The automated defenses remain active — approaching without clearance is suicide.",
-      "requiredItem": "security-badge",
-      "hintText": "The scanner accepts biometric badges. Cold War-era credentials might still be in the system — the military rarely purges its own databases.",
-      "solvedText": "You press the vintage badge to the scanner. It flickers — ‘CLEARANCE VERIFIED — WELCOME DR. WEBB.’ The gate unlocks with a heavy clunk. Turrets power down, servos whining into silence. North, the hangar stands open. Dr. Webb worked here, decades ago.",
+      "requiredItem": "perimeter-access-card",
+      "hintText": "The scanner accepts government credentials. Dr. Webb's perimeter access card — recovered from the Roswell crash site to the west — should still verify.",
+      "solvedText": "You press the access card to the scanner. It flickers — ‘CLEARANCE VERIFIED — WELCOME DR. WEBB.’ The gate unlocks with a heavy clunk. Turrets power down, servos whining into silence. North, the hangar stands open. Dr. Webb worked here, decades ago.",
       "isGoal": true,
       "goalName": "Breach Area 51",
       "action": {

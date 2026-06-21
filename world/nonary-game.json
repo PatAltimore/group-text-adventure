@@ -132,7 +132,8 @@
       },
       "items": [
         "engineers-key",
-        "engine-plate"
+        "engine-plate",
+        "cipher-wheel"
       ],
       "hazards": [
         {
@@ -180,8 +181,7 @@
         "north": "chart-room"
       },
       "items": [
-        "brass-plaque",
-        "cipher-wheel"
+        "brass-plaque"
       ],
       "hazards": []
     }
@@ -288,7 +288,7 @@
     "cipher-wheel": {
       "name": "Cipher Wheel",
       "description": "A mechanical cipher device, two brass disks rotating against each other with numbers 0-9 repeated around the rim. Used for encoding messages. The inner disk is set to position 9.",
-      "roomText": "A brass cipher wheel sits on the altar, its disks aligned to show the number 9 in every position.",
+      "roomText": "A brass cipher wheel has been left atop the engine plating, its disks aligned to show the number 9 in every position.",
       "pickupText": "You take the cipher wheel. The mechanism clicks smoothly as you turn it. Zero's puzzle pieces, scattered through the ship.",
       "portable": true
     },
