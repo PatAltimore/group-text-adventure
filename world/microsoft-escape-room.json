@@ -29,13 +29,7 @@
         "azure-portal-token",
         "toxic-coolant-canister"
       ],
-      "hazards": [
-        {
-          "description": "Warning signs flash on the servers: 'COOLING SYSTEM CRITICAL.' The temperature feels wrong.",
-          "probability": 0,
-          "deathText": ""
-        }
-      ]
+      "hazards": []
     },
     "ai-lab-2020": {
       "name": "AI Research Lab (2020)",
@@ -57,7 +51,9 @@
         "south": "xbox-room-2001",
         "east": "lobby-2025"
       },
-      "items": [],
+      "items": [
+        "launch-party-note"
+      ],
       "hazards": []
     },
     "xbox-room-2001": {
@@ -74,14 +70,13 @@
     },
     "windows95-room": {
       "name": "Windows 95 Launch Party (1995)",
-      "description": "Pure 90s chaos frozen in time. A stage at the far end, banners proclaiming 'START ME UP' hanging from the ceiling. Boxes of Windows 95 retail packages are stacked everywhere, the colorful Windows logo practically glowing. A computer setup runs the legendary flying windows screensaver. Balloons sag from the ceiling. On a table, someone left a box of 3.5-inch floppy disks and a handwritten note. A door to the south, labeled 'Development Floor,' requires a keycard swipe. The archives hallway is east.",
-      "solvedDescription": "Pure 90s chaos frozen in time. A stage at the far end, banners proclaiming 'START ME UP' hanging from the ceiling. Boxes of Windows 95 retail packages are stacked everywhere, the colorful Windows logo practically glowing. A computer setup runs the legendary flying windows screensaver. Balloons sag from the ceiling. On a table, someone left a box of 3.5-inch floppy disks and a handwritten note. The door to the south, once requiring a keycard, now stands open — the Azure key card having granted access despite the temporal mismatch — revealing the development floor beyond. The archives hallway is east.",
+      "description": "Pure 90s chaos frozen in time. A stage at the far end, banners proclaiming 'START ME UP' hanging from the ceiling. Boxes of Windows 95 retail packages are stacked everywhere, the colorful Windows logo practically glowing. A computer setup runs the legendary flying windows screensaver. Balloons sag from the ceiling. On a table, someone left a box of 3.5-inch floppy disks. A door to the south, labeled 'Development Floor,' requires a keycard swipe. The archives hallway is east.",
+      "solvedDescription": "Pure 90s chaos frozen in time. A stage at the far end, banners proclaiming 'START ME UP' hanging from the ceiling. Boxes of Windows 95 retail packages are stacked everywhere, the colorful Windows logo practically glowing. A computer setup runs the legendary flying windows screensaver. Balloons sag from the ceiling. On a table, someone left a box of 3.5-inch floppy disks. The door to the south, once requiring a keycard, now stands open — the Azure key card having granted access despite the temporal mismatch — revealing the development floor beyond. The archives hallway is east.",
       "exits": {
         "east": "archives"
       },
       "items": [
         "floppy-disk-set",
-        "launch-party-note",
         "suspicious-clippy-disk"
       ],
       "hazards": []
@@ -198,9 +193,9 @@
     },
     "launch-party-note": {
       "name": "Launch Party Note",
-      "description": "A sticky note in rushed handwriting: 'The Azure card works on ALL doors — even the 95 dev floor. Time is weird here. -A Friend'",
-      "pickupText": "You read the note. Someone else was here before you, leaving breadcrumbs.",
-      "roomText": "A yellow sticky note is attached to a balloon string.",
+      "description": "A sticky note in rushed handwriting, evidently dropped here on the way out of the 95 launch party: 'That diamond lock on the 1995 door? Press the Windows logos oldest to newest — 3.1, then 95, then XP, then 7. Chronological order. Time is weird here. -A Friend'",
+      "pickupText": "You read the note. Someone else was here before you, leaving breadcrumbs — including the combination for that diamond lock.",
+      "roomText": "A yellow sticky note is stuck to a filing cabinet beside the combination lock.",
       "portable": true
     },
     "ms-dos-manual": {
@@ -271,7 +266,7 @@
       "room": "archives",
       "description": "The door marked '1995' is sealed with a combination lock showing four Windows logos from different eras: Windows 3.1, Windows 95, Windows XP, Windows 7. You need to press them in chronological order.",
       "requiredItem": "launch-party-note",
-      "hintText": "The sticky note mentions the Azure card working on all doors. Maybe technology transcends time in this place?",
+      "hintText": "Find the launch party note in this hallway — it spells out the diamond lock's combination: the Windows logos in chronological order (3.1, 95, XP, 7). Use the note at the lock.",
       "solvedText": "You study the Windows logos on the lock, then press them in order: 3.1, 95, XP, 7. The lock clicks open. The door to 1995 swings wide, revealing the chaos of the Windows 95 launch party beyond.",
       "isGoal": true,
       "goalName": "Unlock the 1995 Archive",
@@ -313,7 +308,7 @@
       "room": "secret-server-room",
       "description": "The temporal console awaits seven artifacts — one from each era of Microsoft's history. Insert them all, and the timeline will stabilize. The slots are labeled: 1975 (Garage Era), 1985 (MS-DOS Era), 1995 (Windows Era), 2001 (Xbox Era), 2010 (Cloud Era), 2020 (AI Era), 2025 (Modern Era).",
       "requiredItem": "founders-photograph",
-      "hintText": "You need artifacts representing each era: the Altair switch or BASIC tape (1975), the MS-DOS manual (1985), the floppy disk set (1995), the Master Chief helmet or DirectX manual (2001), the Azure portal token (2010), the chatbot plugin (2020), the security badge (2025). Collect them all.",
+      "hintText": "The console's keystone is the founders' photograph from the 1975 garage — the origin point of it all. Bring it here and use it to activate the console.",
       "solvedText": "You insert the final artifact into the console. The slots glow in sequence — 1975, 1985, 1995, 2001, 2010, 2020, 2025 — each light pulsing as the timeline stabilizes. The countdown stops. The console displays: 'TEMPORAL INTEGRITY RESTORED. BETA TEST COMPLETE. EXIT UNLOCKED.' A door appears in the eastern wall, shimmering into existence, leading to freedom.",
       "isGoal": true,
       "goalName": "Stabilize the Timeline",
@@ -321,18 +316,6 @@
         "type": "openExit",
         "direction": "east",
         "targetRoom": "freedom-room"
-      }
-    },
-    "remove-datacenter-hazard": {
-      "room": "datacenter-2020",
-      "description": "The server cooling system is failing. Temperature warnings flash across every screen. If you can find the Azure portal token, you can run a command to restart the cooling subsystem.",
-      "requiredItem": "azure-portal-token",
-      "hintText": "'az vm restart --resource-group COOLING --name HVAC-01' — that's what the command would look like.",
-      "solvedText": "You authenticate with the Azure portal token and run the cooling restart command. The servers hum contentedly as cold air floods back in. Crisis averted. The warning signs dim.",
-      "action": {
-        "type": "removeHazard",
-        "room": "datacenter-2020",
-        "hazard": "Warning signs flash on the servers: 'COOLING SYSTEM CRITICAL.' The temperature feels wrong."
       }
     },
     "defuse-dev-floor-hazard": {
