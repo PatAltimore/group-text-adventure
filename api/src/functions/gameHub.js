@@ -434,6 +434,7 @@ async function handleJoin(serviceClient, connectionId, data, context) {
         playerId: oldPlayer.playerId,
         room: oldPlayer.room,
         inventory: [...oldPlayer.inventory],
+        hp: oldPlayer.hp,
       };
       delete session.players[oldPlayerId];
       await deletePlayer(gameId, oldPlayerId);

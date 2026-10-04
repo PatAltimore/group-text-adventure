@@ -1146,6 +1146,19 @@ html, body {
   border-left: 3px solid var(--red);
 }
 
+.msg-damage {
+  color: var(--red);
+  background: rgba(248, 81, 73, 0.08);
+  border-left: 3px solid var(--red);
+}
+
+.room-health {
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
 .msg-respawn-notification {
   color: var(--green);
   font-style: italic;

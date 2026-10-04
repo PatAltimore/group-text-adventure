@@ -14,7 +14,8 @@
       },
       "items": [
         "security-badge",
-        "azure-key-card"
+        "azure-key-card",
+        "first-aid-kit"
       ],
       "hazards": []
     },
@@ -52,7 +53,8 @@
         "east": "lobby-2025"
       },
       "items": [
-        "launch-party-note"
+        "launch-party-note",
+        "cryo-gloves"
       ],
       "hazards": []
     },
@@ -64,7 +66,8 @@
       },
       "items": [
         "master-chief-helmet",
-        "directx-manual"
+        "directx-manual",
+        "energy-drink"
       ],
       "hazards": []
     },
@@ -96,7 +99,11 @@
         {
           "description": "The CRT monitors hum at a frequency that makes your teeth ache. Static electricity snaps in the air.",
           "probability": 0,
-          "deathText": ""
+          "deathText": "The static builds into one enormous arc. The CRTs go dark, and so do you.",
+          "damage": 1,
+          "counteredBy": "esd-wrist-strap",
+          "counterText": "Static crackles around you, but your wrist strap bleeds it away into the floor.",
+          "damageText": "Static snaps from the CRTs and stings your hands."
         }
       ]
     },
@@ -109,7 +116,8 @@
       "items": [
         "altair-toggle-switch",
         "basic-interpreter-tape",
-        "founders-photograph"
+        "founders-photograph",
+        "esd-wrist-strap"
       ],
       "hazards": []
     },
@@ -168,6 +176,10 @@
       "roomText": "A large schematic is pinned to the wall, showing neural network architecture.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "security-badge",
+      "counterText": "As you pull the schematic from the wall, a hidden tripwire clicks — and the security system scans your badge. 'TEMPORAL TESTER: AUTHORIZED.' The laser grid flickers and stands down.",
+      "damageText": "As you pull the schematic from the wall, a hidden tripwire snaps. Laser grids sweep the room and a vent hisses — you throw yourself clear, singed, and the schematic snaps back onto the wall.",
       "deathText": "As you pull the schematic from the wall, a hidden tripwire snaps. A security system activates — laser grids, gas vents, the works. The AI lab was a trap. Your last thought: 'Should have read the warning label.'"
     },
     "master-chief-helmet": {
@@ -212,6 +224,10 @@
       "roomText": "A printout of assembly code is tacked to a cubicle wall.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "esd-wrist-strap",
+      "counterText": "You clip the wrist strap to a desk leg before touching the printout. The static bleeds harmlessly into the ground as you peel the paper free.",
+      "damageText": "The moment you pull the assembly code from the wall, the CRT monitors surge and a bolt of static arcs into your hand. The printout flutters back onto the cubicle wall.",
       "deathText": "The moment you pull the assembly code from the wall, the CRT monitors around you surge. Electricity arcs through the air. The static discharge was building all along, and you just triggered it. The 1980s claim another victim."
     },
     "altair-toggle-switch": {
@@ -249,7 +265,43 @@
       "roomText": "A shiny metal canister sits in a maintenance bracket, warning labels barely visible.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "cryo-gloves",
+      "counterText": "The canister's seal sighs open as you lift it, but your cryo gloves keep the freezing vapor off your skin. You twist the valve shut and tuck it away.",
+      "damageText": "You grab the canister and the seal breaks. Toxic vapor billows out; you stagger back, choking, and the canister clatters back into its bracket.",
       "deathText": "You grab the canister. The moment it leaves its housing, the seal breaks. Toxic vapor floods the room — chemical coolant never meant for human lungs. You collapse before you can even drop it."
+    },
+    "cryo-gloves": {
+      "name": "Cryo Gloves",
+      "description": "Thick insulated gloves with a frosted palm, stenciled 'DATACENTER MAINTENANCE — COOLANT HANDLING.' They'd keep your hands safe from anything cold, caustic or leaking.",
+      "pickupText": "You pull on the cryo gloves. They're stiff, but your hands feel protected.",
+      "roomText": "A pair of heavy insulated gloves hangs from a hook, stenciled 'COOLANT HANDLING.'",
+      "portable": true
+    },
+    "esd-wrist-strap": {
+      "name": "Anti-Static Wrist Strap",
+      "description": "A coiled cord with a cuff on one end and an alligator clip on the other. A tag reads: 'Ground yourself before touching ANYTHING near a CRT.'",
+      "pickupText": "You buckle the anti-static strap around your wrist. Static can't build up on you now.",
+      "roomText": "An anti-static wrist strap is draped over the workbench.",
+      "portable": true
+    },
+    "first-aid-kit": {
+      "name": "First Aid Kit",
+      "description": "A white box with a green cross, restocked for the beta test. Inside: bandages, antiseptic, and a note: 'The temporal anomaly does not cover workplace injuries.'",
+      "pickupText": "You take the first aid kit. It's a lot lighter than it should be.",
+      "roomText": "A first aid kit is mounted on the wall beside the reception desk.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You patch yourself up with bandages and antiseptic. The kit is empty afterwards."
+    },
+    "energy-drink": {
+      "name": "Energy Drink",
+      "description": "A dented can of something neon and fizzy, left over from the Xbox launch crunch. It's still cold, somehow.",
+      "pickupText": "You grab an energy drink. It's the fuel that built an industry.",
+      "roomText": "A single unopened energy drink can sits among the empties.",
+      "portable": true,
+      "heal": 1,
+      "useText": "You crack the can and chug. Your head clears and your hands stop shaking."
     },
     "suspicious-clippy-disk": {
       "name": "Clippy Collectible Disk",

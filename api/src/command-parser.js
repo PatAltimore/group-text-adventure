@@ -20,6 +20,7 @@ const HELP_VERBS = new Set(['help', 'h', '?']);
 const SAY_VERBS = new Set(['say', 'whisper']);
 const YELL_VERBS = new Set(['yell', 'shout']);
 const MAP_VERBS = new Set(['map', 'm']);
+const HEALTH_VERBS = new Set(['health', 'hp', 'status']);
 
 /**
  * Parse raw command text into a structured command object.
@@ -136,6 +137,11 @@ export function parseCommand(text) {
   // Map
   if (MAP_VERBS.has(verb)) {
     return { verb: 'map', raw };
+  }
+
+  // Health
+  if (HEALTH_VERBS.has(verb)) {
+    return { verb: 'health', raw };
   }
 
   // Help

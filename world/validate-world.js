@@ -5,6 +5,29 @@ const VALID_DIRECTIONS = new Set(['north', 'south', 'east', 'west']);
 const OPPOSITE = { north: 'south', south: 'north', east: 'west', west: 'east' };
 
 /**
+ * Validate the optional combat fields shared by hazard items and room hazards:
+ * damage, counteredBy (item id or list of ids), counterText and damageText.
+ */
+function validateHazardFields(label, hazard, itemIds, errors) {
+  if (hazard.damage !== undefined && (typeof hazard.damage !== 'number' || hazard.damage <= 0)) {
+    errors.push(`${label}: \"damage\" must be a positive number when provided.`);
+  }
+  for (const field of ['counterText', 'damageText']) {
+    if (hazard[field] !== undefined && typeof hazard[field] !== 'string') {
+      errors.push(`${label}: \"${field}\" must be a string when provided.`);
+    }
+  }
+  if (hazard.counteredBy !== undefined) {
+    const counters = Array.isArray(hazard.counteredBy) ? hazard.counteredBy : [hazard.counteredBy];
+    for (const counter of counters) {
+      if (typeof counter !== 'string' || !itemIds.has(counter)) {
+        errors.push(`${label}: \"counteredBy\" references non-existent item \"${counter}\".`);
+      }
+    }
+  }
+}
+
+/**
  * Validate a world JSON object for correctness.
  * @param {object} worldData - Raw world definition.
  * @returns {{ valid: boolean, errors: string[], warnings: string[] }}
@@ -129,6 +152,7 @@ export function validateWorld(worldData) {
           if (typeof hazard.deathText !== 'string') {
             errors.push(`Room \"${roomId}\": hazard[${i}].deathText is required and must be a string.`);
           }
+          validateHazardFields(`Room \"${roomId}\": hazard[${i}]`, hazard, itemIds, errors);
         } else {
           errors.push(`Room \"${roomId}\": hazard[${i}] must be a string or an object with { description, probability, deathText }.`);
         }
@@ -181,6 +205,13 @@ export function validateWorld(worldData) {
     }
     if (item.roomText !== undefined && typeof item.roomText !== 'string') {
       errors.push(`Item \"${itemId}\": \"roomText\" must be a string when provided.`);
+    }
+    validateHazardFields(`Item \"${itemId}\"`, item, itemIds, errors);
+    if (item.heal !== undefined && (typeof item.heal !== 'number' || item.heal <= 0)) {
+      errors.push(`Item \"${itemId}\": \"heal\" must be a positive number when provided.`);
+    }
+    if (item.useText !== undefined && typeof item.useText !== 'string') {
+      errors.push(`Item \"${itemId}\": \"useText\" must be a string when provided.`);
     }
   }
 

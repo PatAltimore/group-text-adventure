@@ -4,6 +4,21 @@
 import { parseCommand } from './command-parser.js';
 import { validateWorld } from '../../world/validate-world.js';
 
+const DEFAULT_MAX_HP = 3;
+
+function getMaxHp(session) {
+  return session.maxHp || DEFAULT_MAX_HP;
+}
+
+// Sessions saved before the health system have no hp on their players.
+function getHp(session, player) {
+  return typeof player.hp === 'number' ? player.hp : getMaxHp(session);
+}
+
+function formatHp(current, max) {
+  return `${'♥'.repeat(current)}${'♡'.repeat(max - current)} ${current}/${max}`;
+}
+
 /**
  * Get ASCII art for a goal completion
  * @returns {string} ASCII art trophy
@@ -238,6 +253,7 @@ export function createGameSession(world) {
     players: {},
     goalsCompleted: 0,
     totalGoals,
+    maxHp: DEFAULT_MAX_HP,
     deathTimeout: 30,
     hazardHintsEnabled: false,
     sayScope: 'room',
@@ -262,6 +278,7 @@ export function addPlayer(session, playerId, playerName) {
     name: playerName,
     room: session.world.startRoom,
     inventory: [],
+    hp: getMaxHp(session),
     visitedRooms: [session.world.startRoom],
   };
 
@@ -316,6 +333,7 @@ export function disconnectPlayer(session, playerId) {
     playerId: player.playerId || null,
     room: player.room,
     inventory: [],
+    hp: getHp(session, player),
     disconnectedAt: Date.now(),
     visitedRooms: player.visitedRooms || [],
   };
@@ -376,6 +394,7 @@ export function reconnectPlayer(session, ghostName, newPlayerId) {
     playerId: ghost.playerId || null,
     room: ghost.room,
     inventory: [],
+    hp: typeof ghost.hp === 'number' ? ghost.hp : getMaxHp(session),
     visitedRooms: ghost.visitedRooms || [ghost.room],
   };
 
@@ -440,6 +459,7 @@ export function respawnPlayer(session, ghostName, newPlayerId) {
     playerId: ghost.playerId,
     room: ghost.room,
     inventory: [],
+    hp: getMaxHp(session),
     visitedRooms: ghost.visitedRooms || [ghost.room],
   };
 
@@ -466,6 +486,7 @@ export function revivePlayer(session, ghostName, newPlayerId) {
     playerId: ghost.playerId || null,
     room: ghost.room,
     inventory: [],
+    hp: getMaxHp(session),
     visitedRooms: ghost.visitedRooms || [ghost.room],
   };
 
@@ -559,6 +580,7 @@ export function getPlayerView(session, playerId) {
     items,
     players: otherPlayers,
     ghosts: getGhostsInRoom(session, player.room),
+    hp: { current: getHp(session, player), max: getMaxHp(session) },
   };
 
   // Only include hazard hints if hazardHintsEnabled is not explicitly false
@@ -634,6 +656,8 @@ export function processCommand(session, playerId, commandText) {
     case 'yell':
       result = handleYell(session, playerId, cmd);
       break;
+    case 'health':
+      return handleHealth(session, playerId);
     case 'help':
       return handleHelp(session, playerId);
     case 'map':
@@ -656,6 +680,110 @@ export function processCommand(session, playerId, commandText) {
   }
 
   return result;
+}
+
+// ── Hazards ───────────────────────────────────────────────────────────
+
+/**
+ * Build the responses for a player's death: the death screen for them and
+ * a death + ghost notice for everyone left in the room.
+ */
+function buildDeathResponses(session, playerId, playerName, playerRoom, deathText) {
+  const text = deathText || 'You have died.';
+  const responses = [
+    {
+      playerId,
+      message: { type: 'death', deathText: text, deathTimeout: session.deathTimeout || 30 },
+    },
+  ];
+
+  for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+    if (otherPlayer.room === playerRoom) {
+      responses.push({
+        playerId: otherId,
+        message: {
+          type: 'playerEvent',
+          event: 'died',
+          playerName,
+          text: `${playerName} has died! ${text}`,
+        },
+      });
+      responses.push({
+        playerId: otherId,
+        message: { type: 'ghostEvent', text: `${playerName}'s ghost appears.` },
+      });
+    }
+  }
+
+  return responses;
+}
+
+function hasCounter(player, counteredBy) {
+  if (!counteredBy) return false;
+  const counters = Array.isArray(counteredBy) ? counteredBy : [counteredBy];
+  return counters.some((itemId) => player.inventory.includes(itemId));
+}
+
+/**
+ * Resolve a hazard against a player, deterministically.
+ *
+ * A hazard has `damage` (a number; Infinity is instantly lethal), an optional
+ * `counteredBy` (item id or list of ids — carrying any one makes the player
+ * immune) and optional `counterText`, `damageText` and `deathText`.
+ *
+ * @returns {{ outcome: 'countered'|'hurt'|'died', responses: Array }}
+ */
+function resolveHazard(session, playerId, hazard) {
+  const player = session.players[playerId];
+  const responses = [];
+
+  if (hasCounter(player, hazard.counteredBy)) {
+    if (hazard.counterText) {
+      responses.push({ playerId, message: { type: 'message', text: hazard.counterText } });
+    }
+    return { outcome: 'countered', responses };
+  }
+
+  const maxHp = getMaxHp(session);
+  const remaining = getHp(session, player) - hazard.damage;
+
+  if (remaining > 0) {
+    player.hp = remaining;
+    responses.push({
+      playerId,
+      message: {
+        type: 'damage',
+        text: `${hazard.damageText || 'You are hurt!'} Health: ${formatHp(remaining, maxHp)}`,
+        hp: { current: remaining, max: maxHp },
+      },
+    });
+    for (const [otherId, otherPlayer] of Object.entries(session.players)) {
+      if (otherId !== playerId && otherPlayer.room === player.room) {
+        responses.push({
+          playerId: otherId,
+          message: { type: 'message', text: `${player.name} is hurt!` },
+        });
+      }
+    }
+    return { outcome: 'hurt', responses };
+  }
+
+  const { name, room } = player;
+  const deathText = hazard.deathText || hazard.damageText;
+  killPlayer(session, playerId);
+  responses.push(...buildDeathResponses(session, playerId, name, room, deathText));
+  return { outcome: 'died', responses };
+}
+
+/** Hazard properties of a hazardItem. Items with no `damage` are lethal. */
+function itemHazard(item) {
+  return {
+    damage: typeof item.damage === 'number' ? item.damage : Infinity,
+    counteredBy: item.counteredBy,
+    counterText: item.counterText,
+    damageText: item.damageText,
+    deathText: item.deathText,
+  };
 }
 
 // ── Command handlers ──────────────────────────────────────────────────
@@ -720,9 +848,25 @@ function handleGo(session, playerId, cmd) {
     }
   }
 
-  // Show the player their new room
-  const view = getPlayerView(session, playerId);
-  responses.push({ playerId, message: { type: 'look', room: view } });
+  // Room hazards with damage hurt anyone who enters without the counter item
+  const hazardResponses = [];
+  let died = false;
+  for (const hazard of session.world.rooms[targetRoom].hazards || []) {
+    if (typeof hazard !== 'object' || typeof hazard.damage !== 'number') continue;
+    const result = resolveHazard(session, playerId, hazard);
+    hazardResponses.push(...result.responses);
+    if (result.outcome === 'died') {
+      died = true;
+      break;
+    }
+  }
+
+  // Show the room first, then what it did to them (the view reflects any damage)
+  if (!died) {
+    const view = getPlayerView(session, playerId);
+    responses.push({ playerId, message: { type: 'look', room: view } });
+  }
+  responses.push(...hazardResponses);
 
   return { session, responses };
 }
@@ -810,44 +954,14 @@ function handleTake(session, playerId, cmd) {
     return { session, responses };
   }
 
-  // Hazard item — picking it up kills the player
+  // Hazard item — hurts or kills the player unless they carry its counter.
+  // A player who survives the hit leaves the item where it is.
   if (item.hazardItem) {
-    const playerName = player.name;
-    const playerRoom = player.room;
-    session = killPlayer(session, playerId);
-
-    responses.push({
-      playerId,
-      message: {
-        type: 'death',
-        deathText: item.deathText,
-        deathTimeout: session.deathTimeout || 30,
-      },
-    });
-
-    // Notify other players in the room
-    for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-      if (otherPlayer.room === playerRoom) {
-        responses.push({
-          playerId: otherId,
-          message: {
-            type: 'playerEvent',
-            event: 'died',
-            playerName,
-            text: `${playerName} has died! ${item.deathText}`,
-          },
-        });
-        responses.push({
-          playerId: otherId,
-          message: {
-            type: 'ghostEvent',
-            text: `${playerName}'s ghost appears.`,
-          },
-        });
-      }
+    const result = resolveHazard(session, playerId, itemHazard(item));
+    responses.push(...result.responses);
+    if (result.outcome !== 'countered') {
+      return { session, responses };
     }
-
-    return { session, responses };
   }
 
   // Move item from room to player inventory
@@ -895,49 +1009,27 @@ function handleTakeAll(session, playerId) {
   for (const itemId of portableItems) {
     const item = session.world.items[itemId];
 
-    // Hazard item — picking it up kills the player
+    // Hazard item — hurts or kills the player unless they carry its counter.
+    // Items are taken in room order, so a counter picked up earlier counts.
     if (item && item.hazardItem) {
-      const playerName = player.name;
-      const playerRoom = player.room;
-      session = killPlayer(session, playerId);
-
-      responses.push({
-        playerId,
-        message: {
-          type: 'death',
-          deathText: item.deathText,
-          deathTimeout: session.deathTimeout || 30,
-        },
-      });
-
-      for (const [otherId, otherPlayer] of Object.entries(session.players)) {
-        if (otherPlayer.room === playerRoom) {
-          responses.push({
-            playerId: otherId,
-            message: {
-              type: 'playerEvent',
-              event: 'died',
-              playerName,
-              text: `${playerName} has died! ${item.deathText}`,
-            },
-          });
-          responses.push({
-            playerId: otherId,
-            message: {
-              type: 'ghostEvent',
-              text: `${playerName}'s ghost appears.`,
-            },
-          });
-        }
+      const result = resolveHazard(session, playerId, itemHazard(item));
+      responses.push(...result.responses);
+      if (result.outcome === 'died') {
+        return { session, responses };
       }
-
-      return { session, responses };
+      if (result.outcome === 'hurt') {
+        continue;
+      }
     }
 
     const idx = roomState.items.indexOf(itemId);
     roomState.items.splice(idx, 1);
     player.inventory.push(itemId);
     pickedUpNames.push(item ? item.name : itemId);
+  }
+
+  if (pickedUpNames.length === 0) {
+    return { session, responses };
   }
 
   const itemList = pickedUpNames.join(', ');
@@ -1096,6 +1188,29 @@ function handleUse(session, playerId, cmd) {
   }
 
   const itemId = matches[0];
+  const usedItem = session.world.items[itemId];
+
+  // Healing items restore health and are consumed — but only when needed
+  if (typeof usedItem.heal === 'number' && usedItem.heal > 0) {
+    const maxHp = getMaxHp(session);
+    const hp = getHp(session, player);
+    if (hp >= maxHp) {
+      responses.push({
+        playerId,
+        message: { type: 'message', text: `You're already at full health. Save the ${usedItem.name}.` },
+      });
+      return { session, responses };
+    }
+
+    player.hp = Math.min(maxHp, hp + usedItem.heal);
+    player.inventory.splice(player.inventory.indexOf(itemId), 1);
+    const useText = usedItem.useText || `You use the ${usedItem.name}.`;
+    responses.push({
+      playerId,
+      message: { type: 'message', text: `${useText} Health: ${formatHp(player.hp, maxHp)}` },
+    });
+    return { session, responses };
+  }
 
   // Check for matching puzzles in the current room
   for (const [puzzleId, puzzle] of Object.entries(session.world.puzzles || {})) {
@@ -1430,6 +1545,12 @@ function handleYell(session, playerId, cmd) {
   return { session, responses };
 }
 
+function handleHealth(session, playerId) {
+  const player = session.players[playerId];
+  const text = `Health: ${formatHp(getHp(session, player), getMaxHp(session))}`;
+  return { session, responses: [{ playerId, message: { type: 'message', text } }] };
+}
+
 function handleHelp(session, playerId) {
   const helpText = [
     '── HELP ─────────────────',
@@ -1448,7 +1569,8 @@ function handleHelp(session, playerId) {
     '  GET DROPPED Pick up dropped items (d)',
     '              skips hazardous items',
     '  DROP <x>    Drop an item',
-    '  USE <x>     Use an item',
+    '  USE <x>     Use an item (heals)',
+    '  HEALTH      Show your health (hp)',
     '  USE <x> ON <y>  Use on target',
     '  GIVE <x> TO <p> Give to player',
     '  INVENTORY   Your items (i)',

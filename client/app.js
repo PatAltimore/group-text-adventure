@@ -513,6 +513,9 @@
         appendToOutput(createMsg('msg-death-notification', `☠️ ${msg.deathText || 'You have died.'}`));
         showDeathScreen(msg.deathText, msg.deathTimeout);
         break;
+      case 'damage':
+        appendToOutput(createMsg('msg-damage', `💥 ${msg.text}`));
+        break;
       case 'playerDeath':
         appendToOutput(createMsg('msg-death-notification', `💀 ${msg.playerName} has died!`));
         break;
@@ -606,6 +609,14 @@
       progress.className = 'goal-progress';
       progress.textContent = `🏆 Goals: ${room.goalProgress.completed}/${room.goalProgress.total}`;
       container.appendChild(progress);
+    }
+
+    // Health display - below goal progress
+    if (room.hp && room.hp.max > 0) {
+      const health = document.createElement('div');
+      health.className = 'room-health';
+      health.textContent = `Health: ${'♥'.repeat(room.hp.current)}${'♡'.repeat(room.hp.max - room.hp.current)}`;
+      container.appendChild(health);
     }
 
     // Split items into native and displaced

@@ -14,7 +14,7 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 - **Multiple Worlds** — Choose from 15 pre-built adventures spanning fantasy, sci-fi, horror, mystery, and more — or create your own
 - **Customizable Lobby Settings** — Host can adjust Respawn Timer (15–60s), Hazard Hints (Show/Hide), Say Scope (Room Only/Global), and Puzzle Hints (Enabled/Disabled)
 - **Real-Time Sync** — All actions broadcast instantly via Web PubSub
-- **Hazard System** — Rooms contain dangerous items that kill on pickup; hazard hints can be shown or hidden via lobby settings; defeated players respawn after timer expires
+- **Hazard & Health System** — Players have 3 hearts. Hazardous items and rooms deal deterministic damage unless you carry the right protective item; some hazards are instantly lethal. Healing items restore health. Hazard hints can be shown or hidden via lobby settings; defeated players respawn after timer expires
 - **Ghost System** — Dead or disconnected players become ghosts; items drop to room floor immediately; others can pick them up with the "get" command
 - **Auto-Reconnection** — Refresh your browser and rejoin seamlessly with your progress
 - **Puzzle Rooms** — 🧩 Emoji prefix marks puzzle rooms; optional hints show required items
@@ -45,7 +45,8 @@ Gather 1–20 players, explore a shared world, solve puzzles, and collaborate to
 | **Get** | `get <item>` or `get items` - Get all items including hazardous items. | `get torch` or `get items` or `g` |
 | **Drop** | `drop <item>` | `drop torch` |
 | **Inventory** | `inventory` or `i` | `i` |
-| **Use** | `use <item>` | `use key` |
+| **Use** | `use <item>` (also heals with healing items) | `use key` |
+| **Health** | `health`, `hp`, or `status` | `hp` |
 | **Give** | `give <item> to <player>` | `give key to Alice` |
 | **Say** | `say <message>` | `say Help me with the puzzle!` |
 | **Map** | `map` | `map`  or `m` |
@@ -210,7 +211,17 @@ Worlds are defined as JSON files in `world/` with the following structure:
       "description": "Long description",
       "exits": { "north": "targetRoom", "south": "otherRoom" },
       "items": ["itemId1", "itemId2"],
-      "hazards": ["Description of hazard"]
+      "hazards": [
+        {
+          "description": "Hint text for the hazard",
+          "probability": 0,
+          "deathText": "Shown if the damage kills the player",
+          "damage": 1,
+          "counteredBy": "itemId",
+          "counterText": "Shown when the player is protected",
+          "damageText": "Shown when the player is hurt"
+        }
+      ]
     }
   },
   "items": {
@@ -220,7 +231,13 @@ Worlds are defined as JSON files in `world/` with the following structure:
       "pickupText": "Message when picked up",
       "portable": true,
       "hazardItem": false,
-      "deathText": "Message when hazard item kills player"
+      "damage": 2,
+      "counteredBy": "otherItemId",
+      "counterText": "Shown when the player is protected",
+      "damageText": "Shown when the player is hurt but survives",
+      "deathText": "Shown when the hazard kills the player",
+      "heal": 1,
+      "useText": "Shown when a healing item is used"
     }
   },
   "puzzles": {
@@ -237,6 +254,8 @@ Worlds are defined as JSON files in `world/` with the following structure:
   }
 }
 ```
+
+**Hazards and health.** Every player has 3 hearts. A hazard item (`hazardItem: true`) is resolved when someone takes it: if they carry any item listed in `counteredBy` (an item id or a list), they pick it up safely; otherwise they take `damage` hearts and the item stays put. A hazard item with no `damage` is instantly lethal. Room hazards with a `damage` field work the same way each time a player enters the room (hazards without `damage` are just flavor text). Reaching 0 hearts kills the player. Items with `heal` restore that many hearts when used and are consumed. Everything is deterministic — no dice.
 
 **You can create new worlds** by editing the JSON structure — no code changes needed. Place your world file in `world/` and deploy.
 
