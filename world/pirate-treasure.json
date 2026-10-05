@@ -13,6 +13,9 @@
         "east": "jungle-trail"
       },
       "items": [
+        "leather-boots",
+        "iron-cap",
+        "coconut",
         "torn-map",
         "corroded-sextant"
       ],
@@ -43,6 +46,8 @@
         "east": "ruined-fort"
       },
       "items": [
+        "driftwood-plank",
+        "rum-barrel",
         "brass-compass",
         "golden-locket"
       ],
@@ -64,6 +69,7 @@
         "south": "mangrove-swamp"
       },
       "items": [
+        "surgeons-kit",
         "cannon-medallion"
       ],
       "hazards": [
@@ -246,6 +252,8 @@
       "roomText": "A brass sextant lies in the tidal debris, salt-corroded but gleaming, its mirrors reflecting warped fragments of sky.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "damageText": "You crouch for the sextant and a rogue wave crashes over the coral. It slams you into the wreck, and you scramble up, soaked and bruised. The sextant is swept away.",
       "deathText": "You crouch for the sextant as the tide surges. A rogue wave crashes over the coral barrier — a wall of green water that hammers you into the wreckage. The sextant spins wildly in the foam as the undertow drags you out to sea."
     },
     "golden-locket": {
@@ -254,6 +262,10 @@
       "roomText": "A gold locket glints in the ferns beside the trail, its chain tangled in the undergrowth, as though torn from someone's neck in a struggle.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "leather-boots",
+      "counterText": "You wade carefully into the ferns in the tall boots. The fer-de-lance strikes, and the fangs skid off the stiff leather. You pull the locket free and back away.",
+      "damageText": "You reach into the ferns and a fer-de-lance strikes your forearm. Fire races up your arm as you scramble back, and the locket is lost in the undergrowth.",
       "deathText": "You reach into the ferns for the locket and the fer-de-lance strikes. You never see it until its fangs are in your forearm — liquid fire racing through your veins. The locket swings from your trembling hand as the jungle goes dark."
     },
     "cannon-medallion": {
@@ -262,6 +274,10 @@
       "roomText": "A bronze medallion lies wedged in the crumbling mortar between stones, its crossed-cannon design barely visible beneath a beautiful green patina.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "iron-cap",
+      "counterText": "You jam the iron cap down before digging the medallion out. A section of the battlement gives way, and stone clangs off the cap. You stagger out, ears ringing, with the medallion.",
+      "damageText": "You dig the medallion from the mortar and part of the battlements gives way. A stone clips your shoulder as you dive clear, and the medallion is buried.",
       "deathText": "You dig the medallion from the mortar. A section of the battlements groans, shifts, and gives way with a grinding roar. Centuries of jungle growth release their hold, and tons of stone cascade downward. The medallion rings like a bell as the fort reclaims its fallen."
     },
     "pearl-shell": {
@@ -270,6 +286,10 @@
       "roomText": "A large shell studded with natural pearls sits on a tuft of dry ground, its interior shimmering like captured moonlight amid the dark water.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "driftwood-plank",
+      "counterText": "You lay the driftwood plank across the mud and creep out on your belly. The crust holds, and you pick up the pearl shell and crawl back.",
+      "damageText": "You step toward the shell and your foot breaks through the crust. Quicksand grabs your leg, and you claw your way out, exhausted, losing the shell.",
       "deathText": "You step toward the shell and your foot breaks through a thin crust of dried mud into something worse. Quicksand grips your leg, then your waist, pulling with patient, inexorable force. The pearl shell watches from its dry island as the swamp swallows you whole."
     },
     "crystal-skull": {
@@ -278,6 +298,10 @@
       "roomText": "A fragment of crystal skull sits in a niche beside the cave entrance, its polished surface throwing rainbows into the darkness.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "iron-cap",
+      "counterText": "You jam the iron cap down before pulling the skull from its niche. The tremor shakes loose a shower of stones that ring off the helmet. You dash clear with the skull before the lintel cracks.",
+      "damageText": "You pluck the crystal skull from its niche and the hillside shakes. A falling stone strikes your shoulder as you run, and the skull is buried in the rockfall.",
       "deathText": "You pluck the crystal skull from its niche. A tremor ripples through the hillside. The skull-carved lintel cracks. Tons of rock cascade down, sealing the cave entrance — and you — in a tomb of stone and crystal rainbows."
     },
     "river-pearl": {
@@ -286,6 +310,10 @@
       "roomText": "A massive pearl rests on a ledge above the waterline, glowing faintly in the darkness, as though lit by a light inside the stone itself.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "rum-barrel",
+      "counterText": "You loop an arm through the rum barrel and lunge for the pearl. The flash flood hits, but the barrel floats you above the surge. You ride it out, pearl in hand.",
+      "damageText": "You reach for the pearl and a roar echoes down the tunnel. The flash flood sweeps you downstream, and you struggle to the bank, half-drowned, empty-handed.",
       "deathText": "You reach for the pearl as a roar echoes from the darkness upstream. The river swells, a flash flood from the mountain above filling the cave in seconds. The pearl glows serenely beneath the churning water as the current pins you against the cave wall."
     },
     "jeweled-serpent-totem": {
@@ -295,6 +323,52 @@
       "portable": true,
       "hazardItem": true,
       "deathText": "You lift the totem from its alcove. A soft click beneath your fingers. A hiss from the wall. Poison darts — curare-tipped, ancient, lethal — pepper your body before you can blink. The ruby eyes watch impassively as you crumple."
+    },
+    "leather-boots": {
+      "name": "Tall Leather Boots",
+      "description": "A pair of thigh-high pirate boots, double-stitched and stiff with salt. Built for wading through swamps and snakes.",
+      "pickupText": "You pick up the Tall Leather Boots.",
+      "roomText": "A pair of tall leather boots lies half-buried in the sand.",
+      "portable": true
+    },
+    "iron-cap": {
+      "name": "Iron Cap",
+      "description": "A rusty iron cap of the kind worn by artillerymen. Heavy and ugly, but it would turn a falling stone.",
+      "pickupText": "You pick up the Iron Cap.",
+      "roomText": "A rusty iron cap lies in the wreckage of the longboat.",
+      "portable": true
+    },
+    "driftwood-plank": {
+      "name": "Driftwood Plank",
+      "description": "A long, flat plank of salt-bleached driftwood. Perfect for spreading your weight across soft ground.",
+      "pickupText": "You pick up the Driftwood Plank.",
+      "roomText": "A long driftwood plank leans against a palm trunk.",
+      "portable": true
+    },
+    "rum-barrel": {
+      "name": "Empty Rum Barrel",
+      "description": "A small, sealed barrel, empty and buoyant. It smells powerfully of molasses.",
+      "pickupText": "You pick up the Empty Rum Barrel.",
+      "roomText": "A small, empty rum barrel rolls gently in the shallows.",
+      "portable": true
+    },
+    "coconut": {
+      "name": "Fresh Coconut",
+      "description": "A heavy green coconut, sloshing with sweet water. A pirate's best friend.",
+      "pickupText": "You pick up the Fresh Coconut.",
+      "roomText": "A fresh coconut sits on the sand beside the wreck.",
+      "portable": true,
+      "heal": 1,
+      "useText": "You crack the coconut on a rock and drink. The sweet water revives you a little."
+    },
+    "surgeons-kit": {
+      "name": "Surgeon's Kit",
+      "description": "A battered leather roll of bandages, needles and brandy. Whoever owned it patched up crew in a hurry.",
+      "pickupText": "You pick up the Surgeon's Kit.",
+      "roomText": "A surgeon's kit is tucked into a niche in the fort wall.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You stitch and bind your wounds with the surgeon's kit. It is crude, but it works."
     }
   },
   "puzzles": {

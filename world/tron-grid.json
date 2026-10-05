@@ -12,6 +12,9 @@
         "north": "data-stream"
       },
       "items": [
+        "surge-protector",
+        "signal-filter",
+        "energy-cell",
         "buffer-exploit"
       ],
       "hazards": []
@@ -24,6 +27,7 @@
         "south": "digitization-bay"
       },
       "items": [
+        "phase-shifter",
         "data-fragment",
         "glitching-power-surge"
       ],
@@ -44,7 +48,10 @@
         "east": "light-cycle-track",
         "south": "data-stream"
       },
-      "items": [],
+      "items": [
+        "id-spoof",
+        "stealth-cloak"
+      ],
       "hazards": []
     },
     "disc-arena": {
@@ -187,6 +194,10 @@
       "roomText": "A sphere of volatile energy hovers at the stream's edge, arcs of white-hot code crackling across its surface, each pulse brighter and more unstable than the last.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "surge-protector",
+      "counterText": "You run the surge protector before reaching for the surge. Arcs of white-hot code crackle, and the subroutine absorbs the spike. You carry the stabilized energy away.",
+      "damageText": "You reach for the surge and raw energy detonates through your code. Subroutines overload, and you reel back, glitching, as the surge drops away.",
       "deathText": "You reach for the power surge and raw energy detonates through your code. Every subroutine overloads simultaneously — a cascading failure that rewrites your base functions into garbage data. Your render dissolves into static, scattered across the data stream like interference on a dead channel."
     },
     "identity-disc": {
@@ -202,6 +213,10 @@
       "roomText": "A cracked combat visor lies near the arena's edge, its fractured lens still flickering with targeting data, orange light pulsing through the damage.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "signal-filter",
+      "counterText": "You run the signal filter before donning the visor. The corrupted targeting noise resolves into a clean display, and you keep the visor.",
+      "damageText": "You slide the visor on and corrupted targeting data floods your vision. Warnings scream in your HUD, and you rip it off, disoriented and dizzy.",
       "deathText": "You slide the visor over your eyes and the cracked display floods your vision with corrupted targeting data. Your HUD screams conflicting warnings. Blinded by static, you never see the rogue combat disc — a streak of orange light that finds its mark before you can tear the visor away."
     },
     "light-baton": {
@@ -252,6 +267,8 @@
       "roomText": "An overclocked power rod lies on the track surface, pulsing with erratic blue energy, its core vibrating dangerously as if about to blow.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "phase-shifter",
+      "counterText": "You prime the phase shifter before grabbing the rod. An orange light-wall materializes in your path, but you slip through it and keep the rod.",
       "deathText": "You grab the rod and step left to dodge a blue energy trail. You walk straight into an orange wall materializing at light speed. The impact is instantaneous — your program derezzes on contact, code scattering across the track like shattered glass."
     },
     "mcp-enforcement-badge": {
@@ -260,6 +277,10 @@
       "roomText": "A hexagonal badge pulses with crimson light near the scanner array, its MCP enforcement credentials flickering like an invitation.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "id-spoof",
+      "counterText": "You run the ID spoof before touching the badge. The scanner locks on, hesitates, accepts the forged signature, and goes quiet.",
+      "damageText": "You reach for the badge and a scanner locks on. Purge protocols flood your code, rewriting you from the inside, and you break contact, weakened and flickering.",
       "deathText": "You reach for the badge and a scanner locks onto your unauthorized code signature. It floods your system with purge protocols — rewriting your base code, overwriting your identity. The badge's crimson light is the last thing your fading consciousness processes."
     },
     "nav-module": {
@@ -268,7 +289,53 @@
       "roomText": "A navigation module dangles from a recognizer's open service panel, trailing fiber-optic tendrils, still cycling through mysterious flight coordinates.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "stealth-cloak",
+      "counterText": "You engage the stealth cloak before yanking the module free. The search beam sweeps the hangar and finds nothing, and the Recognizer drifts past. You tuck the module away.",
       "deathText": "You yank the nav module free. A search beam locks onto the energy signature and a Recognizer lurches to life. It drops from its mount, a wall of dark geometry that fills your vision. The impact is less of a sound and more of an absence — a hole where a program used to be."
+    },
+    "surge-protector": {
+      "name": "Surge Protector Subroutine",
+      "description": "A small utility program that absorbs voltage spikes and surge events. It runs quietly in the background, an unglamorous but vital process.",
+      "pickupText": "You pick up the Surge Protector Subroutine.",
+      "roomText": "A glowing surge-protector subroutine is parked in an idle process slot.",
+      "portable": true
+    },
+    "signal-filter": {
+      "name": "Signal Filter",
+      "description": "A pattern-matching filter that cleans corrupted data streams. Without it, the HUD is unreadable noise.",
+      "pickupText": "You pick up the Signal Filter.",
+      "roomText": "A signal filter drifts in the corner of the bay, cycling through sample patterns.",
+      "portable": true
+    },
+    "phase-shifter": {
+      "name": "Phase Shifter",
+      "description": "A bit of code that lets you slide through a single solid light-wall at the cost of a single clock cycle. Best used sparingly.",
+      "pickupText": "You pick up the Phase Shifter.",
+      "roomText": "A phase shifter loops along the data stream like a lost packet.",
+      "portable": true
+    },
+    "id-spoof": {
+      "name": "ID Spoof",
+      "description": "A scrap of forged credential code. Fools MCP scanners for a few critical seconds.",
+      "pickupText": "You pick up the ID Spoof.",
+      "roomText": "A forged ID spoof flickers at the edge of the grid hub, unclaimed.",
+      "portable": true
+    },
+    "stealth-cloak": {
+      "name": "Stealth Cloak",
+      "description": "A cloaking routine that hides your energy signature from Recognizer search beams.",
+      "pickupText": "You pick up the Stealth Cloak.",
+      "roomText": "A stealth cloak shimmers in a dark corner of the hub.",
+      "portable": true
+    },
+    "energy-cell": {
+      "name": "Energy Cell",
+      "description": "A glowing cell of raw system energy, scavenged from a dead process. Absorbing it will restore your integrity.",
+      "pickupText": "You pick up the Energy Cell.",
+      "roomText": "A faintly glowing energy cell floats near the digitizer.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You absorb the energy cell. Your code stabilizes, and the corrupted sectors knit back together."
     }
   },
   "puzzles": {

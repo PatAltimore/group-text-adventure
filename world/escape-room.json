@@ -14,6 +14,8 @@
         "west": "dining-room"
       },
       "items": [
+        "matchbook",
+        "clockmakers-tonic",
         "welcome-note"
       ],
       "hazards": []
@@ -25,6 +27,7 @@
         "west": "foyer"
       },
       "items": [
+        "damp-cloth",
         "red-book"
       ],
       "hazards": []
@@ -212,6 +215,10 @@
       "roomText": "A crystal goblet sits at the head of the table, its facets catching the candlelight in dazzling prisms. Dark residue stains the bowl.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "matchbook",
+      "counterText": "You strike a match as you lift the goblet. The little flame holds the dark at bay, and whatever was breathing in the corner withdraws.",
+      "damageText": "You lift the goblet and the candlelight dies. Cold fingers rake across your arm in the dark. You drop the goblet and scramble back to the light, shaking.",
       "deathText": "You lift the goblet and the candlelight dies. Something exhales in the darkness — a breath that smells of earth and old roses. Cold fingers trace your spine. The house breathes in, and you breathe out for the last time."
     },
     "antique-lighter": {
@@ -220,7 +227,32 @@
       "roomText": "An antique brass lighter sits on the counter near the stove, its polished surface reflecting the kitchen's dim light.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "damp-cloth",
+      "counterText": "You wrap the damp cloth over the lighter before touching it, smothering the spark before it can reach the gas. You slip the muffled lighter into your pocket.",
       "deathText": "You flick the lighter and a single spark leaps toward the stove. The gas line hisses its last warning. A blue-white flash swallows the kitchen — then the house — then you. The explosion rattles windows three blocks away."
+    },
+    "matchbook": {
+      "name": "Matchbook",
+      "description": "A small paper matchbook stamped with a clock face and the words \"Time is Precious.\" Half the matches are still dry.",
+      "pickupText": "You pick up the Matchbook.",
+      "roomText": "A matchbook lies on the foyer table beneath the dead chandelier.",
+      "portable": true
+    },
+    "damp-cloth": {
+      "name": "Damp Dish Cloth",
+      "description": "A wet linen dish cloth that smells faintly of lemon. Draped over a lighter, it would smother any spark.",
+      "pickupText": "You pick up the Damp Dish Cloth.",
+      "roomText": "A damp dish cloth hangs over the back of a parlor chair.",
+      "portable": true
+    },
+    "clockmakers-tonic": {
+      "name": "Clockmaker's Tonic",
+      "description": "A small brown bottle with a brass cap, labeled in tidy engraved script: \"For nerves, shocks, and mainspring fatigue.\"",
+      "pickupText": "You pick up the Clockmaker's Tonic.",
+      "roomText": "A small brown bottle of tonic stands on the mantel.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You swallow the bitter tonic. A warm, ticking calm spreads through you."
     }
   },
   "puzzles": {

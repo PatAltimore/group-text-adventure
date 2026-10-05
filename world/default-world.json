@@ -13,6 +13,8 @@
         "east": "fountain-room"
       },
       "items": [
+        "hobnail-boots",
+        "herbal-poultice",
         "torch"
       ],
       "hazards": []
@@ -63,6 +65,7 @@
         "north": "tower-stairs"
       },
       "items": [
+        "leather-cap",
         "old-book"
       ],
       "hazards": []
@@ -192,7 +195,9 @@
       "description": "A loaf of bread turned to stone by time. It hasn't molded — it has fossilized, hard as masonry and roughly as appetizing.",
       "roomText": "A petrified loaf of bread sits on the counter, so ancient it could pass for a cobblestone.",
       "pickupText": "You heft the stale bread. It thuds into your palm like a brick. Not food anymore — but possibly useful as a blunt instrument.",
-      "portable": true
+      "portable": true,
+      "heal": 1,
+      "useText": "You choke down a mouthful of stale bread. It is dreadful, but it steadies you."
     },
     "golden-key": {
       "name": "Golden Key",
@@ -220,7 +225,9 @@
       "description": "A sprig of herb that glows faintly green, as if lit from within. Its leaves are cool and faintly sticky with sap that smells of mint and something older — forest rain, maybe, or starlight.",
       "roomText": "Beside the spring, a single herb grows luminous and green, its glow steady as a candle flame despite the breeze.",
       "pickupText": "You pluck the healing herb with care. Its glow intensifies at your touch, and the air fills with a scent like rain on warm stone.",
-      "portable": true
+      "portable": true,
+      "heal": 3,
+      "useText": "You chew the healing herb. Warmth floods your limbs and every ache melts away."
     },
     "silk-bundle": {
       "name": "Silk Bundle",
@@ -228,6 +235,10 @@
       "roomText": "A pale bundle of silk threads clings to the web-choked corner, almost glowing.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "torch",
+      "counterText": "You thrust the torch toward the cobwebs before reaching for the bundle. The spiders recoil from the flame, and you lift the silk free.",
+      "damageText": "As you reach for the silk bundle, the cobwebs come alive. A swarm of spiders pours over your hands and you slap them away, bitten and shaking, as the bundle falls back.",
       "deathText": "As you reach for the silk bundle, the cobwebs come alive. Thousands of tiny spiders pour from the threads, swarming over your hands and face. A massive spider drops onto your shoulders — legs thick as fingers wrapping your throat. Fangs punch through skin. The venom is ice-cold, and mercifully fast."
     },
     "mosaic-shard": {
@@ -236,6 +247,10 @@
       "roomText": "A shard of mosaic tile catches the light near the fountain's edge, its surface shimmering with impossible colors.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "hobnail-boots",
+      "counterText": "You dig your hobnails into the slick tile and pry the shard free without losing your footing.",
+      "damageText": "You crouch to pry the shard free and your heel skids on the slick tiles. You slam into the fountain rim, bruised and gasping, and the shard stays put.",
       "deathText": "You crouch to pry the mosaic shard free. Your heel skids on the slick tiles. You pitch sideways, arms flailing, and slam through the crumbled fountain rim. Stone meets skull with a sound like a hammer on wet clay."
     },
     "nibbled-cheese": {
@@ -244,6 +259,10 @@
       "roomText": "A wheel of ancient cheese sits on the counter, its rind strangely intact despite the ages. Tiny claw marks score its surface.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "torch",
+      "counterText": "You wave the torch low across the shelves. The rats shriek and scatter into the walls, and the cheese is yours.",
+      "damageText": "You reach for the cheese and a tide of rats erupts from beneath the shelves. You kick your way clear, bitten and bleeding, and the cheese is left behind.",
       "deathText": "You reach for the cheese and a tide of rats erupts from beneath the shelves — hundreds, thousands, a living carpet of matted fur and needle teeth. They swarm up your arms, biting and tearing, driven mad by centuries of hunger. Your screams are lost in the chittering."
     },
     "wind-chime": {
@@ -252,6 +271,10 @@
       "roomText": "A silver wind chime dangles from an arrow slit, its bells singing a faint, mournful melody in the updraft.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "hobnail-boots",
+      "counterText": "You wedge your hobnails into the stairwell stones and lean out as the gust hits. The boots hold, and the chime comes free.",
+      "damageText": "You lean out to unhook the chime and a gust hammers the stairwell. Your boot finds air, and you grab the railing at the last moment, ribs cracking against stone.",
       "deathText": "You lean out to unhook the wind chime. A gust hammers through the stairwell like a fist. Your boot finds nothing but air. The spiral swallows you — stone battering shoulder, hip, skull — and then the falling stops."
     },
     "iron-ring": {
@@ -260,7 +283,34 @@
       "roomText": "Something glints on a rough-hewn beam overhead — an iron ring, dangling from a nail, its surface etched with tiny runes.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "leather-cap",
+      "counterText": "You duck low and the beam glances off your padded cap with a dull thump. The iron ring comes loose in your hand.",
+      "damageText": "You straighten up under the iron ring and a jagged beam cracks you across the temple. You reel back, vision swimming, and the ring stays on its hook.",
       "deathText": "You reach up for the iron ring and straighten too fast. A jagged beam catches your temple with the sound of a splitting gourd. Light flares white behind your eyes, then collapses to a point, then nothing at all."
+    },
+    "hobnail-boots": {
+      "name": "Hobnail Boots",
+      "description": "A pair of sturdy leather boots with iron studs hammered into the soles. Built for climbing wet stone.",
+      "pickupText": "You pick up the Hobnail Boots.",
+      "roomText": "A pair of hobnail boots sits by the door, as if someone expected you to need them.",
+      "portable": true
+    },
+    "leather-cap": {
+      "name": "Padded Leather Cap",
+      "description": "A thick, quilted cap lined with boiled leather. Smells of old sweat, but it would absorb a knock on the head.",
+      "pickupText": "You pick up the Padded Leather Cap.",
+      "roomText": "A padded leather cap rests on the reading desk.",
+      "portable": true
+    },
+    "herbal-poultice": {
+      "name": "Herbal Poultice",
+      "description": "A small linen pouch packed with crushed mint and yarrow, still faintly damp. A scrap of parchment reads: \"Press to wounds.\"",
+      "pickupText": "You pick up the Herbal Poultice.",
+      "roomText": "A herbal poultice lies on the edge of the old stone bench.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You press the poultice to your wounds. The sting fades and warmth spreads through you."
     }
   },
   "puzzles": {

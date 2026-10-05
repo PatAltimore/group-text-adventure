@@ -14,6 +14,9 @@
         "south": "underwater-chamber"
       },
       "items": [
+        "canvas-gloves",
+        "tide-table",
+        "brandy-flask",
         "brass-compass"
       ],
       "hazards": []
@@ -26,6 +29,8 @@
         "north": "lighthouse-base"
       },
       "items": [
+        "leather-apron",
+        "diver-harness",
         "ancient-journal"
       ],
       "hazards": []
@@ -225,6 +230,10 @@
       "roomText": "A copper valve handle juts from a cracked pipe, steam hissing through the gap in sharp bursts, the metal glowing faintly with trapped heat.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "canvas-gloves",
+      "counterText": "You pull the canvas gloves on before wrenching the valve. Steam hisses through the weave, but the fabric holds long enough, and the valve comes free.",
+      "damageText": "You wrench the valve and a jet of scalding steam blasts your hands. You jerk back, wrists blistered, and the valve handle drops from your grip.",
       "deathText": "You wrench the valve free and the pipe ruptures with explosive force. Superheated steam fills the lighthouse in seconds, cooking the air in your lungs. The valve handle clatters to the floor, spinning in the white-hot mist."
     },
     "resonance-fork": {
@@ -268,6 +277,10 @@
       "roomText": "A cluster of pearls clings to the cave wall just above the waterline, their iridescent surfaces glowing like captured moonlight.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "tide-table",
+      "counterText": "You check the tide table, wait for the lull, and pry the pearls free well before the water turns. You are out of the cave with dry boots and a full pocket.",
+      "damageText": "You pry at the pearls as the tide surges. A wave slams you into the rock, and you scramble out, soaked and bruised, with nothing to show for it.",
       "deathText": "You pry at the pearls as the tide surges. The water rises with unexpected force — ankle, knee, chest, chin. Within minutes, the cave is submerged. The pearls gleam beneath the surface, patient as they've always been, as the ocean claims another visitor."
     },
     "anemone-orb": {
@@ -276,6 +289,8 @@
       "roomText": "A translucent sphere rests in a coral niche, a living anemone swaying inside it, casting delicate dancing shadows.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "diver-harness",
+      "counterText": "You buckle the diver's harness tight before lifting the orb. The field flickers, and the ocean punches in, but the harness holds you against the coral until the chamber seals again.",
       "deathText": "You lift the orb from its coral cradle and the integrity field flickers, fails. The ocean doesn't rush in — it punches. A wall of black, crushing water obliterates the chamber. The orb implodes in your hand, and the anemone is free at last."
     },
     "crystal-gear": {
@@ -284,7 +299,48 @@
       "roomText": "A crystal gear lies among the brass mechanisms, its facets throwing tiny rainbows across the chamber as the machinery turns around it.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "leather-apron",
+      "counterText": "You pull the leather apron tight before lifting the gear. The mechanism screams and spits brass, but the apron takes the shrapnel, and you step out with the gear.",
+      "damageText": "You pull the crystal gear free and the machine goes wild. A sheared brass tooth rips across your chest, and you stagger back, bleeding, as the gear falls from your hand.",
       "deathText": "You pull the crystal gear from the mechanism. The machine screams — gears accelerate wildly, teeth shearing off like shrapnel. A brass tooth catches you across the chest. Then another. The clockwork devours itself and you with it, crystal and bone alike."
+    },
+    "canvas-gloves": {
+      "name": "Canvas Work Gloves",
+      "description": "Thick canvas gloves, stiff with salt and old grease. A keeper's tool for handling hot pipes and rusted machinery.",
+      "pickupText": "You pick up the Canvas Work Gloves.",
+      "roomText": "A pair of canvas work gloves lies on a coil of rope at the end of the dock.",
+      "portable": true
+    },
+    "tide-table": {
+      "name": "Tide Table",
+      "description": "A weathered card printed with the island's tide times, annotated in a careful hand: \"Cave floods at the turn. Don't dawdle.\"",
+      "pickupText": "You pick up the Tide Table.",
+      "roomText": "A tide table is nailed to the dock post, curled at the corners.",
+      "portable": true
+    },
+    "leather-apron": {
+      "name": "Leather Apron",
+      "description": "A thick leather apron with a metal-reinforced chest panel. A machinist's apron, blackened with oil.",
+      "pickupText": "You pick up the Leather Apron.",
+      "roomText": "A leather apron hangs from a branch along the forest path.",
+      "portable": true
+    },
+    "diver-harness": {
+      "name": "Diver's Harness",
+      "description": "A brass-buckled harness for deep-water work, with clips for tethers and weights. Old but sound.",
+      "pickupText": "You pick up the Diver's Harness.",
+      "roomText": "A diver's harness rests on a flat rock beside the path.",
+      "portable": true
+    },
+    "brandy-flask": {
+      "name": "Brandy Flask",
+      "description": "A dented silver flask, still half full. The label has long since worn away, but the smell is unmistakable.",
+      "pickupText": "You pick up the Brandy Flask.",
+      "roomText": "A silver flask rests in a crevice near the base of the dock post.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You take a long pull from the flask. Warmth floods your chest, and the aches fade."
     }
   },
   "puzzles": {

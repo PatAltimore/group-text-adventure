@@ -12,6 +12,9 @@
         "north": "overgrown-courtyard"
       },
       "items": [
+        "snake-boots",
+        "vine-harness",
+        "jungle-poultice",
         "machete",
         "jaguar-fang"
       ],
@@ -33,6 +36,9 @@
         "west": "rope-bridge"
       },
       "items": [
+        "hardwood-wedge",
+        "cloth-mask",
+        "quilted-jerkin",
         "jade-idol"
       ],
       "hazards": [
@@ -279,6 +285,10 @@
       "roomText": "A pendant of gold and tooth hangs from a low branch, its leather cord swaying gently — as though recently dropped.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "machete",
+      "counterText": "You raise the machete as you reach for the pendant, and the jaguar hesitates in the undergrowth. After a long moment, it melts back into the shadows, and the pendant is yours.",
+      "damageText": "You reach for the pendant and the undergrowth explodes. The jaguar rakes your shoulder with claws like knives. You drive it off with a wild kick, and it takes the pendant with it.",
       "deathText": "You reach for the pendant and the undergrowth explodes. The jaguar strikes from the shadows — a blur of muscle and obsidian rosettes. Its jaws close on your throat before your hand closes on the fang. The jungle swallows your cry."
     },
     "jade-idol": {
@@ -287,6 +297,10 @@
       "roomText": "A jade idol peeks from between the flagstones where the courtyard has buckled — a grinning monkey face, half-swallowed by moss.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "vine-harness",
+      "counterText": "You cinch the vine harness and tie off to a trunk before digging the idol free. The ground gives way, but the harness catches you, and you haul yourself back up with the idol.",
+      "damageText": "You crouch to dig the idol free and the courtyard crumbles. You catch a root as you fall, ribs slamming into limestone, and haul yourself out empty-handed.",
       "deathText": "You crouch to dig the idol free and the ground gives way beneath you. The ancient courtyard crumbles into a limestone sinkhole. You plunge into the darkness below, the jade monkey grinning in your hand all the way down."
     },
     "feathered-talisman": {
@@ -295,6 +309,10 @@
       "roomText": "A talisman of brilliant feathers twists on a cord tied to the bridge rope, its green and red plumage startling against the grey mist.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "vine-harness",
+      "counterText": "You clip the vine harness to the rope rail before leaning out. The plank snaps, but the harness holds, and you swing back to safety with the talisman in hand.",
+      "damageText": "You lean out to untie the talisman and a plank gives way. You grab the rope with both hands, and it tears at your palms as you drag yourself back onto the bridge.",
       "deathText": "You lean out to untie the talisman. A plank gives way beneath your shifted weight. You grab for the rope but it snaps in your hand — rotten through. The gorge swallows you in silence. The talisman follows, feathers fluttering, a bright streak against the grey."
     },
     "serpent-egg": {
@@ -303,6 +321,10 @@
       "roomText": "A large opalescent egg sits in a hollow among the stones, its pearlescent surface shimmering with blues and greens, untouched by the serpents that slither around it.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "snake-boots",
+      "counterText": "You pick your way through the snakes in the heavy boots. Fangs strike leather and fail to pierce. You reach the egg, take it, and walk out calmly.",
+      "damageText": "You reach through the snakes and a bushmaster strikes your wrist. Another catches your ankle. You scramble out with venom burning up your arm, and the egg is lost in the writhing mass.",
       "deathText": "You reach through the carpet of snakes for the egg. A bushmaster strikes your wrist — then another hits your ankle, and another. The egg is warm and beautiful in your trembling hand as the venom races through your veins like liquid fire."
     },
     "obsidian-eye": {
@@ -311,6 +333,10 @@
       "roomText": "One of the jaguar statues is missing an eye — but the obsidian sphere lies at its feet, as though recently fallen, gleaming darkly.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "hardwood-wedge",
+      "counterText": "You jam the hardwood wedge into the statue's mechanism as you lift the eye. Stone grinds against wood, then stops. The jaguar's jaws hang open a hand's breadth from your face.",
+      "damageText": "You lift the eye and the stone jaguar lunges on ancient mechanisms. The jaws clip your arm before you wrench free, and the eye rolls back into its socket.",
       "deathText": "You pick up the obsidian eye and hear stone grinding behind you. The jaguar statue lunges forward on ancient mechanisms, stone jaws snapping shut with the force of a hydraulic press. The eye watches from your crushed hand, impassive and eternal."
     },
     "turquoise-mask": {
@@ -319,6 +345,10 @@
       "roomText": "A turquoise mask lies among the rubble, its serene jade face gazing upward, golden wire tracing features both beautiful and unsettling.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "hardwood-wedge",
+      "counterText": "You jam the wedge beneath the sagging ceiling stone before lifting the mask. The ceiling groans, then holds, and you slip out with the mask.",
+      "damageText": "You lift the mask and the ceiling shifts. A chunk of limestone slams into your leg as you dive clear, and the mask is buried.",
       "deathText": "You lift the mask and the ceiling shifts. A section gives way with a thunderous crack, dislodging tons of limestone. The mask's serene expression is the last thing you see as the gallery buries you in stone and darkness."
     },
     "glyph-tile": {
@@ -327,6 +357,10 @@
       "roomText": "One floor tile is raised slightly above the others, its carved glyph more intricate and deeper-cut, as though meant to be noticed — or taken.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "quilted-jerkin",
+      "counterText": "You pull your jerkin tight before prying the tile up. A dart hits your chest, sinks into the quilting, and falls harmlessly to the floor.",
+      "damageText": "You pry the tile free and a soft click answers. A poison dart hits your shoulder before you can flinch. You pull it out, numb and shaking, and the tile drops back.",
       "deathText": "You pry the tile free. A soft click. A poison dart buries itself in your neck before you can flinch — ancient curare, still potent after centuries. Your muscles lock, your lungs freeze. You die kneeling, the glyph tile clutched in rigid fingers."
     },
     "bloodstone-chalice": {
@@ -335,6 +369,8 @@
       "roomText": "A chalice of deep red bloodstone sits at the altar's edge, catching the faint light and seeming to glow from within.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "cloth-mask",
+      "counterText": "You tie the tincture-soaked cloth mask over your nose and mouth before lifting the chalice. Toxic mist pours from the channels, but the herbal filter holds, and you make it out of the chamber coughing but alive.",
       "deathText": "You lift the chalice and the blood channels hiss. Toxic mist billows from the ancient stone, filling the chamber in seconds. It tastes of copper and centuries. Your vision dims as the mist claims you for the altar's endless collection."
     },
     "emerald-necklace": {
@@ -343,7 +379,53 @@
       "roomText": "An emerald necklace drapes across a golden platter, its stones catching the light with an inner fire that seems almost alive.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "hardwood-wedge",
+      "counterText": "You jam the wedge into the counterweight track before lifting the necklace. The mechanism shudders and seizes, and the ceiling stays where it is.",
       "deathText": "You lift the necklace and feel the tripwire snap against your wrist. The counterweight mechanism triggers with a grinding roar. The ceiling descends, stone teeth interlocking with mechanical precision. The emeralds blaze green in the narrowing darkness."
+    },
+    "snake-boots": {
+      "name": "Snakeproof Boots",
+      "description": "Knee-high boots of thick, double-stitched leather, built by an expedition outfitter who clearly had a bad experience with fer-de-lances.",
+      "pickupText": "You pick up the Snakeproof Boots.",
+      "roomText": "A pair of knee-high leather boots has been left on a stump at the edge of the trail.",
+      "portable": true
+    },
+    "vine-harness": {
+      "name": "Vine Harness",
+      "description": "A rough harness braided from tough jungle vine, with a sturdy loop at the back for a rope or a friend.",
+      "pickupText": "You pick up the Vine Harness.",
+      "roomText": "A braided vine harness hangs from a low branch.",
+      "portable": true
+    },
+    "hardwood-wedge": {
+      "name": "Hardwood Wedge",
+      "description": "A heavy wedge of dense tropical hardwood, big enough to jam a door or prop up a sagging beam.",
+      "pickupText": "You pick up the Hardwood Wedge.",
+      "roomText": "A hardwood wedge lies half-buried in the leaf litter.",
+      "portable": true
+    },
+    "cloth-mask": {
+      "name": "Cloth Mask",
+      "description": "A thick cloth mask, soaked in a pungent herbal tincture. A hand-drawn symbol on the strap suggests it filters foul air.",
+      "pickupText": "You pick up the Cloth Mask.",
+      "roomText": "A tincture-soaked cloth mask is draped over a broken pillar.",
+      "portable": true
+    },
+    "quilted-jerkin": {
+      "name": "Quilted Jerkin",
+      "description": "A thick jerkin of layered cotton, stitched in tight rows. Old conquistador armor, patched many times by cheerful tomb robbers.",
+      "pickupText": "You pick up the Quilted Jerkin.",
+      "roomText": "A quilted jerkin hangs from a vine beside the courtyard steps.",
+      "portable": true
+    },
+    "jungle-poultice": {
+      "name": "Jungle Poultice",
+      "description": "A bundle of crushed leaves wrapped in a banana leaf, smelling sharply of eucalyptus. Local healers swear by it.",
+      "pickupText": "You pick up the Jungle Poultice.",
+      "roomText": "A banana-leaf bundle of crushed leaves rests at the base of a tree.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You pack the crushed leaves against your wounds. The sting turns to cool numbness, and the bleeding slows."
     }
   },
   "puzzles": {

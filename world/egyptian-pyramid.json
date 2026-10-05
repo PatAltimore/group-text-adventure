@@ -13,6 +13,8 @@
         "east": "hidden-passage"
       },
       "items": [
+        "linen-wrappings",
+        "sand-pouch",
         "torch",
         "lapis-serpent-brooch"
       ],
@@ -53,6 +55,8 @@
         "north": "trap-room"
       },
       "items": [
+        "bronze-buckler",
+        "healing-unguent",
         "ancient-scroll"
       ],
       "hazards": []
@@ -202,6 +206,8 @@
       "roomText": "An alabaster canopic jar stands upright near the sarcophagus, its jackal-head lid perfectly intact, untouched by the green mist that curls around its base.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "linen-wrappings",
+      "counterText": "You bind the linen over your nose and mouth before lifting the lid. The green mist rises, but the resin-soaked cloth catches it, and you seal the jar again with watering eyes.",
       "deathText": "You lift the jar's lid and the green mist surges upward, pouring from the jar like a living thing. It rises — ankle, waist, throat. It constricts. Ancient preservative gases, concentrated for millennia, fill your lungs with the taste of eternity. You become another relic of the tomb."
     },
     "pharaohs-mask": {
@@ -238,6 +244,10 @@
       "roomText": "A serpent brooch lies half-buried in the sand that trickles from above, its lapis lazuli scales glinting like a trapped sunrise.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "sand-pouch",
+      "counterText": "You press the sand pouch against the pressure plate as you lift the brooch, swapping the weight. The ceiling groans, then settles.",
+      "damageText": "You brush the sand from the brooch and the ceiling groans. A limestone block clips your shoulder as you leap clear, and the brooch drops back into the sand.",
       "deathText": "You brush sand from the brooch and the ceiling groans. A massive limestone block wrenches free and descends with the slow inevitability of a closing tomb. There is no time to run. Three thousand years of patience, and the pyramid claims another offering."
     },
     "jade-figurine": {
@@ -246,6 +256,10 @@
       "roomText": "A jade figurine of a cat sits in a small alcove between the dart holes, its emerald eyes watching the corridor with serene indifference.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "bronze-buckler",
+      "counterText": "You hold up the bronze buckler as you reach into the alcove. A volley of darts rattles off the metal, and you draw out the figurine unharmed.",
+      "damageText": "A click beneath your hand and a volley of darts erupts from the walls. Two find your arm, and you stagger back as the figurine drops into its alcove.",
       "deathText": "You reach into the alcove for the figurine. A click beneath your hand. A volley of darts erupts from the walls — bronze needles black with three-thousand-year-old poison. They find flesh before you find the floor."
     },
     "embalming-thurible": {
@@ -254,6 +268,10 @@
       "roomText": "A bronze thurible dangles from a hook near the altar, its chain still bright, a faint scent of ancient myrrh drifting from its bowl.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "linen-wrappings",
+      "counterText": "You cover your face with the linen wrappings before lifting the thurible. The ancient incense crumbles to dust, but your resin-soaked mask holds against the sour air.",
+      "damageText": "You lift the thurible and the sealed incense crumbles into a cloud. You inhale a lungful of old poison and stumble back, coughing blood, the thurible dropped.",
       "deathText": "You lift the thurible and the last of the ancient incense crumbles to dust. Three thousand years of sealed decay release their poison in a single breath. Your lungs fill with air that was old when Rome was young. You cannot cough. You cannot breathe. You join the offerings."
     },
     "obsidian-crux": {
@@ -262,6 +280,8 @@
       "roomText": "An obsidian crux rests on a raised tile in the center of the room, its ruby heart pulsing faintly in the torchlight.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "sand-pouch",
+      "counterText": "You set the pouch of sand on the tile as you lift the crux, matching its weight. The gears pause, then grind to a halt. The walls stay where they are.",
       "deathText": "You lift the crux from its tile. Stone screams against stone. The walls lurch inward with grinding, mechanical fury — ancient gears awakened by the missing weight. The ceiling descends. The crux's ruby pulses once more, the last light you'll ever see."
     },
     "alabaster-chalice": {
@@ -270,7 +290,41 @@
       "roomText": "An alabaster chalice sits atop a pile of lesser treasures, its crystal dewdrops scattering tiny rainbows across the chamber walls.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "sand-pouch",
+      "counterText": "You set the sand pouch on the perch the instant the chalice leaves it. The pillar settles, and the ceiling stays where it is.",
+      "damageText": "You pluck the chalice from its perch and the cracked pillar groans. You dive aside as part of the ceiling comes down, a slab clipping your back, and the chalice rolls back into place.",
       "deathText": "You pluck the chalice from its perch. Something shifts. The cracked pillar groans, surrenders. The ceiling descends with the slow inevitability of geological time, a million limestone blocks reclaiming their rest. The chalice gleams in your hand as the darkness closes in."
+    },
+    "linen-wrappings": {
+      "name": "Linen Face Wrappings",
+      "description": "Long strips of fine linen, still supple, soaked in a resin that smells of myrrh. Tomb robbers used them to filter the air of sealed chambers.",
+      "pickupText": "You pick up the Linen Face Wrappings.",
+      "roomText": "A bundle of resin-soaked linen strips lies beside a toppled offering bowl.",
+      "portable": true
+    },
+    "sand-pouch": {
+      "name": "Pouch of Sand",
+      "description": "A leather pouch filled with fine desert sand, roughly the weight of a small statue. Heavy enough to fool a pressure plate.",
+      "pickupText": "You pick up the Pouch of Sand.",
+      "roomText": "A heavy leather pouch sits on the sand by the doorway, bulging with something fine and dry.",
+      "portable": true
+    },
+    "bronze-buckler": {
+      "name": "Bronze Buckler",
+      "description": "A small round shield of beaten bronze, light enough to carry in one hand. Its face is dented by countless old impacts.",
+      "pickupText": "You pick up the Bronze Buckler.",
+      "roomText": "A bronze buckler leans against the passage wall.",
+      "portable": true
+    },
+    "healing-unguent": {
+      "name": "Healing Unguent",
+      "description": "A small alabaster pot sealed with wax, filled with a sweet-smelling salve. A hieroglyph on the lid means \"restore.\"",
+      "pickupText": "You pick up the Healing Unguent.",
+      "roomText": "A small sealed pot of ointment sits in a niche in the wall.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You rub the unguent into your wounds. It stings, then soothes, then the pain is simply gone."
     }
   },
   "puzzles": {

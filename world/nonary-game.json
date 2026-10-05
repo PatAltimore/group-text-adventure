@@ -12,6 +12,8 @@
         "north": "c-deck-corridor"
       },
       "items": [
+        "rubber-boots",
+        "climbing-line",
         "zero-note",
         "pocket-watch"
       ],
@@ -33,6 +35,9 @@
         "west": "grand-staircase"
       },
       "items": [
+        "asbestos-gloves",
+        "hard-hat",
+        "ships-medkit",
         "gurney-wheel",
         "brass-compass"
       ],
@@ -298,6 +303,8 @@
       "roomText": "A pocket watch gleams beneath the rising water, its glass face perfectly dry inside, hands ticking backward in a steady countdown.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "damageText": "You plunge your hand into the freezing water for the watch and the wall buckles. A burst of icy seawater slams over your shoulder, and you scramble back to the door, soaked and shaking.",
       "deathText": "You plunge your hand into the freezing water for the watch. The wall buckles with a sound like a gunshot. Freezing seawater floods through the breach, filling the cabin in seconds. The watch ticks its countdown to zero as the ocean swallows everything."
     },
     "brass-compass": {
@@ -306,6 +313,10 @@
       "roomText": "A brass compass in a wooden case lies against the corridor wall, its needle spinning frantically, as though desperate to point somewhere.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "climbing-line",
+      "counterText": "You clip the line to a pipe before grabbing the compass. The deck lurches, but the rope holds, and you ride out the roll before pocketing the compass.",
+      "damageText": "You grab the compass as the deck lurches. You slam into the wall, then the ceiling, then the floor. The compass lands somewhere out of reach as you struggle up, bruised and breathless.",
       "deathText": "You grab the compass as the deck lurches violently. Your feet leave the floor. You slam into the corridor wall, then the ceiling, then the floor again. The compass needle finally stops spinning. It points straight down — toward the ocean floor where the ship is heading."
     },
     "glass-ampoule": {
@@ -314,6 +325,10 @@
       "roomText": "A sealed glass ampoule rolls gently on a metal tray, its amber contents glowing faintly, label long since dissolved.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "asbestos-gloves",
+      "counterText": "You pull on the asbestos gloves before touching the ampoule. A pipe overhead bursts, and steam bursts across your forearms, but the mineral weave takes the worst. The ampoule is safe in your pocket.",
+      "damageText": "You pocket the ampoule and a pipe overhead ruptures. Scalding steam hits your face and arms, and you stagger out blind, skin blistering.",
       "deathText": "You pocket the ampoule and a pipe overhead ruptures with a shriek. Superheated steam erupts in a blinding white column. The ampoule shatters in your pocket — the amber liquid mixing with the steam, with your screams, with the hiss of the ward's final breath."
     },
     "dissection-shears": {
@@ -322,6 +337,10 @@
       "roomText": "A pair of gleaming dissection shears rests on the instrument tray, perfectly aligned, untouched by the chaos that claimed the rest of the theatre.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "rubber-boots",
+      "counterText": "You pull on the rubber boots before reaching across the tray. The syringe in the debris snaps against the thick sole and does nothing. You take the shears and leave.",
+      "damageText": "You reach across the tray for the shears and your heel comes down on a syringe. The needle punches through your boot and into your foot. You hop back, swearing, as the shears slide out of reach.",
       "deathText": "You reach across the instrument tray for the shears. Your heel comes down on a syringe buried in the debris. The needle punches through your boot sole — vintage morphine, enough to stop a horse. Your knees buckle. The shears clatter from numbing fingers as the theatre dims to black."
     },
     "gilded-finial": {
@@ -330,6 +349,10 @@
       "roomText": "A gilded finial has come loose from the banister — a golden mermaid holding a tiny lantern, dangling by a single bolt over the cascading water.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "hard-hat",
+      "counterText": "You jam the hard hat down tight before wrenching the finial free. The banister gives way and iron rains down. The helmet takes the worst of it, and you stumble clear with the finial.",
+      "damageText": "You wrench the finial free and part of the staircase tears loose. A chunk of iron strikes your shoulder as you dive clear, and the finial is buried in debris.",
       "deathText": "You wrench the finial free. The banister gives way. Above you, a section of staircase tears loose — tons of wrought iron and marble descending in a spiral of destruction. The golden mermaid watches from your hand as the grand staircase collapses."
     },
     "steam-whistle": {
@@ -338,6 +361,8 @@
       "roomText": "A small brass steam whistle has fallen from its mount near the main boiler, etched with the ship's name, still vibrating with phantom pressure.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "asbestos-gloves",
+      "counterText": "You pull on the asbestos gloves and slowly ease the whistle free, venting the seal bit by bit. The boiler groans, but the pressure bleeds off safely.",
       "deathText": "You pull the whistle free and the seal it was holding gives way. The boiler explodes. You don't hear it — the shockwave ruptures your eardrums first, then your lungs. The whistle screams one final blast as the engine room becomes a furnace."
     },
     "engine-plate": {
@@ -346,6 +371,8 @@
       "roomText": "A brass plate engraved with engine specifications has come loose from the casing, dangling from a single rivet over the catwalk's edge.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "climbing-line",
+      "counterText": "You tie the climbing line to a stanchion before leaning out for the plate. The catwalk shears from its bolts and drops away, but the rope holds you swinging over the dark, and you haul yourself back with the plate.",
       "deathText": "You lean out to grab the plate. Your weight is the final straw. The catwalk section tears free from its corroded bolts. You and the plate tumble together into the darkness below — the engine's specifications the last words you read."
     },
     "signal-flare": {
@@ -354,7 +381,48 @@
       "roomText": "A bright orange signal flare has rolled against the railing, its canister still sealed, activation instructions visible — a lifeline, waiting to be claimed.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "climbing-line",
+      "counterText": "You loop the climbing line around a cleat before lunging for the flare. The deck tilts past the critical angle, and the rope holds you at the rail as you grab the flare.",
+      "damageText": "You lunge for the flare as the deck tilts. You skid across the steel, fingers scrabbling, and catch the rail at the last moment, ribs hammering against the rail.",
       "deathText": "You lunge for the flare as the deck lurches past the critical angle. Your feet slip on the wet steel. You slide across the tilting deck, fingers scrabbling for purchase. The railing catches you for one moment — then the ship rolls, and the dark Atlantic opens its mouth."
+    },
+    "rubber-boots": {
+      "name": "Heavy Rubber Boots",
+      "description": "Thick rubber boots, the kind worn by hospital orderlies and deckhands. Puncture-resistant soles and a non-slip tread.",
+      "pickupText": "You pick up the Heavy Rubber Boots.",
+      "roomText": "A pair of heavy rubber boots floats near the cabin door, one still upright.",
+      "portable": true
+    },
+    "climbing-line": {
+      "name": "Climbing Line",
+      "description": "A coil of braided nylon rope with a snap hook at one end. Crew-issue, rated for a lot more than your weight.",
+      "pickupText": "You pick up the Climbing Line.",
+      "roomText": "A coil of nylon rope hangs from a pipe above the flooded bunks.",
+      "portable": true
+    },
+    "asbestos-gloves": {
+      "name": "Asbestos Gloves",
+      "description": "Heavy gloves of woven mineral fiber, scorched at the fingertips. Boiler-room issue, from an era when nobody worried about the fiber.",
+      "pickupText": "You pick up the Asbestos Gloves.",
+      "roomText": "A pair of grey asbestos gloves hangs from a hook on the corridor wall.",
+      "portable": true
+    },
+    "hard-hat": {
+      "name": "Steel Hard Hat",
+      "description": "A battered steel helmet with a lantern bracket, stenciled \"ENGINE CREW — SS NONARY.\" Heavy, but it would take a hit.",
+      "pickupText": "You pick up the Steel Hard Hat.",
+      "roomText": "A steel hard hat sits on a shelf in the corridor, dented on one side.",
+      "portable": true
+    },
+    "ships-medkit": {
+      "name": "Ship's Medical Kit",
+      "description": "A waterproof case with a white cross. Gauze, morphine ampoules (empty), antiseptic, and a handwritten note: \"Use only in emergency.\"",
+      "pickupText": "You pick up the Ship's Medical Kit.",
+      "roomText": "A ship's medical kit is bolted to the corridor wall, its glass door cracked.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You dress the wound with what is left in the kit. It is not much, but it stops the bleeding."
     }
   },
   "puzzles": {

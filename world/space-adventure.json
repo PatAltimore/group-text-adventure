@@ -13,6 +13,8 @@
         "east": "maintenance-bay"
       },
       "items": [
+        "rubberized-gloves",
+        "ration-bar",
         "flashlight"
       ],
       "hazards": []
@@ -27,6 +29,7 @@
         "east": "cargo-hold"
       },
       "items": [
+        "radiation-vest",
         "plasma-coil"
       ],
       "hazards": [
@@ -44,6 +47,8 @@
         "west": "airlock"
       },
       "items": [
+        "mag-lock-clip",
+        "respirator",
         "circuit-board",
         "welding-tool"
       ],
@@ -186,7 +191,9 @@
       "description": "Standard-issue station medkit, white case with a red cross. The seal is intact — someone never got the chance to use it. Wound sealant, stimulants, and a decontamination hypo inside.",
       "pickupText": "You pull the medkit from the cabinet. Heavier than expected — fully stocked, never opened. Small mercy.",
       "portable": true,
-      "roomText": "A single medkit sits in the far cabinet, its factory seal unbroken, red cross bright against the white casing."
+      "roomText": "A single medkit sits in the far cabinet, its factory seal unbroken, red cross bright against the white casing.",
+      "heal": 2,
+      "useText": "You work through the emergency medkit: sealant, bandages, a stimulant shot. The pain recedes."
     },
     "power-cell": {
       "name": "Fusion Power Cell",
@@ -236,6 +243,10 @@
       "roomText": "A plasma coil has shaken loose from the overhead conduit, dangling by its wires, blue energy still pulsing through its spirals.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "rubberized-gloves",
+      "counterText": "You pull on the rubberized gloves before grabbing the coil. A conduit above arcs, but the current finds no path through the rubber, and you lift the coil free.",
+      "damageText": "You grab the coil and a conduit arcs overhead. Ten thousand volts surge through your arm. You are thrown back, smoking, and the coil clatters to the deck.",
       "deathText": "You grab the plasma coil. A conduit above arcs without warning, completing the circuit through your body. The voltage slams through you — ten thousand volts cooking your nervous system in a blue-white flash. The coil pulses once more and goes dark."
     },
     "cryo-vial": {
@@ -244,6 +255,10 @@
       "roomText": "A vial of shimmering blue liquid sits undamaged among the broken glass, frost forming on its surface, perfectly intact amid the destruction.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "rubberized-gloves",
+      "counterText": "You pull on the thick gloves before reaching through the broken glass. A jagged shard catches the rubber and goes no further. You draw out the vial and walk away.",
+      "damageText": "You reach through the broken glass for the vial and a shard slices your palm. You jerk your hand back, bleeding, and the vial drops into the wreckage.",
       "deathText": "You reach through the broken glass for the vial. A jagged shard you didn't see finds the gap in your suit glove. Glass punches through the seal, then through skin. The vial falls. Its contents aerosolize on contact with the atmosphere. Your lungs crystallize on the next breath."
     },
     "manifest-tablet": {
@@ -252,6 +267,10 @@
       "roomText": "A data tablet lies on a cargo crate, its cracked screen still scrolling through manifests — red-flagged entries blinking urgently.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "mag-lock-clip",
+      "counterText": "You snap the override clip over the mag-lock before reaching up. The lock holds, and the container sways above you. You take the tablet and back away.",
+      "damageText": "You reach up for the tablet and the mag-locks give way. A shipping container drops, clipping your shoulder before you dive clear. The tablet is crushed.",
       "deathText": "You reach up to the crate for the tablet. The mag-locks above give way. Twenty tons of steel drops from the darkness — a shipping container in free fall. The tablet's screen cracks under the same force that ends everything else."
     },
     "glowing-sample": {
@@ -260,6 +279,10 @@
       "roomText": "A sample container pulses with soft green bioluminescence on the lab bench, its glow steady and beautiful amid the chemical haze.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "respirator",
+      "counterText": "You fit the respirator over your face before cracking the seal. A cloud of corrosive vapor billows up, and the filters take it. You reseal the container and walk out.",
+      "damageText": "You crack the seal and the sample erupts in a cloud of choking gas. You stagger out, eyes streaming, lungs burning, and the sample is lost.",
       "deathText": "You crack the sample container's seal. The bioluminescent substance reacts with the chemical atmosphere — an exothermic cascade that fills the lab with choking, corrosive vapor. Your lungs seize, chemistry turning against biology. The green glow fades as your vision does."
     },
     "fuel-rod-fragment": {
@@ -268,7 +291,46 @@
       "roomText": "A fuel rod fragment sits in a cracked lead sleeve, its core flickering with the distinctive blue glow of Cherenkov radiation — eerie and strangely beautiful.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "radiation-vest",
+      "counterText": "You pull on the radiation vest before lifting the fragment. The dosimeter screams, but the lead and boron take the worst, and you drop the fragment into the lead sleeve and walk out.",
       "deathText": "You pick up the fuel rod fragment. The cracked sleeve crumbles. Without shielding, the radiation pours through you like invisible fire. Your suit's dosimeter screams its final warning. Your cells are already dying as you read it. The blue glow is the last thing you see."
+    },
+    "rubberized-gloves": {
+      "name": "Rubberized Gloves",
+      "description": "Thick, insulated work gloves with a reinforced palm. Standard kit for handling live conduits and broken glass.",
+      "pickupText": "You pick up the Rubberized Gloves.",
+      "roomText": "A pair of rubberized work gloves hangs by the airlock door.",
+      "portable": true
+    },
+    "mag-lock-clip": {
+      "name": "Mag-Lock Override Clip",
+      "description": "A palm-sized clip that holds a cargo mag-lock in the engaged position. A maintenance trick the safety manual strongly discourages.",
+      "pickupText": "You pick up the Mag-Lock Override Clip.",
+      "roomText": "A mag-lock override clip is hooked to the maintenance bay tool rack.",
+      "portable": true
+    },
+    "respirator": {
+      "name": "Chemical Respirator",
+      "description": "A heavy-duty respirator with two dense filter cartridges. Rated for corrosive atmospheres.",
+      "pickupText": "You pick up the Chemical Respirator.",
+      "roomText": "A chemical respirator hangs on a wall hook in the maintenance bay.",
+      "portable": true
+    },
+    "radiation-vest": {
+      "name": "Radiation Vest",
+      "description": "A heavy vest lined with lead foil and boron plates. Worn by crew working near the reactor.",
+      "pickupText": "You pick up the Radiation Vest.",
+      "roomText": "A radiation vest is strapped to the corridor wall.",
+      "portable": true
+    },
+    "ration-bar": {
+      "name": "Ration Bar",
+      "description": "A dense, tasteless ration bar. Stamped with \"KHARON-7 — EMERGENCY ONLY.\"",
+      "pickupText": "You pick up the Ration Bar.",
+      "roomText": "A ration bar sits on the airlock bench.",
+      "portable": true,
+      "heal": 1,
+      "useText": "You choke down the ration bar. It is chalky and awful, but it steadies you."
     }
   },
   "puzzles": {

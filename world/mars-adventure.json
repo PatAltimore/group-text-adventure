@@ -13,6 +13,8 @@
         "east": "hab-module"
       },
       "items": [
+        "sealant-patch",
+        "safety-tether",
         "uv-scanner"
       ],
       "hazards": []
@@ -24,6 +26,8 @@
         "west": "landing-site"
       },
       "items": [
+        "radiation-lining",
+        "trauma-pack",
         "oxygen-tank",
         "geological-hammer"
       ],
@@ -56,6 +60,8 @@
         "north": "olympus-ridge"
       },
       "items": [
+        "insulated-gauntlets",
+        "acoustic-dampers",
         "grappling-line"
       ],
       "hazards": []
@@ -273,6 +279,10 @@
       "roomText": "A sphere of amber glass sits half-buried in the red dust, its interior swirling with frozen ochre patterns — a moment of ancient lightning, preserved.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "sealant-patch",
+      "counterText": "You slap a sealant patch over the vulnerable seam before digging. The storm hammers your suit, but the patch holds, and you pocket the sphere and walk out.",
+      "damageText": "You kneel to dig out the sphere and the dust storm hits. Abrasive grit scours your visor and suit seals, and you crawl back to the rover, scratched and hurting, without the sphere.",
       "deathText": "You kneel to dig out the sphere. The dust storm hits with terrifying speed. Visibility drops to zero. Your suit's seals scream under the abrasive bombardment. The glass sphere is the last thing you feel — smooth and warm — as the storm buries you in red."
     },
     "solar-prism": {
@@ -281,6 +291,10 @@
       "roomText": "A crystalline prism juts from the ridge face, splitting the thin Martian sunlight into a breathtaking spray of alien colors.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "radiation-lining",
+      "counterText": "You settle the radiation lining into your suit before prying the prism loose. The particle event sweeps the ridge, but the lining takes the dose, and you leave the ridge with the prism.",
+      "damageText": "You pry the prism loose and a solar particle event floods the ridge. Your dosimeter spikes into the red as you sprint for cover. The prism stays behind.",
       "deathText": "You pry the prism loose and your visor depolarizes at exactly the wrong moment. A sudden solar particle event floods the ridge with lethal radiation. The prism refracts the killing light into beautiful colors as your suit's dosimeter flatlines."
     },
     "carved-stone-face": {
@@ -289,6 +303,10 @@
       "roomText": "A small carved stone lies near the formation's base, its features almost human — a miniature echo of the great face above.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "sealant-patch",
+      "counterText": "You press a sealant patch over the hairline crack that opens in your visor. The air hisses once, then holds, and you tuck the stone face away.",
+      "damageText": "You lift the stone face and a micro-fracture races across your visor. You slap a hand over the crack and sprint for the airlock, lungs burning, and the face is left behind.",
       "deathText": "You pick up the stone face and your suit's pressure seals strain. A micro-fracture spreads across your helmet visor with a sound like cracking ice. The thin atmosphere of Mars rushes in. The carved face watches with its ambiguous expression as the plateau claims you."
     },
     "crystal-matrix": {
@@ -297,6 +315,8 @@
       "roomText": "A crystal matrix formation protrudes from the wall, humming softly, its facets pulsing with an inner light that seems almost purposeful.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "radiation-lining",
+      "counterText": "You settle the radiation lining before breaking the crystal matrix free. A gamma burst floods the corridor, but the lining takes the worst, and you retreat with the matrix intact.",
       "deathText": "You break the crystal matrix free. The crystalline deposits in the walls erupt in a massive gamma burst — ancient defense systems answering the theft. Your suit's radiation shielding is tissue paper against the onslaught. The crystals sing a brief, bright requiem."
     },
     "martian-fossil": {
@@ -305,6 +325,10 @@
       "roomText": "A spiral fossil emerges from the fractured floor, its delicate whorls unmistakably organic — proof of ancient life, waiting to be claimed.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "safety-tether",
+      "counterText": "You clip the tether to an anchor before prying out the fossil. The floor fractures and gives way beneath your boots, but the tether holds, and you haul yourself back up.",
+      "damageText": "You pry the fossil out and the floor fractures. You fall, ribs bouncing off rock, and claw your way back out with nothing but bruises.",
       "deathText": "You pry the fossil from the cracked stone. The floor fractures further, a web of cracks racing outward. Before you can step back, the stone beneath your boots gives a sickening crack and you plunge into the darkness below, the fossil still clutched to your chest."
     },
     "resonance-crystal": {
@@ -313,6 +337,10 @@
       "roomText": "A slender crystal rises from a pedestal, producing a hauntingly beautiful tone that seems to respond to your presence.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "acoustic-dampers",
+      "counterText": "You fit the acoustic dampers into your helmet before lifting the crystal. The piercing tone is a dull hum now, and you walk out with the crystal in your hands.",
+      "damageText": "You lift the crystal and the walls amplify its tone into a weapon. You stagger away, ears ringing, nose bleeding, and the crystal drops from your hands.",
       "deathText": "You lift the resonance crystal. The harmonic shifts to a piercing frequency. Ancient defense systems awaken, and the crystalline walls amplify the sound into a weapon. The vibration tears through your suit, your bones, your thoughts. The crystal sings on, indifferent."
     },
     "circuit-fragment": {
@@ -321,6 +349,10 @@
       "roomText": "A fragment of alien circuitry lies among the metallic panels, its traces still glowing with residual energy, still warm to the touch.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "insulated-gauntlets",
+      "counterText": "You pull on the insulated gauntlets before touching the panel. Electricity arcs across the metal and dies against the ceramic, and you ease the fragment out.",
+      "damageText": "You pull the fragment free and the panels discharge. Electricity arcs up both arms. You are thrown across the chamber, hands numb, as the fragment clatters away.",
       "deathText": "You pull the circuit fragment free. The metallic panels erupt in a cascade of electrical discharge. Ancient circuits, disturbed from their million-year sleep, discharge their fury through your suit. Lightning dances between the walls and you are the shortest path to ground."
     },
     "nexus-shard": {
@@ -330,6 +362,50 @@
       "portable": true,
       "hazardItem": true,
       "deathText": "You reach into the energy field for the shard. The Nexus mechanism surges in response — a coronal discharge of power that was ancient when Mars had oceans. Energy cascades through your suit in a white-hot instant. The shard pulses once, satisfied, and the field settles."
+    },
+    "sealant-patch": {
+      "name": "Suit Sealant Patches",
+      "description": "A roll of self-adhesive polymer patches, standard kit for any EVA. Press one over a crack, and the suit holds pressure.",
+      "pickupText": "You pick up the Suit Sealant Patches.",
+      "roomText": "A roll of suit sealant patches is clipped to the airlock wall.",
+      "portable": true
+    },
+    "safety-tether": {
+      "name": "Safety Tether",
+      "description": "A coiled length of braided cable with a carabiner on each end. Clip yourself to a fixed point, and you are not going anywhere.",
+      "pickupText": "You pick up the Safety Tether.",
+      "roomText": "A coiled safety tether hangs by the airlock.",
+      "portable": true
+    },
+    "radiation-lining": {
+      "name": "Radiation Lining",
+      "description": "A flexible foil-lined insert that slips inside an EVA suit. Adds mass and discomfort, and blocks the worst of the particle radiation.",
+      "pickupText": "You pick up the Radiation Lining.",
+      "roomText": "A packet of radiation lining inserts is stacked in the hab supply locker.",
+      "portable": true
+    },
+    "insulated-gauntlets": {
+      "name": "Insulated Gauntlets",
+      "description": "Heavy EVA gauntlets with a ceramic inner layer, built for contact with live electrical systems.",
+      "pickupText": "You pick up the Insulated Gauntlets.",
+      "roomText": "A pair of insulated gauntlets rests on the rover charging bench.",
+      "portable": true
+    },
+    "acoustic-dampers": {
+      "name": "Acoustic Dampers",
+      "description": "Foam inserts that fit inside a suit helmet and dampen resonant vibration. Rated for drilling operations.",
+      "pickupText": "You pick up the Acoustic Dampers.",
+      "roomText": "A set of acoustic dampers sits in a tool tray.",
+      "portable": true
+    },
+    "trauma-pack": {
+      "name": "Trauma Pack",
+      "description": "A sealed emergency pack with coagulant foam, pressure bandages and a stimulant shot. Standard Ares VII mission kit.",
+      "pickupText": "You pick up the Trauma Pack.",
+      "roomText": "A trauma pack is strapped to the hab module wall.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You work through the pack: foam, bandage, stimulant. The pain recedes and your head clears."
     }
   },
   "puzzles": {

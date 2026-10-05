@@ -13,7 +13,13 @@
         "east": "forensics-lab",
         "south": "back-alley"
       },
-      "items": [],
+      "items": [
+        "flashlight",
+        "kevlar-vest",
+        "police-radio",
+        "first-aid-kit",
+        "black-coffee"
+      ],
       "solvedDescription": "Fluorescent lights hum overhead, painting everything the color of old coffee. Your desk is a battlefield of case files and cold cups, but now the pieces fit together. The bulletin board connects the evidence — photos, statements, timeline. Probable cause has been established. The interrogation room to the west is now open, warrant signed and ready. To the north, the Crane mansion awaits. East leads to the forensics lab. South, the back alleys where informants and trouble live in equal measure."
     },
     "crane-mansion-foyer": {
@@ -237,6 +243,10 @@
       "roomText": "A single bottle stands apart from the rack — a 1961 vintage, its label faded but distinguished, practically glowing with value.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "flashlight",
+      "counterText": "You sweep the flashlight beam over the rack before reaching in. You spot the wobbling oak frame, brace it with one hand, and ease the vintage bottle free with the other.",
+      "damageText": "You reach for the bottle and your elbow catches the rack. The frame topples and glass crashes down around you. Shards slice your arms as you scramble clear.",
       "deathText": "You reach for the vintage bottle. Your elbow catches the wine rack. The heavy oak frame topples — hundreds of bottles shattering in a cascade of glass and decades of fermented regret. The rack pins you in a pool of red that isn't all wine."
     },
     "leather-wallet": {
@@ -245,6 +255,10 @@
       "roomText": "A leather wallet lies in the gutter, slightly open, a driver's license and the edge of several bills visible through its card window.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "police-radio",
+      "counterText": "You thumb the radio on before bending for the wallet. When the footsteps close in behind you, a cruiser's spotlight sweeps the alley and your attacker bolts. You pocket the wallet.",
+      "damageText": "You bend for the wallet and heavy footsteps close behind you. A blunt impact drops you to the wet asphalt. You come to alone, head throbbing, and the wallet is gone.",
       "deathText": "You bend for the wallet. Heavy footsteps close the distance behind you. You turn too late. A blunt impact at the base of your skull drops you to the wet asphalt. The alley has seen this before. The alley keeps its silence."
     },
     "engraved-flask": {
@@ -253,6 +267,8 @@
       "roomText": "A silver hip flask sits on a recently vacated booth table, engraved with an anchor and monogrammed initials, a splash of bourbon still visible inside.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "kevlar-vest",
+      "counterText": "You button up the kevlar vest before lifting the flask. Dominic Crane's hand comes out of his jacket with a pistol, and the shot hammers into your chest. The vest holds. You snatch the flask and run.",
       "deathText": "You reach for the flask and Dominic Crane's hand appears from inside his jacket — but it isn't holding a drink. The gunshot is deafening in the small bar. The flask skitters across the table, trailing bourbon and blood. Nobody saw nothing."
     },
     "shipping-manifest": {
@@ -261,7 +277,50 @@
       "roomText": "A leather folio lies on the desk, shipping manifests visible inside — dates, weights, port names. The kind of evidence that gets people promoted. Or buried.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "police-radio",
+      "counterText": "You key the radio before reaching for the manifest. When Webb's dockworkers step out of the doorway, sirens are already closing in, and they melt away. You tuck the manifest into your coat.",
+      "damageText": "You reach for the manifest and Webb's dockworkers step out. They work you over with practiced efficiency and leave you on the floor, ribs aching, manifest gone.",
       "deathText": "You reach for the manifest and Webb's dockworkers step forward from the doorway. They're thorough and professional. They work you over with the calm efficiency of men who've done this before. The manifest scatters as the warehouse goes dark."
+    },
+    "flashlight": {
+      "name": "Heavy Flashlight",
+      "description": "A police-issue flashlight, heavy enough to double as a club. Its beam cuts clean through the dark.",
+      "pickupText": "You pick up the Heavy Flashlight.",
+      "roomText": "A heavy police flashlight sits in the charger beside the desk.",
+      "portable": true
+    },
+    "kevlar-vest": {
+      "name": "Kevlar Vest",
+      "description": "A standard-issue police ballistic vest, scuffed at the edges. Reassuringly heavy.",
+      "pickupText": "You pick up the Kevlar Vest.",
+      "roomText": "A kevlar vest hangs on the back of the precinct door.",
+      "portable": true
+    },
+    "police-radio": {
+      "name": "Police Radio",
+      "description": "A battered handheld radio, tuned to the precinct frequency. Backup is only a button away.",
+      "pickupText": "You pick up the Police Radio.",
+      "roomText": "A police radio sits in its cradle on the front desk.",
+      "portable": true
+    },
+    "first-aid-kit": {
+      "name": "First Aid Kit",
+      "description": "A red nylon kit stamped with the department logo. Gauze, ibuprofen, and a note: \"Don't be a hero.\"",
+      "pickupText": "You pick up the First Aid Kit.",
+      "roomText": "A first aid kit is mounted beside the evidence locker.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You patch yourself up with the department kit. Not pretty, but it works."
+    },
+    "black-coffee": {
+      "name": "Black Coffee",
+      "description": "A paper cup of precinct coffee, scalding and strong enough to stand a spoon in. The only reason half this force is still awake.",
+      "pickupText": "You pick up the Black Coffee.",
+      "roomText": "A paper cup of black coffee sits cooling on the desk.",
+      "portable": true,
+      "heal": 1,
+      "useText": "You gulp the coffee. It tastes terrible, and you feel a little more alive."
     }
   },
   "puzzles": {

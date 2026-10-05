@@ -13,6 +13,8 @@
         "east": "crater-rim"
       },
       "items": [
+        "insulated-gloves",
+        "mag-boots",
         "access-card"
       ],
       "hazards": []
@@ -25,6 +27,8 @@
         "north": "observation-deck"
       },
       "items": [
+        "hard-hat",
+        "glow-sticks",
         "helmet-lamp"
       ],
       "hazards": []
@@ -49,6 +53,7 @@
         "east": "living-quarters"
       },
       "items": [
+        "med-patch",
         "comm-device"
       ],
       "hazards": []
@@ -60,6 +65,8 @@
         "west": "command-center"
       },
       "items": [
+        "vibration-dampers",
+        "lead-lined-vest",
         "geiger-counter"
       ],
       "hazards": []
@@ -306,6 +313,10 @@
       "roomText": "A crystalline junction box has come loose from the console array, trailing severed filaments that arc with blue-white sparks, its alien circuitry pulsing dangerously fast.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "insulated-gloves",
+      "counterText": "You pull on the insulated gloves before touching the node. Arcs crawl across the consoles, but the rubber carries you through and you wrench the node free.",
+      "damageText": "You pull the node free and arcs of blue-white current lash across your arms. You are thrown backward, smoking, and the node clatters to the floor.",
       "deathText": "You pull the conduit node free. Every console in the room erupts simultaneously — arcs of blue-white energy lance between them in a web of lethal current. Your suit becomes a conductor. The discharge stops your heart before the pain reaches your brain."
     },
     "star-map": {
@@ -328,6 +339,10 @@
       "roomText": "A cracked geode sits near the bore shaft, its interior blazing with amethyst and silver crystals that catch your helmet lights.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "hard-hat",
+      "counterText": "You pull the hard hat down tight before prying the geode loose. Gravel pelts the shell, the ceiling holds, and you slip the geode into your pack.",
+      "damageText": "You pry the geode out of the wall and the ceiling sheds rock. Fragments rattle across your helmet and shoulders as you leap clear, and the geode is lost in the rubble.",
       "deathText": "You pry the geode from the unstable wall. Cracks radiate outward from the gap. A deep fissure splits the ceiling and lunar rock cascades down in a silent, devastating avalanche. Your suit crumples like foil under the weight of a world."
     },
     "phosphor-crystal": {
@@ -336,6 +351,8 @@
       "roomText": "A faintly glowing crystal protrudes from the tunnel wall, casting a blue-white light that pushes back the absolute darkness.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "glow-sticks",
+      "counterText": "You snap a glow stick and drop it into the shaft before twisting the crystal free. The chemical light shows you the pit at your feet, and you step carefully back from the edge.",
       "deathText": "You twist the crystal free and its light flickers, dies. Total darkness. Your boot finds empty air where floor should be. You pitch forward into a shaft so deep your suit's altimeter spins. The impact, when it comes, is a distant formality."
     },
     "tuning-sphere": {
@@ -344,6 +361,10 @@
       "roomText": "A small metallic sphere hovers inches above a pedestal, vibrating with a tone that you feel more than hear.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "vibration-dampers",
+      "counterText": "You fit the dampers into your helmet before taking the sphere. The frequency spikes but the gel absorbs it, and you ease the sphere into your pack.",
+      "damageText": "You pluck the sphere from its hover and the resonance climbs. Your teeth buzz, your vision blurs, and you drop the sphere and stagger back with ringing ears.",
       "deathText": "You pluck the sphere from its hover. The resonant frequency spikes, finding harmonics your body cannot withstand. Your vision blurs. Your bones vibrate apart at the molecular level. The sphere sings your requiem in frequencies no human was meant to hear."
     },
     "prismatic-shard": {
@@ -352,6 +373,10 @@
       "roomText": "A prismatic shard juts from a crystalline column, refracting your suit lights into a spectrum of impossible, nameless colors.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "lead-lined-vest",
+      "counterText": "You pull the lead-lined vest tight before snapping the shard. The dosimeter spikes, but the lead takes the worst, and you retreat from the chamber, unharmed.",
+      "damageText": "You snap the shard free and the columns flood the chamber with radiation. You dive out with your dosimeter screaming, skin prickling, and drop the shard.",
       "deathText": "You snap the shard free. The crystalline columns pulse angrily, flooding the chamber with radiation your suit was never designed to handle. Your dosimeter screams, then melts. The shard is beautiful in your hand as your cells unravel."
     },
     "zero-g-orb": {
@@ -360,7 +385,60 @@
       "roomText": "A black orb floats at the chamber's center, rotating slowly, trailing wisps of golden light like a miniature planet with its own aurora.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "mag-boots",
+      "counterText": "You switch on the magnetic boots and lock your feet to the floor plates before closing your hands around the orb. The gravity field wrenches at you from every side, but your boots hold, and the orb settles quietly into your grip.",
       "deathText": "You close your hands around the orb. The gravitational field spikes catastrophically. Your body is pulled in every direction simultaneously — stretched, compressed, twisted by tidal forces that dwarf anything in nature. The orb floats serenely in the space where you used to be."
+    },
+    "insulated-gloves": {
+      "name": "Insulated Gloves",
+      "description": "Thick rubberized gloves rated for high-voltage work. Standard issue for mining crews who service the colony grid.",
+      "pickupText": "You pick up the Insulated Gloves.",
+      "roomText": "A pair of insulated gloves is clipped to the suit-rack by the airlock.",
+      "portable": true
+    },
+    "mag-boots": {
+      "name": "Magnetic Boots",
+      "description": "Heavy boots with electromagnetic soles. They lock your feet to any metal surface in any gravity.",
+      "pickupText": "You pick up the Magnetic Boots.",
+      "roomText": "A pair of magnetic boots stands on the suit-rack beside the airlock.",
+      "portable": true
+    },
+    "hard-hat": {
+      "name": "Reinforced Hard Hat",
+      "description": "A mining helmet with an impact-rated shell. Dented on one side, as if someone has used it before.",
+      "pickupText": "You pick up the Reinforced Hard Hat.",
+      "roomText": "A reinforced hard hat sits on a toolbox at the rim overlook.",
+      "portable": true
+    },
+    "glow-sticks": {
+      "name": "Chemical Glow Sticks",
+      "description": "A bundle of snap-activated chemical lights, rated for vacuum. They burn for hours without power.",
+      "pickupText": "You pick up the Chemical Glow Sticks.",
+      "roomText": "A bundle of chemical glow sticks is wedged into a cargo strap.",
+      "portable": true
+    },
+    "vibration-dampers": {
+      "name": "Vibration Dampers",
+      "description": "Gel-filled pads that fit inside a suit helmet. Designed to absorb the shaking from heavy drilling equipment.",
+      "pickupText": "You pick up the Vibration Dampers.",
+      "roomText": "A set of vibration dampers lies on a bunk.",
+      "portable": true
+    },
+    "lead-lined-vest": {
+      "name": "Lead-Lined Vest",
+      "description": "A bulky vest sewn with thin sheets of lead, worn by crews working near the colony reactor.",
+      "pickupText": "You pick up the Lead-Lined Vest.",
+      "roomText": "A lead-lined vest hangs on the back of a bunk-room door.",
+      "portable": true
+    },
+    "med-patch": {
+      "name": "Medical Patch",
+      "description": "A self-adhesive medical patch loaded with coagulant and painkillers. Standard colony trauma gear.",
+      "pickupText": "You pick up the Medical Patch.",
+      "roomText": "A medical patch dispenser is mounted beside the main console.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You slap the patch onto the wound. The coagulant seals it, and the pain dissolves."
     }
   },
   "puzzles": {

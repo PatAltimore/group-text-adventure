@@ -13,6 +13,7 @@
         "east": "research-trailer"
       },
       "items": [
+        "strobe-lantern",
         "emf-detector",
         "crimson-feather"
       ],
@@ -32,6 +33,10 @@
         "north": "bigfoot-forest"
       },
       "items": [
+        "bear-spray",
+        "gas-mask",
+        "anchor-harness",
+        "first-aid-kit",
         "research-journal",
         "night-vision-goggles"
       ],
@@ -46,6 +51,7 @@
         "east": "ufo-landing-site"
       },
       "items": [
+        "lead-apron",
         "sasquatch-hair-sample",
         "carved-footprint-cast"
       ],
@@ -66,6 +72,7 @@
         "south": "underground-chamber"
       },
       "items": [
+        "kevlar-vest",
         "classified-dossier",
         "security-badge",
         "specimen-jar"
@@ -325,6 +332,10 @@
       "roomText": "A crimson feather, impossibly large, drifts against the bridge cables, its iridescent surface shifting between red and black.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "strobe-lantern",
+      "counterText": "You switch on the strobe lantern before plucking the feather. The Mothman's red eyes ignite above you, then jerk away, dazzled. It shrieks into the dark, and you slip the feather into your pocket.",
+      "damageText": "You pluck the feather from the cables and red eyes ignite overhead. Wings crack like thunder, and talons rake your shoulder before the creature wheels away into the fog.",
       "deathText": "You pluck the feather from the cables. Red eyes ignite above you — twin furnaces in the darkness. Massive wings crack the air like thunder. The Mothman descends, and its cry is the sound of every bridge that ever fell, every warning that came too late."
     },
     "carved-footprint-cast": {
@@ -333,6 +344,10 @@
       "roomText": "A plaster footprint cast lies beside a massive impression in the mud, its white surface pristine against the dark earth, still warm to the touch.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "bear-spray",
+      "counterText": "You grip the bear spray as the treeline erupts. When the nine-foot shape lunges, you hit it with a full blast. It crashes back into the forest, howling, and you walk away with the cast.",
+      "damageText": "You pick up the cast and the treeline explodes. Something nine feet tall hurls you into a tree. You roll away, ribs screaming, and the cast is lost.",
       "deathText": "You pick up the cast and the treeline explodes. A roar splits the forest — primal, inhuman, furious. Something nine feet tall crashes through the undergrowth. It wants the cast back. It doesn't ask politely. The trees close behind you both, and the forest keeps its secrets."
     },
     "specimen-jar": {
@@ -341,6 +356,10 @@
       "roomText": "A sealed specimen jar sits on a dusty shelf, its cloudy contents floating gently — something organic, something wrong, something fascinating.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "gas-mask",
+      "counterText": "You snap the gas mask on before cracking the seal. A plume of ancient chemicals billows out, and your filter takes it. You reseal the jar and carry it out.",
+      "damageText": "You crack the seal and fifty years of trapped gas pours out. You stagger out, retching and half-blind, and the jar rolls under the bench.",
       "deathText": "You crack the seal on the specimen jar. Fifty years of trapped toxic gas rush out in a concentrated plume — chemicals that were illegal before the lab was abandoned. Your lungs fill with poison that tastes of formaldehyde and forgotten atrocities."
     },
     "scorched-orbital-debris": {
@@ -349,6 +368,10 @@
       "roomText": "A piece of scorched orbital debris sits at the circle's edge, its metallic surface warm and faintly humming, pulling toward the center like a magnet.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "lead-apron",
+      "counterText": "You pull the lead apron on before lifting the debris. The vibration shakes your bones, but the lead takes the worst of the radiation, and you carry it out.",
+      "damageText": "You pick up the debris and the vibration spikes. Equipment explodes in sparks, the debris burns your hands, and you drop it, ears ringing.",
       "deathText": "You pick up the debris and the vibration spikes to a frequency that shatters glass and fillings alike. Equipment shorts out in a shower of sparks. The debris grows hot — searingly, impossibly hot — as whatever left it here reaches out to reclaim its property."
     },
     "gravity-sphere": {
@@ -357,6 +380,10 @@
       "roomText": "A smooth metallic sphere rolls gently across the tilting floor, its weight shifting visibly — heavy, then light, then heavy — as gravity fluctuates around it.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "anchor-harness",
+      "counterText": "You clip the harness lanyard to a bulkhead before grabbing the sphere. Gravity inverts, then flips again, but the harness holds you in place. When it settles, you hold the sphere calmly.",
+      "damageText": "You grab the sphere and gravity inverts. You slam into the ceiling, then the floor, then the wall. You let go of the sphere and lie there, dazed and bruised.",
       "deathText": "You grab the sphere and gravity inverts. You slam into the ceiling with bone-cracking force, then crash back to the floor as the field reverses. Up, down, sideways — the sphere pulls you in every direction, a ragdoll in the grip of physics gone mad."
     },
     "classified-clearance-tag": {
@@ -365,6 +392,8 @@
       "roomText": "A clearance tag lies in the dust near the perimeter fence, its photo bleached blank but its \"COSMIC\" classification still legible in faded red.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "kevlar-vest",
+      "counterText": "You button the kevlar vest tight and reach for the tag. A red dot settles on your chest. Three rounds slam into you, but the vest holds, and you snatch the tag and run.",
       "deathText": "You reach for the tag and a red dot settles on your chest. The turret doesn't hesitate. Three rounds of high-velocity persuasion end the trespassing before your fingers close on the laminated plastic. The tag flutters in the muzzle blast, lands face-down."
     },
     "depth-gauge": {
@@ -382,6 +411,57 @@
       "portable": true,
       "hazardItem": true,
       "deathText": "You pick up the rune stone and reality shatters. The barrier between worlds ruptures. Through the gap you see what the stones were built to contain — geometries that don't exist, colors that eat light, a hunger older than matter. The stone burns in your hand as you are unmade."
+    },
+    "strobe-lantern": {
+      "name": "Strobe Lantern",
+      "description": "A heavy-duty lantern with a flash mode. Built for search and rescue, it can blind anything with eyes.",
+      "pickupText": "You pick up the Strobe Lantern.",
+      "roomText": "A strobe lantern sits on the bridge railing, powered on and waiting.",
+      "portable": true
+    },
+    "bear-spray": {
+      "name": "Bear Spray",
+      "description": "A canister of industrial-strength bear deterrent. Whatever lives in this forest is a lot bigger than a bear.",
+      "pickupText": "You pick up the Bear Spray.",
+      "roomText": "A canister of bear spray rests on the trailer's workbench.",
+      "portable": true
+    },
+    "gas-mask": {
+      "name": "Gas Mask",
+      "description": "A surplus military gas mask, filter cartridge still sealed. It smells like rubber and old dust.",
+      "pickupText": "You pick up the Gas Mask.",
+      "roomText": "A surplus gas mask hangs from a hook on the trailer wall.",
+      "portable": true
+    },
+    "lead-apron": {
+      "name": "Lead Apron",
+      "description": "A heavy lead-lined apron, like the kind used in X-ray rooms. A tag reads \"Property of the Roswell Medical Center.\"",
+      "pickupText": "You pick up the Lead Apron.",
+      "roomText": "A lead apron is draped over a stump at the edge of the clearing.",
+      "portable": true
+    },
+    "anchor-harness": {
+      "name": "Anchor Harness",
+      "description": "A climbing harness with a long lanyard and two heavy carabiners. Meant for rope work, but it would hold you to a wall.",
+      "pickupText": "You pick up the Anchor Harness.",
+      "roomText": "A climbing harness hangs beside the trailer door.",
+      "portable": true
+    },
+    "kevlar-vest": {
+      "name": "Kevlar Vest",
+      "description": "A heavy ballistic vest, stamped with a federal agency stencil that has been half scratched out.",
+      "pickupText": "You pick up the Kevlar Vest.",
+      "roomText": "A kevlar vest hangs on a hook in the lab's coat closet.",
+      "portable": true
+    },
+    "first-aid-kit": {
+      "name": "First Aid Kit",
+      "description": "A heavy-duty field kit with a faded red cross. Gauze, tape, and a laminated card: \"If it bites, do not walk it off.\"",
+      "pickupText": "You pick up the First Aid Kit.",
+      "roomText": "A first aid kit is bolted to the trailer wall.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You patch yourself up as best you can. The kit is empty afterward."
     }
   },
   "puzzles": {

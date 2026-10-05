@@ -12,6 +12,7 @@
         "north": "entry-hall"
       },
       "items": [
+        "rock-salt",
         "evp-recorder"
       ],
       "hazards": []
@@ -26,6 +27,8 @@
         "south": "dock"
       },
       "items": [
+        "foam-earplugs",
+        "first-aid-kit",
         "frost-locket"
       ],
       "hazards": [
@@ -68,6 +71,7 @@
         "south": "entry-hall"
       },
       "items": [
+        "leather-work-gloves",
         "emf-detector"
       ],
       "hazards": []
@@ -324,6 +328,10 @@
       "roomText": "A silver locket lies on the floor, rimmed with frost that refuses to melt, catching the dim light like a tiny star.",
       "portable": true,
       "hazardItem": true,
+      "damage": 1,
+      "counteredBy": "rock-salt",
+      "counterText": "You trace a line of salt around the locket before lifting it. The cold hisses back from the line like steam, and the locket comes away in your hand, merely chilly.",
+      "damageText": "The moment you touch the locket, the cold bites through your gloves to the bone. You yank your hand back, fingers numb and blue, and the locket drops from your grip.",
       "deathText": "Your fingers close around the locket and the cold intensifies until frost crystallizes on your skin. Your blood slows, thickens, stops. The shadow wraps around you like a burial shroud, and the warmth drains from your body in a single, shuddering exhale."
     },
     "wardens-whistle": {
@@ -332,6 +340,10 @@
       "roomText": "A brass whistle on a frayed lanyard hangs from an empty cell bar, swaying gently though the air is still.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "foam-earplugs",
+      "counterText": "You jam the earplugs in before lifting the whistle. The whispers drop to a faint buzz at the edge of hearing, and you slip the whistle into your pocket.",
+      "damageText": "You lift the whistle and a thousand whispers pour through you at once. You clamp your hands over your ears and fling the whistle down, head ringing, nose bleeding.",
       "deathText": "You lift the whistle to your lips. The whispering grows louder, multiplying, a chorus of the damned pressing against the walls of reality. They pour through the whistle like a funnel — cold, furious, starving — and the last thing you hear is your own name, screamed by a hundred dead throats."
     },
     "prisoners-mirror": {
@@ -340,6 +352,8 @@
       "roomText": "A small pocket mirror lies face-down on the corridor floor outside Cell 14D, its brass frame dull but unbroken.",
       "portable": true,
       "hazardItem": true,
+      "counteredBy": "rock-salt",
+      "counterText": "You pour a quick ring of salt on the cell floor before looking into the glass. The shadow in the reflection presses against the surface and cannot cross it. You turn the mirror face-down and pocket it.",
       "deathText": "You pick up the mirror and look into it. The darkness of Cell 14D looks back. It doesn't blink. It doesn't breathe. But it reaches — cold fingers of shadow threading through the glass, through your eyes, into the warm spaces behind them. Your reflection smiles. You don't."
     },
     "brass-valve-handle": {
@@ -348,7 +362,41 @@
       "roomText": "A polished brass valve handle lies wedged between two pipes, gleaming impossibly bright in the tunnel gloom.",
       "portable": true,
       "hazardItem": true,
+      "damage": 2,
+      "counteredBy": "leather-work-gloves",
+      "counterText": "You wrap both hands in the work gloves before wrenching the handle. Phantom steam screams from the pipe, but the leather takes the worst of it.",
+      "damageText": "You wrench the valve free and a blast of ghost-heat scalds your hands raw. You stumble back, and the handle clangs to the floor.",
       "deathText": "You wrench the valve handle free. A steam pipe explodes — but there's been no steam pressure in decades. Ghost-heat sears your skin, phantom pressure crushes your chest. The shadows between the pipes close around you like fingers, and the screaming of phantom steam drowns out your own."
+    },
+    "rock-salt": {
+      "name": "Canister of Rock Salt",
+      "description": "A battered canister of coarse rock salt, a hand-lettered label reading \"FOR THE COLD SPOTS.\" Every ghost-hunting handbook agrees on one thing: spirits hate a line of salt.",
+      "pickupText": "You pick up the Canister of Rock Salt.",
+      "roomText": "A canister of rock salt sits on the dock bench, left by some earlier, wiser investigator.",
+      "portable": true
+    },
+    "foam-earplugs": {
+      "name": "Foam Earplugs",
+      "description": "A sealed packet of bright orange foam earplugs, the kind issued to anyone working near loud machinery. Or loud ghosts.",
+      "pickupText": "You pick up the Foam Earplugs.",
+      "roomText": "A packet of foam earplugs is tucked into the visitor-sign-in slot.",
+      "portable": true
+    },
+    "leather-work-gloves": {
+      "name": "Leather Work Gloves",
+      "description": "Stiff, heavily stitched gloves with scorch marks across the palms. Whoever wore these handled hot pipes for a living.",
+      "pickupText": "You pick up the Leather Work Gloves.",
+      "roomText": "A pair of scorched leather work gloves hangs from a hook by the stairwell.",
+      "portable": true
+    },
+    "first-aid-kit": {
+      "name": "First Aid Kit",
+      "description": "A dented tin box stamped with a faded red cross. Gauze, iodine and a note: \"Alcatraz bites back.\"",
+      "pickupText": "You pick up the First Aid Kit.",
+      "roomText": "A first aid kit is bolted to the wall beside the sign-in desk.",
+      "portable": true,
+      "heal": 2,
+      "useText": "You clean and bandage the worst of it. The kit is empty afterward."
     }
   },
   "puzzles": {

@@ -1,5 +1,5 @@
 import { describe, test, expect } from '@jest/globals';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import {
   loadWorld,
   createGameSession,
@@ -355,26 +355,77 @@ describe('World validation of combat fields', () => {
   });
 });
 
-describe('microsoft-escape-room pilot', () => {
-  const worldJson = JSON.parse(readFileSync(new URL('../world/microsoft-escape-room.json', import.meta.url), 'utf8'));
+const WORLD_DIR = new URL('../world/', import.meta.url);
+const worldFiles = readdirSync(WORLD_DIR).filter((f) => f.endsWith('.json'));
+
+describe.each(worldFiles)('combat data in %s', (file) => {
+  const worldJson = JSON.parse(readFileSync(new URL(file, WORLD_DIR), 'utf8'));
+  const hazardItems = Object.entries(worldJson.items).filter(([, item]) => item.hazardItem);
+  const placed = new Set(Object.values(worldJson.rooms).flatMap((r) => r.items || []));
+  const puzzleItems = new Set(Object.values(worldJson.puzzles || {}).map((p) => p.requiredItem));
 
   test('the world is valid', () => {
     expect(validateWorld(worldJson).errors).toEqual([]);
   });
 
-  test('every hazard counter is an item the player can actually obtain', () => {
-    const placed = new Set(Object.values(worldJson.rooms).flatMap((r) => r.items || []));
+  test('every hazard counter can actually be obtained and is not used up by a puzzle', () => {
     const hazards = [
       ...Object.values(worldJson.items),
       ...Object.values(worldJson.rooms).flatMap((r) => r.hazards || []),
     ].filter((h) => h.counteredBy);
-    expect(hazards.length).toBeGreaterThan(0);
     for (const hazard of hazards) {
       for (const counter of [].concat(hazard.counteredBy)) {
         expect(placed.has(counter)).toBe(true);
+        expect(puzzleItems.has(counter)).toBe(false);
       }
     }
   });
+
+  test('every counter has text for when it saves you', () => {
+    for (const [id, item] of hazardItems.filter(([, i]) => i.counteredBy)) {
+      expect([id, typeof item.counterText]).toEqual([id, 'string']);
+    }
+  });
+
+  test('every hazard item that can hurt without killing explains the injury', () => {
+    for (const [id, item] of hazardItems.filter(([, i]) => i.damage)) {
+      expect([id, typeof item.damageText]).toEqual([id, 'string']);
+    }
+  });
+
+  test('a player carrying every counter survives every hazard item', () => {
+    const session = createGameSession(loadWorld(worldJson));
+    for (const [id, item] of hazardItems.filter(([, i]) => i.counteredBy)) {
+      const roomId = Object.keys(worldJson.rooms).find((r) => worldJson.rooms[r].items?.includes(id));
+      const s = structuredClone(session);
+      addPlayer(s, 'p1', 'Alice');
+      s.players.p1.room = roomId;
+      s.players.p1.inventory = [].concat(item.counteredBy);
+      const { session: after } = processCommand(s, 'p1', `take ${item.name}`);
+      expect([id, after.players.p1?.hp]).toEqual([id, 3]);
+      expect([id, after.players.p1?.inventory.includes(id)]).toEqual([id, true]);
+    }
+  });
+
+  test('without a counter, damaging hazards hurt and lethal ones kill', () => {
+    const session = createGameSession(loadWorld(worldJson));
+    for (const [id, item] of hazardItems) {
+      const roomId = Object.keys(worldJson.rooms).find((r) => worldJson.rooms[r].items?.includes(id));
+      const s = structuredClone(session);
+      addPlayer(s, 'p1', 'Alice');
+      s.players.p1.room = roomId;
+      const { session: after } = processCommand(s, 'p1', `take ${item.name}`);
+      if (item.damage && item.damage < 3) {
+        expect([id, after.players.p1?.hp]).toEqual([id, 3 - item.damage]);
+      } else {
+        expect([id, after.players.p1]).toEqual([id, undefined]);
+      }
+    }
+  });
+});
+
+describe('microsoft-escape-room pilot', () => {
+  const worldJson = JSON.parse(readFileSync(new URL('microsoft-escape-room.json', WORLD_DIR), 'utf8'));
 
   test('the coolant canister is safe with gloves and merely painful without', () => {
     const session = createGameSession(loadWorld(worldJson));
