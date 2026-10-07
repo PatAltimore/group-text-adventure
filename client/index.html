@@ -105,12 +105,15 @@
       <p class="landing-subtitle">Choose an adventure and invite your friends.</p>
 
       <div class="landing-form">
-        <div id="world-selector-group" class="world-selector-group">
-          <label class="world-selector-label">Choose Adventure</label>
-          <div id="world-selector-list" class="world-selector-list" role="radiogroup" aria-label="Select adventure world">
-            <!-- Populated dynamically by app.js -->
-          </div>
-        </div>
+        <label for="player-name" class="host-name-label">👤 Your Name</label>
+        <input
+          id="player-name"
+          type="text"
+          placeholder="Enter your name…"
+          maxlength="24"
+          autocomplete="off"
+          aria-label="Your player name"
+        >
 
         <div class="settings-section" id="settings-section">
           <h3 class="settings-section-title">⚙️ Game Settings</h3>
@@ -165,15 +168,12 @@
           </div>
         </div>
 
-        <label for="player-name" class="host-name-label">👤 Your Name</label>
-        <input
-          id="player-name"
-          type="text"
-          placeholder="Enter your name…"
-          maxlength="24"
-          autocomplete="off"
-          aria-label="Your player name"
-        >
+        <div id="world-selector-group" class="world-selector-group">
+          <label class="world-selector-label">Choose Adventure</label>
+          <div id="world-selector-list" class="world-selector-list" role="radiogroup" aria-label="Select adventure world">
+            <!-- Populated dynamically by app.js -->
+          </div>
+        </div>
 
         <div class="landing-buttons">
           <button id="btn-host" class="btn btn-primary" disabled aria-label="Host a new game">

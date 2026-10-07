@@ -749,11 +749,12 @@ function resolveHazard(session, playerId, hazard) {
 
   if (remaining > 0) {
     player.hp = remaining;
+    const gearHint = hazard.counteredBy ? ' Some kind of protective gear might have helped.' : '';
     responses.push({
       playerId,
       message: {
         type: 'damage',
-        text: `${hazard.damageText || 'You are hurt!'} Health: ${formatHp(remaining, maxHp)}`,
+        text: `${hazard.damageText || 'You are hurt!'}${gearHint} Health: ${formatHp(remaining, maxHp)}`,
         hp: { current: remaining, max: maxHp },
       },
     });
@@ -900,9 +901,13 @@ function handleLook(session, playerId, cmd) {
 
   if (matches.length === 1) {
     const item = session.world.items[matches[0]];
+    let text = item.description;
+    if (hazardsCounteredBy(session, matches[0], player.room)) {
+      text += ' Carrying this may protect you from something dangerous.';
+    }
     responses.push({
       playerId,
-      message: { type: 'message', text: item.description },
+      message: { type: 'message', text },
     });
     return { session, responses };
   }
@@ -1280,11 +1285,43 @@ function handleUse(session, playerId, cmd) {
     }
   }
 
+  // Protective gear works just by being carried — say so instead of "can't use"
+  const protects = hazardsCounteredBy(session, itemId, player.room);
+  if (protects) {
+    const text = protects.here.length > 0
+      ? `You don't need to use the ${usedItem.name}. Just carrying it protects you from the ${protects.here.join(' and the ')}.`
+      : `You don't need to use the ${usedItem.name}. Just carrying it should protect you from something dangerous.`;
+    responses.push({ playerId, message: { type: 'message', text } });
+    return { session, responses };
+  }
+
   responses.push({
     playerId,
-    message: { type: 'error', text: `You can't use the ${session.world.items[itemId].name} here.` },
+    message: { type: 'error', text: `You can't use the ${usedItem.name} here.` },
   });
   return { session, responses };
+}
+
+/**
+ * Whether an item is the counter to any hazard in the world, and which
+ * hazard items in the player's room it counters.
+ * @returns {{ here: string[] }|null}
+ */
+function hazardsCounteredBy(session, itemId, roomId) {
+  const counters = (hazard) =>
+    hazard && hazard.counteredBy && [].concat(hazard.counteredBy).includes(itemId);
+
+  const hazardItems = Object.entries(session.world.items).filter(([, item]) => item.hazardItem && counters(item));
+  const roomHazards = Object.values(session.world.rooms).some((room) =>
+    (room.hazards || []).some((h) => typeof h === 'object' && counters(h))
+  );
+  if (hazardItems.length === 0 && !roomHazards) return null;
+
+  const roomItems = session.roomStates[roomId].items;
+  const here = hazardItems
+    .filter(([id]) => roomItems.includes(id))
+    .map(([, item]) => item.name);
+  return { here };
 }
 
 function applyPuzzleAction(session, action) {
@@ -1570,6 +1607,8 @@ function handleHelp(session, playerId) {
     '              skips hazardous items',
     '  DROP <x>    Drop an item',
     '  USE <x>     Use an item (heals)',
+    '              Protective gear works',
+    '              just by carrying it',
     '  HEALTH      Show your health (hp)',
     '  USE <x> ON <y>  Use on target',
     '  GIVE <x> TO <p> Give to player',

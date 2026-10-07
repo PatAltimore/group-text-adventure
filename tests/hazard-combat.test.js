@@ -280,6 +280,73 @@ describe('Room hazards with damage', () => {
   });
 });
 
+describe('Using protective gear', () => {
+  test('using a counter item explains that carrying it is enough', () => {
+    let session = start();
+    ({ session } = run(session, 'p1', 'take gloves'));
+    const { session: after, responses } = run(session, 'p1', 'use gloves');
+
+    expect(responses[0].message.type).toBe('message');
+    expect(responses[0].message.text).toContain('Just carrying it');
+    expect(after.players.p1.inventory).toContain('gloves');
+  });
+
+  test('in a room with a hazard it counters, the message names the hazard', () => {
+    let session = start();
+    ({ session } = run(session, 'p1', 'take gloves'));
+    ({ session } = run(session, 'p1', 'go north'));
+    const { responses } = run(session, 'p1', 'use gloves on acid');
+
+    expect(responses[0].message.text).toContain('protects you from the Acid Flask');
+  });
+
+  test('an item that counters nothing still gets the plain error', () => {
+    let session = start();
+    ({ session } = run(session, 'p1', 'take snack'));
+    session.players.p1.hp = 3;
+    ({ session } = run(session, 'p1', 'take bandage'));
+    const { responses } = run(session, 'p1', 'use bandage');
+    expect(responses[0].message.text).toContain('full health');
+
+    ({ session } = run(session, 'p1', 'drop bandage'));
+    session.world.items.gem.portable = true;
+    ({ session } = run(session, 'p1', 'go north'));
+    ({ session } = run(session, 'p1', 'take gem'));
+    const gem = run(session, 'p1', 'use gem').responses[0].message;
+    expect(gem.type).toBe('error');
+  });
+});
+
+describe('Discovering protective gear', () => {
+  test('examining a counter item says it may protect you', () => {
+    const { responses } = run(start(), 'p1', 'examine gloves');
+    expect(responses[0].message.text).toContain('Insulated.');
+    expect(responses[0].message.text).toContain('Carrying this may protect you');
+  });
+
+  test('examining an ordinary item adds nothing', () => {
+    const { responses } = run(start(), 'p1', 'examine snack');
+    expect(responses[0].message.text).toBe('Tasty.');
+  });
+
+  test('getting hurt by a counterable hazard hints at protective gear', () => {
+    let session = start();
+    ({ session } = run(session, 'p1', 'go north'));
+    const { responses } = run(session, 'p1', 'take acid');
+    expect(messagesFor(responses, 'p1', 'damage')[0].message.text).toContain('protective gear might have helped');
+  });
+
+  test('a hazard with no counter gives no gear hint', () => {
+    const world = makeWorld();
+    world.items.acid.counteredBy = undefined;
+    let session = createGameSession(world);
+    session = addPlayer(session, 'p1', 'Alice');
+    ({ session } = run(session, 'p1', 'go north'));
+    const { responses } = run(session, 'p1', 'take acid');
+    expect(messagesFor(responses, 'p1', 'damage')[0].message.text).not.toContain('protective gear');
+  });
+});
+
 describe('Healing items', () => {
   test('using a healing item restores health and consumes it', () => {
     let session = start();
